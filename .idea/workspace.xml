@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="23d12899-4456-45b3-9b0f-e4b5bd1e4587" name="Default Changelist" comment="" />
+    <list default="true" id="23d12899-4456-45b3-9b0f-e4b5bd1e4587" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/upload/admin/view/image/logo-white.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/upload/admin/view/image/logo.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/admin/view/stylesheet/bootstrap.css" beforeDir="false" afterPath="$PROJECT_DIR$/upload/admin/view/stylesheet/bootstrap.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/admin/view/stylesheet/sass/bootstrap/_labels.scss" beforeDir="false" afterPath="$PROJECT_DIR$/upload/admin/view/stylesheet/sass/bootstrap/_labels.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/admin/view/stylesheet/sass/bootstrap/_tables.scss" beforeDir="false" afterPath="$PROJECT_DIR$/upload/admin/view/stylesheet/sass/bootstrap/_tables.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/admin/view/stylesheet/sass/bootstrap/_variables.scss" beforeDir="false" afterPath="$PROJECT_DIR$/upload/admin/view/stylesheet/sass/bootstrap/_variables.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/admin/view/stylesheet/stylesheet.css" beforeDir="false" afterPath="$PROJECT_DIR$/upload/admin/view/stylesheet/stylesheet.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/admin/view/template/common/column_left.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/admin/view/template/common/column_left.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/admin/view/template/common/footer.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/admin/view/template/common/footer.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/admin/view/template/common/header.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/admin/view/template/common/header.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/admin/view/template/extension/dashboard/chart_info.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/admin/view/template/extension/dashboard/chart_info.twig" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -12,6 +25,11 @@
     <execution />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration">
@@ -45,16 +63,18 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/product" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/upload/admin/view/image" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/upload/admin/view/image" />
       <recent name="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/product" />
       <recent name="$PROJECT_DIR$/upload/admin" />
       <recent name="$PROJECT_DIR$/upload" />
@@ -75,7 +95,7 @@
       <workItem from="1614066303207" duration="7538000" />
       <workItem from="1614078660889" duration="10734000" />
       <workItem from="1614093670616" duration="3519000" />
-      <workItem from="1618829636953" duration="671000" />
+      <workItem from="1618829636953" duration="5160000" />
     </task>
     <servers />
   </component>
