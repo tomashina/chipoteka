@@ -1,0 +1,282 @@
+
+
+
+<header class="bg-light shadow-sm fixed-top" data-fixed-element>
+    <div class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand d-none d-sm-block me-3 me-xl-4 flex-shrink-0" href="{{ home }}">
+                <img src="catalog/view/dist/img/logo-chipoteka.svg" width="142" alt="{{ name }}">
+            </a>
+              <a class="navbar-brand d-sm-none me-2" href="{{ home }}">
+                  <img src="catalog/view/dist/img/logo-chipoteka.svg" width="74" alt="{{ name }}">
+              </a>
+            <!-- Search-->
+            <div class="input-group d-none d-lg-flex flex-nowrap mx-4"><i class="ci-search position-absolute top-50 start-0 translate-middle-y ms-3"></i>
+                <input class="form-control rounded-start w-100" type="text" placeholder="Pretraži proizvode">
+
+            </div>
+            <!-- Toolbar-->
+            <div class="navbar-toolbar d-flex flex-shrink-0 align-items-center ms-xl-2">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideNav"><span class="navbar-toggler-icon"></span></button><a class="navbar-tool d-flex d-lg-none" href="#searchBox" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="searchBox"><span class="navbar-tool-tooltip">Search</span>
+                    <div class="navbar-tool-icon-box"><i class="navbar-tool-icon ci-search"></i></div></a><a class="navbar-tool d-none d-lg-flex" href="#"><span class="navbar-tool-tooltip">Wishlist</span>
+                    <div class="navbar-tool-icon-box"><i class="navbar-tool-icon ci-heart"></i></div></a><a class="navbar-tool ms-1 ms-lg-0 me-n1 me-lg-2" href="#signin-modal" data-bs-toggle="modal">
+                    <div class="navbar-tool-icon-box"><i class="navbar-tool-icon ci-user"></i></div>
+                    <div class="navbar-tool-text ms-n3"><small>Dobro došao/la, </small>Pero Perić</div></a>
+                <div class="navbar-tool dropdown ms-3"><a class="navbar-tool-icon-box bg-secondary dropdown-toggle" href="{{ shopping_cart }}"><span class="navbar-tool-label">{{ cart_items }}</span><i class="navbar-tool-icon ci-cart"></i></a><a class="navbar-tool-text" href="{{ shopping_cart }}"><small>Moja košarice</small>{{ cart_amount }}</a>
+                    {{ cart }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Search collapse-->
+    <div class="collapse" id="searchBox">
+        <div class="card pt-2 pb-4 border-0 rounded-0">
+            <div class="container">
+                <div class="input-group"><i class="ci-search position-absolute top-50 start-0 translate-middle-y ms-3"></i>
+                    <input class="form-control rounded-start" type="text" placeholder="Pretraži proizvode">
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<aside class="offcanvas offcanvas-expand w-100 border-end zindex-lg-5 pt-lg-5" id="sideNav"  style="max-width: 21.875rem;">
+    <div class="pt-2 d-none d-lg-block"></div>
+    <ul class="nav nav-tabs nav-justified mt-4 mt-lg-5 mb-0" role="tablist" style="min-height: 3rem;">
+        <li class="nav-item"><a class="nav-link fw-medium active" href="#categories" data-bs-toggle="tab" role="tab">WEB SHOP</a></li>
+        <li class="nav-item"><a class="nav-link fw-medium" href="#menu" data-bs-toggle="tab" role="tab">Menu</a></li>
+        <li class="nav-item d-lg-none"><a class="nav-link fs-sm" href="#" data-bs-dismiss="offcanvas" role="tab"><i class="ci-close fs-xs me-2"></i>Close</a></li>
+    </ul>
+    <div class="offcanvas-body px-0 pt-3 pb-0" data-simplebar>
+        <div class="tab-content">
+            <!-- Categories-->
+            <div class="sidebar-nav tab-pane fade show active" id="categories" role="tabpanel">
+                <div class="widget widget-categories">
+                    <div class="accordion" id="shop-categories">
+                        {% if primary_menu == 'oc' %}
+                            <!-- Default menu -->
+                            {{ default_menu }}
+                        {% elseif primary_menu is defined %}
+                            <!-- Mega menu -->
+                            {% for key, row in primary_menu_desktop %}
+                                {% include 'basel/template/common/menus/mega_menu.twig' %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!-- Menu-->
+            <div class="sidebar-nav tab-pane fade" id="menu" role="tabpanel">
+                <div class="widget widget-categories">
+                    <div class="accordion" id="shop-menu">
+                        <!-- Homepages-->
+                        <div class="accordion-item border-bottom">
+                            <h3 class="accordion-header px-grid-gutter">
+                                <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#home" aria-expanded="false" aria-controls="home">Homepages</button>
+                            </h3>
+                            <div class="collapse" id="home" data-bs-parent="#shop-menu">
+                                <div class="px-grid-gutter pt-1 pb-4">
+                                    <div class="widget widget-links">
+                                        <ul class="widget-list">
+                                            <li class="widget-list-item"><a class="widget-list-link" href="home-fashion-store-v1.html">Fashion Store v.1</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="home-electronics-store.html">Electronics Store</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="home-marketplace.html">Multi-vendor Marketplace</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="home-grocery-store.html">Grocery Store</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="home-food-delivery.html">Food Delivery Service</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="home-fashion-store-v2.html">Fashion Store v.2</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="home-single-store.html">Single Product/Brand Store</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Shop-->
+                        <div class="accordion-item border-bottom">
+                            <h3 class="accordion-header px-grid-gutter">
+                                <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#shop" aria-expanded="false" aria-controls="shop">Shop</button>
+                            </h3>
+                            <div class="collapse" id="shop" data-bs-parent="#shop-menu">
+                                <div class="px-grid-gutter pt-1 pb-4">
+                                    <div class="widget widget-links">
+                                        <ul class="widget-list">
+                                            <li class="widget-list-item"><a class="widget-list-link fw-medium" href="#">Shop Layouts</a>
+                                                <ul class="widget-list pt-1">
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="shop-grid-ls.html">Shop Grid - Left Sidebar</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="shop-grid-rs.html">Shop Grid - Right Sidebar</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="shop-grid-ft.html">Shop Grid - Filters on Top</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="shop-list-ls.html">Shop List - Left Sidebar</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="shop-list-rs.html">Shop List - Right Sidebar</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="shop-list-ft.html">Shop List - Filters on Top</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="widget-list-item"><a class="widget-list-link fw-medium" href="#">Marketplace</a>
+                                                <ul class="widget-list pt-1">
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="marketplace-category.html">Category Page</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="marketplace-single.html">Single Item Page</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="marketplace-vendor.html">Vendor Page</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="marketplace-cart.html">Cart</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="marketplace-checkout.html">Checkout</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="widget-list-item"><a class="widget-list-link fw-medium" href="#">Grocery Store</a>
+                                                <ul class="widget-list pt-1">
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="grocery-catalog.html">Product Catalog</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="grocery-single.html">Single Product Page</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="grocery-checkout.html">Checkout</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="widget-list-item"><a class="widget-list-link fw-medium" href="#">Food Delivery</a>
+                                                <ul class="widget-list pt-1">
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="food-delivery-category.html">Category Page</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="food-delivery-single.html">Single Item (Restaurant)</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="food-delivery-cart.html">Cart (Your Order)</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="food-delivery-checkout.html">Checkout (Address &amp; Payment)</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="widget-list-item"><a class="widget-list-link fw-medium" href="#">Shop pages</a>
+                                                <ul class="widget-list pt-1">
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="shop-categories.html">Shop Categories</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="shop-single-v1.html">Product Page v.1</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="shop-single-v2.html">Product Page v.2</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="shop-cart.html">Cart</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="checkout-details.html">Checkout - Details</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="checkout-shipping.html">Checkout - Shipping</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="checkout-payment.html">Checkout - Payment</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="checkout-review.html">Checkout - Review</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="checkout-complete.html">Checkout - Complete</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="order-tracking.html">Order Tracking</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="comparison.html">Product Comparison</a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Account-->
+                        <div class="accordion-item border-bottom">
+                            <h3 class="accordion-header px-grid-gutter">
+                                <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#account" aria-expanded="false" aria-controls="account">Account</button>
+                            </h3>
+                            <div class="collapse" id="account" data-bs-parent="#shop-menu">
+                                <div class="px-grid-gutter pt-1 pb-4">
+                                    <div class="widget widget-links">
+                                        <ul class="widget-list">
+                                            <li class="widget-list-item"><a class="widget-list-link fw-medium" href="#">Shop User Account</a>
+                                                <ul class="widget-list pt-1">
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="account-orders.html">Orders History</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="account-profile.html">Profile Settings</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="account-address.html">Account Addresses</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="account-payment.html">Payment Methods</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="account-wishlist.html">Wishlist</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="account-tickets.html">My Tickets</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="account-single-ticket.html">Single Ticket</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="widget-list-item"><a class="widget-list-link fw-medium" href="#">Vendor Dashboard</a>
+                                                <ul class="widget-list pt-1">
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="dashboard-settings.html">Settings</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="dashboard-purchases.html">Purchases</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="dashboard-favorites.html">Favorites</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="dashboard-sales.html">Sales</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="dashboard-products.html">Products</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="dashboard-add-new-product.html">Add New Product</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="dashboard-payouts.html">Payouts</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="account-signin.html">Sign In / Sign Up</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="account-password-recovery.html">Password Recovery</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Pages-->
+                        <div class="accordion-item border-bottom">
+                            <h3 class="accordion-header px-grid-gutter">
+                                <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#pages" aria-expanded="false" aria-controls="pages">Pages</button>
+                            </h3>
+                            <div class="collapse" id="pages" data-bs-parent="#shop-menu">
+                                <div class="px-grid-gutter pt-1 pb-4">
+                                    <div class="widget widget-links">
+                                        <ul class="widget-list">
+                                            <li class="widget-list-item"><a class="widget-list-link" href="about.html">About Us</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="contacts.html">Contacts</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link fw-medium" href="#">Help Center</a>
+                                                <ul class="widget-list pt-1">
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="help-topics.html">Help Topics</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="help-single-topic.html">Single Topic</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="help-submit-request.html">Submit a Request</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="widget-list-item"><a class="widget-list-link fw-medium" href="#">404 Not Found</a>
+                                                <ul class="widget-list pt-1">
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="404-simple.html">404 - Simple Text</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="404-illustration.html">404 - Illustration</a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Blog-->
+                        <div class="accordion-item border-bottom">
+                            <h3 class="accordion-header px-grid-gutter">
+                                <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#blog" aria-expanded="false" aria-controls="blog">Blog</button>
+                            </h3>
+                            <div class="collapse" id="blog" data-bs-parent="#shop-menu">
+                                <div class="px-grid-gutter pt-1 pb-4">
+                                    <div class="widget widget-links">
+                                        <ul class="widget-list">
+                                            <li class="widget-list-item"><a class="widget-list-link fw-medium" href="#">Blog List Layouts</a>
+                                                <ul class="widget-list pt-1">
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="blog-list-sidebar.html">List with Sidebar</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="blog-list.html">List no Sidebar</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="widget-list-item"><a class="widget-list-link fw-medium" href="#">Blog Grid Layouts</a>
+                                                <ul class="widget-list pt-1">
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="blog-grid-sidebar.html">Grid with Sidebar</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="blog-grid.html">Grid no Sidebar</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="widget-list-item"><a class="widget-list-link fw-medium" href="#">Single Post Layouts</a>
+                                                <ul class="widget-list pt-1">
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="blog-single-sidebar.html">Article with Sidebar</a></li>
+                                                    <li class="widget-list-item"><a class="widget-list-link" href="blog-single.html">Article no Sidebar</a></li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Docs-->
+                        <div class="accordion-item border-bottom">
+                            <h3 class="accordion-header px-grid-gutter">
+                                <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#docs" aria-expanded="false" aria-controls="docs">Docs / Components</button>
+                            </h3>
+                            <div class="collapse" id="docs" data-bs-parent="#shop-menu">
+                                <div class="px-grid-gutter pt-1 pb-4">
+                                    <div class="widget widget-links">
+                                        <ul class="widget-list">
+                                            <li class="widget-list-item"><a class="widget-list-link" href="docs/dev-setup.html">Documentation</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="components/typography.html">Components</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="docs/changelog.html">Changelog<span class="badge bg-success ms-2">v1.4</span></a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="mailto:contact@createx.studio">Support</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="offcanvas-cap d-block px-grid-gutter pt-5 pb-4 mb-2">
+
+        <h6 class="pt-2 pb-1">Follow us</h6><a class="btn-social bs-outline bs-twitter me-2 mb-2" href="#"><i class="ci-twitter"></i></a><a class="btn-social bs-outline bs-facebook me-2 mb-2" href="#"><i class="ci-facebook"></i></a><a class="btn-social bs-outline bs-instagram me-2 mb-2" href="#"><i class="ci-instagram"></i></a><a class="btn-social bs-outline bs-youtube me-2 mb-2" href="#"><i class="ci-youtube"></i></a>
+    </div>
+</aside>

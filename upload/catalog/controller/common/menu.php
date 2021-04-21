@@ -27,6 +27,7 @@ class ControllerCommonMenu extends Controller {
 
 					$children_data[] = array(
 						'name'  => $child['name'] . ($this->config->get('config_product_count') ? ' (' . $this->model_catalog_product->getTotalProducts($filter_data) . ')' : ''),
+                        'category_id'     => $child['category_id'],
 						'href'  => $this->url->link('product/category', 'path=' . $category['category_id'] . '_' . $child['category_id'])
 					);
 				}
@@ -34,13 +35,15 @@ class ControllerCommonMenu extends Controller {
 				// Level 1
 				$data['categories'][] = array(
 					'name'     => $category['name'],
+                    'category_id'     => $category['category_id'],
 					'children' => $children_data,
 					'column'   => $category['column'] ? $category['column'] : 1,
 					'href'     => $this->url->link('product/category', 'path=' . $category['category_id'])
 				);
 			}
 		}
-
 		return $this->load->view('common/menu', $data);
+
+
 	}
 }
