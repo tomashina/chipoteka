@@ -1,19 +1,16 @@
 {% if categories %}
 {% for category in categories %}
     {% if category.children %}
-
         <div class="accordion-item border-bottom">
             <h3 class="accordion-header px-grid-gutter">
                 <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#catid{{ category.category_id }}" aria-expanded="false" aria-controls="catid{{ category.category_id }}"><span class="d-flex align-items-center">{{ category.name }}</span></button>
             </h3>
             <div class="collapse" id="catid{{ category.category_id }}" data-bs-parent="#shop-categories">
-
                  <div class="px-grid-gutter pt-1 pb-4">
                     <div class="widget widget-links">
                         {% for children in category.children|batch(category.children|length / category.column|round(1, 'ceil')) %}
                             <ul class="widget-list">
                                 {% for child in children %}
-
                                     {% if child.grandchildren %}
                                         <li class="widget-list-item"><a class="widget-list-link fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#subid{{ child.category_id }}" aria-expanded="false" aria-controls="subid{{ child.category_id }}">{{ child.name }}</a>
                                             <ul class="widget-list pt-1 collapse" id="subid{{ child.category_id }}">
@@ -25,28 +22,15 @@
                                     {% else %}
                                         <li class="widget-list-item"><a class="widget-list-link" href="{{ child.href }}">{{ child.name }}</a></li>
                                     {% endif %}
-
                                 {% endfor %}
                             </ul>
                         {% endfor %}
 
                     </div>
                 </div>
-
-
-
-
-
             </div>
-
         </div>
-
-
-
-
     {% else %}
-
-
         <div class="accordion-item border-bottom">
             <h3 class="accordion-header px-grid-gutter"><a class="nav-link-style d-block fs-md fw-normal py-3" href="{{ category.href }}"><span class="d-flex align-items-center">{{ category.name }}</span></a></h3>
         </div>

@@ -40,32 +40,7 @@ $(document).ready(function() {
 	$('#page-title').appendTo($("#title-holder").empty());
 	}
 
-	// Move breadcrumb to header //
-	$('ul.breadcrumb').appendTo($('.links-holder span').empty());
-	
-	// Sticky header
-	var sticky_to_top = $('.sticky-header').offset().top;
-	var stickyheader = function(){
-	var window_to_top = $(window).scrollTop();
-		if (window_to_top > sticky_to_top) { 
-		$('body').addClass('sticky-active');
-		} else {
-		$('body').removeClass('sticky-active');
-		};
-		if (window_to_top > (sticky_to_top + 40)) {
-		$('.sticky-header').addClass('short');
-		} else {
-		$('.sticky-header').removeClass('short');
-		}
-		if (window_to_top > 250) { 
-		$('body').addClass('offset250');
-		} else {
-		$('body').removeClass('offset250');
-		};
-	};
-	$(window).scroll(function() {
-	stickyheader();
-	});
+
 	
 	// Mobile menu open
 	$(".menu-trigger").click(function(){
@@ -188,18 +163,7 @@ $(document).ready(function() {
 	$('#currency-select').on('change', function() {
   	$('#curr-code').attr( 'value', this.value ); $('#form-currency').submit();
 	});
-	
-	// Tooltip position on product style 2
-	$('.product-style2 .single-product .icon').attr('data-placement', 'top');
-	
-	// tooltips on hover
-	$('[data-toggle=\'tooltip\']').tooltip({container: 'body'});
 
-	// Makes tooltips work on ajax generated content
-	$(document).ajaxStop(function() {
-	$('[data-toggle=\'tooltip\']').tooltip({container: 'body'});
-	});
-	
 	// Banner module 
 	$('.cm_content .type-img .cm_item > *').click(function(e) {
 	e.stopPropagation();

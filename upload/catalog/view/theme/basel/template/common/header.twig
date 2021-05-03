@@ -18,7 +18,8 @@
   <link rel="stylesheet" media="screen" href="catalog/view/dist/vendor/simplebar/dist/simplebar.min.css"/>
   <link rel="stylesheet" media="screen" href="catalog/view/dist/vendor/tiny-slider/dist/tiny-slider.css"/>
   <!-- Main Theme Styles + Bootstrap-->
-  <link rel="stylesheet" media="screen" href="catalog/view/dist/css/theme.min.css">
+  <link rel="stylesheet" media="screen" href="catalog/view/dist/css/theme.css">
+  <script src="catalog/view/javascript/jquery/jquery-2.1.1.min.js"></script>
 
 
 <!-- Page specific meta information -->
@@ -36,20 +37,6 @@
 </head>
 <body class="{{ class }}{{ basel_body_class }} bg-secondary">
 
-{% if notification_status %}
-<div class="top_notificaiton">
-  <div class="container{% if top_promo_close %} has-close{% endif %} {{ top_promo_width }} {{ top_promo_align }}">
-    <div class="table">
-    <div class="table-cell w100"><div class="ellipsis-wrap">{{ top_promo_text }}</div></div>
-    {% if top_promo_close %}
-    <div class="table-cell text-right">
-    <a onClick="addCookie('basel_top_promo', 1, 30);$(this).closest('.top_notificaiton').slideUp();" class="top_promo_close">&times;</a>
-    </div>
-    {% endif %}
-    </div>
-  </div>
-</div>
-{% endif %}
 {% include 'basel/template/common/headers/' ~ basel_header ~ '.twig' %}
 <!-- breadcrumb -->
 
