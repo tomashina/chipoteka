@@ -5,9 +5,9 @@ $_['heading_title']      = 'Informacije o korisničkom računu';
 
 // Text
 $_['text_account']       = 'Korisnički račun';
-$_['text_edit']          = 'Izmijeniti informacije korisničkog računa';
+$_['text_edit']          = 'Izmijenite informacije korisničkog računa';
 $_['text_your_details']  = 'Osobni podaci';
-$_['text_success']       = 'Korisnički račun je uspješno otvoren.';
+$_['text_success']       = 'Korisnički račun je uspješno ažuriran.';
 
 // Entry
 $_['entry_firstname']    = 'Ime';

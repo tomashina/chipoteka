@@ -21,6 +21,35 @@ class ControllerExtensionModuleAccount extends Controller {
 		$data['newsletter'] = $this->url->link('account/newsletter', '', true);
 		$data['recurring'] = $this->url->link('account/recurring', '', true);
 
+        $this->load->model('account/customer');
+        if ($this->request->server['REQUEST_METHOD'] != 'POST') {
+            $customer_info = $this->model_account_customer->getCustomer($this->customer->getId());
+        }
+
+        if (isset($this->request->post['firstname'])) {
+            $data['firstname'] = $this->request->post['firstname'];
+        } elseif (!empty($customer_info)) {
+            $data['firstname'] = $customer_info['firstname'];
+        } else {
+            $data['firstname'] = '';
+        }
+
+        if (isset($this->request->post['lastname'])) {
+            $data['lastname'] = $this->request->post['lastname'];
+        } elseif (!empty($customer_info)) {
+            $data['lastname'] = $customer_info['lastname'];
+        } else {
+            $data['lastname'] = '';
+        }
+
+        if (isset($this->request->post['email'])) {
+            $data['email'] = $this->request->post['email'];
+        } elseif (!empty($customer_info)) {
+            $data['email'] = $customer_info['email'];
+        } else {
+            $data['email'] = '';
+        }
+
 		return $this->load->view('extension/module/account', $data);
 	}
 }
