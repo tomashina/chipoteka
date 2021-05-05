@@ -1,5 +1,9 @@
 {{ header }}
 <main class="offcanvas-enabled" style="padding-top: 5rem;">
+
+
+
+
 <section class="ps-lg-4 pe-lg-3 pt-4">
   <div class="px-3 pt-2">
       <!-- Page title + breadcrumb-->
@@ -18,7 +22,6 @@
       {% if success %}
       <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}</div>
       {% endif %}
-
     <section class="d-md-flex justify-content-between align-items-center mb-4 pb-2">
       <div class="row g-0 mx-n2 mb-4">
         <div id="content" class="{{ class }}">{{ content_top }}
@@ -33,33 +36,21 @@
             <h2 class="h5 mb-3">{{ text_my_orders }}</h2>
           <ul class="list-unstyled margin-b30">
             <li><a href="{{ order }}">{{ text_order }}</a></li>
-
-            {% if reward %}
-            <li><a href="{{ reward }}">{{ text_reward }}</a></li>
-            {% endif %}
             <li><a href="{{ return }}">{{ text_return }}</a></li>
-
           </ul>
-
-          <h2 class="h5 mb-3">{{ text_my_affiliate }}</h2>
-          <ul class="list-unstyled margin-b30">
-            {% if not tracking %}
-            <li><a href="{{ affiliate }}">{{ text_affiliate_add }}</a></li>
-            {% else %}
-            <li><a href="{{ affiliate }}">{{ text_affiliate_edit }}</a></li>
-            <li><a href="{{ tracking }}">{{ text_tracking }}</a></li>
-            {% endif %}
-          </ul>
-
           <h2 class="h5 mb-3">{{ text_my_newsletter }}</h2>
           <ul class="list-unstyled margin-b30">
             <li><a href="{{ newsletter }}">{{ text_newsletter }}</a></li>
           </ul>
+
+
+            <a href="{{ logout }}" class="btn btn-primary d-block w-100">{{ text_logout }}</a>
+
           {{ content_bottom }}
         </div>
         {{ column_right }}
       </div>
-
+    </section>
   </div>
 </section>
 {{ footer }} 

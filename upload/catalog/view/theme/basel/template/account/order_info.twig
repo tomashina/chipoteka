@@ -1,10 +1,20 @@
 {{ header }}
-<div class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
+<main class="offcanvas-enabled" style="padding-top: 5rem;">
+  <section class="ps-lg-4 pe-lg-3 pt-4">
+    <div class="px-3 pt-2">
+      <!-- Page title + breadcrumb-->
+      <nav class="mb-4" aria-label="breadcrumb">
+        <ol class="breadcrumb flex-lg-nowrap">
+
+          <li class="breadcrumb-item"><a class="text-nowrap" href="{{ home }}"><i class="ci-home"></i>Naslovnica</a></li>
+          {% for breadcrumb in breadcrumbs %}
+            {% if loop.last %}
+
+              <li class="breadcrumb-item text-nowrap active" aria-current="page">{{ breadcrumb.text }}</li>
+            {% endif %}
+          {% endfor %}
+        </ol>
+      </nav>
   {% if success %}
   <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}
     <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -173,4 +183,5 @@
       {{ content_bottom }}</div>
     {{ column_right }}</div>
 </div>
+  </section>
 {{ footer }}
