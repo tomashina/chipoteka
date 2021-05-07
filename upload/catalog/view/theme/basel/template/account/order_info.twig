@@ -1,41 +1,65 @@
 {{ header }}
-<main class="offcanvas-enabled" style="padding-top: 5rem;">
-  <section class="ps-lg-4 pe-lg-3 pt-4">
-    <div class="px-3 pt-2">
-      <!-- Page title + breadcrumb-->
-      <nav class="mb-4" aria-label="breadcrumb">
-        <ol class="breadcrumb flex-lg-nowrap">
+<main  class="offcanvas-enabled" style="padding-top: 5rem;">
 
-          <li class="breadcrumb-item"><a class="text-nowrap" href="{{ home }}"><i class="ci-home"></i>Naslovnica</a></li>
-          {% for breadcrumb in breadcrumbs %}
-            {% if loop.last %}
 
-              <li class="breadcrumb-item text-nowrap active" aria-current="page">{{ breadcrumb.text }}</li>
-            {% endif %}
-          {% endfor %}
-        </ol>
-      </nav>
-  {% if success %}
-  <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <!-- Page Title-->
+  <div class="page-title-overlap bg-dark pt-4 ps-lg-4 pe-lg-3">
+    <div class="container d-lg-flex justify-content-between py-2 py-lg-3 ">
+      <div class="order-lg-2 mb-3 mb-lg-0 pt-lg-2">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb breadcrumb-light flex-lg-nowrap justify-content-center justify-content-lg-start">
+            {% for breadcrumb in breadcrumbs %}
+              <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+            {% endfor %}
+          </ol>
+        </nav>
+      </div>
+      <div class="order-lg-1 pe-lg-4 text-center text-lg-start">
+        <h1 class="h3 text-light mb-0">{{ heading_title }}</h1>
+      </div>
+    </div>
   </div>
-  {% endif %}
-  {% if error_warning %}
-  <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-  </div>
-  {% endif %}
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-md-9 col-sm-8' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
-    {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h1 id="page-title">{{ heading_title }}</h1>
-      <table class="table table-bordered">
+
+
+
+  <div id="content" class="container pb-5 mb-2 mb-md-4 ps-lg-4 pe-lg-3">
+    <div class="row">
+      <!-- Sidebar-->
+
+      {{ column_left }}
+
+      <!-- Content  -->
+      <section class="col-lg-8" >
+
+
+        <!-- Toolbar-->
+        <div class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-4 pb-lg-5 mb-lg-3">
+          <h6 class="fs-base text-light mb-0">{{ heading_title }}</h6><a class="btn btn-primary btn-sm" href="{{ logout }}"><i class="ci-sign-out me-2"></i>{{ text_logout }}</a>
+        </div>
+
+
+
+
+
+          {% if success %}
+          <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+          </div>
+          {% endif %}
+          {% if error_warning %}
+          <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+          </div>
+          {% endif %}
+
+
+
+
+
+
+
+
+      <table class="table table-bordered table-striped">
         <thead>
           <tr>
             <td class="text-left" colspan="2">{{ text_order_detail }}</td>
@@ -59,7 +83,7 @@
           </tr>
         </tbody>
       </table>
-      <table class="table table-bordered">
+      <table class="table table-bordered table-striped">
         <thead>
           <tr>
             <td class="text-left" style="width: 50%; vertical-align: top;">{{ text_payment_address }}</td>
@@ -78,7 +102,7 @@
         </tbody>
       </table>
       <div class="table-responsive">
-        <table class="table table-bordered margin-b0">
+        <table class="table table-striped margin-b0">
           <thead>
             <tr>
               <td class="text-left">{{ column_name }}</td>
@@ -126,7 +150,7 @@
           </tbody>
         </table>
         
-        <table class="table totals table-bordered">
+        <table class="table totals table-striped">
         <tbody>
             {% for total in totals %}
             <tr>
@@ -139,7 +163,7 @@
       </div>
       
       {% if comment %}
-      <table class="table table-bordered">
+      <table class="table table-striped">
         <thead>
           <tr>
             <td class="text-left">{{ text_comment }}</td>
@@ -153,8 +177,8 @@
       </table>
       {% endif %}
       {% if histories %}
-      <br /><h2 class="margin-b10">{{ text_history }}</h2>
-      <table class="table table-bordered">
+      <br /><h2 class="h5 mb-3">{{ text_history }}</h2>
+      <table class="table table-striped">
         <thead>
           <tr>
             <td class="text-left">{{ column_date_added }}</td>
@@ -179,9 +203,10 @@
         </tbody>
       </table>
       {% endif %}
-      
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
+      </section>
+
+    </div>
+
 </div>
-  </section>
+
 {{ footer }}
