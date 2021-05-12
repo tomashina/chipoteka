@@ -1,0 +1,13 @@
+//
+// Ofcanvas
+// --------------------------------------------------
+ 
+.offcanvas,
+.offcanvas.show {
+    max-width: unset;
+
+    @include media-breakpoint-up(lg) {
+        max-width: 21.875rem;
+    }
+}
+ 

@@ -1,3 +1,6 @@
+# nod_modules in view folder
+/upload/catalog/view/node_modules
+
 # Config and Htaccess Files
 /upload/.htaccess
 /upload/config.php
