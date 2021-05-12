@@ -7,13 +7,13 @@
 // Remove the "//" to comment it in and see it in action!
 // $body-bg: #12263F;
 
-// Fonts
-//
-// Font, line-height, and color for body text, headings, and more.
+// @import '../../node_modules/bootstrap/scss/variables';
 
-// $path-to-fonts:  'https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap';
+// @import '../../dist/vendor/bootstrap/scss/functions';
+// @import '../../dist/vendor/bootstrap/scss/mixins';
+// @import '../../dist/vendor/bootstrap/scss/variables';
 
-
+// @import '../../dist/vendor/bootstrap/scss/bootstrap';
 
 // Custom Grayscale
  $light:   #F5F5F5;
@@ -30,3 +30,7 @@ $accent:                #1B84E5;
 $secondary:             $gray;
 
 
+// Custom grid
+$grid-gutter-width: 1.875rem !default;
+$grid-gutter-width-half:   $grid-gutter-width / 2;  
+$grid-gutter-width-10px:   $grid-gutter-width-half - 0.313rem;  

@@ -18297,6 +18297,34 @@ html:not([dir=rtl]) .range-slider-ui.noUi-horizontal .noUi-handle {
   }
 }
 
+body > main.offcanvas-enabled {
+  padding-top: 0 !important;
+}
+
+main > .section {
+  padding-left: 0.6245rem;
+  padding-right: 0.6245rem;
+}
+
+@media (min-width: 500px) {
+  main > .section {
+    padding-left: 0.9375rem;
+    padding-right: 0.9375rem;
+  }
+}
+
+@media (min-width: 992px) {
+  main > .section {
+    padding-left: 1.875rem;
+    padding-right: 1.875rem;
+  }
+}
+
+body > header[data-fixed-element] {
+  position: -webkit-sticky;
+  position: sticky;
+}
+
 .offcanvas,
 .offcanvas.show {
   max-width: unset;
