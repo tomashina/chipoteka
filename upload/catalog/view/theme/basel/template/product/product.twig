@@ -1,1012 +1,548 @@
 {{ header }}
+<main class="offcanvas-enabled" style="padding-top: 5rem;">
+    <!-- Custom page title-->
+    <div class="page-title-overlap bg-dark pt-4 ps-lg-4 pe-lg-3">
+        <div class="container  py-2 py-lg-3">
 
-{% if product_layout != "full-width" %}
-<style>
-.product-page .image-area {
-	{% if product_layout == "images-left" and images %} 
-		width: {{img_w + img_a_w + 20 }}px;
-	{% else %}
-		width: {{ img_w }}px;
-	{% endif %}
-}
-.product-page .main-image {
-	width:{{ img_w }}px;	
-}
-.product-page .image-additional {
-	{% if product_layout == "images-left" %} 
-		width: {{ img_a_w }}px;
-		height: {{ img_h }}px;
-	{% else %}
-		width: {{ img_w }}px;
-	{% endif %}
-}
-.product-page .image-additional.has-arrows {
-	{% if product_layout == "images-left" %} 
-		height: {{ img_h - 40 }}px;
-	{% endif %}
-}
-@media (min-width: 992px) and (max-width: 1199px) {
-.product-page .image-area {
-	{% if product_layout == "images-left" %} 
-		width: {{((img_w + img_a_w)/1.25 + 20) }}px;
-	{% else %}
-		width: {{ img_w/1.25 }}px;
-	{% endif %}
-}
-.product-page .main-image {
-	width:{{ img_w/1.25 }}px;	
-}
-.product-page .image-additional {
-	{% if product_layout == "images-left" %} 
-		width: {{ img_a_w/1.25 }}px;
-		height: {{ img_h/1.25 }}px;
-	{% else %}
-		width: {{ img_w/1.25 }}px;
-	{% endif %}
-}
-}
-</style>
-{% endif %}
-
-<ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-
-<div class="container product-layout {{ product_layout }}">
-  
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-md-9 col-sm-8' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
-    {% endif %}
-    <div id="content" class="product-main no-min-height {{ class }}">
-    {{ content_top }}
-    
-    <div class="table product-info product-page">
-     
-     <div class="table-cell left">
-     
-     {% if thumb or images %}
-     <div class="image-area {% if not hover_zoom %}hover-zoom-disabled{% endif %}" id="gallery">
-            
-        {% if thumb %}
-        <div class="main-image">
-        
-        {% if price and special and sale_badge %}
-        <span class="badge sale_badge"><i>{{ sale_badge }}</i></span>
-        {% endif %}
-        
-        {% if is_new %}
-        <span class="badge new_badge"><i>{{ basel_text_new }}</i></span>
-        {% endif %}
-		
-		{% if ((qty < 1) and (stock_badge_status)) %}
-        <span class="badge out_of_stock_badge"><i>{{ basel_text_out_of_stock}}</i></span>
-        {% endif %}
-
-        <a class="{% if not images %}link cloud-zoom{% endif %} {% if product_layout == 'full-width' %}link{% else %}cloud-zoom{% endif %}" id="main-image" href="{{ popup }}" rel="position:'inside', showTitle: false"><img src="{{ thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" /></a>
-        </div>
-        {% endif %}
-		
-        {% if images %}
-        <ul class="image-additional">
-        {% for image in images %}
-        <li>
-        <a class="link {% if product_layout != 'full-width' %}cloud-zoom-gallery locked{% endif %}" href="{{ image.popup }}" rel="useZoom: 'main-image', smallImage: '{{ image.thumb_lg }}'"><img src="{{ image.thumb }}" title="{{ heading_title }}" alt="{{ heading_title }}" /></a>
-        </li>
-        {% endfor %}
-            {% if thumb and (product_layout != "full-width") %}
-            <li><a class="link cloud-zoom-gallery locked active" href="{{ popup }}" rel="useZoom: 'main-image', smallImage: '{{ thumb }}'"><img src="{{ thumb_sm }}" title="{{ heading_title }}" alt="{{ heading_title }}" /></a></li>
-            {% endif %}
-        </ul>
-        {% endif %}
-            
-     </div> <!-- .table-cell.left ends -->
-      
-     </div> <!-- .image-area ends -->
-     {% endif %}
-     
-    <div class="table-cell w100 right">
-	<div class="inner">
-    
-    <div class="product-h1">
-    <h1 id="page-title">{{ heading_title }}</h1>
-    </div>
-    
-    {% if review_status and (review_qty > 0) %}
-    <div class="rating">
-    <span class="rating_stars rating r{{ rating }}">
-    <i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-    </span>
-    </div>
-    <span class="review_link">(<a class="hover_uline to_tabs" onclick="$('a[href=\'#tab-review\']').trigger('click'); return false;">{{ reviews }}</a>)</span>
-	{% endif %}
-
-    {% if price %}
-      <ul class="list-unstyled price">
-        {% if not special %}
-        <li><span class="live-price">{{ price }}<span></li>
-        {% else %}
-        <li><span class="price-old">{{ price }}</span><span class="live-price-new">{{ special }}<span></li>
-        <span id="special_countdown"></span>
-        {% endif %}
-      </ul>
-        
-        {% if discounts %}
-        <p class="discount">
-        {% for discount in discounts %}
-        <span>{{ discount.quantity }}{{ text_discount }}<i class="price">{{ discount.price }}</i></span>
-        {% endfor %}
-        </p>
-        {% endif %}
-      
-      {% endif %} <!-- if price ends -->
-      
-      
-      {% if meta_description_status and meta_description %}
-      <p class="meta_description">{{ meta_description }}</p>
-      {% endif %}
-            
-      
-      <div id="product">
-            
-            {% if options %}
-            <div class="options">
-            {% for option in options %}
-            
-            {% if option.type == 'select' %}
-            <div class="form-group{% if option.required %} required{% endif %} table-row">
-              <div class="table-cell name">
-              <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-              </div>
-              <div class="table-cell">
-              <select name="option[{{ option.product_option_id }}]" id="input-option{{ option.product_option_id }}" class="form-control">
-                <option value="">{{ text_select }}</option>
-                {% for option_value in option.product_option_value %}
-                <option value="{{ option_value.product_option_value_id }}">{{ option_value.name }}
-                {% if option_value.price %}
-                ({{ option_value.price_prefix }}{{ option_value.price }})
-                {% endif %}
-                </option>
-                {% endfor %}
-              </select>
-              </div>
+            <div class="pe-lg-4 text-center text-lg-start">
+                <h1 class="h3 text-light mb-2" id="page-title">{{ heading_title }}</h1>
             </div>
-            {% endif %}
-            
-            {% if option.type == 'radio' %}
-            <div class="form-group{% if option.required %} required{% endif %} table-row">
-              <div class="table-cell radio-cell name">
-              <label class="control-label">{{ option.name }}</label>
-              </div>
-              <div class="table-cell radio-cell">
-              <div id="input-option{{ option.product_option_id }}">
-                {% for option_value in option.product_option_value %}
-                <div class="radio{% if option_value.image %} has-image{% endif %}">
-                  <label>
-                    <input type="radio" name="option[{{ option.product_option_id }}]" value="{{ option_value.product_option_value_id }}" />
-                    {% if option_value.image %}
-                    <img src="{{ option_value.image }}" alt="{{ option_value.name }}{% if option_value.price %}({{ option_value.price_prefix }}{{ option_value.price }}){% endif %}" data-toggle="tooltip" data-title="{{ option_value.name }}{% if option_value.price %} ({{ option_value.price_prefix }}{{ option_value.price }}){% endif %}" />
-                    {% endif %}
-                    <span class="name">
-                    {{ option_value.name }}
-                    {% if option_value.price %}
-                    ({{ option_value.price_prefix }}{{ option_value.price }})
-                    {% endif %}
-                    </span>
-                  </label>
+            <div class=" mb-3 mb-lg-0 pt-lg-2">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-light flex-lg-nowrap justify-content-center justify-content-lg-start">
+                        {% for breadcrumb in breadcrumbs %}
+                            <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                        {% endfor %}
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="bg-light shadow-lg rounded-3">
+            <!-- Tabs-->
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item"><a class="nav-link py-4 px-sm-4 active" href="#general" data-bs-toggle="tab" role="tab">General <span class='d-none d-sm-inline'>Info</span></a></li>
+                <li class="nav-item"><a class="nav-link py-4 px-sm-4" href="#specs" data-bs-toggle="tab" role="tab"><span class='d-none d-sm-inline'>Tech</span> Specs</a></li>
+                <li class="nav-item"><a class="nav-link py-4 px-sm-4" href="#reviews" data-bs-toggle="tab" role="tab">Reviews <span class="fs-sm opacity-60">(74)</span></a></li>
+            </ul>
+            <div class="px-4 pt-lg-3 pb-3 mb-5">
+                <div class="tab-content px-lg-3">
+                    <!-- General info tab-->
+                    <div class="tab-pane fade show active" id="general" role="tabpanel">
+                        <div class="row">
+                            <!-- Product gallery-->
+                            <div class="col-lg-7 pe-lg-0">
+                                <div class="product-gallery">
+                                    <div class="product-gallery-preview order-sm-2">
+                                        {% if thumb or images %}
+                                            {% if thumb %}
+                                                <div class="product-gallery-preview-item active" id="first"><img class="image-zoom" src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}">
+                                                    <div class="image-zoom-pane"></div>
+                                                </div>
+                                            {% endif %}
+                                            {% for image in images %}
+                                                <div class="product-gallery-preview-item" id="image{{ image.imageid }}"><img class="image-zoom" src="{{ image.popup }}"  alt="Product image"></div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                    {% if images %}
+                                        <div class="product-gallery-thumblist order-sm-1">
+                                            {% for image in images %}
+                                                {% if thumb  %}
+                                                    <a class="product-gallery-thumblist-item active" href="#first"><img src="{{ thumb_sm }}" alt="{{ heading_title }}"></a>
+                                                {% endif %}
+                                                <a class="product-gallery-thumblist-item" href="#image{{ image.imageid }}"><img src="{{ image.thumb }}" alt="{{ heading_title }}"></a>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- Product details-->
+                            <div class="col-lg-5 pt-4 pt-lg-0">
+                                <div class="product-details ms-auto pb-3">
+                                    <div class="mb-3">
+                                        {% if not special %}
+                                            <span class="h3 fw-normal text-accent me-1">{{ price }}</span>
+                                        {% else %}
+                                            <span class="h3 fw-normal text-accent me-1">{{ price }}</span>
+                                            <del class="text-muted fs-lg me-3">{{ special }}</del>
+                                            {% if price and special and sale_badge %}
+                                                <span class="badge bg-danger badge-shadow align-middle mt-n2">{{ sale_badge }}</span>
+                                            {% endif %}
+                                            <span id="special_countdown"></span>
+                                        {% endif %}
+                                    </div>
+
+                                    <form class="mb-grid-gutter" method="post">
+                                        <div class="mb-3 d-flex align-items-center">
+                                            <select class="form-select me-3" style="width: 5rem;">
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                            </select>
+                                            <button class="btn btn-primary btn-shadow d-block w-100" type="submit"><i class="ci-cart fs-lg me-2"></i>Add to Cart</button>
+                                        </div>
+                                    </form>
+
+                                    <div class="d-flex mb-4">
+                                        <div class="w-100 me-3">
+                                            <button class="btn btn-secondary d-block w-100" type="button"><i class="ci-heart fs-lg me-2"></i><span class='d-none d-sm-inline'>Add to </span>Wishlist</button>
+                                        </div>
+                                        <div class="w-100">
+                                            <button class="btn btn-secondary d-block w-100" type="button"><i class="ci-compare fs-lg me-2"></i>Compare</button>
+                                        </div>
+                                    </div>
+                                    <!-- Product panels-->
+                                    <div class="accordion mb-4" id="productPanels">
+                                        <div class="accordion-item">
+                                            <h3 class="accordion-header"><a class="accordion-button" href="#productInfo" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="productInfo"><i class="ci-announcement text-muted fs-lg align-middle mt-n1 me-2"></i>Osnovne značajke</a></h3>
+                                            <div class="accordion-collapse collapse show" id="productInfo" data-bs-parent="#productPanels">
+                                                <div class="accordion-body">
+                                                    {% if meta_description_status and meta_description %}
+                                                        <p class="fs-md">{{ meta_description }}</p>
+                                                    {% endif %}
+                                                    <h6 class="fs-sm mb-2">{{ text_model }}</h6>
+                                                    <ul class="fs-sm ps-4 mb-0">
+                                                        <li>{{ model }}</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h3 class="accordion-header"><a class="accordion-button collapsed" href="#shippingOptions" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="shippingOptions"><i class="ci-delivery text-muted lead align-middle mt-n1 me-2"></i>Shipping options</a></h3>
+                                            <div class="accordion-collapse collapse" id="shippingOptions" data-bs-parent="#productPanels">
+                                                <div class="accordion-body fs-sm">
+                                                    <div class="d-flex justify-content-between border-bottom pb-2">
+                                                        <div>
+                                                            <div class="fw-semibold text-dark">Courier</div>
+                                                            <div class="fs-sm text-muted">2 - 4 days</div>
+                                                        </div>
+                                                        <div>$26.50</div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between border-bottom py-2">
+                                                        <div>
+                                                            <div class="fw-semibold text-dark">Local shipping</div>
+                                                            <div class="fs-sm text-muted">up to one week</div>
+                                                        </div>
+                                                        <div>$10.00</div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between border-bottom py-2">
+                                                        <div>
+                                                            <div class="fw-semibold text-dark">Flat rate</div>
+                                                            <div class="fs-sm text-muted">5 - 7 days</div>
+                                                        </div>
+                                                        <div>$33.85</div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between border-bottom py-2">
+                                                        <div>
+                                                            <div class="fw-semibold text-dark">UPS ground shipping</div>
+                                                            <div class="fs-sm text-muted">4 - 6 days</div>
+                                                        </div>
+                                                        <div>$18.00</div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between pt-2">
+                                                        <div>
+                                                            <div class="fw-semibold text-dark">Local pickup from store</div>
+                                                            <div class="fs-sm text-muted">&mdash;</div>
+                                                        </div>
+                                                        <div>$0.00</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-item">
+                                            <h3 class="accordion-header"><a class="accordion-button collapsed" href="#localStore" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="localStore"><i class="ci-location text-muted fs-lg align-middle mt-n1 me-2"></i>Find in local store</a></h3>
+                                            <div class="accordion-collapse collapse" id="localStore" data-bs-parent="#productPanels">
+                                                <div class="accordion-body">
+                                                    <select class="form-select">
+                                                        <option value>Select your country</option>
+                                                        <option value="Argentina">Argentina</option>
+                                                        <option value="Belgium">Belgium</option>
+                                                        <option value="France">France</option>
+                                                        <option value="Germany">Germany</option>
+                                                        <option value="Spain">Spain</option>
+                                                        <option value="UK">United Kingdom</option>
+                                                        <option value="USA">USA</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Sharing-->
+                                    <label class="form-label d-inline-block align-middle my-2 me-3">Share:</label><a class="btn-share btn-twitter me-2 my-2" href="#"><i class="ci-twitter"></i>Twitter</a><a class="btn-share btn-instagram me-2 my-2" href="#"><i class="ci-instagram"></i>Instagram</a><a class="btn-share btn-facebook my-2" href="#"><i class="ci-facebook"></i>Facebook</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tech specs tab-->
+                    <div class="tab-pane fade" id="specs" role="tabpanel">
+                        <div class="d-md-flex justify-content-between align-items-start pb-4 mb-4 border-bottom">
+                            <div class="d-flex align-items-center me-md-3"><img src="img/shop/single/gallery/th05.jpg" width="90" alt="Product thumb">
+                                <div class="ps-3">
+                                    <h6 class="fs-base mb-2">Smartwatch Youth Edition</h6>
+                                    <div class="h4 fw-normal text-accent">$124.<small>99</small></div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center pt-3">
+                                <select class="form-select me-2" style="width: 5rem;">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                                <button class="btn btn-primary btn-shadow me-2" type="button"><i class="ci-cart fs-lg me-sm-2"></i><span class="d-none d-sm-inline">Add to Cart</span></button>
+                                <div class="me-2">
+                                    <button class="btn btn-secondary btn-icon" type="button" data-bs-toggle="tooltip" title="Add to Wishlist"><i class="ci-heart fs-lg"></i></button>
+                                </div>
+                                <div>
+                                    <button class="btn btn-secondary btn-icon" type="button" data-bs-toggle="tooltip" title="Compare"><i class="ci-compare fs-lg"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Specs table-->
+                        <div class="row pt-2">
+                            <div class="col-lg-5 col-sm-6">
+                                <h3 class="h6">General specs</h3>
+                                <ul class="list-unstyled fs-sm pb-2">
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Model:</span><span>Amazfit Smartwatch</span></li>
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Gender:</span><span>Unisex</span></li>
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Smartphone app:</span><span>Amazfit Watch</span></li>
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">OS campitibility:</span><span>Android / iOS</span></li>
+                                </ul>
+                                <h3 class="h6">Physical specs</h3>
+                                <ul class="list-unstyled fs-sm pb-2">
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Shape:</span><span>Rectangular</span></li>
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Body material:</span><span>Plastics / Ceramics</span></li>
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Band material:</span><span>Silicone</span></li>
+                                </ul>
+                                <h3 class="h6">Display</h3>
+                                <ul class="list-unstyled fs-sm pb-2">
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Display type:</span><span>Color</span></li>
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Display size:</span><span>1.28"</span></li>
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Screen resolution:</span><span>176 x 176</span></li>
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Touch screen:</span><span>No</span></li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-5 col-sm-6 offset-lg-1">
+                                <h3 class="h6">Functions</h3>
+                                <ul class="list-unstyled fs-sm pb-2">
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Phone calls:</span><span>Incoming call notification</span></li>
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Monitoring:</span><span>Heart rate / Physical activity</span></li>
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">GPS support:</span><span>Yes</span></li>
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Sensors:</span><span>Heart rate, Gyroscope, Geomagnetic, Light sensor</span></li>
+                                </ul>
+                                <h3 class="h6">Battery</h3>
+                                <ul class="list-unstyled fs-sm pb-2">
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Battery:</span><span>Li-Pol</span></li>
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Battery capacity:</span><span>190 mAh</span></li>
+                                </ul>
+                                <h3 class="h6">Dimensions</h3>
+                                <ul class="list-unstyled fs-sm pb-2">
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Dimensions:</span><span>195 x 20 mm</span></li>
+                                    <li class="d-flex justify-content-between pb-2 border-bottom"><span class="text-muted">Weight:</span><span>32 g</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Reviews tab-->
+                    <div class="tab-pane fade" id="reviews" role="tabpanel">
+                        <div class="d-md-flex justify-content-between align-items-start pb-4 mb-4 border-bottom">
+                            <div class="d-flex align-items-center me-md-3"><img src="img/shop/single/gallery/th05.jpg" width="90" alt="Product thumb">
+                                <div class="ps-3">
+                                    <h6 class="fs-base mb-2">Smartwatch Youth Edition</h6>
+                                    <div class="h4 fw-normal text-accent">$124.<small>99</small></div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center pt-3">
+                                <select class="form-select me-2" style="width: 5rem;">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                                <button class="btn btn-primary btn-shadow me-2" type="button"><i class="ci-cart fs-lg me-sm-2"></i><span class="d-none d-sm-inline">Add to Cart</span></button>
+                                <div class="me-2">
+                                    <button class="btn btn-secondary btn-icon" type="button" data-bs-toggle="tooltip" title="Add to Wishlist"><i class="ci-heart fs-lg"></i></button>
+                                </div>
+                                <div>
+                                    <button class="btn btn-secondary btn-icon" type="button" data-bs-toggle="tooltip" title="Compare"><i class="ci-compare fs-lg"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Reviews-->
+                        <div class="row pt-2 pb-3">
+                            <div class="col-lg-4 col-md-5">
+                                <h2 class="h3 mb-4">74 Reviews</h2>
+                                <div class="star-rating me-2"><i class="ci-star-filled fs-sm text-accent me-1"></i><i class="ci-star-filled fs-sm text-accent me-1"></i><i class="ci-star-filled fs-sm text-accent me-1"></i><i class="ci-star-filled fs-sm text-accent me-1"></i><i class="ci-star fs-sm text-muted me-1"></i></div><span class="d-inline-block align-middle">4.1 Overall rating</span>
+                                <p class="pt-3 fs-sm text-muted">58 out of 74 (77%)<br>Customers recommended this product</p>
+                            </div>
+                            <div class="col-lg-8 col-md-7">
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="text-nowrap me-3"><span class="d-inline-block align-middle text-muted">5</span><i class="ci-star-filled fs-xs ms-1"></i></div>
+                                    <div class="w-100">
+                                        <div class="progress" style="height: 4px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div><span class="text-muted ms-3">43</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="text-nowrap me-3"><span class="d-inline-block align-middle text-muted">4</span><i class="ci-star-filled fs-xs ms-1"></i></div>
+                                    <div class="w-100">
+                                        <div class="progress" style="height: 4px;">
+                                            <div class="progress-bar" role="progressbar" style="width: 27%; background-color: #a7e453;" aria-valuenow="27" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div><span class="text-muted ms-3">16</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="text-nowrap me-3"><span class="d-inline-block align-middle text-muted">3</span><i class="ci-star-filled fs-xs ms-1"></i></div>
+                                    <div class="w-100">
+                                        <div class="progress" style="height: 4px;">
+                                            <div class="progress-bar" role="progressbar" style="width: 17%; background-color: #ffda75;" aria-valuenow="17" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div><span class="text-muted ms-3">9</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <div class="text-nowrap me-3"><span class="d-inline-block align-middle text-muted">2</span><i class="ci-star-filled fs-xs ms-1"></i></div>
+                                    <div class="w-100">
+                                        <div class="progress" style="height: 4px;">
+                                            <div class="progress-bar" role="progressbar" style="width: 9%; background-color: #fea569;" aria-valuenow="9" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div><span class="text-muted ms-3">4</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="text-nowrap me-3"><span class="d-inline-block align-middle text-muted">1</span><i class="ci-star-filled fs-xs ms-1"></i></div>
+                                    <div class="w-100">
+                                        <div class="progress" style="height: 4px;">
+                                            <div class="progress-bar bg-danger" role="progressbar" style="width: 4%;" aria-valuenow="4" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </div><span class="text-muted ms-3">2</span>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="mt-4 mb-3">
+                        <div class="row py-4">
+                            <!-- Reviews list-->
+                            <div class="col-md-7">
+                                <div class="d-flex justify-content-end pb-4">
+                                    <div class="d-flex flex-nowrap align-items-center">
+                                        <label class="fs-sm text-muted text-nowrap me-2 d-none d-sm-block" for="sort-reviews">Sort by:</label>
+                                        <select class="form-select form-select-sm" id="sort-reviews">
+                                            <option>Newest</option>
+                                            <option>Oldest</option>
+                                            <option>Popular</option>
+                                            <option>High rating</option>
+                                            <option>Low rating</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- Review-->
+                                <div class="product-review pb-4 mb-4 border-bottom">
+                                    <div class="d-flex mb-3">
+                                        <div class="d-flex align-items-center me-4 pe-2"><img class="rounded-circle" src="img/shop/reviews/01.jpg" width="50" alt="Rafael Marquez">
+                                            <div class="ps-3">
+                                                <h6 class="fs-sm mb-0">Rafael Marquez</h6><span class="fs-ms text-muted">June 28, 2019</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="star-rating"><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star"></i>
+                                            </div>
+                                            <div class="fs-ms text-muted">83% of users found this review helpful</div>
+                                        </div>
+                                    </div>
+                                    <p class="fs-md mb-2">Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est...</p>
+                                    <ul class="list-unstyled fs-ms pt-1">
+                                        <li class="mb-1"><span class="fw-medium">Pros:&nbsp;</span>Consequuntur magni, voluptatem sequi, tempora</li>
+                                        <li class="mb-1"><span class="fw-medium">Cons:&nbsp;</span>Architecto beatae, quis autem</li>
+                                    </ul>
+                                    <div class="text-nowrap">
+                                        <button class="btn-like" type="button">15</button>
+                                        <button class="btn-dislike" type="button">3</button>
+                                    </div>
+                                </div>
+                                <!-- Review-->
+                                <div class="product-review pb-4 mb-4 border-bottom">
+                                    <div class="d-flex mb-3">
+                                        <div class="d-flex align-items-center me-4 pe-2"><img class="rounded-circle" src="img/shop/reviews/02.jpg" width="50" alt="Barbara Palson">
+                                            <div class="ps-3">
+                                                <h6 class="fs-sm mb-0">Barbara Palson</h6><span class="fs-ms text-muted">May 17, 2019</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="star-rating"><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i>
+                                            </div>
+                                            <div class="fs-ms text-muted">99% of users found this review helpful</div>
+                                        </div>
+                                    </div>
+                                    <p class="fs-md mb-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                                    <ul class="list-unstyled fs-ms pt-1">
+                                        <li class="mb-1"><span class="fw-medium">Pros:&nbsp;</span>Consequuntur magni, voluptatem sequi, tempora</li>
+                                        <li class="mb-1"><span class="fw-medium">Cons:&nbsp;</span>Architecto beatae, quis autem</li>
+                                    </ul>
+                                    <div class="text-nowrap">
+                                        <button class="btn-like" type="button">34</button>
+                                        <button class="btn-dislike" type="button">1</button>
+                                    </div>
+                                </div>
+                                <!-- Review-->
+                                <div class="product-review pb-4 mb-4 border-bottom">
+                                    <div class="d-flex mb-3">
+                                        <div class="d-flex align-items-center me-4 pe-2"><img class="rounded-circle" src="img/shop/reviews/03.jpg" width="50" alt="Daniel Adams">
+                                            <div class="ps-3">
+                                                <h6 class="fs-sm mb-0">Daniel Adams</h6><span class="fs-ms text-muted">May 8, 2019</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="star-rating"><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star"></i><i class="star-rating-icon ci-star"></i>
+                                            </div>
+                                            <div class="fs-ms text-muted">75% of users found this review helpful</div>
+                                        </div>
+                                    </div>
+                                    <p class="fs-md mb-2">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem.</p>
+                                    <ul class="list-unstyled fs-ms pt-1">
+                                        <li class="mb-1"><span class="fw-medium">Pros:&nbsp;</span>Consequuntur magni, voluptatem sequi</li>
+                                        <li class="mb-1"><span class="fw-medium">Cons:&nbsp;</span>Architecto beatae,  quis autem, voluptatem sequ</li>
+                                    </ul>
+                                    <div class="text-nowrap">
+                                        <button class="btn-like" type="button">26</button>
+                                        <button class="btn-dislike" type="button">9</button>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <button class="btn btn-outline-accent" type="button"><i class="ci-reload me-2"></i>Load more reviews</button>
+                                </div>
+                            </div>
+                            <!-- Leave review form-->
+                            <div class="col-md-5 mt-2 pt-4 mt-md-0 pt-md-0">
+                                <div class="bg-secondary py-grid-gutter px-grid-gutter rounded-3">
+                                    <h3 class="h4 pb-2">Write a review</h3>
+                                    <form class="needs-validation" method="post" novalidate>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="review-name">Your name<span class="text-danger">*</span></label>
+                                            <input class="form-control" type="text" required id="review-name">
+                                            <div class="invalid-feedback">Please enter your name!</div><small class="form-text text-muted">Will be displayed on the comment.</small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="review-email">Your email<span class="text-danger">*</span></label>
+                                            <input class="form-control" type="email" required id="review-email">
+                                            <div class="invalid-feedback">Please provide valid email address!</div><small class="form-text text-muted">Authentication only - we won't spam you.</small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="review-rating">Rating<span class="text-danger">*</span></label>
+                                            <select class="form-select" required id="review-rating">
+                                                <option value="">Choose rating</option>
+                                                <option value="5">5 stars</option>
+                                                <option value="4">4 stars</option>
+                                                <option value="3">3 stars</option>
+                                                <option value="2">2 stars</option>
+                                                <option value="1">1 star</option>
+                                            </select>
+                                            <div class="invalid-feedback">Please choose rating!</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="review-text">Review<span class="text-danger">*</span></label>
+                                            <textarea class="form-control" rows="6" required id="review-text"></textarea>
+                                            <div class="invalid-feedback">Please write a review!</div><small class="form-text text-muted">Your review must be at least 50 characters.</small>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label" for="review-pros">Pros</label>
+                                            <textarea class="form-control" rows="2" placeholder="Separated by commas" id="review-pros"></textarea>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label" for="review-cons">Cons</label>
+                                            <textarea class="form-control" rows="2" placeholder="Separated by commas" id="review-cons"></textarea>
+                                        </div>
+                                        <button class="btn btn-primary btn-shadow d-block w-100" type="submit">Submit a Review</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                {% endfor %}
-              </div>
-              </div>
             </div>
-            {% endif %}
-            
-            {% if option.type == 'checkbox' %}
-            <div class="form-group{% if option.required %} required{% endif %} table-row">
-              <div class="table-cell checkbox-cell name">
-              <label class="control-label">{{ option.name }}</label>
-              </div>
-              <div class="table-cell checkbox-cell">
-              <div id="input-option{{ option.product_option_id }}">
-                {% for option_value in option.product_option_value %}
-                <div class="checkbox{% if option_value.image %} has-image{% endif %}">
-                  <label>
-                    <input type="checkbox" name="option[{{ option.product_option_id }}][]" value="{{ option_value.product_option_value_id }}" />
-                    {% if option_value.image %}
-                    <img src="{{ option_value.image }}" alt="{{ option_value.name }}{% if option_value.price %}({{ option_value.price_prefix }}{{ option_value.price }}){% endif %}" data-toggle="tooltip" data-title="{{ option_value.name }}{% if option_value.price %} ({{ option_value.price_prefix }}{{ option_value.price }}){% endif %}" /> 
-                    {% endif %}
-                    <span class="name">
-                    {{ option_value.name }}
-                    {% if option_value.price %}
-                    ({{ option_value.price_prefix }}{{ option_value.price }})
-                    {% endif %}
-                    </span>
-                  </label>
+        </div>
+    </div>
+
+    <!-- Product carousel (You may also like)-->
+    <div class="container pt-lg-2 pb-5 mb-md-3 ps-lg-4 pe-lg-3">
+        <h2 class="h3 text-center pb-4">You may also like</h2>
+        <div class="tns-carousel tns-controls-static tns-controls-outside">
+            <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 2, &quot;controls&quot;: true, &quot;nav&quot;: false, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1},&quot;500&quot;:{&quot;items&quot;:2, &quot;gutter&quot;: 18},&quot;768&quot;:{&quot;items&quot;:3, &quot;gutter&quot;: 20}, &quot;1100&quot;:{&quot;items&quot;:4, &quot;gutter&quot;: 30}}}">
+                <!-- Product-->
+                <div>
+                    <div class="card product-card card-static">
+                        <button class="btn-wishlist btn-sm" type="button" data-bs-toggle="tooltip" data-bs-placement="left" title="Add to wishlist"><i class="ci-heart"></i></button><a class="card-img-top d-block overflow-hidden" href="#"><img src="img/shop/catalog/66.jpg" alt="Product"></a>
+                        <div class="card-body py-2"><a class="product-meta d-block fs-xs pb-1" href="#">Smartwatches</a>
+                            <h3 class="product-title fs-sm"><a href="#">Health &amp; Fitness Smartwatch</a></h3>
+                            <div class="d-flex justify-content-between">
+                                <div class="product-price"><span class="text-accent">$250.<small>00</small></span></div>
+                                <div class="star-rating"><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                {% endfor %}
-              </div>
-              </div>
-            </div>
-            {% endif %}
-            
-            
-            {% if option.type == 'text' %}
-            <div class="form-group{% if option.required %} required{% endif %} table-row">
-              <div class="table-cell name">
-              <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-              </div>
-              <div class="table-cell">
-              <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" placeholder="{{ option.name }}" id="input-option{{ option.product_option_id }}" class="form-control" />
-              </div>
-            </div>
-            {% endif %}
-            
-            {% if option.type == 'textarea' %}
-            <div class="form-group{% if option.required %} required{% endif %} table-row">
-              <div class="table-cell name">
-              <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-              </div>
-              <div class="table-cell">
-              <textarea name="option[{{ option.product_option_id }}]" rows="5" placeholder="{{ option.name }}" id="input-option{{ option.product_option_id }}" class="form-control">{{ option.value }}</textarea>
-              </div>
-            </div>
-            {% endif %}
-            
-            {% if option.type == 'file' %}
-            <div class="form-group{% if option.required %} required{% endif %} table-row">
-              <div class="table-cell name">
-              <label class="control-label">{{ option.name }}</label>
-              </div>
-              <div class="table-cell">
-              <button type="button" id="button-upload{{ option.product_option_id }}" data-loading-text="{{ text_loading }}" class="btn btn-default btn-block"><i class="fa fa-upload"></i> {{ button_upload }}</button>
-              <input type="hidden" name="option[{{ option.product_option_id }}]" value="" id="input-option{{ option.product_option_id }}" />
-              </div>
-            </div>
-            {% endif %}
-            
-            {% if option.type == 'date' %}
-            <div class="form-group{% if option.required %} required{% endif %} table-row">
-              <div class="table-cell name">
-              <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-              </div>
-              <div class="table-cell">
-              <div class="input-group date">
-                <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="YYYY-MM-DD" id="input-option{{ option.product_option_id }}" class="form-control" />
-                <span class="input-group-btn">
-                <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
-                </span></div>
+                <!-- Product-->
+                <div>
+                    <div class="card product-card card-static">
+                        <button class="btn-wishlist btn-sm" type="button" data-bs-toggle="tooltip" data-bs-placement="left" title="Add to wishlist"><i class="ci-heart"></i></button><a class="card-img-top d-block overflow-hidden" href="#"><img src="img/shop/catalog/67.jpg" alt="Product"></a>
+                        <div class="card-body py-2"><a class="product-meta d-block fs-xs pb-1" href="#">Smartwatches</a>
+                            <h3 class="product-title fs-sm"><a href="#">Heart Rate &amp; Activity Tracker</a></h3>
+                            <div class="d-flex justify-content-between">
+                                <div class="product-price text-accent">$26.<small>99</small></div>
+                                <div class="star-rating"><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-half active"></i><i class="star-rating-icon ci-star"></i><i class="star-rating-icon ci-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product-->
+                <div>
+                    <div class="card product-card card-static">
+                        <button class="btn-wishlist btn-sm" type="button" data-bs-toggle="tooltip" data-bs-placement="left" title="Add to wishlist"><i class="ci-heart"></i></button><a class="card-img-top d-block overflow-hidden" href="#"><img src="img/shop/catalog/64.jpg" alt="Product"></a>
+                        <div class="card-body py-2"><a class="product-meta d-block fs-xs pb-1" href="#">Smartwatches</a>
+                            <h3 class="product-title fs-sm"><a href="#">Smart Watch Series 5, Aluminium</a></h3>
+                            <div class="d-flex justify-content-between">
+                                <div class="product-price text-accent">$349.<small>99</small></div>
+                                <div class="star-rating"><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product-->
+                <div>
+                    <div class="card product-card card-static">
+                        <button class="btn-wishlist btn-sm" type="button" data-bs-toggle="tooltip" data-bs-placement="left" title="Add to wishlist"><i class="ci-heart"></i></button><a class="card-img-top d-block overflow-hidden" href="#"><img src="img/shop/catalog/68.jpg" alt="Product"></a>
+                        <div class="card-body py-2"><a class="product-meta d-block fs-xs pb-1" href="#">Smartwatches</a>
+                            <h3 class="product-title fs-sm"><a href="#">Health &amp; Fitness Smartwatch</a></h3>
+                            <div class="d-flex justify-content-between">
+                                <div class="product-price text-accent">$118.<small>00</small></div>
+                                <div class="star-rating"><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Product-->
+                <div>
+                    <div class="card product-card card-static">
+                        <button class="btn-wishlist btn-sm" type="button" data-bs-toggle="tooltip" data-bs-placement="left" title="Add to wishlist"><i class="ci-heart"></i></button><a class="card-img-top d-block overflow-hidden" href="#"><img src="img/shop/catalog/69.jpg" alt="Product"></a>
+                        <div class="card-body py-2"><a class="product-meta d-block fs-xs pb-1" href="#">Smartwatches</a>
+                            <h3 class="product-title fs-sm"><a href="#">Heart Rate &amp; Activity Tracker</a></h3>
+                            <div class="d-flex justify-content-between">
+                                <div class="product-price text-accent">$25.<small>00</small></div>
+                                <div class="star-rating"><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-half active"></i><i class="star-rating-icon ci-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            {% endif %}
-            
-            {% if option.type == 'datetime' %}
-            <div class="form-group{% if option.required %} required{% endif %} table-row">
-              <div class="table-cell name">
-              <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-              </div>
-              <div class="table-cell">
-              <div class="input-group datetime">
-                <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="YYYY-MM-DD HH:mm" id="input-option{{ option.product_option_id }}" class="form-control" />
-                <span class="input-group-btn">
-                <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-                </span></div>
-                </div>
-            </div>
-            {% endif %}
-            
-            {% if option.type == 'time' %}
-            <div class="form-group{% if option.required %} required{% endif %} table-row">
-              <div class="table-cell name">
-              <label class="control-label" for="input-option{{ option.product_option_id }}">{{ option.name }}</label>
-              </div>
-              <div class="table-cell">
-              <div class="input-group time">
-                <input type="text" name="option[{{ option.product_option_id }}]" value="{{ option.value }}" data-date-format="HH:mm" id="input-option{{ option.product_option_id }}" class="form-control" />
-                <span class="input-group-btn">
-                <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-                </span></div>
-                </div>
-            </div>
-            {% endif %}
-            
-            {% endfor %} <!-- foreach option -->
-            </div>
-            {% endif %}
-            
-            {% if recurrings %}
-            <hr>
-            <h3>{{ text_payment_recurring }}</h3>
-            <div class="form-group required">
-              <select name="recurring_id" class="form-control">
-                <option value="">{{ text_select }}</option>
-                {% for recurring in recurrings %}
-                <option value="{{ recurring.recurring_id }}">{{ recurring.name }}</option>
-                {% endfor %}
-              </select>
-              <div class="help-block" id="recurring-description"></div>
-            </div>
-            {% endif %}
-            
-            <div class="form-group buy catalog_hide">
-
-            <input type="number" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}" id="input-quantity" class="form-control input-quantity" />
-              <input type="hidden" name="product_id" value="{{ product_id }}" />
-              <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
-            </div>
-            {% if minimum > 1 %}
-            <div class="alert alert-sm alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
-            {% endif %}
-          
-          </div> <!-- #product ends -->
-
-
-	<p class="info is_wishlist"><a onclick="wishlist.add('{{ product_id }}');"><i class="icon-heart"></i> {{ button_wishlist }}</a></p>
-	<p class="info is_compare"><a onclick="compare.add('{{ product_id }}');"><i class="icon-refresh"></i> {{ button_compare }}</a></p>
-    {% if question_status %}
-    <p class="info is_ask"><a class="to_tabs" onclick="$('a[href=\'#tab-questions\']').trigger('click'); return false;"><i class="icon-question"></i> {{ basel_button_ask }}</a></p>
-    {% endif %}
-    
-    <div class="clearfix"></div>
-    
-    <div class="info-holder">
-    
-      {% if price and tax %}
-      <p class="info p-tax"><b>{{ text_tax }}</b> <span class="live-price-tax">{{ tax }}</span></p>
-      {% endif %}
-      
-      {% if price and points %}
-      <p class="info"><b>{{ text_points }}</b> {{ points }}</p>
-      {% endif %}
-      
-      <p class="info {% if qty > 0 %}in_stock{% endif %}"><b>{{ text_stock }}</b> {{ stock }}</p>
-      
-      {% if manufacturer %}
-      <p class="info"><b>{{ text_manufacturer }}</b> <a class="hover_uline" href="{{ manufacturers }}">{{ manufacturer }}</a></p>
-      {% endif %}
-      
-      <p class="info"><b>{{ text_model }}</b> {{ model }}</p>
-      
-      {% if reward %}
-      <p class="info"><b>{{ text_reward }}</b> {{ reward }}</p>
-      {% endif %}
-      
-      {% if tags %}
-      <p class="info tags"><b>{{ text_tags }}</b> &nbsp;<span>{% for tag in tags %}<a class="hover_uline" href="{{ tag.href }}">{{ tag.tag }}</a>{% endfor %}</span></p>
-      {% endif %}
-      
-      {% if basel_share_btn %}
-		{% if basel_sharing_style == 'large' %}
-			<div class="lg-share">
-			<div class="social-icons round inversed">
-			<a class="icon facebook fb_share external" rel="nofollow"><i class="fa fa-facebook"></i></a>
-			<a class="icon twitter twitter_share external" rel="nofollow"><i class="fa fa-twitter"></i></a>
-			<a class="icon google google_share external" rel="nofollow"><i class="icon-google-plus"></i></a>
-			<a class="icon pinterest pinterest_share external" rel="nofollow"><i class="fa fa-pinterest"></i></a>
-			<a class="icon vk vk_share external" rel="nofollow"><i class="fa fa-vk"></i></a>
-			</div>
-			</div>
-		{% else %}
-			<p class="info share"><b>{{ basel_text_share }}:</b> 
-			<a class="single_share fb_share external" rel="nofollow"><i class="fa fa-facebook"></i></a>
-			<a class="single_share twitter_share external" rel="nofollow"><i class="fa fa-twitter"></i></a>
-			<a class="single_share google_share external" rel="nofollow"><i class="icon-google-plus"></i></a>
-			<a class="single_share pinterest_share external" rel="nofollow"><i class="fa fa-pinterest"></i></a>
-			<a class="single_share vk_share external" rel="nofollow"><i class="fa fa-vk"></i></a>
-			</p>
-		 {% endif %}
-	  {% endif %}
-     
-     </div> <!-- .info-holder ends -->
-     
-	 </div> <!-- .inner ends -->
-     </div> <!-- .table-cell.right ends -->
-    
-    </div> <!-- .product-info ends -->
-    
-{% if full_width_tabs %}
-</div> <!-- main column ends -->
-{{ column_right }}
-</div> <!-- .row ends -->
-</div> <!-- .container ends -->    
-{% endif %}
-
-{% if full_width_tabs %}
-<div class="outer-container product-tabs-wrapper">
-<div class="container">   
-{% else %}
-<div class="inline-tabs"> 
-{% endif %}
-
-<!-- Tabs area start -->
-<div class="row">
-<div class="col-sm-12">
-  
-  <ul class="nav nav-tabs {{ product_tabs_style }} main_tabs">
-    <li class="active"><a href="#tab-description" data-toggle="tab">{{ tab_description }}</a></li>
-    {% if product_tabs %}
-        {% for tab in product_tabs %}
-        <li><a href="#custom-tab-{{ tab.tab_id }}" data-toggle="tab">{{ tab.name }}</a></li>
-        {% endfor %}
-    {% endif %}
-    {% if attribute_groups %}
-    <li><a href="#tab-specification" data-toggle="tab">{{ tab_attribute }}</a></li>
-    {% endif %}
-    {% if review_status %}
-    <li><a href="#tab-review" data-toggle="tab">{{ tab_review }}</a></li>
-    {% endif %}
-    {% if question_status %}
-    <li><a href="#tab-questions" data-toggle="tab">{{ basel_tab_questions }} ({{ questions_total }})</a></li>
-    {% endif %}
-  </ul>
-  
-  <div class="tab-content">
-    
-    <div class="tab-pane active" id="tab-description">
-    {{ description }}
+        </div>
     </div>
-    
-    {% if product_tabs %}
-    {% for tab in product_tabs %}
-    <div class="tab-pane" id="custom-tab-{{ tab.tab_id }}">
-    {{ tab.description }}
-    </div>
-    {% endfor %}
-    {% endif %}
-    
-    {% if attribute_groups %}
-    <div class="tab-pane" id="tab-specification">
-      <table class="table specification">
-        {% for attribute_group in attribute_groups %}
-        <thead>
-          <tr>
-            <td colspan="2">{{ attribute_group.name }}</td>
-          </tr>
-        </thead>
-        <tbody>
-          {% for attribute in attribute_group.attribute %}
-          <tr>
-            <td class="text-left"><b>{{ attribute.name }}</b></td>
-            <td class="text-right">{{ attribute.text }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-        {% endfor %}
-      </table>
-    </div>
-    {% endif %}
-    
-    {% if question_status %}
-    <div class="tab-pane" id="tab-questions">
-    {{ product_questions }}
-    </div>
-    {% endif %}
-    
-    {% if review_status %}
-    <div class="tab-pane" id="tab-review">
-    <div class="row">
-    <div class="col-sm-6">
-    <h4><b>{{ button_reviews }}</b></h4>
-        
-		<div id="review">
-		{% if seo_reviews %}
-		{% for review in seo_reviews %}
-		<div class="table">
-		<div class="table-cell"><i class="fa fa-user"></i></div>
-		<div class="table-cell right">
-		<p class="author"><b>{{ review.author }}</b>  -  {{ review.date_added }}
-		<span class="rating">
-		<span class="rating_stars rating r{{ review.rating }}">
-		<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-		</span>
-		</span>
-		</p>
-		{{ review.text }}
-		</div>
-		</div>
-		{% endfor %}
-		{% if pagination %}
-		<div class="pagination-holder">{{ pagination }}</div>
-		{% endif %}
-		{% else %}
-		<p>{{ text_no_reviews }}</p>
-		{% endif %}
-		</div>
-
-    </div>
-    <div class="col-sm-6 right">
-      <form class="form-horizontal" id="form-review">
-        
-        <h4 id="review-notification"><b>{{ text_write }}</b></h4>
-        {% if review_guest %}
-        
-        <div class="form-group required">
-          <div class="col-sm-12 rating-stars">
-            <label class="control-label">{{ entry_rating }}</label>
-            
-            <input type="radio" value="1" name="rating" id="rating1" />
-        	<label for="rating1"><i class="fa fa-star-o"></i></label>
-            
-            <input type="radio" value="2" name="rating" id="rating2" />
-        	<label for="rating2"><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></label>
-            
-            <input type="radio" value="3" name="rating" id="rating3" />
-        	<label for="rating3"><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></label>
-            
-            <input type="radio" value="4" name="rating" id="rating4" />
-        	<label for="rating4"><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></label>
-            
-            <input type="radio" value="5" name="rating" id="rating5" />
-        	<label for="rating5"><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></label>
-            </div>
-        </div>
-        
-        <div class="form-group required">
-          <div class="col-sm-12">
-            <label class="control-label" for="input-name">{{ entry_name }}</label>
-            <input type="text" name="name" value="{{ customer_name }}" id="input-name" class="form-control grey" />
-          </div>
-        </div>
-        <div class="form-group required">
-          <div class="col-sm-12">
-            <label class="control-label" for="input-review">{{ entry_review }}</label>
-            <textarea name="text" rows="5" id="input-review" class="form-control grey"></textarea>
-            <small>{{ text_note }}</small>
-          </div>
-        </div>
-        
-        <div class="form-group required">
-          <div class="col-sm-12">
-            {{ captcha }}
-          </div>
-        </div>
-        
-        <div class="buttons clearfix">
-          <div class="text-right">
-          <button type="button" id="button-review" data-loading-text="{{ text_loading }}" class="btn btn-outline">{{ button_continue }}</button>
-          </div>
-        </div>
-        {% else %}
-        {{ text_login }}
-        {% endif %}
-      </form>
-       </div>
-      </div>
-    </div>
-    {% endif %}<!-- if review-status ends -->
-    
-  </div> <!-- .tab-content ends -->
-</div> <!-- .col-sm-12 ends -->
-</div> <!-- .row ends -->
-<!-- Tabs area ends -->
-
-{% if full_width_tabs %}
-</div>
-{% endif %}
-</div>
-      
-      <!-- Related Products -->
-      
-    {% if full_width_tabs %}
-    <div class="container">  
-    {% endif %}
-      
-        {% if products %}
-        <div class="widget widget-related">
-        
-        <div class="widget-title">
-        <p class="main-title"><span>{{ text_related }}</span></p>
-        <p class="widget-title-separator"><i class="icon-line-cross"></i></p>
-        </div>
-        
-        <div class="grid grid-holder related carousel grid{{ basel_rel_prod_grid }}">
-            {% for product in products %}
-              {% include 'basel/template/product/single_product.twig' %}
-            {% endfor %}
-        </div>
-        </div>
-        {% endif %}
-      
-      {{ content_bottom }}
-      
-    {% if full_width_tabs %}
-    </div>  
-    {% endif %}
-
-
-{% if not full_width_tabs %}
-</div> <!-- main column ends -->
-{{ column_right }}
-</div> <!-- .row ends -->
-</div> <!-- .container ends -->
-{% endif %}
-
-<script src="catalog/view/theme/basel/js/lightgallery/js/lightgallery.min.js"></script>
-<script src="catalog/view/theme/basel/js/lightgallery/js/lg-zoom.min.js"></script>
-<script src="catalog/view/theme/basel/js/cloudzoom/cloud-zoom.1.0.2.min.js"></script>
-{% if basel_price_update %}
-<script src="index.php?route=extension/basel/live_options/js&product_id={{ product_id }}"></script>
-{% endif %}
-
-{% if products %}
-<script><!--
-$('.grid-holder.related').slick({
-prevArrow: "<a class=\"arrow-left icon-arrow-left\"></a>",
-nextArrow: "<a class=\"arrow-right icon-arrow-right\"></a>",
-dots:true,
-{% if direction == 'rtl' %}
-rtl: true,
-{% endif %}
-respondTo:'min',
-{% if basel_rel_prod_grid == '5' %}
-slidesToShow:5,slidesToScroll:5,responsive:[{breakpoint:1100,settings:{slidesToShow:4,slidesToScroll:4}},{breakpoint:960,settings:{slidesToShow:3,slidesToScroll:3}},{breakpoint:600,settings:{slidesToShow:2,slidesToScroll:2}},
-{% elseif basel_rel_prod_grid == '4' %}
-slidesToShow:4,slidesToScroll:4,responsive:[{breakpoint:960,settings:{slidesToShow:3,slidesToScroll:3}},{breakpoint:600,settings:{slidesToShow:2,slidesToScroll:2}},
-{% elseif basel_rel_prod_grid == '3' %}
-slidesToShow:3,slidesToScroll:3,responsive:[{breakpoint:600,settings:{slidesToShow:2,slidesToScroll:2}},
-{% elseif basel_rel_prod_grid == '2' %}
-slidesToShow:2,slidesToScroll:2,responsive:[
-{% endif %}
-{% if items_mobile_fw %}
-{breakpoint:320,settings:{slidesToShow:1,slidesToScroll:1}}
-{% endif %}
-]
-});
-$('.product-style2 .single-product .icon').attr('data-placement', 'top');
-$('[data-toggle=\'tooltip\']').tooltip({container: 'body'});
-//--></script>
-{% endif %}
-
-{% if sale_end_date and product_page_countdown %}
- <script>
-  $(function() {
-	$('#special_countdown').countdown('{{ sale_end_date }}').on('update.countdown', function(event) {
-  var $this = $(this).html(event.strftime(''
-    + '<div class=\"special_countdown\"></span><p><span class=\"icon-clock\"></span> {{ basel_text_offer_ends }}</p><div>'
-    + '%D<i>{{ basel_text_days }}</i></div><div>'
-    + '%H <i>{{ basel_text_hours }}</i></div><div>'
-    + '%M <i>{{ basel_text_mins }}</i></div><div>'
-    + '%S <i>{{ basel_text_secs }}</i></div></div>'));
-});
-  });
-</script>
-{% endif %}
-
-<script><!--
-$('select[name=\'recurring_id\'], input[name="quantity"]').change(function(){
-	$.ajax({
-		url: 'index.php?route=product/product/getRecurringDescription',
-		type: 'post',
-		data: $('input[name=\'product_id\'], input[name=\'quantity\'], select[name=\'recurring_id\']'),
-		dataType: 'json',
-		beforeSend: function() {
-			$('#recurring-description').html('');
-		},
-		success: function(json) {
-			$('.alert-dismissible, .text-danger').remove();
-
-			if (json['success']) {
-				$('#recurring-description').html(json['success']);
-			}
-		}
-	});
-});
-//--></script>
-
-<script><!--
-$('#button-cart').on('click', function() {
-	$.ajax({
-		url: 'index.php?route=extension/basel/basel_features/add_to_cart',
-		type: 'post',
-		data: $('#product input[type=\'text\'], #product input[type=\'hidden\'], #product input[type=\'number\'], #product input[type=\'radio\']:checked, #product input[type=\'checkbox\']:checked, #product select, #product textarea'),
-		dataType: 'json',
-		beforeSend: function(json) {
-			$('body').append('<span class="basel-spinner ajax-call"></span>');
-		},
-
-		success: function(json) {
-			$('.alert, .text-danger').remove();
-			$('.table-cell').removeClass('has-error');
-
-			if (json.error) {
-				$('.basel-spinner.ajax-call').remove();
-				if (json.error.option) {
-					for (i in json.error.option) {
-						var element = $('#input-option' + i.replace('_', '-'));
-
-						if (element.parent().hasClass('input-group')) {
-							element.parent().after('<div class="text-danger">' + json.error.option[i] + '</div>');
-						} else {
-							element.after('<div class="text-danger">' + json.error.option[i] + '</div>');
-						}
-					}
-				}
-
-				if (json.error.recurring) {
-					$('select[name=\'recurring_id\']').after('<div class="text-danger">' + json['error']['recurring'] + '</div>');
-				}
-
-				// Highlight any found errors
-				$('.text-danger').parent().addClass('has-error');
-			}
-
-				if (json.success_redirect) {
-					
-					location = json.success_redirect;
-				
-				} else if (json.success) {
-					
-					$('.table-cell').removeClass('has-error');
-					$('.alert, .popup-note, .basel-spinner.ajax-call, .text-danger').remove();
-				 
-					html = '<div class="popup-note">';
-					html += '<div class="inner">';
-					html += '<a class="popup-note-close" onclick="$(this).parent().parent().remove()">&times;</a>';
-					html += '<div class="table">';
-					html += '<div class="table-cell v-top img"><img src="' + json.image + '" /></div>';
-					html += '<div class="table-cell v-top">' + json.success + '</div>';
-					html += '</div>';
-					html += '</div>';
-					html += '</div>';
-					$('body').append(html);
-					setTimeout(function() {$('.popup-note').hide();}, 8100);
-					// Need to set timeout otherwise it wont update the total
-					setTimeout(function () {
-					$('.cart-total-items').html( json.total_items );
-					$('.cart-total-amount').html( json.total_amount );
-					}, 100);
-
-					$('#cart-content').load('index.php?route=common/cart/info #cart-content > *');
-			}
-		},
-        error: function(xhr, ajaxOptions, thrownError) {
-            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-        }
-	});
-});
-//--></script>
-<script><!--
-$('.date').datetimepicker({
-	pickTime: false
-});
-
-$('.datetime').datetimepicker({
-	pickDate: true,
-	pickTime: true
-});
-
-$('.time').datetimepicker({
-	pickDate: false
-});
-
-$('button[id^=\'button-upload\']').on('click', function() {
-	var node = this;
-
-	$('#form-upload').remove();
-
-	$('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" /></form>');
-
-	$('#form-upload input[name=\'file\']').trigger('click');
-
-	if (typeof timer != 'undefined') {
-    	clearInterval(timer);
-	}
-
-	timer = setInterval(function() {
-		if ($('#form-upload input[name=\'file\']').val() != '') {
-			clearInterval(timer);
-
-			$.ajax({
-				url: 'index.php?route=tool/upload',
-				type: 'post',
-				dataType: 'json',
-				data: new FormData($('#form-upload')[0]),
-				cache: false,
-				contentType: false,
-				processData: false,
-				beforeSend: function() {
-					$(node).button('loading');
-				},
-				complete: function() {
-					$(node).button('reset');
-				},
-				success: function(json) {
-					$('.text-danger').remove();
-
-					if (json['error']) {
-						$(node).parent().find('input').after('<div class="text-danger">' + json['error'] + '</div>');
-					}
-
-					if (json['success']) {
-						alert(json['success']);
-
-						$(node).parent().find('input').val(json['code']);
-					}
-				},
-				error: function(xhr, ajaxOptions, thrownError) {
-					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-				}
-			});
-		}
-	}, 500);
-});
-//--></script>
-<script><!--
-$('#review').delegate('.pagination a', 'click', function(e) {
-  e.preventDefault();
-	$("html,body").animate({scrollTop:(($("#review").offset().top)-50)},500);
-    $('#review').fadeOut(50);
-
-    $('#review').load(this.href);
-
-    $('#review').fadeIn(500);
-	
-});
-
-
-$('#button-review').on('click', function() {
-	$.ajax({
-		url: 'index.php?route=product/product/write&product_id={{ product_id }}',
-		type: 'post',
-		dataType: 'json',
-		data: $("#form-review").serialize(),
-		beforeSend: function() {
-			$('#button-review').button('loading');
-		},
-		complete: function() {
-			$('#button-review').button('reset');
-		},
-		success: function(json) {
-			$('.alert-success, .alert-danger').remove();
-
-			if (json.error) {
-				$('#review-notification').after('<div class="alert alert-sm alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json.error + '</div>');
-			}
-
-			if (json.success) {
-				$('#review-notification').after('<div class="alert alert-sm alert-success"><i class="fa fa-check-circle"></i> ' + json.success + '</div>');
-
-				$('input[name=\'name\']').val('');
-				$('textarea[name=\'text\']').val('');
-				$('input[name=\'rating\']:checked').prop('checked', false);
-			}
-		}
-	});
-});
-
-$(document).ready(function() {
-{% if product_layout == "full-width" %}
-// Sticky information
-$('.table-cell.right .inner').theiaStickySidebar({containerSelector:'.product-info'});
-{% endif %}
-
-// Reviews/Question scroll link
-$(".to_tabs").click(function() {
-    $('html, body').animate({
-        scrollTop: ($(".main_tabs").offset().top - 100)
-    }, 1000);
-});
-
-// Sharing buttons
-{% if basel_share_btn %}
-var share_url = encodeURIComponent(window.location.href);
-var page_title = '{{ heading_title }}';
-{% if thumb %}
-var thumb = '{{ thumb }}';
-{% endif %}
-$('.fb_share').attr("href", 'https://www.facebook.com/sharer/sharer.php?u=' + share_url + '');
-$('.twitter_share').attr("href", 'https://twitter.com/intent/tweet?source=' + share_url + '&text=' + page_title + ': ' + share_url + '');
-$('.google_share').attr("href", 'https://plus.google.com/share?url=' + share_url + '');
-$('.pinterest_share').attr("href", 'http://pinterest.com/pin/create/button/?url=' + share_url + '&media=' + thumb + '&description=' + page_title + '');
-$('.vk_share').attr("href", 'http://vkontakte.ru/share.php?url=' + share_url + '');
-{% endif %}
-});
-//--></script>
-
-{% if product_layout != "full-width" %}
-<script>
-$(document).ready(function() {
-$('.image-additional a.link').click(function (e) {
-	if ($(this).hasClass("locked")) {
-  		e.stopImmediatePropagation();
-	}
-	$('.image-additional a.link.active').removeClass('active');
-	$(this).addClass('active')
-});
-
-{% if images %}
-$('.cloud-zoom-wrap').click(function (e) {
-	e.preventDefault();
-	$('.image-additional a.link.active').removeClass('locked').trigger('click').addClass('locked');
-});
-{% else %}
-$('.cloud-zoom-wrap').click(function (e) {
-	e.preventDefault();
-	$('#main-image').trigger('click');
-});
-{% endif %}
-
-$('.image-additional').slick({
-prevArrow: "<a class=\"icon-arrow-left\"></a>",
-nextArrow: "<a class=\"icon-arrow-right\"></a>",
-appendArrows: '.image-additional .slick-list',
-arrows:true,
-{% if direction == 'rtl' %}
-rtl: true,
-{% endif %}
-infinite:false,
-{% if product_layout == "images-left" %}
-slidesToShow: {{ (img_h/img_a_h)|round(0, 'floor') }},
-vertical:true,
-verticalSwiping:true,
-{% else %}
-slidesToShow: {{ (img_w/img_a_w)|round }},
-{% endif %}
-responsive: [
-{
-breakpoint: 992,
-settings: {
-vertical:false,
-verticalSwiping:false
-}
-}]
-});	
-
-});
-//--></script>
-{% endif %}
-<script>
-$(document).ready(function() {
-// Image Gallery
-$("#gallery").lightGallery({
-	selector: '.link',
-	download:false,
-	hideBarsDelay:99999
-});
-});
-//--></script>
-<script type="application/ld+json">
-{
-"@context": "http://schema.org",
-"@type": "Product",
-"image": [
-{% if thumb %}
-"{{ thumb }}"
-{% endif %}
-],
-"description": "{{ meta_description }}",
-{% if review_qty %}
-"aggregateRating": {
-"@type": "AggregateRating",
-"ratingValue": "{{ rating }}",
-"reviewCount": "{{ review_qty }}"},
-{% endif %}
-"name": "{{ heading_title }}",
-"sku": "{{ model }}",
-{% if manufacturer %}
-"brand": "{{ manufacturer }}",
-{% endif %}
-"offers": {
-"@type": "Offer",
-{% if qty > 0 %}
-"availability": "http://schema.org/InStock",
-{% else %}
-"availability": "http://schema.org/OutOfStock",
-{% endif %}
-{% if price %}
-{% if special %}
-"price": "{{ special_snippet }}",
-{% else %}
-"price": "{{ price_snippet }}",
-{% endif %}
-"priceCurrency": "{{ currency_code }}"
-{% endif %}
-}
-}
-</script>
 {{ footer }}
