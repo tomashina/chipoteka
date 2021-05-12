@@ -48,7 +48,7 @@
         </div>
     </div>
 </header>
-<aside class="offcanvas offcanvas-expand w-100 border-end zindex-lg-5 pt-lg-5" id="sideNav"  style="max-width: 21.875rem; {% if notification_status %} margin-top:50px  {% endif %}" >
+<aside class="offcanvas offcanvas-expand w-100 border-end zindex-lg-5 pt-lg-5" id="sideNav"  style="{% if notification_status %} margin-top:50px  {% endif %}" >
     <div class="pt-2 d-none d-lg-block"></div>
     <ul class="nav nav-tabs nav-justified mt-4 mt-lg-5 mb-0" role="tablist" style="min-height: 3rem;">
         <li class="nav-item"><a class="nav-link fw-medium active" href="#categories" data-bs-toggle="tab" role="tab">WEB SHOP</a></li>
