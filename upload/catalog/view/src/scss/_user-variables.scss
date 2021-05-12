@@ -1,0 +1,32 @@
+// 
+// user-variables.scss
+// Use this to override Bootstrap and Cartzilla variables
+//
+
+// Example of a variable override to change Cartzilla background color
+// Remove the "//" to comment it in and see it in action!
+// $body-bg: #12263F;
+
+// Fonts
+//
+// Font, line-height, and color for body text, headings, and more.
+
+// $path-to-fonts:  'https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap';
+
+
+
+// Custom Grayscale
+ $light:   #F5F5F5;
+ $gray-l2: #E3E3E3;
+ $gray-l1: #A8A8A8;
+ $gray:    #828282;
+ $gray-d1: #5C5C5C;
+ $gray-d2: #363636;
+ $dark:    #171717;
+
+// Brand colors
+$primary:               #E31318;
+$accent:                #1B84E5;
+$secondary:             $gray;
+
+
