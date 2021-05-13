@@ -1,0 +1,7 @@
+//
+// Header
+// --------------------------------------------------
+
+body > header[data-fixed-element] {
+    position: sticky;
+}

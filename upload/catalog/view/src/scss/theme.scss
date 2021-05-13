@@ -12,6 +12,7 @@
 @import 'mixins';
 @import 'utilities';
 
+
 // Bootstrap
 @import '../../dist/vendor/bootstrap/scss/bootstrap';
 
@@ -23,4 +24,5 @@
 @import 'user'; 
 
 // Chipoteka components
-@import 'components-chipoteka/offcanvas-cpta';  
+@import 'components-chipoteka/header-cpta';  
+@import 'components-chipoteka/offcanvas-cpta';   
