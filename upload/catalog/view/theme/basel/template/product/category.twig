@@ -24,10 +24,14 @@
 
 
 
-        <div id="product-view">
+
 
 
         <!-- Toolbar-->
+
+            <!-- Products grid-->
+        <div id="product-view">
+
             <div class="bg-light shadow-lg rounded-3 p-4 mt-n5 mb-4">
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="dropdown me-2"><a class="btn btn-outline-secondary dropdown-toggle" href="#shop-filters" data-bs-toggle="collapse"><i class="ci-filter me-2"></i>Filters</a></div>
@@ -36,7 +40,7 @@
                     </div>
                     <div class="d-none d-sm-flex">
                         <label class="text-light fs-sm opacity-75 text-nowrap me-2 d-none d-sm-block" for="sorting">{{ text_sort }}</label>
-                        <select  class="form-select " onchange="location = this.value;">
+                        <select id="input-sort" class="form-select " onchange="location = this.value;">
                             {% for sorts in sorts %}
                                 {% if sorts.value == '%s-%s'|format(sort, order) %}
                                     <option value="{{ sorts.href }}" selected="selected"> {{ sorts.text }}</option>
@@ -49,12 +53,11 @@
                 </div>
                 <!-- Toolbar with expandable filters-->
                 <div class="collapse" id="shop-filters">
-                    <div class="row pt-4">
-                        {{ content_top }}
-                    </div>
+
+                    {{ content_top }}
+
                 </div>
             </div>
-            <!-- Products grid-->
             <div class="row pt-3 mx-n2 product-holder ">
                 {% if products %}
                 <!-- Product-->
@@ -67,10 +70,11 @@
                 {% endif %}
             </div>
             <hr class="my-3">
-            <!-- Pagination-->
+
             <nav class="d-flex justify-content-between pt-2 pagination-navigation" aria-label="Page navigation">
                 {{ pagination }}
             </nav>
         </div>
+    </div>
     </div>
 {{ footer }}

@@ -3,7 +3,7 @@ function DigitalElephantFilterSort() {
     this.selector = DEFConfig.selector.sort;
 
     this.holdOn = function() {
-        $(this.selector).attr('disabled', 'disabled');
+       // $(this.selector).attr('disabled', 'disabled');
     };
 
     this.holdOff = function() {

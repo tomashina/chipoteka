@@ -5,6 +5,7 @@
 
         <div class="box-content digitalElephantFilter">
             <form id="digitalElephantFilter_form" action="{{ JS_config['action']['getProduct'] }}" method="get">
+                <div class="row pt-4">
                 {% if filter_data['price']['show'] %}
                     <div class="col-lg-4 col-sm-6">
                         <!-- Price range-->
@@ -63,7 +64,11 @@
 
                     {% for section_group in package %}
 
+
+
                         {% if section_group['sections'] %}
+
+
 
                             {% if is_show_group_attributes and section_group['group_name'] %}
                                 <div class="filter_element_title">{{ section_group['group_name'] }}</div>
@@ -72,6 +77,11 @@
                             {% for section in section_group['sections'] %}
 
                                 {% if section['type'] and section['values'] %}
+                                    <div class="col-lg-4 col-sm-6">
+                                    <!-- Price range-->
+                                    <div class="card mb-grid-gutter">
+                                    <div class="card-body px-4">
+                                    <div class="widget">
                                     <div class="filter_element_wrap ">
 
                                         <div
@@ -91,10 +101,19 @@
                                             {% include "basel/template/extension/module/digitalElephantFilter/%s.twig"|format(section['type']) %}
                                         </div>
                                     </div>
+
+                                    </div>
+                                    </div>
+                                    </div>
+                                    </div>
                                 {% endif %}
 
                             {% endfor %}
+
+
                         {% endif %}
+
+
 
                     {% endfor %}
 
@@ -123,6 +142,7 @@
                 </div>
 
                 <input type="hidden" name="ajax_digitalElephantFilter" value="1"/>
+                </div>
             </form>
 
             <script>
@@ -187,7 +207,7 @@ $(document).ready(function() {
 	// Basel
 	$(".filter-trigger-btn").click(function(){
 	$('html').addClass('no-scroll side-filter-open');
-	$('.body-cover').addClass('active'); 
+	$('.body-cover').addClass('active');
 	});
 });
 </script>
