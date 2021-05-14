@@ -1,6 +1,4 @@
 {{ header }}
-
-
 <main class="offcanvas-enabled" style="padding-top: 5rem;">
     <!-- Custom page title-->
     <div class="page-title-overlap bg-dark pt-4 ps-lg-4 pe-lg-3">
@@ -26,8 +24,21 @@
         <div class="bg-light shadow-lg rounded-3 p-4 mt-n5 mb-4">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="dropdown me-2"><a class="btn btn-outline-secondary dropdown-toggle" href="#shop-filters" data-bs-toggle="collapse"><i class="ci-filter me-2"></i>Filters</a></div>
-                <div class="d-flex"><a class="nav-link-style me-3" href="#"><i class="ci-arrow-left"></i></a><span class="fs-md">1 / 5</span><a class="nav-link-style ms-3" href="#"><i class="ci-arrow-right"></i></a></div>
-                <div class="d-none d-sm-flex"><a class="btn btn-icon nav-link-style bg-primary text-light disabled opacity-100 me-2" href="#"><i class="ci-view-grid"></i></a><a class="btn btn-icon nav-link-style" href="shop-list-ft.html"><i class="ci-view-list"></i></a></div>
+                <div class="d-flex">
+                    {{ pagination }}
+                </div>
+                <div class="d-none d-sm-flex">
+                    <label class="text-light fs-sm opacity-75 text-nowrap me-2 d-none d-sm-block" for="sorting">{{ text_sort }}</label>
+                    <select id="input-sort" class="form-select" onchange="location = this.value;">
+                        {% for sorts in sorts %}
+                            {% if sorts.value == '%s-%s'|format(sort, order) %}
+                                <option value="{{ sorts.href }}" selected="selected"> {{ sorts.text }}</option>
+                            {% else %}
+                                <option value="{{ sorts.href }}" >{{ sorts.text }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
             <!-- Toolbar with expandable filters-->
             <div class="collapse" id="shop-filters">
@@ -571,44 +582,20 @@
         </div>
         <!-- Products grid-->
         <div class="row pt-3 mx-n2">
-
             {% if products %}
             <!-- Product-->
                 {% for product in products %}
                     {% include 'basel/template/product/single_product.twig' %}
                 {% endfor %}
-
-
-
             {% endif %}
-
             {% if not categories and not products %}
                 <p>{{ text_empty }}</p>
             {% endif %}
-
         </div>
-
         <hr class="my-3">
         <!-- Pagination-->
         <nav class="d-flex justify-content-between pt-2" aria-label="Page navigation">
-          <!--  <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="#"><i class="ci-arrow-left me-2"></i>Prev</a></li>
-            </ul>
-            <ul class="pagination">
-                <li class="page-item d-sm-none"><span class="page-link page-link-static">1 / 5</span></li>
-                <li class="page-item active d-none d-sm-block" aria-current="page"><span class="page-link">1<span class="visually-hidden">(current)</span></span></li>
-                <li class="page-item d-none d-sm-block"><a class="page-link" href="#">2</a></li>
-                <li class="page-item d-none d-sm-block"><a class="page-link" href="#">3</a></li>
-                <li class="page-item d-none d-sm-block"><a class="page-link" href="#">4</a></li>
-                <li class="page-item d-none d-sm-block"><a class="page-link" href="#">5</a></li>
-            </ul>
-            <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="#" aria-label="Next">Next<i class="ci-arrow-right ms-2"></i></a></li>
-            </ul> -->
-
             {{ pagination }}
         </nav>
     </div>
-
-
 {{ footer }}
