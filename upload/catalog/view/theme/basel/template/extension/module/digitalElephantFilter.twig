@@ -1,53 +1,61 @@
 {% if is_filter_show %}
 
-
+    <div class="filter-container">
     <div id="digitalElephantFilter_box">
-        
+
         <div class="box-content digitalElephantFilter">
             <form id="digitalElephantFilter_form" action="{{ JS_config['action']['getProduct'] }}" method="get">
                 {% if filter_data['price']['show'] %}
-                <div class="col-lg-4 col-sm-6">
-                    <!-- Price range-->
-                    <div class="card mb-grid-gutter">
-                        <div class="card-body px-4">
-                            <div class="widget">
-                    <div class="filter_element_wrap ">
-                        <div
-                            class="filter_element_title"
-                            data-section-name="price"
-                            data-section-id="price"
-                            >
-                            <h3 class="widget-title">  {{ text_price_range }}</h3>
-                        </div>
-                        {% set display = 'none' %}
-                        {% if filter_data['price']['open'] %}
-                            {% set display = 'block' %}
-                         {% endif %}
-                        <div class="filter_element_content price_slider collapsible" style="display: {{ display }}">
-                            
-							<input class="form-control range-slider-value-min price" type="text" id="digitalElephantFilter_changing_price_min"
-                                               value="{{ filter_data['price']['min'] }}" name="price[min]"
-                                          >
-                            <input type="hidden" id="digitalElephantFilter_changing_price_max"
-                                               value="{{ filter_data['price']['max'] }}" name="price[max]"
-                                               class="price">
+                    <div class="col-lg-4 col-sm-6">
+                        <!-- Price range-->
+                        <div class="card mb-grid-gutter">
+                            <div class="card-body px-4">
+                                <div class="widget">
+                                    <div class="filter_element_wrap ">
+                                        <div
+                                                class="filter_element_title"
+                                                data-section-name="price"
+                                                data-section-id="price"
+                                        >
+                                            <h3 class="widget-title">  {{ text_price_range }}</h3>
+                                        </div>
+                                        {% set display = 'none' %}
+                                        {% if filter_data['price']['open'] %}
+                                            {% set display = 'block' %}
+                                        {% endif %}
+                                        <div class="filter_element_content price_slider collapsible" style="display: {{ display }}">
 
-							
-                            <div id="slider-range" class="range-slider-ui"></div>
-							<div class="price-range-holder">
+                                            <div id="slider-range"></div>
+
+                                            <div class="d-flex pb-1">
+                                                <div class="w-50 pe-2 me-2">
+                                                    <div class="input-group input-group-sm"><span class="input-group-text">kn</span>
+                                                        <input class="form-control range-slider-value-min price  " type="text" id="digitalElephantFilter_changing_price_min"
+                                                               value="{{ filter_data['price']['min'] }}" name="price[min]">
+                                                    </div>
+                                                </div>
+                                                <div class="w-50 ps-2">
+                                                    <div class="input-group input-group-sm"><span class="input-group-text">kn</span>
+                                                        <input class="form-control range-slider-value-min price" type="text" id="digitalElephantFilter_changing_price_max"
+                                                               value="{{ filter_data['price']['max'] }}" name="price[max]">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- <div class="price-range-holder">
 							{{ text_price_range }}
 							<b>
 							{{ symbol_left }}<span id="price-min-holder">{{ filter_data['price']['min'] }}</span>{{ symbol_right }}
 							-
 							{{ symbol_left }}<span id="price-max-holder">{{ filter_data['price']['max'] }}</span>{{ symbol_right }}
 							</b>
-							</div>
-                        </div>
-                    </div>
+							</div> -->
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 {% endif %}
 
 
@@ -67,10 +75,10 @@
                                     <div class="filter_element_wrap ">
 
                                         <div
-                                            class="filter_element_title {% if is_show_group_attributes and section_group['group_name'] %}is-attribute-child{% endif %}"
-                                            data-section-name="{{ section['name'] }}"
-                                            data-section-id="{{ section['id'] }}"
-                                            >{{ section['name'] }}</div>
+                                                class="filter_element_title {% if is_show_group_attributes and section_group['group_name'] %}is-attribute-child{% endif %}"
+                                                data-section-name="{{ section['name'] }}"
+                                                data-section-id="{{ section['id'] }}"
+                                        >{{ section['name'] }}</div>
 
                                         {% set display = 'none' %}
                                         {% if section['open'] %}
@@ -96,11 +104,11 @@
                         <tr>
                             {% if is_button_apply and is_button_clear %}
                                 <td width="50%" style="padding-right:2px;"><input type="reset" id="digitalElephantFilter_button_clear"
-                                                       class="btn btn-outline"
-                                                       value="{{ text_clear }}"/></td>
+                                                                                  class="btn btn-outline"
+                                                                                  value="{{ text_clear }}"/></td>
                                 <td width="50%" style="padding-left:2px;"><input type="button" id="digitalElephantFilter_button_apply"
-                                                       class="btn btn-contrast"
-                                                       value="{{ text_ok }}"/></td>
+                                                                                 class="btn btn-contrast"
+                                                                                 value="{{ text_ok }}"/></td>
                             {% elseif is_button_apply %}
                                 <td width="100%"><input type="button" id="digitalElephantFilter_button_apply"
                                                         class="btn btn-contrast"
@@ -113,7 +121,7 @@
                         </tr>
                     </table>
                 </div>
-                            
+
                 <input type="hidden" name="ajax_digitalElephantFilter" value="1"/>
             </form>
 
@@ -171,7 +179,7 @@
             {% endif %}
         </div>
     </div>
-
+    </div>
 <script type="text/javascript">
 // Basel
 $(document).ready(function() {
