@@ -31,9 +31,24 @@
                     {% endif %}
                     </a>
 
-                <div class="navbar-tool dropdown ms-3"><a class="navbar-tool-icon-box bg-secondary dropdown-toggle" href="{{ shopping_cart }}"><span class="navbar-tool-label">{{ cart_items }}</span><i class="navbar-tool-icon ci-cart"></i></a><a class="navbar-tool-text" href="{{ shopping_cart }}"><small>Moja košarice</small>{{ cart_amount }}</a>
+             <div class="navbar-tool dropdown ms-3" id="cart" >
+                    <a class="navbar-tool-icon-box bg-secondary dropdown-toggle" href="{{ shopping_cart }}"><span class="navbar-tool-label cart-total-items" id="cart-total" >{{ cart_items }}</span><i class="navbar-tool-icon ci-cart"></i></a><a class="navbar-tool-text cart-total-amount" href="{{ shopping_cart }}"><small>Moja košarice</small>{{ cart_amount }}</a>
                     {{ cart }}
                 </div>
+
+                <!--
+                <div class="icon-element catalog_hide">
+                    <div id="cart" class="dropdown-wrapper from-top">
+                        <a href="{{ shopping_cart }}" class="shortcut-wrapper cart">
+                            <i id="cart-icon" class="global-cart icon"></i> <span id="cart-total" class="nowrap">
+        <span class="counter cart-total-items">{{ cart_items }}</span> <span class="slash hidden-md hidden-sm hidden-xs">/</span>&nbsp;<b class="cart-total-amount hidden-sm hidden-xs">{{ cart_amount }}</b>
+        </span>
+                        </a>
+                        <div class="dropdown-content dropdown-right hidden-sm hidden-xs">
+                            {{ cart }}
+                        </div>
+                    </div>
+                </div> -->
             </div>
         </div>
     </div>
