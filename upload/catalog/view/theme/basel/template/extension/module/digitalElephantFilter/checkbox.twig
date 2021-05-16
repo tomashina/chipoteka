@@ -1,6 +1,10 @@
 <div class="digitalElephantFilter_type_checkbox">
+    <ul class="widget-list widget-filter-list list-unstyled pt-1" style="max-height: 11rem;" data-simplebar data-simplebar-auto-hide="false">
     {% for input_data in inputs_data %}
-        <label class="checkbox-inline">
+
+        <li class="widget-filter-item d-flex justify-content-between align-items-center mb-1">
+            <div class="form-check">
+        <label class="form-check-label widget-filter-item-text" >
             {% set attr_checked = '' %}
 
             {% if check_data_on_active[input_data['input_name']][section['id']] and input_data['input_value'] in check_data_on_active[input_data['input_name']][section['id']] %}
@@ -12,14 +16,20 @@
             {% else %}
                 {% set attr_disabled = 'disabled="disabled"' %}
             {% endif %}
-            <input
-                    type="checkbox"
-                    name="{{ input_data['input_name'] }}[{{ section['id'] }}][]"
-                    value="{{ input_data['input_value'] }}"
-                    {{ attr_checked }}
-                    {{ attr_disabled }}
-            >
-            <span>{{ input_data['input_label'] }}</span>
+
+            {{ input_data['input_label'] }}
         </label>
+
+                <input id="{{ input_data['input_label'] }}"
+                        type="checkbox" class="form-check-input"
+                        name="{{ input_data['input_name'] }}[{{ section['id'] }}][]"
+                        value="{{ input_data['input_value'] }}"
+                        {{ attr_checked }}
+                        {{ attr_disabled }}
+                >
+            </div>
+        </li>
     {% endfor %}
+
+    </ul>
 </div>

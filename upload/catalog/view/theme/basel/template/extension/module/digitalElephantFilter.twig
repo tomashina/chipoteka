@@ -8,6 +8,8 @@
                 <div class="row pt-4">
                 {% if filter_data['price']['show'] %}
                     <div class="col-lg-4 col-sm-6">
+
+
                         <!-- Price range-->
                         <div class="card mb-grid-gutter">
                             <div class="card-body px-4">
@@ -26,19 +28,21 @@
                                         {% endif %}
                                         <div class="filter_element_content price_slider collapsible" style="display: {{ display }}">
 
-                                            <div id="slider-range"></div>
+                                            <div  id="slider-range" style="margin: 2.5rem .5rem;"></div>
 
                                             <div class="d-flex pb-1">
                                                 <div class="w-50 pe-2 me-2">
-                                                    <div class="input-group input-group-sm"><span class="input-group-text">kn</span>
+                                                    <div class="input-group input-group-sm">
                                                         <input class="form-control range-slider-value-min price  " type="text" id="digitalElephantFilter_changing_price_min"
                                                                value="{{ filter_data['price']['min'] }}" name="price[min]">
+                                                        <span class="input-group-text">kn</span>
                                                     </div>
                                                 </div>
                                                 <div class="w-50 ps-2">
-                                                    <div class="input-group input-group-sm"><span class="input-group-text">kn</span>
+                                                    <div class="input-group input-group-sm">
                                                         <input class="form-control range-slider-value-min price" type="text" id="digitalElephantFilter_changing_price_max"
                                                                value="{{ filter_data['price']['max'] }}" name="price[max]">
+                                                        <span class="input-group-text">kn</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -81,19 +85,21 @@
                                     <!-- Price range-->
                                     <div class="card mb-grid-gutter">
                                     <div class="card-body px-4">
-                                    <div class="widget">
+                                    <div class="widget widget-filter">
                                     <div class="filter_element_wrap ">
 
                                         <div
                                                 class="filter_element_title {% if is_show_group_attributes and section_group['group_name'] %}is-attribute-child{% endif %}"
                                                 data-section-name="{{ section['name'] }}"
                                                 data-section-id="{{ section['id'] }}"
-                                        >{{ section['name'] }}</div>
+                                        > <h3 class="widget-title">{{ section['name'] }}</h3></div>
 
                                         {% set display = 'none' %}
                                         {% if section['open'] %}
                                             {% set display = 'block' %}
                                         {% endif %}
+
+
 
                                         <div class="filter_element_content" style="display: {{ display }}">
 
@@ -134,7 +140,7 @@
                                                         value="{{ text_ok }}"/></td>
                             {% elseif is_button_clear %}
                                 <td width="100%"><input type="reset" id="digitalElephantFilter_button_clear"
-                                                        class="btn btn-outline"
+                                                        class="btn btn-outline-secondary"
                                                         value="{{ text_clear }}"/></td>
                             {% endif %}
                         </tr>

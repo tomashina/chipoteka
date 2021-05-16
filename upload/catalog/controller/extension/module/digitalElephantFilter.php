@@ -94,7 +94,7 @@ class ControllerExtensionModuleDigitalElephantFilter extends Controller
 			$server = $this->config->get('config_url');
 		}
 		
-        $this->document->addStyle($server . '/catalog/view/javascript/jquery/ui/jquery-ui.min.css');
+       $this->document->addStyle($server . '/catalog/view/javascript/jquery/ui/jquery-ui.min.css');
     }
 
     private function runSEO($setting) {
