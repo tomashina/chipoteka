@@ -7,12 +7,12 @@
     {% endif %}
     <div class="navbar navbar-expand-lg navbar-light py-0">
         <div class="container-fluid ps-0">
-            <a class="navbar-brand d-none d-sm-block me-3 me-xl-4 flex-shrink-0 py-0" href="{{ home }}">
-                <img src="catalog/view/dist/img/logo-chipoteka.svg" width="265" style="margin-bottom:-15px" alt="{{ name }}">
+            <a class="navbar-brand me-0 me-xl-4 flex-shrink-0 py-0" href="{{ home }}">
+                <img src="catalog/view/dist/img/logo-chipoteka.svg" width="265"  alt="{{ name }}">
             </a>
-              <a class="navbar-brand d-sm-none me-2" href="{{ home }}">
+              {# <a class="navbar-brand d-sm-none me-2" href="{{ home }}">
                   <img src="catalog/view/dist/img/logo-chipoteka.svg" width="74" alt="{{ name }}">
-              </a>
+              </a> #}
             <!-- Search-->
             <div class="input-group d-none d-lg-flex flex-nowrap mx-4"><i class="ci-search position-absolute top-50 start-0 translate-middle-y ms-3"></i>
                 <input class="form-control rounded-start w-100" type="text" placeholder="Pretraži proizvode">
@@ -20,10 +20,12 @@
             </div>
             <!-- Toolbar-->
             <div class="navbar-toolbar d-flex flex-shrink-0 align-items-center ms-xl-2">
-                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideNav"><span class="navbar-toggler-icon"></span></button><a class="navbar-tool d-flex d-lg-none" href="#searchBox" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="searchBox"><span class="navbar-tool-tooltip">Search</span>
-                    <div class="navbar-tool-icon-box"><i class="navbar-tool-icon ci-search"></i></div></a><a class="navbar-tool d-none d-lg-flex" href="#"><span class="navbar-tool-tooltip">Wishlist</span>
-                    <div class="navbar-tool-icon-box"><i class="navbar-tool-icon ci-heart"></i></div></a><a class="navbar-tool ms-1 ms-lg-0 me-n1 me-lg-2"  href="{% if logged %}{{ edit }}{% else %} {{ login }}{% endif %}">
-                    <div class="navbar-tool-icon-box"><i class="navbar-tool-icon ci-user"></i></div>
+           
+                <button class="navbar-tool navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideNav">
+                <div class="navbar-tool-icon-box"><i class="fal fa-bars navbar-tool-icon"></i></div></button><a class="navbar-tool d-flex d-lg-none" href="#searchBox" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="searchBox"><span class="navbar-tool-tooltip">Search</span>
+                    <div class="navbar-tool-icon-box"> <i class="fal fa-search navbar-tool-icon start-0"></i></div></a><a class="navbar-tool d-none d-lg-flex" href="#"><span class="navbar-tool-tooltip">Wishlist</span>
+                    <div class="navbar-tool-icon-box"><i class="navbar-tool-icon ci-heart"></i></div></a><a class="navbar-tool"  href="{% if logged %}{{ edit }}{% else %} {{ login }}{% endif %}">
+                    <div class="navbar-tool-icon-box"><i class="fal fa-user navbar-tool-icon"></i> </i></div>
                     {% if logged %}
                     <div class="navbar-tool-text ms-n3"><small>Dobro došao/la, </small>{{ text_logged }}</div>
                     {% else %}
@@ -31,7 +33,7 @@
                     {% endif %}
                     </a>
 
-                <div class="navbar-tool dropdown ms-3"><a class="navbar-tool-icon-box bg-secondary dropdown-toggle" href="{{ shopping_cart }}"><span class="navbar-tool-label">{{ cart_items }}</span><i class="navbar-tool-icon ci-cart"></i></a><a class="navbar-tool-text" href="{{ shopping_cart }}"><small>Moja košarice</small>{{ cart_amount }}</a>
+                <div class="navbar-tool dropdown"><a class="navbar-tool-icon-box dropdown-toggle" href="{{ shopping_cart }}"><span class="navbar-tool-label">{{ cart_items }}</span><i class="fal fa-shopping-basket navbar-tool-icon"></i> </a><a class="navbar-tool-text" href="{{ shopping_cart }}"><small>Moja košarice</small>{{ cart_amount }}</a>
                     {{ cart }}
                 </div>
             </div>

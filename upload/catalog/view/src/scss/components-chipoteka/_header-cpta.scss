@@ -1,7 +1,119 @@
 //
-// Header
+// Header & Navbar & Sidebar
 // --------------------------------------------------
 
-body > header[data-fixed-element] {
+body>header[data-fixed-element] {
     position: sticky;
+
+
+    // - - - - - - - - - - - - - - - -
+    // Navbar
+    .navbar {
+
+        .navbar-brand {
+            margin-bottom: -15px;
+        }
+
+        // - - - - - - - - - -
+        // Navbar icons
+        .navbar-tool {
+
+            &:hover {
+                .navbar-tool-icon {
+                    color: $primary;
+                }
+            }
+        }
+
+        .navbar-tool-icon-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+         }
+
+        .navbar-tool-icon {
+            font-size: 1.5rem;
+            transition: $navbar-tool-transition;
+        }
+
+        .navbar-tool-label {
+            top: unset;
+            right: unset;
+            bottom: -0.1125rem;
+            width: unset;
+            padding: 0 0.313rem;
+            border-radius: 15px;
+            font-weight: 600;
+        }
+
+        // - - - - - - - - - -
+        // Mobile
+
+
+        @include media-breakpoint-down(lg) {
+            border-radius: 0 0 9px 0;
+            background-color: $primary;
+            min-height: 60px;
+
+            // - - - - - - - - - -
+            // Navbar icons
+
+            .navbar-toggler .navbar-tool-icon,
+            .navbar-tool-icon {
+                color: $light;
+            }
+
+            .navbar-toggler .navbar-tool-icon:hover {
+                color: $black;
+            }
+
+            .navbar-tool {
+                padding: 0 1.11rem;
+
+                &:not(:first-child) {
+                    border-left: 1px solid rgba($light, 0.15);
+                }
+
+                &:hover {
+                    .navbar-tool-icon {
+                        color: $black;
+                    }
+                }
+            }
+
+            // .dropdown {}
+
+            .navbar-tool-icon-box {
+                width: auto;
+            }
+
+            .navbar-tool-label {
+                background-color: $white;
+                color: $primary;
+            }
+
+            // - - - - - - - - - -
+            // Brand logo
+            .navbar-brand {
+                margin-bottom: 0;
+
+                img {
+                    width: 165px;
+                }
+            }
+        }
+
+        // 450px below
+        @media only screen and (max-width: 450px) {
+            .navbar-brand {
+                img {
+                    width: 117px;
+                }
+            }
+        }
+
+
+
+    }
+
 }
