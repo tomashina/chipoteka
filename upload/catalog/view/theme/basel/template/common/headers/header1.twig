@@ -33,7 +33,7 @@
                     {% endif %}
                     </a>
 
-                <div class="navbar-tool dropdown" id="cart"><a class="navbar-tool-icon-box dropdown-toggle" href="{{ shopping_cart }}"><span class="navbar-tool-label">{{ cart_items }}</span><i class="fal fa-shopping-basket navbar-tool-icon"></i> </a><a class="navbar-tool-text" href="{{ shopping_cart }}"><small>Moja košarice</small>{{ cart_amount }}</a>
+                <div class="navbar-tool dropdown" id="cart"><a class="navbar-tool-icon-box dropdown-toggle" href="{{ shopping_cart }}"><span class="navbar-tool-label" id="cart-total">{{ cart_items }}</span><i class="fal fa-shopping-basket navbar-tool-icon"></i> </a><a class="navbar-tool-text" href="{{ shopping_cart }}"><small>Moja košarice</small>{{ cart_amount }}</a>
                     {{ cart }}
                 </div>
             </div>
