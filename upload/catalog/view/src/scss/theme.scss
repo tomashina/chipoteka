@@ -25,4 +25,22 @@
 
 // Chipoteka components
 @import 'components-chipoteka/header-cpta';  
-@import 'components-chipoteka/offcanvas-cpta';   
+@import 'components-chipoteka/offcanvas-cpta'; 
+
+// FA 
+@import "fa/variables";
+@import "fa/mixins";
+@import "fa/core";
+@import "fa/larger";
+@import "fa/fixed-width";
+// @import "fa/list";
+// @import "fa/bordered-pulled";
+// @import "fa/animated";
+// @import "fa/rotated-flipped";
+// @import "fa/stacked";
+@import "fa/icons";
+@import "fa/screen-reader";
+@import "fa/regular";
+@import "fa/solid";
+@import "fa/light";
+// @import "fa/duotone";
