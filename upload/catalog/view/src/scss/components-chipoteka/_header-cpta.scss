@@ -2,21 +2,50 @@
 // Header & Navbar & Sidebar
 // --------------------------------------------------
 
-body>header[data-fixed-element] {
+body>.page-header {
     position: sticky;
+    background-color: $white;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.09), 0px 1px 21px rgba(0, 0, 0, 0.15);
 
+    
 
     // - - - - - - - - - - - - - - - -
     // Navbar
     .navbar {
+        min-height: 78px;
 
+        // Navbar Brand
         .navbar-brand {
             margin-bottom: -15px;
+
+            img {
+                width: 225px;
+                margin-left: -1px;
+
+                @include media-breakpoint-only(lg) {
+                    padding-top: 7px;
+                    padding-bottom: 7px;
+                    background-color: $primary;
+                    border-radius: 0 0 15px 0;
+                }
+
+                @include media-breakpoint-up(xl) {
+                    width: 265px;
+                }
+            }
         }
 
         // - - - - - - - - - -
         // Navbar icons
         .navbar-tool {
+            padding: 0 0.5rem;
+
+            @include media-breakpoint-up(lg) {
+                &:not(:nth-child(3)) {
+                    border-left: 1px solid $gray-l2;
+                }
+            }
+           
 
             &:hover {
                 .navbar-tool-icon {
@@ -33,7 +62,7 @@ body>header[data-fixed-element] {
 
         .navbar-tool-icon {
             font-size: 1.5rem;
-            transition: $navbar-tool-transition;
+            transition: color $transition-default;
         }
 
         .navbar-tool-label {
@@ -46,18 +75,27 @@ body>header[data-fixed-element] {
             font-weight: 600;
         }
 
-        // - - - - - - - - - -
+        .navbar-tool-text {
+            font-size: 1rem;
+            padding-left: 0;
+            padding-right: 0.5rem;
+
+            small {
+                font-size: 0.875rem;
+            }
+        }
+
+        // - - - - - - - - - - - - - - - - - - -
         // Mobile
 
-
         @include media-breakpoint-down(lg) {
-            border-radius: 0 0 9px 0;
+            border-radius: 0 0 $border-radius-lg 0;
             background-color: $primary;
             min-height: 60px;
 
+
             // - - - - - - - - - -
             // Navbar icons
-
             .navbar-toggler .navbar-tool-icon,
             .navbar-tool-icon {
                 color: $light;
@@ -69,9 +107,10 @@ body>header[data-fixed-element] {
 
             .navbar-tool {
                 padding: 0 1.11rem;
+                border: none;
 
-                &:not(:first-child) {
-                    border-left: 1px solid rgba($light, 0.15);
+                &:not(:nth-child(1)) {
+                    border-left: 1px solid rgba($light, 0.24);
                 }
 
                 &:hover {

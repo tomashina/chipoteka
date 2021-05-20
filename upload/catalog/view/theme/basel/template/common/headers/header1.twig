@@ -1,21 +1,22 @@
-<header class="bg-light shadow-sm fixed-top" data-fixed-element>
+<header class="page-header fixed-top" data-fixed-element>
     {% if notification_status %}
-        <div class="alert alert-warning {% if top_promo_close %} alert-dismissible {% endif %}  fade show top_notificaiton mb-0 {{ top_promo_align }}" role="alert">
+        <div class="alert alert-warning alert-promo {% if top_promo_close %} alert-dismissible {% endif %}  fade show top_notificaiton mb-0 {{ top_promo_align }}" role="alert">
             {{ top_promo_text }}
-            {% if top_promo_close %}  <button type="button" class="btn-close" onClick="addCookie('basel_top_promo', 1, 30);$(this).closest('.top_notificaiton').slideUp(); $('#sideNav').css({'margin-top':''});" data-bs-dismiss="alert" aria-label="Close"></button>{% endif %}
+            {% if top_promo_close %}  <button type="button" class="btn-close" onClick="addCookie('basel_top_promo', 1, 30);$(this).closest('.top_notificaiton').slideUp(); $('#sideNav').css({'margin-top':''});" data-bs-dismiss="alert" aria-label="Close"><i class="fal fa-times"></i></button>{% endif %}
         </div>
     {% endif %}
     <div class="navbar navbar-expand-lg navbar-light py-0">
         <div class="container-fluid ps-0">
             <a class="navbar-brand me-0 me-xl-4 flex-shrink-0 py-0" href="{{ home }}">
-                <img src="catalog/view/dist/img/logo-chipoteka.svg" width="265"  alt="{{ name }}">
+                <img src="catalog/view/dist/img/logo-chipoteka.svg" alt="{{ name }}">
             </a>
               {# <a class="navbar-brand d-sm-none me-2" href="{{ home }}">
                   <img src="catalog/view/dist/img/logo-chipoteka.svg" width="74" alt="{{ name }}">
               </a> #}
             <!-- Search-->
-            <div class="input-group d-none d-lg-flex flex-nowrap mx-4"><i class="ci-search position-absolute top-50 start-0 translate-middle-y ms-3"></i>
-                <input class="form-control rounded-start w-100" type="text" placeholder="Pretraži proizvode">
+            <div class="page-search input-group d-none d-lg-flex flex-nowrap mx-4">
+            <i class="fal fa-search position-absolute top-50 start-0 translate-middle-y ms-3"></i>
+                 <input class="form-control rounded-start w-100" type="text" placeholder="Pretraži proizvode">
 
             </div>
             <!-- Toolbar-->
@@ -27,9 +28,9 @@
                     <div class="navbar-tool-icon-box"><i class="navbar-tool-icon ci-heart"></i></div></a><a class="navbar-tool"  href="{% if logged %}{{ edit }}{% else %} {{ login }}{% endif %}">
                     <div class="navbar-tool-icon-box"><i class="fal fa-user navbar-tool-icon"></i> </i></div>
                     {% if logged %}
-                    <div class="navbar-tool-text ms-n3"><small>Dobro došao/la, </small>{{ text_logged }}</div>
+                    <div class="navbar-tool-text"><small>Dobro došao/la, </small>{{ text_logged }}</div>
                     {% else %}
-                        <div class="navbar-tool-text ms-n3"><small>Dobro došao/la, </small>Prijavi se ili registriraj</div>
+                        <div class="navbar-tool-text "><small>Dobro došao/la, </small>Prijavi se ili registriraj</div>
                     {% endif %}
                     </a>
 
