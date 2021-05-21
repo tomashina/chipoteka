@@ -4,6 +4,11 @@
 //
 
 
+body {
+    background: linear-gradient(180deg, #F5F5F5 0, rgba(245, 245, 245, 0) 333px);
+    background-color: $white;
+}
+ 
 body > main.offcanvas-enabled {
     padding-top: 0 !important;
 }

@@ -5,20 +5,34 @@
 // - - - - - - - - - - - - - - - - -
 // Page Search Input
 .page-search {
+    position: absolute;
+    width: 100%;
+    box-shadow: $box-shadow-header;
 
-    max-width: 999px;
+    @include media-breakpoint-up(lg) {
+        box-shadow: none;
+        position: relative;
+        max-width: 999px;
+    }
+
+
+
     
     // Input
     input {
         padding-left: 4rem !important;
-        padding-right: rem !important;
+        padding-right: 1rem !important;
         color: $dark;
         background-color: $light;
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         font-weight: 300;
         border: none;
         transition: all $transition-default;
         box-shadow: none;
+
+        @include media-breakpoint-up(xl) {
+            font-size: 1.5rem;
+        }
        
         &::placeholder {
             color: $gray-l1;

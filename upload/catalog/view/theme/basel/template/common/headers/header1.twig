@@ -41,8 +41,8 @@
         </div>
     </div>
     <!-- Search collapse-->
-    <div class="collapse" id="searchBox">
-        <div class="card pt-2 pb-4 border-0 rounded-0">
+    <div class="page-search collapse" id="searchBox">
+        <div class="card pt-4 pb-4 border-0 rounded-0">
             <div class="container">
                 <div class="input-group"><i class="ci-search position-absolute top-50 start-0 translate-middle-y ms-3"></i>
                     <input class="form-control rounded-start" type="text" placeholder="Pretraži proizvode">
@@ -51,14 +51,14 @@
         </div>
     </div>
 </header>
-<aside class="offcanvas offcanvas-expand w-100 border-end zindex-lg-5 pt-lg-5" id="sideNav"  style="{% if notification_status %} margin-top:50px  {% endif %}" >
+<aside class="sidebar offcanvas offcanvas-expand w-100 border-end zindex-lg-5 pt-lg-5" id="sideNav"  style="{% if notification_status %} margin-top:50px  {% endif %}" >
     <div class="pt-2 d-none d-lg-block"></div>
-    <ul class="nav nav-tabs nav-justified mt-4 mt-lg-5 mb-0" role="tablist" style="min-height: 3rem;">
-        <li class="nav-item"><a class="nav-link fw-medium active" href="#categories" data-bs-toggle="tab" role="tab">WEB SHOP</a></li>
-        <li class="nav-item"><a class="nav-link fw-medium" href="#menu" data-bs-toggle="tab" role="tab">Menu</a></li>
+    <ul class="nav nav-tabs nav-justified mt-4 mt-lg-5 mb-0" role="tablist">
+        <li class="nav-item"><a class="nav-link active" href="#categories" data-bs-toggle="tab" role="tab"><i class="fas fa-store"></i> Web shop</a></li>
+        <li class="nav-item"><a class="nav-link" href="#menu" data-bs-toggle="tab" role="tab"><i class="fas fa-info-circle"></i> Info </a></li>
         <li class="nav-item d-lg-none"><a class="nav-link fs-sm" href="#" data-bs-dismiss="offcanvas" role="tab"><i class="ci-close fs-xs me-2"></i>Close</a></li>
     </ul>
-    <div class="offcanvas-body px-0 pt-3 pb-0" data-simplebar>
+    <div class="offcanvas-body px-0 pb-0" data-simplebar>
         <div class="tab-content">
             <!-- Categories-->
             <div class="sidebar-nav tab-pane fade show active" id="categories" role="tabpanel">
@@ -82,7 +82,7 @@
                     <div class="accordion" id="shop-menu">
                         <!-- Homepages-->
                         <div class="accordion-item border-bottom">
-                            <h3 class="accordion-header px-grid-gutter">
+                            <h3 class="accordion-header">
                                 <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#home" aria-expanded="false" aria-controls="home">Homepages</button>
                             </h3>
                             <div class="collapse" id="home" data-bs-parent="#shop-menu">
@@ -103,7 +103,7 @@
                         </div>
                         <!-- Shop-->
                         <div class="accordion-item border-bottom">
-                            <h3 class="accordion-header px-grid-gutter">
+                            <h3 class="accordion-header">
                                 <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#shop" aria-expanded="false" aria-controls="shop">Shop</button>
                             </h3>
                             <div class="collapse" id="shop" data-bs-parent="#shop-menu">
@@ -166,7 +166,7 @@
                         </div>
                         <!-- Account-->
                         <div class="accordion-item border-bottom">
-                            <h3 class="accordion-header px-grid-gutter">
+                            <h3 class="accordion-header">
                                 <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#account" aria-expanded="false" aria-controls="account">Account</button>
                             </h3>
                             <div class="collapse" id="account" data-bs-parent="#shop-menu">
@@ -204,7 +204,7 @@
                         </div>
                         <!-- Pages-->
                         <div class="accordion-item border-bottom">
-                            <h3 class="accordion-header px-grid-gutter">
+                            <h3 class="accordion-header">
                                 <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#pages" aria-expanded="false" aria-controls="pages">Pages</button>
                             </h3>
                             <div class="collapse" id="pages" data-bs-parent="#shop-menu">
@@ -233,7 +233,7 @@
                         </div>
                         <!-- Blog-->
                         <div class="accordion-item border-bottom">
-                            <h3 class="accordion-header px-grid-gutter">
+                            <h3 class="accordion-header">
                                 <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#blog" aria-expanded="false" aria-controls="blog">Blog</button>
                             </h3>
                             <div class="collapse" id="blog" data-bs-parent="#shop-menu">
@@ -265,7 +265,7 @@
                         </div>
                         <!-- Docs-->
                         <div class="accordion-item border-bottom">
-                            <h3 class="accordion-header px-grid-gutter">
+                            <h3 class="accordion-header">
                                 <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#docs" aria-expanded="false" aria-controls="docs">Docs / Components</button>
                             </h3>
                             <div class="collapse" id="docs" data-bs-parent="#shop-menu">

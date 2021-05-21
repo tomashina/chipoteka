@@ -2,7 +2,7 @@
 {% for category in categories %}
     {% if category.children %}
         <div class="accordion-item border-bottom">
-            <h3 class="accordion-header px-grid-gutter">
+            <h3 class="accordion-header">
                 <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#catid{{ category.category_id }}" aria-expanded="false" aria-controls="catid{{ category.category_id }}"><span class="d-flex align-items-center">{{ category.name }}</span></button>
             </h3>
             <div class="collapse" id="catid{{ category.category_id }}" data-bs-parent="#shop-categories">
@@ -32,7 +32,7 @@
         </div>
     {% else %}
         <div class="accordion-item border-bottom">
-            <h3 class="accordion-header px-grid-gutter"><a class="nav-link-style d-block fs-md fw-normal py-3" href="{{ category.href }}"><span class="d-flex align-items-center">{{ category.name }}</span></a></h3>
+            <h3 class="accordion-header"><a class="nav-link-style d-block fs-md fw-normal py-3" href="{{ category.href }}"><span class="d-flex align-items-center">{{ category.name }}</span></a></h3>
         </div>
     {% endif %}
 {% endfor %}
