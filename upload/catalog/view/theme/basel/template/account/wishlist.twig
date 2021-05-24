@@ -1,7 +1,5 @@
 {{ header }}
 <main  class="offcanvas-enabled" style="padding-top: 5rem;">
-
-
   <!-- Page Title-->
   <div class="page-title-overlap bg-dark pt-4 ps-lg-4 pe-lg-3">
     <div class="container d-lg-flex justify-content-between py-2 py-lg-3 ">
@@ -19,93 +17,53 @@
       </div>
     </div>
   </div>
-
-
   <div id="content" class="container pb-5 mb-2 mb-md-4 ps-lg-4 pe-lg-3">
     <div class="row">
       <!-- Sidebar-->
-
       {{ column_left }}
-
       <!-- Content  -->
       <section class="col-lg-8" id="whishlist">
-
-
         <!-- Toolbar-->
         <div class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-4 pb-lg-5 mb-lg-3">
-          <h6 class="fs-base text-light mb-0">{{ text_edit_address }}</h6><a class="btn btn-primary btn-sm" href="{{ logout }}"><i class="ci-sign-out me-2"></i>{{ text_logout }}</a>
+          <h6 class="fs-base text-light mb-0"> {% if products %}{{ text_whish_havesome }} {% else %}{{ text_empty }}{% endif %}</h6>
+          <a class="btn btn-primary btn-sm" href="{{ logout }}"><i class="ci-sign-out me-2"></i>{{ text_logout }}</a>
         </div>
-
-
         {% if success %}
-        <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}
-          <button type="button" class="close" data-dismiss="alert">&times;</button>
-        </div>
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ success }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button>
+          </div>
         {% endif %}
-
         {% if products %}
-          <table class="table table-bordered">
-            <thead>
-            <tr>
-              <td class="remove-cell"></td>
-              <td></td>
-              <td>{{ column_name }}</td>
-              <td class="hidden-xs hidden-sm">{{ column_model }}</td>
-              <td class="text-right hidden-xs hidden-sm">{{ column_stock }}</td>
-              <td class="text-right price-cell hidden-xs hidden-sm">{{ column_price }}</td>
-              <td></td>
-            </tr>
-            </thead>
-            <tbody>
-            {% for product in products %}
-              <tr>
-                <td class="remove-cell text-center"><a href="{{ product.remove }}" title="{{ button_remove }}" class="product-remove"><i class="fa fa-times"></i></a></td>
-                <td class="image">
+          {% for product in products %}
+              <!-- Item-->
+              <div class="d-sm-flex justify-content-between mt-lg-4 mb-4 pb-3 pb-sm-2 border-bottom">
+                <div class="d-block d-sm-flex align-items-start text-center text-sm-start">
                   {% if product.thumb %}
-                    <a href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}" title="{{ product.name }}" /></a>
+                  <a class="d-block flex-shrink-0 mx-auto me-sm-4" href="{{ product.href }}" style="width: 10rem;">
+                    <img src="{{ product.thumb }}" alt="{{ product.name }}">
+                  </a>
                   {% endif %}
-                </td>
-                <td>
-                  <a class="hover_uline" href="{{ product.href }}">{{ product.name }}</a>
-                  <span class="display-block hidden-md hidden-lg">
-                {% if not product.special %}
-                  {{ product.price }}
-                {% else %}
-                  <span class="price">{{ product.special }} </span><span class="price-old">{{ product.price }}</span>
-                {% endif %}
-                  </span>
-                  <span class="display-block hidden-md hidden-lg">{{ product.stock }}</span>
-                  </span>
-                </td>
-                <td class="hidden-xs hidden-sm">{{ product.model }}</td>
-                <td class="text-right hidden-xs hidden-sm">{{ product.stock }}</td>
-                <td class="text-right price-cell hidden-xs hidden-sm">
-                  {% if product.price %}
+                  <div class="pt-2">
+                    <h3 class="product-title fs-base mb-2"><a href="{{ product.href }}">{{ product.name }}</a></h3>
+                    <div class="fs-sm"><span class="text-muted me-2">Šifra:</span>{{ product.model }}</div>
                     {% if not product.special %}
-                      {{ product.price }}
+                      <div class="fs-lg text-accent pt-2"> {{ product.price }}></div>
                     {% else %}
-                      <span class="price">{{ product.special }}</span><span class="price-old">{{ product.price }}</span>
+                      <div class="fs-lg text-accent pt-2"> {{ product.special }} <del class="fs-sm text-muted">{{ product.price }}</del></div>
                     {% endif %}
-                  {% endif %}</td>
-                <td class="text-right"><button type="button" onclick="cart.add('{{ product.product_id }}');" class="btn btn-sm btn-primary">{{ button_cart }}</button>
-                </td>
-              </tr>
+                  </div>
+                </div>
+                <div class="pt-2 ps-sm-3 mx-auto mx-sm-0 text-center">
+                  <a class="btn btn-primary btn-sm" onclick="cart.add('{{ product.product_id }}');"><i class="ci-trash me-2"></i>{{ button_cart }}</a>
+                  <a class="btn btn-outline-danger btn-sm" href="{{ product.remove }}"><i class="ci-trash me-2"></i>{{ button_remove }}</a>
+                </div>
+              </div>
             {% endfor %}
-            </tbody>
-          </table>
-
         {% else %}
           <p>{{ text_empty }}</p>
         {% endif %}
-
-
       </section>
-
     </div>
   </div>
-
-
-
-
-
 {{ footer }}

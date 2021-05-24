@@ -1,5 +1,6 @@
 <div class="col-lg-3 col-md-4 col-sm-6 px-2 mb-4">
     <div class="card product-card">
+        <button class="btn-wishlist btn-sm" type="button" data-bs-toggle="tooltip" data-bs-placement="left" onclick="wishlist.add('{{ product.product_id }}');" title="{{ button_wishlist }}"><i class="ci-heart"></i></button>
         <a class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}"></a>
         <div class="card-body py-2">
             <h3 class="product-title fs-sm"><a href="{{ product.href }}">{{ product.name }}</a></h3>

@@ -1,13 +1,16 @@
 
-    <h4><b>{{ heading_title }}</b></h4>
-<div class="form-vertical">
-      <label class="control-label" for="input-coupon">{{ entry_coupon }}</label>
-      
-        <input type="text" name="coupon" value="{{ coupon }}" placeholder="{{ entry_coupon }}" id="input-coupon" class="form-control margin-b10" />
-        
-<input type="button" value="{{ button_coupon }}" id="button-coupon" data-loading-text="{{ text_loading }}"  class="btn btn-primary" />
+<div class="accordion-item">
+    <h3 class="accordion-header"><a class="accordion-button collapsed" href="#promo-code" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="promo-code">{{ heading_title }}</a></h3>
+    <div class="accordion-collapse collapse " id="promo-code" data-bs-parent="#order-options">
+        <form class="accordion-body needs-validation" method="post" novalidate>
+            <div class="mb-3">
+                <input class="form-control" name="coupon" value="{{ coupon }}" placeholder="{{ entry_coupon }}" id="input-coupon">
+                <div class="invalid-feedback">Please provide promo code.</div>
+            </div>
+            <input class="btn btn-outline-primary d-block w-100" type="button" value="{{ button_coupon }}" id="button-coupon" data-loading-text="{{ text_loading }}" />
+        </form>
+    </div>
 </div>
-        
       <script><!--
 $('#button-coupon').on('click', function() {
 	$.ajax({
@@ -25,7 +28,7 @@ $('#button-coupon').on('click', function() {
 			$('.alert').remove();
 
 			if (json['error']) {
-				$('#content').before('<div class="col-sm-12"><div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div></div>');
+				$('#content').before('<div class="alert alert-danger alert-dismissible fade show" role="alert"> ' + json['error'] + '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button></div>');
 
 				$('html, body').animate({ scrollTop: 0 }, 'slow');
 			}
@@ -37,3 +40,4 @@ $('#button-coupon').on('click', function() {
 	});
 });
 //--></script>
+

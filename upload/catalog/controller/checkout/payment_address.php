@@ -4,10 +4,12 @@ class ControllerCheckoutPaymentAddress extends Controller {
 		$this->load->language('checkout/checkout');
 
 		if (isset($this->session->data['payment_address']['address_id'])) {
-			$data['address_id'] = $this->session->data['payment_address']['address_id'];
+			 $data['address_id'] = $this->session->data['payment_address']['address_id'];
 		} else {
-			$data['address_id'] = $this->customer->getAddressId();
+           $data['address_id'] = $this->customer->getAddressId();
 		}
+
+
 
 		$this->load->model('account/address');
 
@@ -48,7 +50,12 @@ class ControllerCheckoutPaymentAddress extends Controller {
 			$data['payment_address_custom_field'] = array();
 		}
 
+
+
 		$this->response->setOutput($this->load->view('checkout/payment_address', $data));
+
+
+
 	}
 
 	public function save() {
