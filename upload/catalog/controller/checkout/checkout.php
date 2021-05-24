@@ -27,7 +27,9 @@ class ControllerCheckoutCheckout extends Controller {
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
-		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment.min.js');
+        $data['urlroute'] = $this->request->get['route'];
+
+	/*	$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment.min.js');
 		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js');
 		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js');
 		$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');
@@ -35,7 +37,7 @@ class ControllerCheckoutCheckout extends Controller {
 		// Required by klarna
 		if ($this->config->get('payment_klarna_account') || $this->config->get('payment_klarna_invoice')) {
 			$this->document->addScript('http://cdn.klarna.com/public/kitt/toc/v1.0/js/klarna.terms.min.js');
-		}
+		}*/
 
 		$data['breadcrumbs'] = array();
 
@@ -139,6 +141,8 @@ class ControllerCheckoutCheckout extends Controller {
         $data['continue'] = $this->url->link('common/home');
 
         $data['checkout'] = $this->url->link('checkout/checkout', '', true);
+
+        $data['shipping_method'] = $this->url->link('checkout/shipping_method', '', true);
 
         $this->load->model('setting/extension');
 

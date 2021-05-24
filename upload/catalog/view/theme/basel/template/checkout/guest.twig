@@ -46,14 +46,14 @@
 
 
 <div class="row">
-    <div class="col-sm-6">
-        <div class="mb-3">
+    <div class="col-sm-6 required">
+        <div class="mb-3 form-group">
             <label class="form-label" for="input-payment-firstname">{{ entry_firstname }} <span class="text-danger">*</span></label>
-            <input class="form-control" type="text" name="firstname" value="" placeholder="{{ entry_firstname }}" id="input-payment-firstname" >
+            <input class="form-control" type="text" name="firstname" value="" placeholder="{{ entry_firstname }}" id="input-payment-firstname" required>
         </div>
     </div>
     <div class="col-sm-6">
-        <div class="mb-3">
+        <div class="mb-3 form-group">
             <label class="form-label" for="input-payment-lastname">{{ entry_lastname }} <span class="text-danger">*</span></label>
             <input class="form-control" type="text" name="lastname" value="" placeholder="{{ entry_lastname }}" id="input-payment-lastname" >
         </div>
@@ -62,13 +62,13 @@
 
 <div class="row">
     <div class="col-sm-6">
-        <div class="mb-3">
+        <div class="mb-3 form-group">
             <label class="form-label" for="input-payment-email">{{ entry_email }} <span class="text-danger">*</span></label>
             <input type="text" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-payment-email" class="form-control" />
         </div>
     </div>
     <div class="col-sm-6">
-        <div class="mb-3">
+        <div class="mb-3 form-group">
             <label class="form-label" for="input-payment-telephone">{{ entry_telephone }} <span class="text-danger">*</span></label>
             <input type="text" name="telephone" value="{{ telephone }}" placeholder="{{ entry_telephone }}" id="input-payment-telephone" class="form-control" />
         </div>
@@ -80,13 +80,13 @@
 
 <div class="row">
     <div class="col-sm-6">
-        <div class="mb-3">
+        <div class="mb-3 form-group">
             <label class="form-label" for="input-payment-address-1">{{ entry_address_1 }} <span class="text-danger">*</span></label>
             <input class="form-control" type="text" name="address_1" value="" placeholder="{{ entry_address_1 }}" id="input-payment-address-1">
         </div>
     </div>
     <div class="col-sm-6">
-        <div class="mb-3">
+        <div class="mb-3 form-group">
             <label class="form-label" for="input-payment-city">{{ entry_city }} <span class="text-danger">*</span></label>
             <input class="form-control" type="text" name="city" value="" placeholder="{{ entry_city }}" id="input-payment-city">
         </div>
@@ -96,16 +96,16 @@
 
 <div class="row">
     <div class="col-sm-6">
-        <div class="mb-3">
+        <div class="mb-3 form-group">
             <label class="form-label" for="input-payment-postcode">{{ entry_postcode }} <span class="text-danger">*</span></label>
             <input class="form-control" type="text" name="postcode" value="" placeholder="{{ entry_postcode }}" id="input-payment-postcode">
         </div>
     </div>
 
     <div class="col-sm-6">
-        <div class="mb-3">
+        <div class="mb-3 form-group">
             <label class="form-label" for="input-payment-country">{{ entry_country }} <span class="text-danger">*</span></label>
-            <select name="country" id="input-payment-country" class="form-select">
+            <select name="country_id" id="input-payment-country" class="form-select">
                 <option value="">{{ text_select }}</option>
                 {% for country in countries %}
                     {% if country.country_id == country_id %}
@@ -120,7 +120,6 @@
 
 
 </div>
-
 
 
 <h6 class="mb-3 py-3 border-bottom">Trebate R1 račun?</h6>
