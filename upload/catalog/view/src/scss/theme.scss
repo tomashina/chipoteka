@@ -16,17 +16,6 @@
 // Bootstrap
 @import '../../dist/vendor/bootstrap/scss/bootstrap';
 
-// Layout & components
-@import 'reboot';
-@import 'components';   
-
-// User custom styles   
-@import 'user'; 
-
-// Chipoteka components
-@import 'components-chipoteka/header-cpta';
-@import 'components-chipoteka/forms-cpta';
-@import 'components-chipoteka/alert-cpta';
 
 // FA 
 @import "fa/variables";
@@ -45,3 +34,16 @@
 @import "fa/solid";
 @import "fa/light";
 // @import "fa/duotone";
+
+// Layout & components
+@import 'reboot';
+@import 'components';   
+
+// User custom styles   
+@import 'user'; 
+
+// Chipoteka components
+@import 'components-chipoteka/header-cpta';
+@import 'components-chipoteka/forms-cpta';
+@import 'components-chipoteka/alert-cpta';
+
