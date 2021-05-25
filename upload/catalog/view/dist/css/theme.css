@@ -27688,7 +27688,11 @@ html:not([dir=rtl]) .range-slider-ui.noUi-horizontal .noUi-handle {
   }
 }
 
-.sidebar #categories .accordion-item .accordion-header .accordion-button::after, .sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link::after {
+.sidebar #account .accordion-item .accordion-header .accordion-button::after,
+.sidebar #menu .accordion-item .accordion-header .accordion-button::after,
+.sidebar #categories .accordion-item .accordion-header .accordion-button::after, .sidebar #account .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link::after,
+.sidebar #menu .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link::after,
+.sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link::after {
   display: inline-block;
   font-style: normal;
   font-variant: normal;
@@ -27874,15 +27878,21 @@ main > .section {
   font-size: 1rem;
 }
 
+.sidebar #account .accordion-item .accordion-header + [id*="catid"],
+.sidebar #menu .accordion-item .accordion-header + [id*="catid"],
 .sidebar #categories .accordion-item .accordion-header + [id*="catid"] {
   background-color: #F5F5F5;
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.sidebar #account .accordion-item .accordion-header,
+.sidebar #menu .accordion-item .accordion-header,
 .sidebar #categories .accordion-item .accordion-header {
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.sidebar #account .accordion-item .accordion-header .accordion-button,
+.sidebar #menu .accordion-item .accordion-header .accordion-button,
 .sidebar #categories .accordion-item .accordion-header .accordion-button {
   font-size: 1rem;
   text-transform: uppercase;
@@ -27891,6 +27901,8 @@ main > .section {
   border-radius: 0;
 }
 
+.sidebar #account .accordion-item .accordion-header .accordion-button::after,
+.sidebar #menu .accordion-item .accordion-header .accordion-button::after,
 .sidebar #categories .accordion-item .accordion-header .accordion-button::after {
   font-weight: 300;
   content: "\f078";
@@ -27900,22 +27912,32 @@ main > .section {
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.sidebar #account .accordion-item .accordion-header .accordion-button[aria-expanded="true"],
+.sidebar #menu .accordion-item .accordion-header .accordion-button[aria-expanded="true"],
 .sidebar #categories .accordion-item .accordion-header .accordion-button[aria-expanded="true"] {
   background-color: #F5F5F5;
 }
 
+.sidebar #account .accordion-item .accordion-header .accordion-button[aria-expanded="true"]:after,
+.sidebar #menu .accordion-item .accordion-header .accordion-button[aria-expanded="true"]:after,
 .sidebar #categories .accordion-item .accordion-header .accordion-button[aria-expanded="true"]:after {
   color: #E31318;
 }
 
+.sidebar #account .accordion-item .widget-links,
+.sidebar #menu .accordion-item .widget-links,
 .sidebar #categories .accordion-item .widget-links {
   margin-left: 0;
 }
 
+.sidebar #account .accordion-item .widget-links .widget-list,
+.sidebar #menu .accordion-item .widget-links .widget-list,
 .sidebar #categories .accordion-item .widget-links .widget-list {
   border: none;
 }
 
+.sidebar #account .accordion-item .widget-links .widget-list .widget-list-item,
+.sidebar #menu .accordion-item .widget-links .widget-list .widget-list-item,
 .sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item {
   margin-bottom: 0;
   padding-left: 0;
@@ -27923,10 +27945,14 @@ main > .section {
   border-bottom: 1px solid #fff;
 }
 
+.sidebar #account .accordion-item .widget-links .widget-list .widget-list-item:first-child,
+.sidebar #menu .accordion-item .widget-links .widget-list .widget-list-item:first-child,
 .sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item:first-child {
   border-top: 1px solid #fff;
 }
 
+.sidebar #account .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link,
+.sidebar #menu .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link,
 .sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link {
   padding: 0.75rem 1.25rem;
   padding-right: 1rem;
@@ -27934,6 +27960,8 @@ main > .section {
   display: flex;
 }
 
+.sidebar #account .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link::after,
+.sidebar #menu .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link::after,
 .sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link::after {
   font-weight: 300;
   content: "\f078";
@@ -27951,25 +27979,35 @@ main > .section {
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.sidebar #account .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link[aria-expanded*="true"],
+.sidebar #menu .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link[aria-expanded*="true"],
 .sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link[aria-expanded*="true"] {
   color: #E31318;
   background-color: #e8e8e8;
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.sidebar #account .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link[aria-expanded*="true"]::after,
+.sidebar #menu .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link[aria-expanded*="true"]::after,
 .sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link[aria-expanded*="true"]::after {
   transform: rotate(180deg);
   color: #E31318;
 }
 
+.sidebar #account .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link + [id*="subid"],
+.sidebar #menu .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link + [id*="subid"],
 .sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link + [id*="subid"] {
   background-color: #e8e8e8;
 }
 
+.sidebar #account .accordion-item .widget-links .widget-list .widget-list-item > .widget-list .widget-list-item,
+.sidebar #menu .accordion-item .widget-links .widget-list .widget-list-item > .widget-list .widget-list-item,
 .sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item > .widget-list .widget-list-item {
   border-bottom: 1px solid #fff;
 }
 
+.sidebar #account .accordion-item .widget-links .widget-list .widget-list-item > .widget-list .widget-list-item .widget-list-link::after,
+.sidebar #menu .accordion-item .widget-links .widget-list .widget-list-item > .widget-list .widget-list-item .widget-list-link::after,
 .sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item > .widget-list .widget-list-item .widget-list-link::after {
   content: "";
   display: none;
