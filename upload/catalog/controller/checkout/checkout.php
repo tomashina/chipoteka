@@ -142,6 +142,8 @@ class ControllerCheckoutCheckout extends Controller {
 
         $data['checkout'] = $this->url->link('checkout/checkout', '', true);
 
+        $data['cart'] = $this->url->link('checkout/cart', '', true);
+
         $data['shipping_method'] = $this->url->link('checkout/shipping_method', '', true);
 
         $this->load->model('setting/extension');
