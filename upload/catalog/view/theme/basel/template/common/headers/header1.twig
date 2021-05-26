@@ -26,7 +26,7 @@
                 <div class="navbar-tool-icon-box"><i class="fal fa-bars navbar-tool-icon"></i></div></button><a class="navbar-tool d-flex d-lg-none" href="#searchBox" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="searchBox"><span class="navbar-tool-tooltip">Search</span>
                     <div class="navbar-tool-icon-box"> <i class="fal fa-search navbar-tool-icon start-0"></i></div></a><a class="navbar-tool d-none d-lg-flex" href="#"><span class="navbar-tool-tooltip">Wishlist</span>
                     <div class="navbar-tool-icon-box"><i class="navbar-tool-icon ci-heart"></i></div></a><a class="navbar-tool"  href="{% if logged %}{{ edit }}{% else %} {{ login }}{% endif %}">
-                    <div class="navbar-tool-icon-box"><i class="fal fa-user navbar-tool-icon"></i></div>
+                    <div class="navbar-tool-icon-box"><i class="fal fa-user navbar-tool-icon"></i> </i></div>
                     {% if logged %}
                     <div class="navbar-tool-text"><small>Dobro došao/la, </small>{{ text_logged }}</div>
                     {% else %}
@@ -34,16 +34,9 @@
                     {% endif %}
                     </a>
 
-                <div class="navbar-tool dropdown" id="cart">
-                    <a class="navbar-tool-icon-box dropdown-toggle" href="{{ shopping_cart }}">
-                        <span class="navbar-tool-label cart-total-items" id="cart-total">{{ cart_items }}</span><i class="fal fa-shopping-basket navbar-tool-icon"></i>
-                    </a>
-                    <a class="navbar-tool-text cart-total-amount" href="{{ shopping_cart }}"><small>Moja košarice</small>{{ cart_amount }}</a>
+                <div class="navbar-tool dropdown" id="cart"><a class="navbar-tool-icon-box dropdown-toggle" href="{{ shopping_cart }}"><span class="navbar-tool-label" id="cart-total">{{ cart_items }}</span><i class="fal fa-shopping-basket navbar-tool-icon"></i> </a><a class="navbar-tool-text" href="{{ shopping_cart }}"><small>Moja košarice</small>{{ cart_amount }}</a>
                     {{ cart }}
                 </div>
-
-
-
             </div>
         </div>
     </div>
