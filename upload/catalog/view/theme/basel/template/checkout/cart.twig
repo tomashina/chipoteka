@@ -65,7 +65,7 @@
 
                                 {% if product.thumb %}
                                     <a class="d-inline-block flex-shrink-0 mx-auto me-sm-4" href="{{ product.href }}">
-                                        <img src="{{ product.thumb }}" width="160" alt="{{ product.name }}">
+                                        <img src="{{ product.thumb }}" width="120" alt="{{ product.name }}">
                                     </a>
                                 {% endif %}
 
@@ -102,18 +102,24 @@
             <aside class="col-lg-4 pt-4 pt-lg-0 ps-xl-5">
                 <div class="bg-white rounded-3 shadow-lg p-4">
                     <div class="py-2 px-xl-2">
-                        <div class="text-center mb-4 pb-3 border-bottom">
-
-
+                        <div class="text-center mb-4 border-bottom">
+                            <h2 class="h6 text-center mb-4">Sažetak narudžbe</h2>
+                            <ul class="list-unstyled fs-sm pb-2 border-bottom">
                             {% for total in totals %}
-                                {% if total.title=='Ukupno'  %}
-                                    <h2 class="h6 mb-3 pb-1">{{ total.title }}</h2>
-                                    <h3 class="fw-normal">{{ total.text }}</h3>
+                                {% if total.title!='Ukupno'  %}
+
+                                    <li class="d-flex justify-content-between align-items-center"><span class="me-2">{{ total.title }}</span><span class="text-end">{{ total.text }}</span></li>
+
                                 {% endif %}
                             {% endfor %}
+                            </ul>
 
+                            {% for total in totals %}
+                            {% if total.title=='Ukupno'  %}
 
-
+                            <h3 class="fw-normal text-center my-4">{{ total.text }}</h3>
+                            {% endif %}
+                            {% endfor %}
                         </div>
 
                         <div class="accordion" id="order-options">
@@ -125,9 +131,8 @@
                             {% endfor %}
                             {% endif %}
 
-
-
-                        </div><a class="btn btn-primary btn-shadow d-block w-100 mt-4" href="{{ checkout }}"><i class="ci-card fs-lg me-2"></i>{{ button_checkout }}</a>
+                        </div>
+                        <a class="btn btn-primary btn-shadow d-block w-100 mt-4" href="{{ checkout }}"><i class="ci-card fs-lg me-2"></i>{{ button_checkout }}</a>
                     </div>
                 </div>
             </aside>

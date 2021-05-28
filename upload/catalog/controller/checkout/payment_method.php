@@ -158,6 +158,15 @@ class ControllerCheckoutPaymentMethod extends Controller {
 			}
 		}
 
+		//start
+
+
+
+
+
+
+        //end
+
 		if (!isset($this->request->post['payment_method'])) {
 			$json['error']['warning'] = $this->language->get('error_payment');
 		} elseif (!isset($this->session->data['payment_methods'][$this->request->post['payment_method']])) {
@@ -177,7 +186,7 @@ class ControllerCheckoutPaymentMethod extends Controller {
 		if (!$json) {
 			$this->session->data['payment_method'] = $this->session->data['payment_methods'][$this->request->post['payment_method']];
 
-			$this->session->data['comment'] = strip_tags($this->request->post['comment']);
+			//$this->session->data['comment'] = strip_tags($this->request->post['comment']);
 		}
 
 		$this->response->addHeader('Content-Type: application/json');

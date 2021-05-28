@@ -21,7 +21,7 @@
         <div class="row">
             <section class="col-lg-12">
                 <!-- Steps-->
-                <div class="steps steps-dark pt-2 pb-3 mb-5"><a id="stepcart" class="step-item active" href="{{ cart }}">
+                <div class="steps steps-dark pt-2 pb-3 mb-3"><a id="stepcart" class="step-item active" href="{{ cart }}">
                         <div class="step-progress"><span class="step-count">1</span></div>
                         <div class="step-label"><i class="ci-cart"></i>Košarica</div></a><a id="stepcheckout" class="step-item  " href="{{ checkout }}">
                         <div class="step-progress"><span class="step-count">2</span></div>
@@ -45,9 +45,13 @@
             <section class="col-lg-8 "  >
 
                     {% if error_warning %}
-                  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                  </div>
+
+                        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                            {{ error_warning }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+
+
                   {% endif %}
 
                 <hr>
@@ -56,43 +60,43 @@
 
 
                         <div   id="collapse-checkout-option">
-                            <div class="card-body"></div>
+                            <div class="card-body px-0"></div>
                         </div>
 
                     {% if not logged and account != 'guest' %}
 
                             <div  id="collapse-payment-address">
-                                <div class="card-body"></div>
+                                <div class="card-body p-0"></div>
                             </div>
 
                     {% else %}
                         <div id="collapse-payment-address">
-                            <div class="card-body"></div>
+                            <div class="card-body p-0"></div>
                         </div>
                     {% endif %}
                     {% if shipping_required %}
 
 
                             <div  id="collapse-shipping-address">
-                                <div class="card-body"></div>
+                                <div class="card-body px-0"></div>
                             </div>
 
 
 
                             <div  id="collapse-shipping-method">
-                                <div class="card-body"></div>
+                                <div class="card-body px-0"></div>
                             </div>
 
                     {% endif %}
 
 
                         <div  id="collapse-payment-method">
-                            <div class="card-body"></div>
+                            <div class="card-body px-0"></div>
                         </div>
 
 
                         <div  id="collapse-checkout-confirm">
-                            <div class="card-body"></div>
+                            <div class="card-body px-0"></div>
                         </div>
 
                 </div>
@@ -101,16 +105,11 @@
 
             </section>
 
-             <aside class="col-lg-4 pt-4 pt-lg-0 ps-xl-5">
+             <aside class="d-none d-lg-block col-lg-4 pt-4 pt-lg-0 ps-xl-5">
             <div class="bg-white rounded-3 shadow-lg p-4">
                 <div class="py-2 px-xl-2">
-                    <div class="text-center mb-4 pb-3 border-bottom">
-                        {% for total in totals %}
-                            {% if total.title=='Ukupno'  %}
-                                <h2 class="h6 mb-3 pb-1">{{ total.title }}</h2>
-                                <h3 class="fw-normal">{{ total.text }}</h3>
-                            {% endif %}
-                        {% endfor %}
+                    <div  id="sazetak">
+
                     </div>
                     <div class="accordion" id="order-options">
                         {% if modules %}
@@ -141,6 +140,7 @@
                 success: function(html) {
                     {% if not logged  %}
                     $('#collapse-checkout-option .card-body').html(html);
+                    $('#sazetak').load('index.php?route=common/total/info #total-content > *');
                     {% endif %}
                     $( "#stepcheckout" ).addClass( 'active current');
 
@@ -331,11 +331,6 @@
                             success: function(html) {
                                 $('#collapse-payment-method .card-body').html(html);
 
-                                $('#collapse-payment-method').parent().find('.panel-heading .panel-title').html('<a href="#collapse-payment-method" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_payment_method }} <i class="fa fa-caret-down"></i></a>');
-
-                                $('a[href=\'#collapse-payment-method\']').trigger('click');
-
-                                $('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                             },
                             error: function(xhr, ajaxOptions, thrownError) {
                                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -410,13 +405,7 @@
                             success: function(html) {
                                 $('#collapse-shipping-address .card-body').html(html);
 
-                                $('#collapse-shipping-address').parent().find('.panel-heading .panel-title').html('<a href="#collapse-shipping-address" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_address }} <i class="fa fa-caret-down"></i></a>');
 
-                                $('a[href=\'#collapse-shipping-address\']').trigger('click');
-
-                                $('#collapse-shipping-method').parent().find('.panel-heading .panel-title').html('{{ text_checkout_shipping_method }}');
-                                $('#collapse-payment-method').parent().find('.panel-heading .panel-title').html('{{ text_checkout_payment_method }}');
-                                $('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                             },
                             error: function(xhr, ajaxOptions, thrownError) {
                                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -440,11 +429,6 @@
                             success: function(html) {
                                 $('#collapse-payment-method .card-body').html(html);
 
-                                $('#collapse-payment-method').parent().find('.panel-heading .panel-title').html('<a href="#collapse-payment-method" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_payment_method }} <i class="fa fa-caret-down"></i></a>');
-
-                                $('a[href=\'#collapse-payment-method\']').trigger('click');
-
-                                $('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                             },
                             error: function(xhr, ajaxOptions, thrownError) {
                                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -490,7 +474,7 @@
                         $('#button-shipping-address').button('reset');
 
                         if (json['error']['warning']) {
-                            $('#collapse-shipping-address .card-body').prepend('<div class="alert alert-warning alert-dismissible">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                            $('#collapse-shipping-address .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>');
                         }
 
                         for (i in json['error']) {
@@ -580,7 +564,7 @@
                         $('#button-guest').button('reset');
 
                         if (json['error']['warning']) {
-                            $('#collapse-payment-address .card-body').prepend('<div class="alert alert-warning alert-dismissible">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                            $('#collapse-payment-address .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
                         }
 
                         for (i in json['error']) {
@@ -614,8 +598,7 @@
                                         success: function(html) {
                                             $('#collapse-shipping-address .card-body').html(html);
 
-                                            $('#collapse-shipping-address').parent().find('.panel-heading .panel-title').html('<a href="#collapse-shipping-address" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_address }} <i class="fa fa-caret-down"></i></a>');
-                                        },
+                                          },
                                         error: function(xhr, ajaxOptions, thrownError) {
                                             alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
                                         }
@@ -631,17 +614,6 @@
                                     $( "#button-guest" ).addClass( 'current active');
 
 
-
-
-
-
-
-                                  //  $('#collapse-shipping-method').parent().find('.panel-heading .panel-title').html('<a href="#collapse-shipping-method" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_method }} <i class="fa fa-caret-down"></i></a>');
-
-                                    //$('a[href=\'#collapse-shipping-method\']').trigger('click');
-
-                                  //  $('#collapse-payment-method').parent().find('.panel-heading .panel-title').html('{{ text_checkout_payment_method }}');
-                                   // $('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                                 },
                                 error: function(xhr, ajaxOptions, thrownError) {
                                     alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -675,9 +647,6 @@
                             success: function(html) {
                                 $('#collapse-payment-method .card-body').html(html);
 
-                                $('a[href=\'#collapse-payment-method\']').trigger('click');
-
-                                $('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                             },
                             error: function(xhr, ajaxOptions, thrownError) {
                                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -712,7 +681,7 @@
                         $('#button-guest-shipping').button('reset');
 
                         if (json['error']['warning']) {
-                            $('#collapse-shipping-address .card-body').prepend('<div class="alert alert-danger alert-dismissible">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                            $('#collapse-shipping-address .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
                         }
 
                         for (i in json['error']) {
@@ -737,12 +706,6 @@
                             success: function(html) {
                                 $('#collapse-shipping-method .card-body').html(html);
 
-                                $('#collapse-shipping-method').parent().find('.panel-heading .panel-title').html('<a href="#collapse-shipping-method" data-toggle="collapse" data-parent="#accordion" class="accordion-toggle">{{ text_checkout_shipping_method }} <i class="fa fa-caret-down"></i>');
-
-                                $('a[href=\'#collapse-shipping-method\']').trigger('click');
-
-                                $('#collapse-payment-method').parent().find('.panel-heading .panel-title').html('{{ text_checkout_payment_method }}');
-                                $('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                             },
                             error: function(xhr, ajaxOptions, thrownError) {
                                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -774,7 +737,7 @@
                         $('#button-shipping-method').button('reset');
 
                         if (json['error']['warning']) {
-                            $('#collapse-shipping-method .card-body').prepend('<div class="alert alert-danger alert-dismissible">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                            $('#collapse-shipping-method .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
                         }
                     } else {
                         $.ajax({
@@ -792,13 +755,10 @@
                                 $( "#button-shipping-method" ).addClass( 'current active');
 
 
+                                $('#sazetak').load('index.php?route=common/total/info #total-content > *');
 
                                 $('#collapse-payment-method .card-body').html(html);
 
-
-                                $('a[href=\'#collapse-payment-method\']').trigger('click');
-
-                                $('#collapse-checkout-confirm').parent().find('.panel-heading .panel-title').html('{{ text_checkout_confirm }}');
                             },
                             error: function(xhr, ajaxOptions, thrownError) {
                                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -830,7 +790,7 @@
                         $('#button-payment-method').button('reset');
 
                         if (json['error']['warning']) {
-                            $('#collapse-payment-method .card-body').prepend('<div class="alert alert-danger alert-dismissible">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                            $('#collapse-payment-method .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
                         }
                     } else {
                         $.ajax({
@@ -841,6 +801,7 @@
                             },
                             success: function(html) {
                                 $('#collapse-checkout-confirm .card-body').html(html);
+                                $('#sazetak').load('index.php?route=common/review/info #total-content > *');
 
                                 $('#collapse-payment-method').hide();
 

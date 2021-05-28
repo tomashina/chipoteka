@@ -2,8 +2,8 @@
 
 
 
-<div class="d-sm-flex justify-content-between align-items-center bg-secondary p-4 rounded-3 ">
-    <div class="d-flex align-items-center">
+<div class="d-sm-flex justify-content-between align-items-center bg-secondary p-2 rounded-3 ">
+    <div class="d-inline-flex align-items-center">
 
         <div class="form-check form-check-inline">
             {% if account == 'register' %}
@@ -12,9 +12,9 @@
                 <input type="radio" class="form-check-input" name="account" value="register" />
             {% endif %}
 
-            <label class="form-check-label" />{{ text_register }}</label>
+            <label class="form-check-label" >{{ text_register }}</label>
         </div>
-        {% if checkout_guest %}
+
         <div class="form-check form-check-inline">
             {% if account == 'guest' %}
                 <input type="radio" class="form-check-input" name="account" value="guest" checked="checked" />
@@ -23,33 +23,55 @@
             {% endif %}
             <label class="form-check-label" >{{ text_guest }}</label>
         </div>
-        {% endif %}
+
 
     </div>
 
-    <a class="btn btn-light btn-sm btn-shadow mt-3 mt-sm-0" href="account-profile.html"><i class="ci-edit me-2"></i>Login</a>
-</div>
+    <a href="#collapseExample" id="hide" class="btn btn-light btn-sm btn-shadow mt-0  mt-sm-0" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample">
+        <i class="ci-sign-in"></i> {{ text_login }}
+    </a>
+
+    </div>
 
 
+    <div class="collapse mt-3" id="collapseExample">
+
+        <div class="card">
+            <div class="card-body">
+
+                    <h2 class="h6 pt-1 pb-3 mb-3 border-bottom">{{ text_returning_customer }}</h2>
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group mb-3 required">
+                                <label class="form-label" for="input-email">{{ entry_email }}<span class="text-danger">*</span></label>
+                                <input type="text"  name="email" value="" placeholder="{{ entry_email }}" id="input-email" class="form-control" />
+
+                                <div class="form-text">   <a href="{{ forgotten }}" class="label-link ">{{ text_forgotten }}</a></div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-group mb-3 required">
+                                <label class="form-label" for="input-password">{{ entry_password }}<span class="text-danger">*</span></label>
+                                <input type="password" name="password" value="" placeholder="{{ entry_password }}" id="input-password" class="form-control" />
 
 
+                            </div>
+                        </div>
+                        <div class="col-sm-6">  <input type="button" value="{{ button_login }}" id="button-login" data-loading-text="{{ text_loading }}" class="btn btn-primary" /></div>
+
+                    </div>
+            </div>
+    </div>
 
 
+       <!-- <script>
+            $(document).ready(function(){
+                $('#hide').click(function() {
+                    $('#collapse-payment-address').toggle('linear')
+                });
+            });
+        </script>
 
-
-    <!--    <input type="button" value="{{ button_continue }}" id="button-account" data-loading-text="{{ text_loading }}" class="btn btn-primary" /> -->
-
-  <!--  <div class="col-sm-6">
-        <h2>{{ text_returning_customer }}</h2>
-        <p>{{ text_i_am_returning_customer }}</p>
-        <div class="form-group">
-            <label class="control-label" for="input-email">{{ entry_email }}</label>
-            <input type="text" name="email" value="" placeholder="{{ entry_email }}" id="input-email" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label class="control-label" for="input-password">{{ entry_password }}</label>
-            <a href="{{ forgotten }}" class="label-link pull-right">{{ text_forgotten }}</a>
-            <input type="password" name="password" value="" placeholder="{{ entry_password }}" id="input-password" class="form-control margin-b15" />
-            <input type="button" value="{{ button_login }}" id="button-login" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
-        </div>
-    </div> -->
+-->

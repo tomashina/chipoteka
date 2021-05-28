@@ -1,0 +1,35 @@
+<div id="total-content" >
+  {% if products  %}
+   <div class="widget mb-3">
+     <h2 class="h6 text-center mb-4">Sažetak narudžbe</h2>
+   </div>
+
+            <ul class="list-unstyled fs-sm pb-2 border-bottom">
+              {% for total in totals %}
+                {% if total.title!='Ukupno'  %}
+
+                  <li class="d-flex justify-content-between align-items-center"><span class="me-2">{{ total.title }}</span><span class="text-end">{{ total.text }}</span></li>
+
+                {% endif %}
+              {% endfor %}
+            </ul>
+
+            {% for total in totals %}
+              {% if total.title=='Ukupno'  %}
+
+                <h3 class="fw-normal text-center my-4">{{ total.text }}</h3>
+              {% endif %}
+            {% endfor %}
+
+
+
+    {% endif %}
+
+
+</div>
+
+
+
+
+
+
