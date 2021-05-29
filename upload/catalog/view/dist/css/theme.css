@@ -213,12 +213,12 @@ sup {
 }
 
 a {
-  color: #E31318;
+  color: #828282;
   text-decoration: none;
 }
 
 a:hover {
-  color: #b40f13;
+  color: #5c5c5c;
   text-decoration: none;
 }
 
@@ -3620,12 +3620,12 @@ fieldset:disabled .btn {
 
 .btn-link {
   font-weight: 400;
-  color: #E31318;
+  color: #828282;
   text-decoration: none;
 }
 
 .btn-link:hover {
-  color: #b40f13;
+  color: #5c5c5c;
   text-decoration: none;
 }
 
@@ -4867,7 +4867,7 @@ fieldset:disabled .btn {
 
 .page-link:focus {
   z-index: 3;
-  color: #b40f13;
+  color: #5c5c5c;
   background-color: #F9F9F9;
   outline: 0;
   box-shadow: 0 0 0 0 rgba(227, 19, 24, 0.25);
@@ -21791,6 +21791,24 @@ readers do not read off random characters that represent icons */
   font-weight: 300;
 }
 
+/*!
+ * Font Awesome Pro 5.15.3 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license (Commercial License)
+ */
+@font-face {
+  font-family: 'Font Awesome 5 Brands';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("../../dist/fonts/fa-fonts/fa-brands-400.eot");
+  src: url("../../dist/fonts/fa-fonts/fa-brands-400.eot?#iefix") format("embedded-opentype"), url("../../dist/fonts/fa-fonts/fa-brands-400.woff2") format("woff2"), url("../../dist/fonts/fa-fonts/fa-brands-400.woff") format("woff"), url("../../dist/fonts/fa-fonts/fa-brands-400.ttf") format("truetype"), url("../../dist/fonts/fa-fonts/fa-brands-400.svg#fontawesome") format("svg");
+}
+
+.fab {
+  font-family: 'Font Awesome 5 Brands';
+  font-weight: 400;
+}
+
 html * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -27701,6 +27719,34 @@ html:not([dir=rtl]) .range-slider-ui.noUi-horizontal .noUi-handle {
   font-family: "Font Awesome 5 Pro";
 }
 
+.light {
+  color: #F5F5F5;
+}
+
+.gray-l2 {
+  color: #E3E3E3;
+}
+
+.gray-l1 {
+  color: #A8A8A8;
+}
+
+.gray {
+  color: #828282;
+}
+
+.gray-d1 {
+  color: #5C5C5C;
+}
+
+.gray-d2 {
+  color: #363636;
+}
+
+.dark {
+  color: #171717;
+}
+
 body {
   background: linear-gradient(180deg, #F5F5F5 0, rgba(245, 245, 245, 0) 333px);
   background-color: #fff;
@@ -27710,20 +27756,20 @@ body > main.offcanvas-enabled {
   padding-top: 0 !important;
 }
 
-main > .section {
+main > section {
   padding-left: 0.6245rem;
   padding-right: 0.6245rem;
 }
 
 @media (min-width: 500px) {
-  main > .section {
+  main > section {
     padding-left: 0.9375rem;
     padding-right: 0.9375rem;
   }
 }
 
 @media (min-width: 992px) {
-  main > .section {
+  main > section {
     padding-left: 1.875rem;
     padding-right: 1.875rem;
   }
@@ -28029,6 +28075,101 @@ main > .section {
   .offcanvas-enabled {
     padding-left: 20rem;
   }
+}
+
+.page-footer {
+  position: relative;
+  background-color: #363636;
+}
+
+.page-footer .logo-footer {
+  position: absolute;
+  top: -21px;
+  left: 0.9375rem;
+}
+
+@media (min-width: 992px) {
+  .page-footer .logo-footer {
+    left: 30px;
+  }
+}
+
+.page-footer .accent-links {
+  display: flex;
+  flex-direction: row;
+  min-height: 45px;
+  font-size: 1.125rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  border-top: 1px solid #5C5C5C;
+  border-bottom: 1px solid #5C5C5C;
+}
+
+.page-footer .accent-links i {
+  margin-left: 10px;
+}
+
+.page-footer .accent-links > * {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.page-footer .accent-links > *:last-child {
+  border-left: 1px solid #5C5C5C;
+}
+
+.page-footer .shop-features h6, .page-footer .shop-features .h6 {
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: #F5F5F5;
+}
+
+.page-footer .shop-features i {
+  color: #1B84E5;
+  font-size: 2.5rem;
+}
+
+.page-footer .payment-cards,
+.page-footer .eu-financing-logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.page-footer .payment-cards > *:not(:first-child),
+.page-footer .eu-financing-logos > *:not(:first-child) {
+  margin-left: 0.9375rem;
+}
+
+.page-footer__top .widget-list {
+  -moz-columns: 3 150px;
+  columns: 3 150px;
+  -moz-column-gap: 1.875rem;
+  column-gap: 1.875rem;
+}
+
+.page-footer__bottom {
+  background-color: #171717;
+}
+
+.page-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.page-footer__links > * {
+  padding: 10px 20px;
+  background-color: #363636;
+  color: #A8A8A8;
+  border-radius: 0.375rem;
+}
+
+.page-footer__links > *:not(:first-child) {
+  margin-left: 10px;
 }
 
 .page-search {
