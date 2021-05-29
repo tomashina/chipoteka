@@ -28025,6 +28025,12 @@ main > .section {
   }
 }
 
+@media (min-width: 992px) {
+  .offcanvas-enabled {
+    padding-left: 20rem;
+  }
+}
+
 .page-search {
   position: absolute;
   width: 100%;

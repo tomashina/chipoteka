@@ -393,6 +393,12 @@
     max-width: unset;
 
     @include media-breakpoint-up(lg) {
-        max-width: 20rem;
+        max-width: $offcanvas-width;
+    }
+}
+
+.offcanvas-enabled {
+    @include media-breakpoint-up(lg) {
+        padding-left: $offcanvas-width;
     }
 }
