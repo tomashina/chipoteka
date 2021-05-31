@@ -1,0 +1,99 @@
+//
+// Footer
+// --------------------------------------------------
+
+.page-footer {
+    position: relative;
+    background-color: $gray-d2;
+
+    .logo-footer {
+        position: absolute;
+        top: -21px;
+        left: $grid-gutter-width-half;
+
+        @include media-breakpoint-up(lg) {
+            left: 30px;
+        }
+    }
+
+    .accent-links {
+        display: flex;
+        flex-direction: row;
+        min-height: 45px;
+        font-size: 1.125rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        border-top: 1px solid $gray-d1;
+        border-bottom: 1px solid $gray-d1;
+
+        i {
+            margin-left: 10px;
+        }
+
+        > * {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            &:last-child {
+                border-left: 1px solid $gray-d1;
+            }
+        }
+    }
+
+    .shop-features {
+        h6 {
+            font-size: 1.25rem;
+            font-weight: 300;
+            color: $light;
+        }
+
+        i {
+            color: $accent;
+            font-size: 2.5rem;
+        }
+    }
+
+    .payment-cards,
+    .eu-financing-logos {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        > *:not(:first-child) {
+            margin-left: $grid-gutter-width-half;
+        }
+    }
+    
+    &__top {
+      .widget-list {
+        columns: 3 150px;
+        column-gap: $grid-gutter-width;
+   
+      }
+    }
+
+    &__bottom {
+        background-color: $dark;
+    }
+
+
+    &__links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+
+        > * {
+            padding: 10px 20px;
+            background-color: $gray-d2;
+            color: $gray-l1;
+            border-radius: $border-radius;
+
+            &:not(:first-child) {
+                margin-left: 10px;
+            }
+        }
+    }
+}

@@ -21,10 +21,7 @@ function DigitalElephantFilterPagination() {
     };
 
     this.preloaderOn = function() {
-        $(this.selector).html('' +
-            '<i ' +
-            'class="' + this.config.preloaderClass + '"' +
-            'style="margin: auto; margin-top: 10px; display: block;">');
+        $(this.selector).html('');
     };
 
     this.isset = function() {

@@ -15,6 +15,18 @@
 }
 
 
+// Color classes
+
+// Custom Grayscale
+.light { color: $light; }
+.gray-l2 { color: $gray-l2; }
+.gray-l1 { color: $gray-l1; }
+.gray { color: $gray ; }
+.gray-d1 { color: $gray-d1; }
+.gray-d2 { color: $gray-d2; }
+.dark { color: $dark; }
+
+ 
 
 body {
     background: linear-gradient(180deg, #F5F5F5 0, rgba(245, 245, 245, 0) 333px);
@@ -25,7 +37,7 @@ body > main.offcanvas-enabled {
     padding-top: 0 !important;
 }
 
-main > .section {
+main >  section {
         padding-left: $grid-gutter-width-10px;
         padding-right: $grid-gutter-width-10px;
 

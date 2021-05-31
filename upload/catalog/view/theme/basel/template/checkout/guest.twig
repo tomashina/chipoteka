@@ -1,7 +1,7 @@
 
 <h2 class="h6 pt-1 pb-3 mb-3 border-bottom">{{ text_your_details }}</h2>
 <div class="row" id="account">
-                 <div class="form-group" style="display: {% if customer_groups|length > 1 %} block {% else %} none {% endif %};">
+                 <div class="form-group" style="display: {% if customer_groups|length > 10 %} block {% else %} none {% endif %};">
                         <label class="control-label">{{ entry_customer_group }}</label>
                         {% for customer_group in customer_groups %}
                         {% if customer_group.customer_group_id == customer_group_id %}
@@ -48,13 +48,13 @@
                 <div class="col-sm-12">
                         <div class=" mb-3 ">
                             <label class="form-check-label" >
-                            <input type="checkbox" href="#collapseExample" class="form-check-input" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseExample">
+                            <input type="checkbox" href="#collapseR" class="form-check-input" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseR">
                            Trebam R1 račun</label>
                         </div>
                 </div>
 
         </div>
-    <div class="collapse row" id="collapseExample">
+    <div class="collapse row" id="collapseR">
 
 
                                           {% for custom_field in custom_fields %}
@@ -64,7 +64,7 @@
                                           {% if custom_field.type == 'text' %}
 
                                                   <div id="payment-custom-field{{ custom_field.custom_field_id }}" class="form-group custom-field mb-3" data-sort="{{ custom_field.sort_order }}">
-                                                    <label class="form-label" for="input-payment-custom-field{{ custom_field.custom_field_id }}">{{ custom_field.name }}</label>
+                                                    <label class="form-label" for="input-payment-custom-field{{ custom_field.custom_field_id }}">{{ custom_field.name }} <span class="text-danger">*</span></label>
                                                     <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{% if guest_custom_field[custom_field.custom_field_id] %} {{ guest_custom_field[custom_field.custom_field_id] }} {% else %} {{ custom_field.value }} {% endif %}" placeholder="{{ custom_field.name }}" id="input-payment-custom-field{{ custom_field.custom_field_id }}" class="form-control" />
                                                   </div>
 

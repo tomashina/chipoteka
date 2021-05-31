@@ -15,30 +15,33 @@
 
 // @import '../../dist/vendor/bootstrap/scss/bootstrap';
 
-// Custom Grayscale
- $light:   #F5F5F5;
- $gray-l2: #E3E3E3;
- $gray-l1: #A8A8A8;
- $gray:    #828282;
- $gray-d1: #5C5C5C;
- $gray-d2: #363636;
- $dark:    #171717;
 
- // Grayscale
-$gray-100:              #FCFCFC !default;
-$gray-200:              #F9F9F9 !default;
-$gray-300:              #EFEFEF !default;
-$gray-400:              #E7E7E7 !default;
-$gray-500:              #BEBEBE !default;
-$gray-600:              #9C9C9C !default;
-$gray-700:            	#6B6B6B !default;
-$gray-800:              #505050 !default;
-$gray-900:              #454545 !default;
+// Custom Grayscale
+$light: #F5F5F5;
+$gray-l2: #E3E3E3;
+$gray-l1: #A8A8A8;
+$gray: #828282;
+$gray-d1: #5C5C5C;
+$gray-d2: #363636;
+$dark: #171717;
+
+
+// Grayscale
+$gray-100: #FCFCFC !default;
+$gray-200: #F9F9F9 !default;
+$gray-300: #EFEFEF !default;
+$gray-400: #E7E7E7 !default;
+$gray-500: #BEBEBE !default;
+$gray-600: #9C9C9C !default;
+$gray-700: #6B6B6B !default;
+$gray-800: #505050 !default;
+$gray-900: #454545 !default;
+
 
 // Brand colors
-$primary:               #E31318;
-$accent:                #1B84E5;
-$secondary:             $gray;
+$primary: #E31318;
+$accent: #1B84E5;
+$secondary: $gray;
 
 $primary-l3: #FCA2A4;
 $primary-l2: #FC7477;
@@ -47,29 +50,39 @@ $primary-d1: #CF0E13;
 $primary-d2: #B80D11;
 $primary-d3: #A10D11;
 
+
+// Links
+$link-color: $secondary;
+$link-hover-color: darken($link-color, 15%);
+
 // Custom grid
 $grid-gutter-width: 1.875rem !default;
-$grid-gutter-width-half:   $grid-gutter-width / 2;  
-$grid-gutter-width-10px:   $grid-gutter-width-half - 0.313rem;  
+$grid-gutter-width-half: $grid-gutter-width / 2;
+$grid-gutter-width-10px: $grid-gutter-width-half - 0.313rem;
+
 
 // Border 
-$border-color:                $gray-l2;
+$border-color: $gray-l2;
 
 
 // Border Radius
-$border-radius:              0.375rem;
-$border-radius-lg:           0.563rem;
-$border-radius-sm:           0.188rem;
+$border-radius: 0.375rem;
+$border-radius-lg: 0.563rem;
+$border-radius-sm: 0.188rem;
+
 
 // Shadow
-$box-shadow-header: 0px 2px 3px rgba(0, 0, 0, 0.09), 0px 1px 21px rgba(0, 0, 0, 0.15);
+$box-shadow-header: 0px 2px 3px rgba(0, 0, 0, 0.09),
+0px 1px 21px rgba(0, 0, 0, 0.15);
+
 
 // Transitions
 $transition-default: 0.35s cubic-bezier(0.16, 1, 0.3, 1); // Without transition property
 
+
 // Fonts
-$path-to-fonts:               'https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap';
+$path-to-fonts: 'https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap';
 
 
 // FontAwesome
-$fa-font-path:  "../../dist/fonts/fa-fonts";
+$fa-font-path: "../../dist/fonts/fa-fonts";

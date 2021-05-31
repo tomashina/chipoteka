@@ -52,12 +52,7 @@ function DigitalElephantFilterSync() {
 
     this.preloaderOn = function() {
         if ($('#' + this.preloaderId).length == 0) {
-            $(this.config.selector.containerProducts).after('' +
-                '<div class="col-sm-12" id="' + this.preloaderId + '">' +
-                '<i ' +
-                'class="' + this.config.preloaderClass + '"' +
-                'style="margin: auto; margin-top: 10px; display: block">' +
-                '</div>');
+            $(this.config.selector.containerProducts).after('');
         }
     };
 

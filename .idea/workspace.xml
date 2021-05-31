@@ -1,64 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="23d12899-4456-45b3-9b0f-e4b5bd1e4587" name="Default Changelist" comment="fixes admin">
-      <change afterPath="$PROJECT_DIR$/upload/Archive.zip" afterDir="false" />
+    <list default="true" id="23d12899-4456-45b3-9b0f-e4b5bd1e4587" name="Default Changelist" comment="checkout">
+      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/americanexpress.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/esif.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/eu.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/hamag.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/logo-dark.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/maestro.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/mastercard.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/visa.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/ws-pay.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/upload/catalog/view/src/scss/components-chipoteka/_footer-cpta.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/controller/account/edit.php" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/controller/account/edit.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/controller/extension/module/account.php" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/controller/extension/module/account.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/language/hr-hr/account/edit.php" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/language/hr-hr/account/edit.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/language/hr-hr/hr-hr.php" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/language/hr-hr/hr-hr.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/account.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/address_form.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/address_list.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/download.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/edit.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/edit.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/edit.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/forgotten.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/login.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/newsletter.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/order_info.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/order_list.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/password.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/password.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/password.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/recurring_info.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/recurring_list.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/register.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/reset.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/return_form.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/return_info.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/return_list.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/reward.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/transaction.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/voucher.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/wishlist.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/basel_search.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/basel_search_full.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/cart.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/column_left.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/column_left.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/column_left.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/column_right.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/content_top.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/currency.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/footer.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/header.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/headers/header1.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/headers/header2.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/headers/header3.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/headers/header4.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/headers/header5.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/headers/header6.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/home.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/language.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/menu.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/mobile-nav.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/position_bottom.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/position_bottom_half.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/position_category_top.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/position_top.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/static_links.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/success.tpl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/extension/module/account.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/extension/module/account.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/dist/css/theme.css" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/dist/css/theme.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/dist/css/theme.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/dist/css/theme.css.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/javascript/digitalElephantFilter/classes/container_products.js" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/javascript/digitalElephantFilter/classes/container_products.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/javascript/digitalElephantFilter/classes/pagination.js" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/javascript/digitalElephantFilter/classes/pagination.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/javascript/digitalElephantFilter/classes/sync.js" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/javascript/digitalElephantFilter/classes/sync.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/src/scss/_user-variables.scss" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/src/scss/_user-variables.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/src/scss/_user.scss" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/src/scss/_user.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/src/scss/components-chipoteka/_header-cpta.scss" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/src/scss/components-chipoteka/_header-cpta.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/src/scss/theme.scss" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/src/scss/theme.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/forgotten.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/forgotten.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/register.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/register.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/checkout/guest.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/checkout/guest.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/footer.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/footer.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/home.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/home.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/extension/module/basel_products.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/extension/module/basel_products.twig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/image/cache/catalog/akcijska-kamera-gopro-max-360-104202-1063-600x600xA-130x165.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/upload/image/cache/catalog/akcijska-kamera-gopro-max-360-104202-1063-600x600xA-130x165.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/image/cache/catalog/akcijska-kamera-gopro-max-360-104202-1063-600x600xA-45x45.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/upload/image/cache/catalog/akcijska-kamera-gopro-max-360-104202-1063-600x600xA-45x45.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/image/catalog/akcijska-kamera-gopro-max-360-104202-1063-600x600xA.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/upload/image/catalog/akcijska-kamera-gopro-max-360-104202-1063-600x600xA.jpg" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -76,7 +48,6 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="SWAP_SIDES_IN_COMPARE_BRANCHES" value="true" />
   </component>
   <component name="PhpWorkspaceProjectConfiguration">
     <include_path>
@@ -116,18 +87,21 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/upload/catalog/view/dist/img" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/upload/catalog/controller/common" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/upload/catalog/controller/common" />
+      <recent name="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common" />
+      <recent name="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/checkout" />
       <recent name="$PROJECT_DIR$/upload/catalog/view/dist/img" />
       <recent name="$PROJECT_DIR$/upload/catalog/view/theme/basel/dist" />
-      <recent name="$PROJECT_DIR$/upload" />
-      <recent name="$PROJECT_DIR$/upload/admin/view/image" />
-      <recent name="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/product" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/upload/catalog/view" />
@@ -154,6 +128,12 @@
       <workItem from="1619000989252" duration="432000" />
       <workItem from="1620028506740" duration="14230000" />
       <workItem from="1620200240415" duration="8946000" />
+      <workItem from="1622019972693" duration="13561000" />
+      <workItem from="1622106666090" duration="6675000" />
+      <workItem from="1622114362076" duration="147000" />
+      <workItem from="1622117137721" duration="2775000" />
+      <workItem from="1622183019533" duration="15363000" />
+      <workItem from="1622441225095" duration="14273000" />
     </task>
     <task id="LOCAL-00001" summary="fixes admin">
       <created>1618839308771</created>
@@ -183,7 +163,35 @@
       <option name="project" value="LOCAL" />
       <updated>1620207362227</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="checkout">
+      <created>1622032271325</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1622032271325</updated>
+    </task>
+    <task id="LOCAL-00006" summary="checkout">
+      <created>1622035344048</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1622035344048</updated>
+    </task>
+    <task id="LOCAL-00007" summary="checkout">
+      <created>1622036429629</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1622036429629</updated>
+    </task>
+    <task id="LOCAL-00008" summary="checkout">
+      <created>1622201154250</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1622201154250</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -204,7 +212,8 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="fixes admin" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixes admin" />
+    <MESSAGE value="checkout" />
+    <option name="LAST_COMMIT_MESSAGE" value="checkout" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
