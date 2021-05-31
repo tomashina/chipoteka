@@ -66,12 +66,19 @@
     </div>
 
 
-       <!-- <script>
+    <script>
             $(document).ready(function(){
                 $('#hide').click(function() {
-                    $('#collapse-payment-address').toggle('linear')
+                    $('#collapseExample').show()
+                    $('#collapse-payment-address').hide()
+
                 });
+                $('input:radio[name="account"]').change(function(){
+                    $('#collapse-payment-address').show()
+                    $('#collapseExample').hide()
+
+                });
+
             });
         </script>
 
--->

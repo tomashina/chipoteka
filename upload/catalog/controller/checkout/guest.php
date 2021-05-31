@@ -17,7 +17,7 @@ class ControllerCheckoutGuest extends Controller {
 			}
 		}
 
-
+        $data['cart'] = $this->url->link('checkout/cart', '', true);
 
 		if (isset($this->session->data['guest']['customer_group_id'])) {
 			$data['customer_group_id'] = $this->session->data['guest']['customer_group_id'];
