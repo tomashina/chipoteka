@@ -27970,6 +27970,12 @@ main > section {
   color: #E31318;
 }
 
+.sidebar #account .accordion-item .accordion-header .accordion-button:hover,
+.sidebar #menu .accordion-item .accordion-header .accordion-button:hover,
+.sidebar #categories .accordion-item .accordion-header .accordion-button:hover {
+  background-color: #F5F5F5;
+}
+
 .sidebar #account .accordion-item .widget-links,
 .sidebar #menu .accordion-item .widget-links,
 .sidebar #categories .accordion-item .widget-links {
