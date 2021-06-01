@@ -258,6 +258,10 @@
                         }
                     }
 
+                    &:hover {
+                        background-color: $primary-l4;
+                    }
+
                     // Clicked & Hover
                     // &[aria-expanded="true"],
                     // &:hover {
@@ -373,29 +377,6 @@
 
 
 
-
-        }
-
-    }
-
-    // - - - - - - - - -
-    // MEnu
-    #menu {
-
-        // Item
-        .accordion-item {
-
-            // Header
-            .accordion-header {
-                padding-left: 0.9rem;
-                padding-right: 0.9rem;
-
-                // Button
-                .accordion-button {
-
-                }
-
-            }
 
         }
 
