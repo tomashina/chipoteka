@@ -43,12 +43,16 @@
         // - - - - - - - - - -
         // Navbar icons
         .navbar-tool {
-            padding: 0 0.5rem;
 
             @include media-breakpoint-up(lg) {
+
+                padding-right: 0.54rem;
+                padding-left: 0.54rem;
+
                 &:not(:nth-child(3)) {
                     border-left: 1px solid $gray-l2;
                 }
+
             }
 
 
@@ -123,6 +127,10 @@
                         color: $black;
                     }
                 }
+
+                .navbar-tool-icon {
+                    font-size: 1.25rem;
+                }
             }
 
             // .dropdown {}
@@ -175,9 +183,24 @@
 
     // Nav Tabs
     .nav-tabs {
+
+
+        .nav-item {
+
+            // Close 
+            &:nth-child(3) {
+                flex: 0 0 3.5rem;
+
+                i {
+                    margin-right: 0;
+                }
+            }
+        }
+
+
         .nav-link {
             height: 100%;
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 600;
             text-transform: uppercase;
             padding-left: 0.8rem;
@@ -187,6 +210,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            
 
             &.active {
                 background-color: $light;
@@ -200,6 +224,12 @@
                 margin-right: 0.5rem;
                 font-size: 1rem;
             }
+
+        
+            @include media-breakpoint-up(sm) {
+                font-size: 1.25rem;
+            }
+
         }
     }
 

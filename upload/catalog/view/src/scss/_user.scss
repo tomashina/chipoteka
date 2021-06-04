@@ -37,18 +37,18 @@ body > main.offcanvas-enabled {
     padding-top: 0 !important;
 }
 
-main >  section {
-        padding-left: $grid-gutter-width-10px;
-        padding-right: $grid-gutter-width-10px;
+// main >  section {
+//         padding-left: $grid-gutter-width-10px;
+//         padding-right: $grid-gutter-width-10px;
 
-    @include media-breakpoint-up(sm) {
-            padding-left: $grid-gutter-width-half;
-            padding-right: $grid-gutter-width-half;
-    }
+//     @include media-breakpoint-up(sm) {
+//             padding-left: $grid-gutter-width-half;
+//             padding-right: $grid-gutter-width-half;
+//     }
 
-    @include media-breakpoint-up(lg) {
-        padding-left: $grid-gutter-width;
-        padding-right: $grid-gutter-width;
-    }
+//     @include media-breakpoint-up(lg) {
+//         padding-left: $grid-gutter-width;
+//         padding-right: $grid-gutter-width;
+//     }
     
-}
+// }

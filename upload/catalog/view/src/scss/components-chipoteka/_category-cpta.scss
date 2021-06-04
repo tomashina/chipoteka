@@ -1,0 +1,190 @@
+//
+// CATEGORY
+// --------------------------------------------------
+
+
+
+// - - - - - - - - - - - - - - - -
+// Product Holder
+// .product-holder {}
+
+
+
+// - - - - - - - - - - - - - - - -
+// Product Filter
+.product-filter {
+    background-color: $white;
+    border: 1px solid $light;
+    box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.03), 0px 6px 24px rgba(0, 0, 0, 0.06);
+}
+
+
+
+// - - - - - - - - - - - - - - - -
+// Product Card
+
+.product-card {
+    position: relative;
+    background-color: $light;
+
+
+    // Card Body
+    .card-body {
+        background-color: transparent;
+    }
+
+    // Image
+    .card-img-top {
+        position: relative;
+        border-radius: 0.563rem;
+
+        img {
+            width: 100%;
+        }
+
+        &::after {
+            content: " ";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient($light, $light);
+            mix-blend-mode: multiply;
+        }
+
+    }
+
+    // Button Basket
+    .btn-basket {
+        position: absolute;
+        right: 1rem;
+        bottom: 1rem;
+        z-index: 1;
+        box-shadow: 0px 3px 54px rgba($black, 0.15), 0px 2px 36px rgba($black, 0.15), 0px 3px 12px rgba($black, 0.18);
+        border: 1px solid $primary-l1;
+
+        @include media-breakpoint-up(lg) {
+            opacity: 0;
+            visibility: hidden;
+            transition: all $transition-default;
+        }
+
+        
+    }
+
+    // Badge - Free shipping
+    .product-badge-cpta__free-shipping {
+        width: max-content;
+        position: absolute;
+            top: 1rem;
+            left: 1rem;
+
+        span {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+
+        @include media-breakpoint-up(lg) {
+            width: 50px;
+
+            transition: all 0.2s $transition-animation-default;
+
+            span {
+                position: absolute;
+                top: 0.625rem;
+                left: 10px;
+                visibility: hidden;
+                opacity: 0;
+                margin-right: 0;
+
+                transition: all 0.1s $transition-animation-default;
+            }
+        }
+    }
+
+
+
+    // Product Title
+    .product-title {
+        font-size: 1.25rem;
+        font-weight: 300;
+
+        a {
+            color: $gray-d1;
+        }
+    }
+
+
+
+    // - - - - - - - - -
+    // Card - Hover
+    &:hover:not(.card-static) {
+        box-shadow: 0px 3px 14px rgba($black, 0.06), 0px 3px 6px rgba($black, 0.09), 0px 3px 27px rgba($black, 0.09);
+
+        // Button Basket
+        .btn-basket {
+ 
+            @include media-breakpoint-up(lg) {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+
+        // Product Title
+        .product-title {
+            a {
+                color: $primary;
+            }
+        }
+
+        // Badge - Free shipping
+        .product-badge-cpta__free-shipping {
+            width: max-content;
+
+            @include media-breakpoint-up(lg) {
+                width: 190px;
+
+            span {
+                    top: 0.07rem;
+                    visibility: visible;
+                    opacity: 1;
+                    transition: all 0.27s cubic-bezier(0.83, 0, 0.17, 1);
+                }
+            }
+        }
+
+    }
+
+
+
+}
+
+
+
+// - - - - - - - - - - - - - - - -
+// Product Badge
+
+.product-badge-cpta {
+    border-radius: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.375rem 0.625rem;
+    text-transform: uppercase;
+    color: $white;
+    letter-spacing: 0.03rem;
+
+    // Free shipping
+    &__free-shipping {
+        font-size: 0.75rem;
+        background-color: $accent;
+        max-height: 20px;
+
+        i {
+            font-size: 1.5rem;
+            margin-left: auto;
+            margin-bottom: -2px;
+        }
+    }
+}

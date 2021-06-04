@@ -79,10 +79,18 @@ $border-radius-sm: 0.188rem;
 $box-shadow-header: 0px 2px 3px rgba(0, 0, 0, 0.09),
 0px 1px 21px rgba(0, 0, 0, 0.15);
 
+// Off-canvas
+$offcanvas-width:  20rem;
+
 
 // Transitions
 $transition-default: 0.35s cubic-bezier(0.16, 1, 0.3, 1); // Without transition property
+$transition-time-default: 0.35s; 
+$transition-animation-default: cubic-bezier(0.16, 1, 0.3, 1); 
 
+
+// RFS
+$enable-rfs: true;
 
 // Fonts
 $path-to-fonts: 'https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap';
