@@ -188,3 +188,52 @@
         }
     }
 }
+
+
+// - - - - - - - - -
+// Custom grid for Categories
+.product-card-wrapper {
+    // min-width: 16rem;
+    // max-width: 22rem;
+ 
+    @include media-breakpoint-up(sm)  {
+        width: 50%;
+        min-width: 50%;
+        max-width: 50%;
+   }
+
+    @include media-breakpoint-up(md)  {
+        width: 33.3333333333%;
+        min-width: 33.3333333333%;
+        max-width: 33.3333333333%;
+   }
+
+    @include media-breakpoint-up(lg)  {
+        width: 50%;
+        min-width: 50%;
+        max-width: 50%;
+   }
+
+    @media only screen and (min-width: 1050px) {
+        width: 33.3333333333%;
+        min-width: 33.3333333333%;
+        max-width: 33.3333333333%;
+    }
+
+    // @include media-breakpoint-up(xl)  {}
+
+    @include media-breakpoint-up(xxl)  {
+         width: 25%;
+         min-width: 25%;
+         max-width: 25%;
+    }
+
+    @media only screen and (min-width: 1630px)  {
+         width: 20%;
+         min-width: 20%;
+         max-width: 20%;
+    }
+ 
+    
+} 
+

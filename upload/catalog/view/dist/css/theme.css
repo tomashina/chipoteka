@@ -35873,6 +35873,54 @@ body > main.offcanvas-enabled {
   margin-bottom: -2px;
 }
 
+@media (min-width: 500px) {
+  .product-card-wrapper {
+    width: 50%;
+    min-width: 50%;
+    max-width: 50%;
+  }
+}
+
+@media (min-width: 768px) {
+  .product-card-wrapper {
+    width: 33.3333333333%;
+    min-width: 33.3333333333%;
+    max-width: 33.3333333333%;
+  }
+}
+
+@media (min-width: 992px) {
+  .product-card-wrapper {
+    width: 50%;
+    min-width: 50%;
+    max-width: 50%;
+  }
+}
+
+@media only screen and (min-width: 1050px) {
+  .product-card-wrapper {
+    width: 33.3333333333%;
+    min-width: 33.3333333333%;
+    max-width: 33.3333333333%;
+  }
+}
+
+@media (min-width: 1400px) {
+  .product-card-wrapper {
+    width: 25%;
+    min-width: 25%;
+    max-width: 25%;
+  }
+}
+
+@media only screen and (min-width: 1630px) {
+  .product-card-wrapper {
+    width: 20%;
+    min-width: 20%;
+    max-width: 20%;
+  }
+}
+
 .alert-promo {
   background-color: #171717;
   color: #FCA2A4;
