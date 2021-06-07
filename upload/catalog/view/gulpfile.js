@@ -4,12 +4,10 @@ const gulp = require('gulp'),
       del = require('del'),
       rename = require('gulp-rename'),
       sass = require('gulp-sass'),
-
-      pug = require('gulp-pug'),
+      // pug = require('gulp-pug'),
       autoprefixer = require('gulp-autoprefixer'),
       sourcemaps = require('gulp-sourcemaps'),
-      emitty = require('emitty').setup('src/templates', 'pug'),
-
+      // emitty = require('emitty').setup('src/templates', 'pug'),
       browserSync = require('browser-sync').create(),
       reload = browserSync.reload,
       babel = require('gulp-babel'),
@@ -22,6 +20,7 @@ const gulp = require('gulp'),
 const path = {
   src: 'src',
   dist: 'dist',
+
   src_pug: 'src/templates',
 
   src_scss: 'src/scss',
@@ -137,26 +136,26 @@ gulp.task('js:minified', () => {
 
 // stream-performance
 
-gulp.task('pug', () =>
-  new Promise((resolve, reject) => {
-    const sourceOptions = {
-      cwd: path.src_pug,
-      base: path.src_pug // This causes the components and docs subfolders to be mirrored in dist folder
-    };
+// gulp.task('pug', () =>
+//   new Promise((resolve, reject) => {
+//     const sourceOptions = {
+//       cwd: path.src_pug,
+//       base: path.src_pug // This causes the components and docs subfolders to be mirrored in dist folder
+//     };
 
-    emitty.scan(global.emittyChangedFile).then(() => {
-      gulp.src(['*.pug', 'components/*pug', 'docs/*.pug'], sourceOptions)
-        .pipe(gulpif(global.watch, emitty.filter(global.emittyChangedFile)))
-        .pipe(pug({ pretty: true }))
-        .pipe(gulp.dest(path.dist))
-        .on('error', reject)
-        .on('end', () => {
-          reload(); // One time browser reload at end of pug compilation
-          resolve();
-         })
-      });
-  })
-);
+//     emitty.scan(global.emittyChangedFile).then(() => {
+//       gulp.src(['*.pug', 'components/*pug', 'docs/*.pug'], sourceOptions)
+//         .pipe(gulpif(global.watch, emitty.filter(global.emittyChangedFile)))
+//         .pipe(pug({ pretty: true }))
+//         .pipe(gulp.dest(path.dist))
+//         .on('error', reject)
+//         .on('end', () => {
+//           reload(); // One time browser reload at end of pug compilation
+//           resolve();
+//          })
+//       });
+//   })
+// );
 
 
 

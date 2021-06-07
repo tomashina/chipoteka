@@ -1,38 +1,12 @@
 {
-  "_args": [
-    [
-      "card@2.5.0",
-      "/Users/rokaux/Sites/cartzilla-new"
-    ]
-  ],
-  "_from": "card@2.5.0",
-  "_id": "card@2.5.0",
-  "_inBundle": false,
-  "_integrity": "sha512-vShS/L9APZtmlo/GrDQApHdpkM8EBbpfCLequdN6epuE2q2Il5w81+j+6U6sh3BTxYD53r7YyE6Vl8zGtEwN5g==",
-  "_location": "/card",
-  "_phantomChildren": {},
-  "_requested": {
-    "type": "version",
-    "registry": true,
-    "raw": "card@2.5.0",
-    "name": "card",
-    "escapedName": "card",
-    "rawSpec": "2.5.0",
-    "saveSpec": null,
-    "fetchSpec": "2.5.0"
-  },
-  "_requiredBy": [
-    "/"
-  ],
-  "_resolved": "https://registry.npmjs.org/card/-/card-2.5.0.tgz",
-  "_spec": "2.5.0",
-  "_where": "/Users/rokaux/Sites/cartzilla-new",
-  "author": {
-    "name": "Jesse Pollak",
-    "email": "jpollak92@gmail.com"
-  },
-  "bugs": {
-    "url": "https://github.com/jessepollak/card/issues"
+  "name": "card",
+  "version": "2.5.0",
+  "author": "Jesse Pollak <jpollak92@gmail.com>",
+  "description": "Card lets you add an interactive, CSS3 credit card animation to your credit card form to help your users through the process.",
+  "main": "lib/card.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jessepollak/card"
   },
   "contributors": [
     {
@@ -44,12 +18,18 @@
       "email": "danieljuhl@gmail.com"
     }
   ],
-  "dependencies": {
-    "node.extend": "~1.1.3",
-    "payment": "^2.4.0",
-    "qj": "^2.0.0"
+  "scripts": {
+    "clean": "rimraf ./lib/ && rimraf ./dist/",
+    "compile": "npm run clean && npm run compile:lib && npm run compile:dist && npm run compile:styles",
+    "compile:lib": "coffee --compile -o ./lib/ ./src/coffee/card.coffee && node-sass ./src/scss/card.scss -o lib/ && replace '../scss/card.scss' './card.css' lib/card.js",
+    "compile:dist": "npm run env NODE_ENV=production && webpack",
+    "compile:styles": "node-sass ./src/scss/card.scss -o ./dist/ --output-style compressed",
+    "development": "webpack-dev-server --hot --inline",
+    "preversion": "npm run compile",
+    "prepublish": "npm run env NODE_ENV=production && npm run compile",
+    "postpublish": "git push origin master && git push --tags",
+    "test": "karma start --single-run --browsers PhantomJS"
   },
-  "description": "Card lets you add an interactive, CSS3 credit card animation to your credit card form to help your users through the process.",
   "devDependencies": {
     "bower": "~1.8.8",
     "coffee-loader": "^0.7.2",
@@ -71,24 +51,9 @@
     "webpack-cli": "^3.2.1",
     "webpack-dev-server": "^3.11.0"
   },
-  "homepage": "https://github.com/jessepollak/card#readme",
-  "main": "lib/card.js",
-  "name": "card",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/jessepollak/card.git"
-  },
-  "scripts": {
-    "clean": "rimraf ./lib/ && rimraf ./dist/",
-    "compile": "npm run clean && npm run compile:lib && npm run compile:dist && npm run compile:styles",
-    "compile:dist": "npm run env NODE_ENV=production && webpack",
-    "compile:lib": "coffee --compile -o ./lib/ ./src/coffee/card.coffee && node-sass ./src/scss/card.scss -o lib/ && replace '../scss/card.scss' './card.css' lib/card.js",
-    "compile:styles": "node-sass ./src/scss/card.scss -o ./dist/ --output-style compressed",
-    "development": "webpack-dev-server --hot --inline",
-    "postpublish": "git push origin master && git push --tags",
-    "prepublish": "npm run env NODE_ENV=production && npm run compile",
-    "preversion": "npm run compile",
-    "test": "karma start --single-run --browsers PhantomJS"
-  },
-  "version": "2.5.0"
+  "dependencies": {
+    "node.extend": "~1.1.3",
+    "qj": "^2.0.0",
+    "payment": "^2.4.0"
+  }
 }
