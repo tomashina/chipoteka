@@ -23,6 +23,29 @@
       <excludeFolder url="file://$MODULE_DIR$/upload/system/storage/vendor/cardinity/cardinity-sdk-php" />
       <excludeFolder url="file://$MODULE_DIR$/upload/system/storage/vendor/zoujingli/wechat-php-sdk" />
       <excludeFolder url="file://$MODULE_DIR$/upload/system/storage/vendor/guzzlehttp/log-subscriber" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/phpoffice/phpspreadsheet" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/ezyang/htmlpurifier" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/myclabs/php-enum" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/doctrine/inflector" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/illuminate/filesystem" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/illuminate/contracts" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/illuminate/support" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/illuminate/container" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/illuminate/database" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/agmedia/opencart-eloquent" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/symfony/finder" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/markbaker/matrix" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/markbaker/complex" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/psr/container" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/psr/http-message" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/psr/simple-cache" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/psr/http-factory" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/psr/http-client" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/kylekatarnls/update-helper" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/maennchen/zipstream-php" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/nesbot/carbon" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/agmedia/luceed" />
+      <excludeFolder url="file://$MODULE_DIR$/storage/vendor/agmedia/luceed-opencart-wrapper" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
