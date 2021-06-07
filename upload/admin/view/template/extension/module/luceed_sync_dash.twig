@@ -1,0 +1,223 @@
+<style>
+    .darker-bg {
+        background-color: #e9e9e9 !important;
+    }
+</style>
+{{ header }}{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+            </div>
+            <h1>{{ title }}</h1>
+            <ul class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div id="alert_placeholder"></div>
+        {% if error_warning %}
+            <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        {% if success %}
+            <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="col-sm-12 col-md-7">
+                <div class="panel panel-default">
+                    <div class="panel-heading darker-bg">
+                        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_products_import_panel }}</h3>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-4 text-center">
+                                <a href="javascript:void(0)" id="import-new-products" data-toggle="tooltip" title="{{ btn_products_import }}" class="btn btn-info btn-block">{{ btn_products_import }}</a>
+                            </div>
+                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_import }}</p>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 text-center">
+                                <a href="javascript:void(0)" id="check-active-min" data-toggle="tooltip" title="{{ btn_products_active }}" class="btn btn-info btn-block" style="margin-top: 9px;">{{ btn_products_active }}</a>
+                            </div>
+                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_active }}</p>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 text-center">
+                                <a href="javascript:void(0)" id="import-new-actions" data-toggle="tooltip" title="{{ btn_products_actions_import }}" class="btn btn-info btn-block">{{ btn_products_actions_import }}</a>
+                            </div>
+                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_actions }}</p>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 text-center">
+                                <a href="javascript:void(0)" id="update-prices-quantities" data-toggle="tooltip" title="{{ btn_products_update_pq }}" class="btn btn-info btn-block">{{ btn_products_update_pq }}</a>
+                            </div>
+                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_pq }}</p>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 text-center">
+                                <a href="javascript:void(0)" id="update-prices" data-toggle="tooltip" title="{{ btn_products_update_p }}" class="btn btn-info btn-block">{{ btn_products_update_p }}</a>
+                            </div>
+                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_p }}</p>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 text-center">
+                                <a href="javascript:void(0)" id="update-quantities" data-toggle="tooltip" title="{{ btn_products_update_q }}" class="btn btn-info btn-block">{{ btn_products_update_q }}</a>
+                            </div>
+                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_q }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-12 col-md-5">
+                <div class="panel panel-default">
+                    <div class="panel-heading darker-bg">
+                        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_categories_import_panel }}</h3>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-5 text-center">
+                                <a href="javascript:void(0)" id="import-new-categories" data-toggle="tooltip" title="{{ btn_categories_import }}" class="btn btn-info btn-block">{{ btn_categories_import }}</a>
+                            </div>
+                            <p class="col-sm-7">{{ help_categories_import }}</p>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-5 text-center">
+                                <a href="javascript:void(0)" id="categories-active-min" data-toggle="tooltip" title="{{ btn_categories_active }}" class="btn btn-info btn-block">{{ btn_categories_active }}</a>
+                            </div>
+                            <p class="col-sm-7">{{ help_categories_active }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading darker-bg">
+                        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_manufacturer_import_panel }}</h3>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-5 text-center">
+                                <a href="javascript:void(0)" id="import-new-manufacturer" data-toggle="tooltip" title="{{ btn_manufacturer_import }}" class="btn btn-info btn-block">{{ btn_manufacturer_import }}</a>
+                            </div>
+                            <p class="col-sm-7">{{ help_manufacturer_import }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(() => {
+            $('#import-new-categories')     .on('click', e => { callApi(e, 'importCategories'); });
+            $('#import-new-manufacturer')   .on('click', e => { callApi(e, 'importManufacturers'); });
+            $('#import-new-products')       .on('click', e => { callApi(e, 'importProducts'); });
+            $('#import-new-actions')        .on('click', e => { callApi(e, 'importActions'); });
+            $('#check-active-min')          .on('click', e => { callApi(e, 'checkMinQty'); });
+            $('#categories-active-min')     .on('click', e => { callApi(e, 'checkMinQtyOfCategories'); });
+            $('#update-prices-quantities')  .on('click', e => { callApi(e, 'updatePricesAndQuantities'); });
+            $('#update-prices')             .on('click', e => { callApi(e, 'updatePrices'); });
+            $('#update-quantities')         .on('click', e => { callApi(e, 'updateQuantities'); });
+        });
+
+
+        /**
+         *
+         */
+        function callApi(e, path) {
+            let target = e.currentTarget;
+            let text = target.text;
+
+            lockTarget(path.charAt(0), $('#' + target.id));
+
+            $.ajax({
+                url: 'index.php?route=extension/module/luceed_sync/' + path + '&user_token={{ user_token }}',
+                dataType: 'json',
+                success: function(json) {
+                    checkResult(json);
+                    releseTarget(text, $('#' + target.id));
+                }
+            });
+        }
+
+        /**
+         *
+         */
+        function lockTarget(target, btn) {
+            btn.removeClass('btn-info');
+            btn.addClass('btn-warning');
+
+            if (target == 'i') {
+                btn.html('{{ btn_importing }}');
+            }
+            if (target == 'u') {
+                btn.html('{{ btn_updating }}');
+            }
+            if (target == 'c') {
+                btn.html('{{ btn_checking }}');
+            }
+        }
+
+        /**
+         *
+         */
+        function releseTarget(text, btn) {
+            btn.removeClass('btn-warning');
+            btn.addClass('btn-info');
+            btn.text(text);
+        }
+
+        /**
+         *
+         */
+        function checkResult(result) {
+            if (result.status == 200) {
+                AG_alert.success(result.message);
+            }
+            if (result.status == 300) {
+                AG_alert.warning(result.message);
+            }
+        }
+
+        /**
+         *
+         */
+        function hideAlert() {
+            setTimeout(() => { $('#alert_placeholder').html(''); }, 6300);
+        }
+
+
+        AG_alert = () => {}
+        /**
+         * Success alert.
+         * @param message
+         */
+        AG_alert.success = (message) => {
+            $('#alert_placeholder').html('<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + message + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+            hideAlert();
+        }
+        /**
+         * Warning or error alert.
+         * @param message
+         */
+        AG_alert.warning = (message) => {
+            $('#alert_placeholder').html('<div class="alert alert-warning alert-dismissible"><i class="fa fa-warning"></i> ' + message + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>')
+            hideAlert();
+        }
+
+    </script>
+</div>
+{{ footer }}
