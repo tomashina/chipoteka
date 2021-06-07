@@ -2,35 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="23d12899-4456-45b3-9b0f-e4b5bd1e4587" name="Default Changelist" comment="checkout">
-      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/americanexpress.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/esif.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/eu.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/hamag.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/logo-dark.svg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/maestro.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/mastercard.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/visa.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/upload/catalog/view/dist/img/ws-pay.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/upload/catalog/view/src/scss/components-chipoteka/_footer-cpta.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/dist/css/theme.css" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/dist/css/theme.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/dist/css/theme.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/dist/css/theme.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/javascript/digitalElephantFilter/classes/container_products.js" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/javascript/digitalElephantFilter/classes/container_products.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/javascript/digitalElephantFilter/classes/pagination.js" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/javascript/digitalElephantFilter/classes/pagination.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/javascript/digitalElephantFilter/classes/sync.js" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/javascript/digitalElephantFilter/classes/sync.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/src/scss/_user-variables.scss" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/src/scss/_user-variables.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/src/scss/_user.scss" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/src/scss/_user.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/src/scss/components-chipoteka/_header-cpta.scss" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/src/scss/components-chipoteka/_header-cpta.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/src/scss/theme.scss" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/src/scss/theme.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/forgotten.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/forgotten.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/register.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/account/register.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/checkout/guest.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/checkout/guest.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/footer.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/footer.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/home.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common/home.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/extension/module/basel_products.twig" beforeDir="false" afterPath="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/extension/module/basel_products.twig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/image/cache/catalog/akcijska-kamera-gopro-max-360-104202-1063-600x600xA-130x165.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/upload/image/cache/catalog/akcijska-kamera-gopro-max-360-104202-1063-600x600xA-130x165.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/image/cache/catalog/akcijska-kamera-gopro-max-360-104202-1063-600x600xA-45x45.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/upload/image/cache/catalog/akcijska-kamera-gopro-max-360-104202-1063-600x600xA-45x45.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/upload/image/catalog/akcijska-kamera-gopro-max-360-104202-1063-600x600xA.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/upload/image/catalog/akcijska-kamera-gopro-max-360-104202-1063-600x600xA.jpg" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +59,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/upload/catalog/controller/common" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/checkout" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -97,9 +69,9 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/checkout" />
       <recent name="$PROJECT_DIR$/upload/catalog/controller/common" />
       <recent name="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/common" />
-      <recent name="$PROJECT_DIR$/upload/catalog/view/theme/basel/template/checkout" />
       <recent name="$PROJECT_DIR$/upload/catalog/view/dist/img" />
       <recent name="$PROJECT_DIR$/upload/catalog/view/theme/basel/dist" />
     </key>
@@ -133,7 +105,11 @@
       <workItem from="1622114362076" duration="147000" />
       <workItem from="1622117137721" duration="2775000" />
       <workItem from="1622183019533" duration="15363000" />
-      <workItem from="1622441225095" duration="14273000" />
+      <workItem from="1622441225095" duration="14473000" />
+      <workItem from="1622459931382" duration="5301000" />
+      <workItem from="1622550256460" duration="274000" />
+      <workItem from="1622814292405" duration="413000" />
+      <workItem from="1622966214271" duration="194000" />
     </task>
     <task id="LOCAL-00001" summary="fixes admin">
       <created>1618839308771</created>
@@ -191,7 +167,21 @@
       <option name="project" value="LOCAL" />
       <updated>1622201154250</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="checkout">
+      <created>1622459248594</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1622459248594</updated>
+    </task>
+    <task id="LOCAL-00010" summary="checkout">
+      <created>1622467402064</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1622467402064</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
