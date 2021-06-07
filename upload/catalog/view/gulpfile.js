@@ -1,18 +1,18 @@
 const gulp = require('gulp'),
-      rollup = require('gulp-rollup'),  
-      gulpif = require('gulp-if'),
-      del = require('del'),
-      rename = require('gulp-rename'),
-      sass = require('gulp-sass'),
-      // pug = require('gulp-pug'),
-      autoprefixer = require('gulp-autoprefixer'),
-      sourcemaps = require('gulp-sourcemaps'),
-      // emitty = require('emitty').setup('src/templates', 'pug'),
-      browserSync = require('browser-sync').create(),
-      reload = browserSync.reload,
-      babel = require('gulp-babel'),
-      uglify = require('gulp-uglify'),
-      packageJSON = require('./package.json');
+    rollup = require('gulp-rollup'),
+    gulpif = require('gulp-if'),
+    del = require('del'),
+    rename = require('gulp-rename'),
+    sass = require('gulp-sass'),
+    // pug = require('gulp-pug'),
+    autoprefixer = require('gulp-autoprefixer'),
+    sourcemaps = require('gulp-sourcemaps'),
+    // emitty = require('emitty').setup('src/templates', 'pug'),
+    browserSync = require('browser-sync').create(),
+    reload = browserSync.reload,
+    babel = require('gulp-babel'),
+    uglify = require('gulp-uglify'),
+    packageJSON = require('./package.json');
 
 
 // Define reusable paths
@@ -20,9 +20,7 @@ const gulp = require('gulp'),
 const path = {
   src: 'src',
   dist: 'dist',
-
-  src_pug: 'src/templates',
-
+  // src_pug: 'src/templates',
   src_scss: 'src/scss',
   src_js: 'src/js',
   dist_vendor: 'dist/vendor',
@@ -40,14 +38,14 @@ gulp.task('sass:expanded', () => {
     precision: 10 // rounding of css color values, etc..
   };
   return gulp.src(path.src_scss + '/theme.scss')
-  .pipe(sourcemaps.init())
-    .pipe(sass(options).on('error', sass.logError))
-    .pipe(autoprefixer({
-      cascade: false
-    }))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(path.dist_css))
-    .pipe(browserSync.stream()); // Inject css into browser
+      .pipe(sourcemaps.init())
+      .pipe(sass(options).on('error', sass.logError))
+      .pipe(autoprefixer({
+        cascade: false
+      }))
+      .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest(path.dist_css))
+      .pipe(browserSync.stream()); // Inject css into browser
 });
 
 // Minified
@@ -57,15 +55,15 @@ gulp.task('sass:minified', () => {
     precision: 10 // rounding of css color values, etc..
   };
   return gulp.src(path.src_scss + '/theme.scss')
-    .pipe(sourcemaps.init())
-    .pipe(sass(options).on('error', sass.logError))
-    .pipe(autoprefixer({
-      cascade: false
-    }))
-    .pipe(rename({ suffix: '.min'}))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(path.dist_css))
-    .pipe(browserSync.stream()); // Inject css into browser
+      .pipe(sourcemaps.init())
+      .pipe(sass(options).on('error', sass.logError))
+      .pipe(autoprefixer({
+        cascade: false
+      }))
+      .pipe(rename({ suffix: '.min'}))
+      .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest(path.dist_css))
+      .pipe(browserSync.stream()); // Inject css into browser
 });
 
 
@@ -74,12 +72,12 @@ gulp.task('sass:minified', () => {
 // Expended
 gulp.task('js:expanded', () => {
   return gulp.src(path.src_js + '/theme.js')
-    .pipe(rollup({
-      allowRealFiles: true,
-      input: './' + path.src_js + '/theme.js',
-      output: {
-        format: 'iife',
-        banner: `
+      .pipe(rollup({
+        allowRealFiles: true,
+        input: './' + path.src_js + '/theme.js',
+        output: {
+          format: 'iife',
+          banner: `
         /**
          * Cartzilla | Bootstrap E-Commerce Template
          * Copyright 2021 Createx Studio
@@ -89,23 +87,23 @@ gulp.task('js:expanded', () => {
          * @version 2.0.0
          */
         `
-      }
-    }))
-    .pipe(babel({
-      presets: [['@babel/env', {modules: false}]]
-    }))
-    .pipe(gulp.dest(path.dist_js));
+        }
+      }))
+      .pipe(babel({
+        presets: [['@babel/env', {modules: false}]]
+      }))
+      .pipe(gulp.dest(path.dist_js));
 });
 
 // Minified
 gulp.task('js:minified', () => {
   return gulp.src(path.src_js + '/theme.js')
-    .pipe(rollup({
-      allowRealFiles: true,
-      input: './' + path.src_js + '/theme.js',
-      output: {
-        format: 'iife',
-        banner: `
+      .pipe(rollup({
+        allowRealFiles: true,
+        input: './' + path.src_js + '/theme.js',
+        output: {
+          format: 'iife',
+          banner: `
         /**
          * Cartzilla | Bootstrap E-Commerce Template
          * Copyright 2021 Createx Studio
@@ -115,17 +113,17 @@ gulp.task('js:minified', () => {
          * @version 2.0.0
          */
         `
-      }
-    }))
-    .pipe(rename('theme.min.js'))
-    .pipe(babel({
-      presets: [['@babel/env', {modules: false}]],
-    }))
-    .pipe(uglify({output: {comments: /^!|@author|@version/i}}))
-    .pipe(gulp.dest(path.dist_js))
-    .on('end', () => {
-      reload(); // One time browser reload at end of uglification (minification)
-    });
+        }
+      }))
+      .pipe(rename('theme.min.js'))
+      .pipe(babel({
+        presets: [['@babel/env', {modules: false}]],
+      }))
+      .pipe(uglify({output: {comments: /^!|@author|@version/i}}))
+      .pipe(gulp.dest(path.dist_js))
+      .on('end', () => {
+        reload(); // One time browser reload at end of uglification (minification)
+      });
 });
 
 
@@ -135,7 +133,6 @@ gulp.task('js:minified', () => {
 // https://github.com/mrmlnc/emitty/blob/master/examples/stream-performance.js
 
 // stream-performance
-
 // gulp.task('pug', () =>
 //   new Promise((resolve, reject) => {
 //     const sourceOptions = {
@@ -158,7 +155,6 @@ gulp.task('js:minified', () => {
 // );
 
 
-
 // Move vendor css and js files from node_modules to dist folder
 // based on the list in package.json dependencies
 
@@ -168,7 +164,7 @@ gulp.task('vendor', () => {
     return key + '/**/*';
   });
   return gulp.src(vendor, {cwd: 'node_modules', base: './node_modules'})
-  .pipe(gulp.dest(path.dist_vendor));
+      .pipe(gulp.dest(path.dist_vendor));
 });
 
 
@@ -204,15 +200,14 @@ gulp.task('watch', () => {
   //     global.emittyChangedFile = filepath;
   //   });
 
-    gulp.watch(path.src_scss + '/**/*.scss',   gulp.series('sass:expanded')); //  gulp.series('sass:minified', 'sass:expanded'));
-    gulp.watch(path.src_js + '/**/*.js', gulp.series('js:expanded', 'js:minified'));
+  gulp.watch(path.src_scss + '/**/*.scss',   gulp.series('sass:expanded')); //  gulp.series('sass:minified', 'sass:expanded'));
+  gulp.watch(path.src_js + '/**/*.js', gulp.series('js:expanded', 'js:minified'));
 });
 
 
 // Default task - the dependent tasks will run in parallell / excluding Docs and Components compilation
 
 gulp.task(
-  'default',
-  gulp.series('clean', 'vendor', gulp.parallel('js:minified', 'js:expanded', 'sass:minified', 'sass:expanded'), 'watch') // 'pug'
-
+    'default',
+    gulp.series('clean', 'vendor', gulp.parallel('js:minified', 'js:expanded', 'sass:minified', 'sass:expanded'), 'watch') // 'pug'
 );
