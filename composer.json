@@ -6,7 +6,7 @@
     "homepage": "http://www.opencart.com",
     "license": "GPL-3.0+",
     "config": {
-        "vendor-dir": "./upload/system/storage/vendor/"
+        "vendor-dir": "./storage/vendor/"
     },
     "require": {
         "braintree/braintree_php" : "3.40.0",
