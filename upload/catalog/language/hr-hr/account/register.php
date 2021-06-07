@@ -7,7 +7,7 @@ $_['heading_title']        = 'Kreiraj korisnički račun';
 $_['text_account']         = 'Korisnički račun';
 $_['text_register']        = 'Registriraj se';
 $_['text_account_already'] = 'Ako već imate kreiran korisnički račun kod nas, molim prijavite se na <a href="%s">stranici za prijavu</a>.';
-$_['text_your_details']    = 'Vaši osobni podatci';
+$_['text_your_details']    = 'Vaši osobni podaci';
 $_['text_your_address']    = 'Vaša adresa';
 $_['text_newsletter']      = 'Newsletter';
 $_['text_your_password']   = 'Vaša lozinka';

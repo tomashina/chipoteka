@@ -6,6 +6,8 @@ $_['heading_title']        = 'Adresar';
 // Text
 $_['text_account']         = 'Korisnički račun';
 $_['text_address_book']    = 'Upis u adresar';
+$_['text_address_add']   = 'Dodaj adresu';
+$_['text_address_edit']  = 'Promjeni adresu';
 $_['text_edit_address']    = 'Promjeni adresu';
 $_['text_add']             = 'Adresa je uspješno dodana';
 $_['text_edit']            = 'Adresa je uspješno izbrisana';

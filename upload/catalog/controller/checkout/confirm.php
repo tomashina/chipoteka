@@ -37,6 +37,9 @@ class ControllerCheckoutConfirm extends Controller {
 		// Validate minimum quantity requirements.
 		$products = $this->cart->getProducts();
 
+        $this->load->model('tool/image');
+        $this->load->model('tool/upload');
+
 		foreach ($products as $product) {
 			$product_total = 0;
 
@@ -51,6 +54,8 @@ class ControllerCheckoutConfirm extends Controller {
 
 				break;
 			}
+
+
 		}
 
 		if (!$redirect) {
@@ -208,7 +213,18 @@ class ControllerCheckoutConfirm extends Controller {
 
 			$order_data['products'] = array();
 
+
+
+
 			foreach ($this->cart->getProducts() as $product) {
+
+                if ($product['image']) {
+                    $image = $this->model_tool_image->resize($product['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_cart_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_cart_height'));
+                } else {
+                    $image = '';
+                }
+
+
 				$option_data = array();
 
 				foreach ($product['option'] as $option) {
@@ -226,6 +242,7 @@ class ControllerCheckoutConfirm extends Controller {
 				$order_data['products'][] = array(
 					'product_id' => $product['product_id'],
 					'name'       => $product['name'],
+                    'thumb'     => $image,
 					'model'      => $product['model'],
 					'option'     => $option_data,
 					'download'   => $product['download'],
@@ -328,6 +345,12 @@ class ControllerCheckoutConfirm extends Controller {
 			$data['products'] = array();
 
 			foreach ($this->cart->getProducts() as $product) {
+
+                if ($product['image']) {
+                    $image = $this->model_tool_image->resize($product['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_cart_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_cart_height'));
+                } else {
+                    $image = '';
+                }
 				$option_data = array();
 
 				foreach ($product['option'] as $option) {
@@ -374,6 +397,7 @@ class ControllerCheckoutConfirm extends Controller {
 				$data['products'][] = array(
 					'cart_id'    => $product['cart_id'],
 					'product_id' => $product['product_id'],
+                    'thumb'     => $image,
 					'name'       => $product['name'],
 					'model'      => $product['model'],
 					'option'     => $option_data,
@@ -407,7 +431,24 @@ class ControllerCheckoutConfirm extends Controller {
 				);
 			}
 
+          /*  echo'<pre>';
+			print_r($this->session->data);
+            echo'</pre>';*/
+            $data['first_name'] = $this->session->data['payment_address']['firstname'];
+            $data['last_name'] = $this->session->data['payment_address']['lastname'];
+            $data['address'] = $this->session->data['payment_address']['address_1'];
+            $data['zip'] = $this->session->data['payment_address']['postcode'];
+            $data['city'] = $this->session->data['payment_address']['city'];
+            $data['country'] = $this->session->data['payment_address']['country'];
+
+            $data['phone'] = $this->session->data['guest']['telephone'];
+            $data['email'] = $this->session->data['guest']['email'];
+
+            $data['payment_name'] = $this->session->data['payment_method']['title'];
+            $data['shipping_name'] = $this->session->data['shipping_method']['title'];
 			$data['payment'] = $this->load->controller('extension/payment/' . $this->session->data['payment_method']['code']);
+
+
 		} else {
 			$data['redirect'] = $redirect;
 		}

@@ -1,0 +1,93 @@
+{{ header }}
+<main class="offcanvas-enabled" style="padding-top: 5rem;">
+
+
+  <!-- Page Title-->
+  <div class="page-title-overlap bg-dark pt-4 ps-lg-4 pe-lg-3">
+    <div class="container d-lg-flex justify-content-between py-2 py-lg-3">
+      <div class="order-lg-2 mb-3 mb-lg-0 pt-lg-2">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb breadcrumb-light flex-lg-nowrap justify-content-center justify-content-lg-start">
+            {% for breadcrumb in breadcrumbs %}
+              <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+            {% endfor %}
+          </ol>
+        </nav>
+      </div>
+      <div class="order-lg-1 pe-lg-4 text-center text-lg-start">
+        <h1 class="h3 text-light mb-0">{{ heading_title }}</h1>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div class="container pb-5 mb-2 mb-md-4 ps-lg-4 pe-lg-3">
+    <div class="row">
+      <!-- Sidebar-->
+
+      {{ column_left }}
+
+
+      <!-- Content  -->
+      <section class="col-lg-8" id="account-edit">
+        <!-- Toolbar-->
+        <div class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-4 pb-lg-5 mb-lg-3">
+          <h6 class="fs-base text-light mb-0">{{ text_address_book }}</h6><a class="btn btn-primary btn-sm" href="{{ logout }}"><i class="ci-sign-out me-2"></i>{{ text_logout }}</a>
+        </div>
+        <!-- Profile form-->
+
+
+        {% if success %}
+          <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}</div>
+        {% endif %}
+        {% if error_warning %}
+          <div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+        {% endif %}
+
+
+
+        {% if addresses %}
+        <!-- Addresses list-->
+        <div class="table-responsive fs-md">
+          <table class="table table-hover mb-0">
+            <thead>
+            <tr>
+              <th>Adrese</th>
+              <th>Uredi</th>
+            </tr>
+            </thead>
+            <tbody>
+
+
+            {% for result in addresses %}
+            <tr>
+              <td class="py-3 align-middle">{{ result.address }}</td>
+              <td class="py-3 align-middle">
+                <a class="nav-link-style me-2" href="{{ result.update }}" data-bs-toggle="tooltip" title="{{ button_edit }}"><i class="ci-edit"></i></a>
+                <a class="nav-link-style text-danger" href="{{ result.delete }}" data-bs-toggle="tooltip" title="{{ button_delete }}"><div class="ci-trash"></div></a>
+              </td>
+            </tr>
+
+            {% endfor %}
+
+
+
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+          <p>{{ text_empty }}</p>
+        {% endif %}
+        <div class="text-sm-start pt-4"><a class="btn btn-primary" href="{{ add }}" data-bs-toggle="modal">{{ button_new_address }}</a></div>
+
+
+
+
+
+      </section>
+
+    </div>
+  </div>
+{{ footer }}

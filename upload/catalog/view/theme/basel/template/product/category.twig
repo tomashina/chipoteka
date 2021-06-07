@@ -1,0 +1,80 @@
+{{ header }}
+<main class="offcanvas-enabled" style="padding-top: 5rem;">
+    <!-- Custom page title-->
+    <div class="page-title-overlap bg-dark pt-4 ps-lg-4 pe-lg-3">
+        <div class="container-fluid  py-2 py-lg-3">
+
+            <div class="pe-lg-4 text-center text-lg-start">
+                <h1 class="h3 text-light mb-2" id="page-title">{{ heading_title }}</h1>
+            </div>
+            <div class=" mb-3 mb-lg-0 pt-lg-2">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-light flex-lg-nowrap justify-content-center justify-content-lg-start">
+                        {% for breadcrumb in breadcrumbs %}
+                            <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                        {% endfor %}
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <div id="content" class="container-fluid pb-5 mb-2 mb-md-4">
+
+
+
+
+
+
+
+        <!-- Toolbar-->
+
+            <!-- Products grid-->
+        <div id="product-view">
+
+            <div class="product-filter rounded-3 p-4 mt-n5 mb-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="dropdown me-2"><a class="btn btn-outline-secondary dropdown-toggle" href="#shop-filters" data-bs-toggle="collapse"><i class="ci-filter me-2"></i>Filters</a></div>
+                    <div class="d-flex">
+                        {{ pagination }}
+                    </div>
+                    <div class="d-none d-sm-flex">
+                        <label class="text-light fs-sm opacity-75 text-nowrap me-2 d-none d-sm-block" for="sorting">{{ text_sort }}</label>
+                        <select id="input-sort" class="form-select " onchange="location = this.value;">
+                            {% for sorts in sorts %}
+                                {% if sorts.value == '%s-%s'|format(sort, order) %}
+                                    <option value="{{ sorts.href }}" selected="selected"> {{ sorts.text }}</option>
+                                {% else %}
+                                    <option value="{{ sorts.href }}" >{{ sorts.text }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <!-- Toolbar with expandable filters-->
+                <div class="collapse" id="shop-filters">
+
+                    {{ content_top }}
+
+                </div>
+            </div>
+            <div class="row pt-3 mx-n2 product-holder ">
+                {% if products %}
+                <!-- Product-->
+                    {% for product in products %}
+                        {% include 'basel/template/product/single_product.twig' %}
+                    {% endfor %}
+                {% endif %}
+                {% if not categories and not products %}
+                    <p>{{ text_empty }}</p>
+                {% endif %}
+            </div>
+            <hr class="my-3">
+
+            <nav class="d-flex justify-content-between pt-2 pagination-navigation" aria-label="Page navigation">
+                {{ pagination }}
+            </nav>
+        </div>
+    </div>
+    </div>
+{{ footer }}

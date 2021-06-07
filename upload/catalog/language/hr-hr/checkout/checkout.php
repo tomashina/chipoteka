@@ -18,18 +18,18 @@ $_['text_new_customer']              = 'Novi kupac';
 $_['text_returning_customer']        = 'Postojeći kupac';
 $_['text_checkout']                  = 'Opcije naplate:';
 $_['text_i_am_returning_customer']   = 'Ja sam već postojeći kupac';
-$_['text_register']                  = 'Kreiraj korisnički račun';
-$_['text_guest']                     = 'Naplata kao gost';
+$_['text_register']                  = 'Registriraj se';
+$_['text_guest']                     = 'Bez registracije';
 $_['text_register_account']          = 'Kreiranjem korisničkog računa bit ćete u mogućnosti brže i jednostavnije kupovati, provjeravati statuse narudžbi, te pregledavati prošle narudžbe.';
 $_['text_forgotten']                 = 'Zaboravljena lozinka';
-$_['text_your_details']              = 'Vaši osobni podatci';
-$_['text_your_address']              = 'Vaša adresa';
+$_['text_your_details']              = 'Vaši osobni podaci';
+$_['text_your_address']              = 'Adresa dostave';
 $_['text_your_password']             = 'Vaša lozinka';
 $_['text_agree']                     = 'Pročitao sam i prihvaćam (slažem se s) <a href="%s" class="agree"><b>%s</b></a>';
 $_['text_address_new']               = 'Želim koristiti novu adresu';
 $_['text_address_existing']          = 'Želim koristiti postojeću adresu';
-$_['text_shipping_method']           = 'Molim odaberite način dostave koji želite koristiti za ovu narudžbu.';
-$_['text_payment_method']            = 'Molim odaberite način plaćanja koji želite koristiti za ovu narudžbu.';
+$_['text_shipping_method']           = 'Odaberite način dostave ';
+$_['text_payment_method']            = 'Odaberite način plaćanja';
 $_['text_comments']                  = 'Dodajte komentar uz Vašu narudžbu';
 // $_['text_recurring']                 = 'Ponavljajuće stavke'; // postojalo u verziji OC 2.0.1.0
 $_['text_recurring_item']            = 'Ponavljajuće stavke';
@@ -43,7 +43,8 @@ $_['text_week']                      = 'tjedan';
 $_['text_semi_month']                = 'pola mjeseca';
 $_['text_month']                     = 'mjesec';
 $_['text_year']                      = 'godina';
-
+$_['text_login']                      = 'Prijavi se';
+$_['text_review']                      = 'Provjeri narudžbu';
 // Column
 $_['column_name']                    = 'Naziv artikla';
 $_['column_model']                   = 'Model';

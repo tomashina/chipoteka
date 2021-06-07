@@ -1,0 +1,50 @@
+
+<div class="col-12 col-sm product-card-wrapper  px-2 mb-3">
+
+{# <div class="col-xxl-3 col-xl-4 col-lg-4 col-sm-4 px-2 mb-3"> #}
+
+{# <div class="col-xl-3 col-lg-4 col-sm-4 px-2 mb-3"> #}
+
+    <div class="card product-card">
+
+        {# <button class="btn-wishlist btn-sm" type="button" data-bs-toggle="tooltip" data-bs-placement="left" onclick="wishlist.add('{{ product.product_id }}');" title="{{ button_wishlist }}"><i class="ci-heart"></i></button> #}
+
+        <div class="position-relative">
+
+        <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fad fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
+
+        <a class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}"></a>
+
+        <div class="product-badge-cpta product-badge-cpta__free-shipping">
+            <span> Besplatna dostava</span>
+            <i class="fas fa-shipping-fast"></i>    
+        </div>
+
+        </div>
+
+        <div class="card-body py-2">
+            <h3 class="product-title"><a href="{{ product.href }}">{{ product.name }}</a></h3>
+            <div class="d-flex justify-content-between">
+                {% if product.price %}
+                    <div class="product-price">
+                        {% if product.special %}
+                            <span class="text-accent">{{ product.price }}</span>
+                            <del class="fs-sm text-muted">{{ product.special }}</del>
+                        {% else %}
+                            <span class="text-accent"> {{ product.price }}</span>
+                        {% endif %}
+                    </div><!-- .price -->
+                {% endif %}
+                {% if product.rating %}
+
+                <div class="star-rating {{ product.rating }}"><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star"></i>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+          
+       
+    </div>
+    
+</div>

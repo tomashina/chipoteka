@@ -1,0 +1,101 @@
+{{ header }}
+<main class="offcanvas-enabled" style="padding-top: 5rem;">
+    <section id="account-edit"  class="ps-lg-4 pe-lg-3 pt-4">
+        <div class="px-3 pt-2">
+            <!-- Page title + breadcrumb-->
+            <nav class="mb-4" aria-label="breadcrumb">
+                <ol class="breadcrumb flex-lg-nowrap">
+                    {% for breadcrumb in breadcrumbs %}
+                        <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                    {% endfor %}
+                </ol>
+            </nav>
+            <section class="d-md-flex justify-content-between align-items-center mb-4 pb-2">
+                <div class="row g-0 mx-n2 mb-4">
+                  <div id="content" class="{{ class }} no-min-height">
+                     {{ content_top }}
+                      <h1 id="page-title" class="h2 mb-3">{{ heading_title }}</h1>
+                      <div class="row">
+                        <div class="col-sm-6 mb-4">
+                            <div class="card border-0 shadow">
+                                <div class="card-body">
+                                        <h2  class="h4 mb-1">{{ button_login }}</h2>
+
+                                        {% if success %}
+                                        <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}</div>
+                                        {% endif %}
+                                        {% if error_warning %}
+                                        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
+                                        {% endif %}
+
+                                    <div class="py-3">
+                                        <h3 class="d-inline-block align-middle fs-base fw-medium mb-2 me-2">Putem socialnih mreža:</h3>
+                                        <div class="d-inline-block align-middle"><a class="btn-social bs-google me-2 mb-2" href="#" data-bs-toggle="tooltip" title="Sign in with Google"><i class="ci-google"></i></a><a class="btn-social bs-facebook me-2 mb-2" href="#" data-bs-toggle="tooltip" title="Sign in with Facebook"><i class="ci-facebook"></i></a><a class="btn-social bs-twitter me-2 mb-2" href="#" data-bs-toggle="tooltip" title="Sign in with Twitter"><i class="ci-twitter"></i></a></div>
+                                    </div>
+                                    <hr>
+
+                                    <h3 class="fs-base pt-4 pb-2">Putem obrasca</h3>
+
+                                        <form action="{{ action }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                                            <div class="input-group mb-3"><i class="ci-mail position-absolute top-50 translate-middle-y text-muted fs-base ms-3"></i>
+                                                <input type="text" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-email" class="form-control rounded-start" />
+                                            </div>
+
+                                            <div class="input-group mb-3"><i class="ci-locked position-absolute top-50 translate-middle-y text-muted fs-base ms-3"></i>
+                                                <div class="password-toggle w-100">
+                                                    <input class="form-control" name="password" type="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" required>
+                                                    <label class="password-toggle-btn" aria-label="Show/hide password">
+                                                        <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="d-flex flex-wrap justify-content-between">
+                                               <!-- <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" checked id="remember_me">
+                                                    <label class="form-check-label" for="remember_me">Remember me</label>
+                                                </div>-->
+                                                <a class="nav-link-inline fs-sm" href="{{ forgotten }}">{{ text_forgotten }}</a>
+                                            </div>
+                                            <hr class="mt-4">
+                                            <div class="text-end pt-4">
+                                                <button class="btn btn-primary" type="submit"><i class="ci-sign-in me-2 ms-n21"></i>{{ button_login }}</button>
+
+
+                                            </div>
+
+
+
+
+
+
+                                          {% if redirect %}
+                                          <input type="hidden" name="redirect" value="{{ redirect }}" />
+                                          {% endif %}
+                                        </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6  mb-4">
+                            <div class="card border-0 shadow">
+                                <div class="card-body">
+                                    <h2 class="h4 mb-3">{{ text_new_customer }}</h2>
+
+
+                                    {{ text_register_account }}
+                                    <hr class="mt-4">
+                                    <div class="text-end pt-4">
+                                        <a href="{{ register }}" class="btn btn-primary"><i class="ci-user me-2 ms-n1"></i>{{ button_register }}</a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                         {{ content_bottom }}
+                   </div>
+                </div>
+            </section>
+        </div>
+    </section>
+{{ footer }}

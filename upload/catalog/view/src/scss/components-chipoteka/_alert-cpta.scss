@@ -1,0 +1,23 @@
+
+//
+// Alert
+// --------------------------------------------------
+
+.alert-promo {
+    background-color: $dark;
+    color: $primary-l3;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 0;
+    border: none;
+
+ 
+
+    .btn-close {
+        height: 100%;
+        font-size: 1.25rem;
+        color: $gray-d1;
+        background-image: none;
+        padding: 0 1rem;
+    }
+}

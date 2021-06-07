@@ -1,0 +1,43 @@
+
+<div class="accordion-item">
+    <h3 class="accordion-header"><a class="accordion-button collapsed" href="#promo-code" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="promo-code">{{ heading_title }}</a></h3>
+    <div class="accordion-collapse collapse " id="promo-code" data-bs-parent="#order-options">
+        <form class="accordion-body needs-validation" method="post" novalidate>
+            <div class="mb-3">
+                <input class="form-control" name="coupon" value="{{ coupon }}" placeholder="{{ entry_coupon }}" id="input-coupon">
+                <div class="invalid-feedback">Please provide promo code.</div>
+            </div>
+            <input class="btn btn-outline-primary d-block w-100" type="button" value="{{ button_coupon }}" id="button-coupon" data-loading-text="{{ text_loading }}" />
+        </form>
+    </div>
+</div>
+      <script><!--
+$('#button-coupon').on('click', function() {
+	$.ajax({
+		url: 'index.php?route=extension/total/coupon/coupon',
+		type: 'post',
+		data: 'coupon=' + encodeURIComponent($('input[name=\'coupon\']').val()),
+		dataType: 'json',
+		beforeSend: function() {
+			$('#button-coupon').button('loading');
+		},
+		complete: function() {
+			$('#button-coupon').button('reset');
+		},
+		success: function(json) {
+			$('.alert').remove();
+
+			if (json['error']) {
+				$('#content').before('<div class="alert alert-danger alert-dismissible fade show" role="alert"> ' + json['error'] + '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button></div>');
+
+				$('html, body').animate({ scrollTop: 0 }, 'slow');
+			}
+
+			if (json['redirect']) {
+				location = json['redirect'];
+			}
+		}
+	});
+});
+//--></script>
+

@@ -1,0 +1,438 @@
+//
+// Header & Sidebar (Navbar, Accordion, Menu) & Offcanvas
+// --------------------------------------------------
+
+// - - - - - - - - - - - - - - - - - 
+// Header
+.page-header {
+    position: sticky;
+    background-color: $white;
+    box-shadow: $box-shadow-header;
+
+    // @include media-breakpoint-down(lg) {
+    //     border-radius: 0 0 $border-radius-lg 0;
+    //  }
+
+
+    // - - - - - - - - - - - - - - - -
+    // Navbar
+    .navbar {
+        min-height: 78px;
+
+        // Navbar Brand
+        .navbar-brand {
+            margin-bottom: -15px;
+
+            img {
+                width: 225px;
+                margin-left: -1px;
+
+                @include media-breakpoint-only(lg) {
+                    padding-top: 7px;
+                    padding-bottom: 7px;
+                    background-color: $primary;
+                    border-radius: 0 0 15px 0;
+                }
+
+                @include media-breakpoint-up(xl) {
+                    width: 265px;
+                }
+            }
+        }
+
+        // - - - - - - - - - -
+        // Navbar icons
+        .navbar-tool {
+
+            @include media-breakpoint-up(lg) {
+
+                padding-right: 0.54rem;
+                padding-left: 0.54rem;
+
+                &:not(:nth-child(3)) {
+                    border-left: 1px solid $gray-l2;
+                }
+
+            }
+
+
+            &:hover {
+                .navbar-tool-icon {
+                    color: $primary;
+                }
+            }
+        }
+
+        .navbar-tool-icon-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navbar-tool-icon {
+            font-size: 1.5rem;
+            transition: color $transition-default;
+        }
+
+        .navbar-tool-label {
+            top: unset;
+            right: unset;
+            bottom: -0.1125rem;
+            width: unset;
+            padding: 0 0.313rem;
+            border-radius: 15px;
+            font-weight: 600;
+        }
+
+        .navbar-tool-text {
+            font-size: 1rem;
+            padding-left: 0;
+            padding-right: 0.5rem;
+
+            small {
+                font-size: 0.875rem;
+            }
+        }
+
+        // - - - - - - - - - - - - - - - - - - -
+        // Mobile
+
+        @include media-breakpoint-down(lg) {
+            // border-radius: 0 0 $border-radius-lg 0;
+            background-color: $primary;
+            min-height: 60px;
+
+
+            // - - - - - - - - - -
+            // Navbar icons
+            .navbar-toggler .navbar-tool-icon,
+            .navbar-tool-icon {
+                color: $light;
+            }
+
+            .navbar-toggler .navbar-tool-icon:hover {
+                color: $black;
+            }
+
+            .navbar-tool {
+                padding: 0 1.11rem;
+                border: none;
+
+                &:not(:nth-child(1)) {
+                    border-left: 1px solid rgba($light, 0.24);
+                }
+
+                &:hover {
+                    .navbar-tool-icon {
+                        color: $black;
+                    }
+                }
+
+                .navbar-tool-icon {
+                    font-size: 1.25rem;
+                }
+            }
+
+            // .dropdown {}
+
+            .navbar-tool-icon-box {
+                width: auto;
+            }
+
+            .navbar-tool-label {
+                background-color: $white;
+                color: $primary;
+            }
+
+            // - - - - - - - - - -
+            // Brand logo
+            .navbar-brand {
+                margin-bottom: 0;
+
+                img {
+                    width: 165px;
+                }
+            }
+        }
+
+        // 450px below
+        @media only screen and (max-width: 450px) {
+            .navbar-brand {
+                img {
+                    width: 117px;
+                }
+            }
+        }
+
+    }
+
+}
+
+
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+
+
+// - - - - - - - - - - - - - - - - - 
+// Sidebar
+.sidebar {
+
+    // - - - - - - - - - 
+    // 0 - Main level
+
+    // Nav Tabs
+    .nav-tabs {
+
+
+        .nav-item {
+
+            // Close 
+            &:nth-child(3) {
+                flex: 0 0 3.5rem;
+
+                i {
+                    margin-right: 0;
+                }
+            }
+        }
+
+
+        .nav-link {
+            height: 100%;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding-left: 0.8rem;
+            padding-right: 0.8rem;
+            border-left: 1px solid $light;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+
+            &.active {
+                background-color: $light;
+
+                &::before {
+                    background-color: transparent;
+                }
+            }
+
+            i {
+                margin-right: 0.5rem;
+                font-size: 1rem;
+            }
+
+        
+            @include media-breakpoint-up(sm) {
+                font-size: 1.25rem;
+            }
+
+        }
+    }
+
+
+    // - - - - - - - - - 
+    // 1 - First level
+
+    // Categories
+    #account,
+    #menu,
+    #categories {
+
+        // Item
+        .accordion-item {
+
+            // Active - accordion item
+            .accordion-header+[id*="catid"] {
+                background-color: $light;
+                transition: all $transition-default;
+            }
+
+            // Header
+            .accordion-header {
+                transition: all $transition-default;
+
+                // Button
+                .accordion-button {
+                    font-size: 1rem;
+                    text-transform: uppercase;
+                    padding-left: 1.25rem;
+                    padding-right: 1rem;
+                    border-radius: 0;
+
+                    // Icon
+                    &::after {
+                        @extend %fa;
+
+                        font-weight: 300;
+                        content: "\f078";
+                        font-size: 1.313rem;
+                        color: $gray-l2;
+                        background-color: transparent;
+
+                        transition: all $transition-default;
+                    }
+
+                    // Clicked
+                    &[aria-expanded="true"] {
+                        background-color: $light;
+                    }
+
+                    // Clicked
+                    &[aria-expanded="true"] {
+                        &:after {
+                            color: $primary
+                        }
+                    }
+
+                    &:hover {
+                        background-color: $light;
+                    }
+
+                    // Clicked & Hover
+                    // &[aria-expanded="true"],
+                    // &:hover {
+                    //     &:after {
+                    //         color: $primary;
+                    //     }
+                    // }
+                }
+
+            }
+
+
+
+            // - - - - - - - - - 
+            // 2 - Second level
+
+            // widget-links
+
+            .widget-links {
+                margin-left: 0;
+
+                .widget-list {
+                    // border-right-color: $gray-l1;
+                    border: none;
+
+                    .widget-list-item {
+                        margin-bottom: 0;
+                        padding-left: 0;
+                        padding-right: 0;
+                        border-bottom: 1px solid $white;
+
+                        &:first-child {
+                            border-top: 1px solid $white;
+                        }
+
+                        .widget-list-link {
+                            padding: 0.75rem 1.25rem;
+                            padding-right: 1rem;
+                            // padding-left: 1.75rem;
+                            font-size: 0.906rem;
+                            display: flex;
+
+                            // Icon
+                            &::after {
+                                @extend %fa;
+
+                                font-weight: 300;
+                                content: "\f078";
+                                font-size: 1.313rem;
+                                color: darken($gray-l2, 6);
+                                background-color: transparent;
+                                width: 1.375rem;
+                                margin-left: auto;
+                                text-align: center;
+                                line-height: 1.375rem;
+                                padding-top: .0625rem;
+                                background-image: none;
+                                cursor: pointer;
+
+                                transform: rotate(0deg);
+
+                                transition: all $transition-default;
+                            }
+
+                            // Active
+                            &[aria-expanded*="true"] {
+                                color: $primary;
+                                background-color: darken($light, 5);
+
+                                transition: all $transition-default;
+
+                                &::after {
+                                    transform: rotate(180deg);
+                                    color: $primary;
+                                }
+                            }
+
+                        }
+
+                         // Active .widget-list-item
+                         .widget-list-link+[id*="subid"] {
+                            background-color: darken($light, 5);
+                         }
+
+
+
+                        // - - - - - - - - - 
+                        // 3 - Third level
+
+                        >.widget-list {
+                            // margin-right: -2px;
+                            // border-right: 2px solid $primary;
+
+                            .widget-list-item {
+                                border-bottom: 1px solid $white;
+
+                                .widget-list-link {
+                                    // padding-left: 2.25rem;
+
+                                    // Icon
+                                    &::after {
+                                        content: "";
+                                        display: none;
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+            }
+
+
+
+
+        }
+
+    }
+
+}
+
+
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+/////////////////////////////////////////////////////
+
+
+// - - - - - - - - - 
+// Ofcanvas
+.offcanvas,
+.offcanvas.show {
+    max-width: unset;
+
+    @include media-breakpoint-up(lg) {
+        max-width: $offcanvas-width;
+    }
+}
+
+.offcanvas-enabled {
+    @include media-breakpoint-up(lg) {
+        padding-left: $offcanvas-width;
+    }
+}

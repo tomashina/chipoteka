@@ -21,10 +21,14 @@ function DigitalElephantFilterPagination() {
     };
 
     this.preloaderOn = function() {
+<<<<<<< HEAD
         $(this.selector).html('' +
             '<i ' +
             'class="' + this.config.preloaderClass + '"' +
             'style="margin: auto; margin-top: 10px; display: block;">');
+=======
+        $(this.selector).html('');
+>>>>>>> Admin2
     };
 
     this.isset = function() {

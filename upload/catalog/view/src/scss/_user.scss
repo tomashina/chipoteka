@@ -1,0 +1,54 @@
+// 
+// user.scss
+// Use this to write your custom SCSS
+//
+
+// Placeholders
+
+%fa {
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    font-family: "Font Awesome 5 Pro";
+}
+
+
+// Color classes
+
+// Custom Grayscale
+.light { color: $light; }
+.gray-l2 { color: $gray-l2; }
+.gray-l1 { color: $gray-l1; }
+.gray { color: $gray ; }
+.gray-d1 { color: $gray-d1; }
+.gray-d2 { color: $gray-d2; }
+.dark { color: $dark; }
+
+ 
+
+body {
+    background: linear-gradient(180deg, #F5F5F5 0, rgba(245, 245, 245, 0) 333px);
+    background-color: $white;
+}
+ 
+body > main.offcanvas-enabled {
+    padding-top: 0 !important;
+}
+
+// main >  section {
+//         padding-left: $grid-gutter-width-10px;
+//         padding-right: $grid-gutter-width-10px;
+
+//     @include media-breakpoint-up(sm) {
+//             padding-left: $grid-gutter-width-half;
+//             padding-right: $grid-gutter-width-half;
+//     }
+
+//     @include media-breakpoint-up(lg) {
+//         padding-left: $grid-gutter-width;
+//         padding-right: $grid-gutter-width;
+//     }
+    
+// }

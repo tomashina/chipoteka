@@ -14,12 +14,12 @@ class Pagination {
 	public $total = 0;
 	public $page = 1;
 	public $limit = 20;
-	public $num_links = 8;
+	public $num_links = 5;
 	public $url = '';
-	public $text_first = '|&lt;';
-	public $text_last = '&gt;|';
-	public $text_next = '&gt;';
-	public $text_prev = '&lt;';
+	public $text_first = 'Prva';
+	public $text_last = 'Zadnja';
+	public $text_next = '<i class="ci-arrow-right ms-2"></i>';
+	public $text_prev = '<i class="ci-arrow-left me-2"></i>';
 
 	/**
      * 
@@ -49,14 +49,18 @@ class Pagination {
 		$output = '<ul class="pagination">';
 
 		if ($page > 1) {
-			$output .= '<li><a href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '">' . $this->text_first . '</a></li>';
+			//$output .= '<li class="page-item d-none d-sm-block"><a class="page-link" href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '">' . $this->text_first . '</a></li>';
 			
 			if ($page - 1 === 1) {
-				$output .= '<li><a href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '">' . $this->text_prev . '</a></li>';
+				$output .= '<li class="page-item d-none d-sm-block"><a class="page-link" href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '">' . $this->text_prev . '</a></li>';
 			} else {
-				$output .= '<li><a href="' . str_replace('{page}', $page - 1, $this->url) . '">' . $this->text_prev . '</a></li>';
+				$output .= '<li class="page-item d-none d-sm-block"><a class="page-link" href="' . str_replace('{page}', $page - 1, $this->url) . '">' . $this->text_prev . '</a></li>';
 			}
 		}
+
+        $output .= '</ul>';
+
+        $output .= '<ul class="pagination">';
 
 		if ($num_pages > 1) {
 			if ($num_pages <= $num_links) {
@@ -79,20 +83,24 @@ class Pagination {
 
 			for ($i = $start; $i <= $end; $i++) {
 				if ($page == $i) {
-					$output .= '<li class="active"><span>' . $i . '</span></li>';
+					$output .= '<li class="page-item active d-none d-sm-block" aria-current="page"><span class="page-link">' . $i . '<span class="visually-hidden">(current)</span></span></li>';
+
+
 				} else {
 					if ($i === 1) {
-						$output .= '<li><a href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '">' . $i . '</a></li>';
+						$output .= '<li class="page-item d-none d-sm-block"><a class="page-link" href="' . str_replace(array('&amp;page={page}', '?page={page}', '&page={page}'), '', $this->url) . '">' . $i . '</a></li>';
 					} else {
-						$output .= '<li><a href="' . str_replace('{page}', $i, $this->url) . '">' . $i . '</a></li>';
+						$output .= '<li class="page-item d-none d-sm-block"><a class="page-link" href="' . str_replace('{page}', $i, $this->url) . '">' . $i . '</a></li>';
 					}
 				}
 			}
 		}
 
+		   $output .= '</ul>';
+           $output .= '<ul class="pagination">';
 		if ($page < $num_pages) {
-			$output .= '<li><a href="' . str_replace('{page}', $page + 1, $this->url) . '">' . $this->text_next . '</a></li>';
-			$output .= '<li><a href="' . str_replace('{page}', $num_pages, $this->url) . '">' . $this->text_last . '</a></li>';
+			$output .= '<li class="page-item d-none d-sm-block"><a class="page-link" href="' . str_replace('{page}', $page + 1, $this->url) . '">' . $this->text_next . '</a></li>';
+			//$output .= '<li class="page-item d-none d-sm-block"><a href="' . str_replace('{page}', $num_pages, $this->url) . '">' . $this->text_last . '</a></li>';
 		}
 
 		$output .= '</ul>';

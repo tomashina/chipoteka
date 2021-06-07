@@ -27,7 +27,9 @@ class ControllerCheckoutCheckout extends Controller {
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
-		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment.min.js');
+        $data['urlroute'] = $this->request->get['route'];
+
+	/*	$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment.min.js');
 		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js');
 		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js');
 		$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');
@@ -35,7 +37,7 @@ class ControllerCheckoutCheckout extends Controller {
 		// Required by klarna
 		if ($this->config->get('payment_klarna_account') || $this->config->get('payment_klarna_invoice')) {
 			$this->document->addScript('http://cdn.klarna.com/public/kitt/toc/v1.0/js/klarna.terms.min.js');
-		}
+		}*/
 
 		$data['breadcrumbs'] = array();
 
@@ -82,6 +84,83 @@ class ControllerCheckoutCheckout extends Controller {
 		} else {
 			$data['account'] = '';
 		}
+
+        // Totals
+        $this->load->model('setting/extension');
+
+        $totals = array();
+        $taxes = $this->cart->getTaxes();
+        $total = 0;
+
+        // Because __call can not keep var references so we put them into an array.
+        $total_data = array(
+            'totals' => &$totals,
+            'taxes'  => &$taxes,
+            'total'  => &$total
+        );
+
+        // Display prices
+        if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+            $sort_order = array();
+
+            $results = $this->model_setting_extension->getExtensions('total');
+
+            foreach ($results as $key => $value) {
+                $sort_order[$key] = $this->config->get('total_' . $value['code'] . '_sort_order');
+            }
+
+            array_multisort($sort_order, SORT_ASC, $results);
+
+            foreach ($results as $result) {
+                if ($this->config->get('total_' . $result['code'] . '_status')) {
+                    $this->load->model('extension/total/' . $result['code']);
+
+                    // We have to put the totals in an array so that they pass by reference.
+                    $this->{'model_extension_total_' . $result['code']}->getTotal($total_data);
+                }
+            }
+
+            $sort_order = array();
+
+            foreach ($totals as $key => $value) {
+                $sort_order[$key] = $value['sort_order'];
+            }
+
+            array_multisort($sort_order, SORT_ASC, $totals);
+        }
+
+        $data['totals'] = array();
+
+        foreach ($totals as $total) {
+            $data['totals'][] = array(
+                'title' => $total['title'],
+                'text'  => $this->currency->format($total['value'], $this->session->data['currency'])
+            );
+        }
+
+        $data['continue'] = $this->url->link('common/home');
+
+        $data['checkout'] = $this->url->link('checkout/checkout', '', true);
+
+        $data['cart'] = $this->url->link('checkout/cart', '', true);
+
+        $data['shipping_method'] = $this->url->link('checkout/shipping_method', '', true);
+
+        $this->load->model('setting/extension');
+
+        $data['modules'] = array();
+
+        $files = glob(DIR_APPLICATION . '/controller/extension/total/*.php');
+
+        if ($files) {
+            foreach ($files as $file) {
+                $result = $this->load->controller('extension/total/' . basename($file, '.php'));
+
+                if ($result) {
+                    $data['modules'][] = $result;
+                }
+            }
+        }
 
 		$data['shipping_required'] = $this->cart->hasShipping();
 

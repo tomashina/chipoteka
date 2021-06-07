@@ -12,6 +12,7 @@ $_['text_success']  = 'Uspješno: Dodali ste <a href="%s">%s</a> u Vašu <a href
 // $_['text_exists']   = '<a href="%s">%s</a> već je dodan u Vašu <a href="%s">listu želja</a>!'; // postojalo u verziji OC 2.0.3.1
 $_['text_remove']   = 'Uspješno: Ažurirali ste svoju listu želja!';
 $_['text_empty']    = 'Vaša lista želja je prazna.';
+$_['text_whish_havesome']    = 'Lista artikala koje ste dodali u listu želja';
 
 // Column
 $_['column_image']  = 'Slika';

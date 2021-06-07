@@ -9,6 +9,8 @@ class ControllerCheckoutShippingMethod extends Controller {
 
 			$this->load->model('setting/extension');
 
+            $data['checkout'] = $this->url->link('checkout/checkout', '', true);
+
 			$results = $this->model_setting_extension->getExtensions('shipping');
 
 			foreach ($results as $result) {
@@ -118,7 +120,7 @@ class ControllerCheckoutShippingMethod extends Controller {
 		if (!$json) {
 			$this->session->data['shipping_method'] = $this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]];
 
-			$this->session->data['comment'] = strip_tags($this->request->post['comment']);
+		//	$this->session->data['comment'] = strip_tags($this->request->post['comment']);
 		}
 
 		$this->response->addHeader('Content-Type: application/json');

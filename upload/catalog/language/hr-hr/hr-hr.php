@@ -49,6 +49,7 @@ $_['button_shopping']       = 'Nastavi kupnju';
 $_['button_search']         = 'Traži';
 $_['button_shipping']       = 'Koristi dostavu';
 $_['button_submit']         = 'Pošalji';
+$_['button_save']           = 'Snimi';
 $_['button_guest']          = 'Naruči bez registriranja';
 $_['button_view']           = 'Pregled';
 $_['button_voucher']        = 'Koristi poklon bon';

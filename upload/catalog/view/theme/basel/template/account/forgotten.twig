@@ -1,0 +1,37 @@
+{{ header }}
+
+<main  class="offcanvas-enabled" style="padding-top: 5rem;">
+
+
+  <div class="container py-4 py-lg-5 my-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-md-10">
+        <h2 class="h3 mb-4">{{ heading_title }}</h2>
+        <p class="fs-md">{{ text_email }}</p>
+
+
+        {% if error_warning %}
+          <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            {{ error_warning }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+
+        {% endif %}
+
+        <div class="card py-2 mt-4">
+
+          <form action="{{ action }}" method="post" enctype="multipart/form-data" class="card-body needs-validation">
+
+            <div class="mb-3">
+              <label class="form-label" for="input-email">{{ entry_email }}</label>
+              <input class="form-control" type="text" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-email">
+            </div>
+            <button class="btn btn-primary" type="submit">{{ button_continue }}</button>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{{ footer }}

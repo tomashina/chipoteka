@@ -1,0 +1,76 @@
+{% if not redirect %}
+
+
+  <h2 class="h6 pt-1 pb-3 mb-3 border-bottom">{{ text_review }}</h2>
+
+
+  {% for product in products %}
+  <!-- Item-->
+  <div class="d-sm-flex justify-content-between align-items-center my-2 pb-3 border-bottom">
+    <div class="d-block d-sm-flex align-items-center text-center text-sm-start">
+
+      {% if product.thumb %}
+        <a class="d-inline-block flex-shrink-0 mx-auto me-sm-4" href="{{ product.href }}">
+          <img src="{{ product.thumb }}" width="120" alt="{{ product.name }}">
+        </a>
+      {% endif %}
+
+
+
+      <div class="pt-2">
+        <h3 class="product-title fs-base mb-2"><a href="{{ product.href }}">{{ product.name }}</a></h3>
+        {% if not product.stock %}
+          <span class="text-danger">***</span>
+        {% endif %}
+        {% if product.option %}
+          {% for option in product.option %}
+            <div class="fs-sm"><span class="text-muted me-2">{{ option.name }}:</span> {{ option.value }}</div>
+          {% endfor %}
+        {% endif %}
+        <div class="fs-sm"><span class="text-muted me-2">{{ column_model }}:</span>{{ product.model }}</div>
+
+        <div class="fs-lg text-accent pt-2">{{ product.price }}</div>
+      </div>
+    </div>
+    <div class="pt-2 pt-sm-0 ps-sm-3 mx-auto mx-sm-0 text-center text-sm-start" style="max-width: 9rem;">
+      <label class="form-label" for="quantity1">{{ column_quantity }}</label>
+      <input type="number" min="1" step="1" name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" class="form-control qty-form" />
+      <button class="btn btn-link px-0 text-danger" type="button" onclick="cart.remove('{{ product.cart_id }}');" ><i class="ci-close-circle me-2"></i><span class="fs-sm">{{ button_remove }}</span>
+      </button>
+    </div>
+  </div>
+
+  {% endfor %}
+
+    <!-- Client details-->
+    <div class="bg-secondary rounded-3 px-4 pt-4 pb-2">
+        <div class="row">
+            <div class="col-sm-6">
+                <h4 class="h6">Adresa dostave:</h4>
+                <ul class="list-unstyled fs-sm">
+                    <li><span class="text-muted">Klijent:&nbsp;</span>{{ first_name }} {{ last_name }}</li>
+                    <li><span class="text-muted">Adresa dostave:&nbsp;</span>{{ address }}, {{ zip }} {{ city }}, {{ country }}</li>
+                    <li><span class="text-muted">Telefon:&nbsp;</span>{{ phone }}</li>
+                    <li><span class="text-muted">Email:&nbsp;</span>{{ email }}</li>
+                </ul>
+            </div>
+            <div class="col-sm-6">
+                <h4 class="h6">Način plaćanja:</h4>
+                <ul class="list-unstyled fs-sm">
+                    <li><span class="text-muted">{{ payment_name }}</li>
+                </ul>
+
+                <h4 class="h6 mt-2">Način dostave:</h4>
+                <ul class="list-unstyled fs-sm">
+                    <li><span class="text-muted">{{ shipping_name }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+{{ payment }}
+{% else %}
+<script><!--
+location = '{{ redirect }}';
+//--></script>
+{% endif %}

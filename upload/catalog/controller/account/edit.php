@@ -11,6 +11,8 @@ class ControllerAccountEdit extends Controller {
 
 		$this->load->language('account/edit');
 
+        $data['logout'] = $this->url->link('account/logout', '', true);
+
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment.min.js');
@@ -25,7 +27,7 @@ class ControllerAccountEdit extends Controller {
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$this->response->redirect($this->url->link('account/account', '', true));
+			$this->response->redirect($this->url->link('account/edit', '', true));
 		}
 
 		$data['breadcrumbs'] = array();
@@ -45,7 +47,15 @@ class ControllerAccountEdit extends Controller {
 			'href' => $this->url->link('account/edit', '', true)
 		);
 
-		if (isset($this->error['warning'])) {
+        if (isset($this->session->data['success'])) {
+            $data['success'] = $this->session->data['success'];
+
+            unset($this->session->data['success']);
+        } else {
+            $data['success'] = '';
+        }
+
+        if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
 		} else {
 			$data['error_warning'] = '';

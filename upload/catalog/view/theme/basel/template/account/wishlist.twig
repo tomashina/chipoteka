@@ -1,0 +1,69 @@
+{{ header }}
+<main  class="offcanvas-enabled" style="padding-top: 5rem;">
+  <!-- Page Title-->
+  <div class="page-title-overlap bg-dark pt-4 ps-lg-4 pe-lg-3">
+    <div class="container d-lg-flex justify-content-between py-2 py-lg-3 ">
+      <div class="order-lg-2 mb-3 mb-lg-0 pt-lg-2">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb breadcrumb-light flex-lg-nowrap justify-content-center justify-content-lg-start">
+            {% for breadcrumb in breadcrumbs %}
+              <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+            {% endfor %}
+          </ol>
+        </nav>
+      </div>
+      <div class="order-lg-1 pe-lg-4 text-center text-lg-start">
+        <h1 class="h3 text-light mb-0">{{ heading_title }}</h1>
+      </div>
+    </div>
+  </div>
+  <div id="content" class="container pb-5 mb-2 mb-md-4 ps-lg-4 pe-lg-3">
+    <div class="row">
+      <!-- Sidebar-->
+      {{ column_left }}
+      <!-- Content  -->
+      <section class="col-lg-8" id="whishlist">
+        <!-- Toolbar-->
+        <div class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-4 pb-lg-5 mb-lg-3">
+          <h6 class="fs-base text-light mb-0"> {% if products %}{{ text_whish_havesome }} {% else %}{{ text_empty }}{% endif %}</h6>
+          <a class="btn btn-primary btn-sm" href="{{ logout }}"><i class="ci-sign-out me-2"></i>{{ text_logout }}</a>
+        </div>
+        {% if success %}
+          <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ success }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button>
+          </div>
+        {% endif %}
+        {% if products %}
+          {% for product in products %}
+              <!-- Item-->
+              <div class="d-sm-flex justify-content-between mt-lg-4 mb-4 pb-3 pb-sm-2 border-bottom">
+                <div class="d-block d-sm-flex align-items-start text-center text-sm-start">
+                  {% if product.thumb %}
+                  <a class="d-block flex-shrink-0 mx-auto me-sm-4" href="{{ product.href }}" style="width: 10rem;">
+                    <img src="{{ product.thumb }}" alt="{{ product.name }}">
+                  </a>
+                  {% endif %}
+                  <div class="pt-2">
+                    <h3 class="product-title fs-base mb-2"><a href="{{ product.href }}">{{ product.name }}</a></h3>
+                    <div class="fs-sm"><span class="text-muted me-2">Šifra:</span>{{ product.model }}</div>
+                    {% if not product.special %}
+                      <div class="fs-lg text-accent pt-2"> {{ product.price }}></div>
+                    {% else %}
+                      <div class="fs-lg text-accent pt-2"> {{ product.special }} <del class="fs-sm text-muted">{{ product.price }}</del></div>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="pt-2 ps-sm-3 mx-auto mx-sm-0 text-center">
+                  <a class="btn btn-primary btn-sm" onclick="cart.add('{{ product.product_id }}');"><i class="ci-trash me-2"></i>{{ button_cart }}</a>
+                  <a class="btn btn-outline-danger btn-sm" href="{{ product.remove }}"><i class="ci-trash me-2"></i>{{ button_remove }}</a>
+                </div>
+              </div>
+            {% endfor %}
+        {% else %}
+          <p>{{ text_empty }}</p>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+{{ footer }}
