@@ -59,128 +59,106 @@
 
             <div class="col-sm-6">
                 <div class="form-group mb-3 required">
-
                     <label class="form-label" for="input-payment-password">{{ entry_password }}</label>
-                    <div class="password-toggle w-100">
                         <input type="password" name="password" value="" placeholder="{{ entry_password }}" id="input-payment-password" class="form-control" />
-                        <label class="password-toggle-btn" aria-label="Show/hide password">
-                            <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
-                        </label>
-                    </div>
-
                 </div>
             </div>
             <div class="col-sm-6">
                 <div class="form-group mb-3 required">
                     <label class="form-label" for="input-payment-confirm">{{ entry_confirm }}</label>
-                    <div class="password-toggle w-100">
                         <input type="password" name="confirm" value="" placeholder="{{ entry_confirm }}" id="input-payment-confirm" class="form-control" />
-                        <label class="password-toggle-btn" aria-label="Show/hide password">
-                            <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
-                        </label>
-                    </div>
                 </div>
             </div>
 
 
+            <h2 class="h6 pt-1 pb-3 mb-3 mt-3 mx-3 ps-0 border-bottom">{{ text_your_address }}</h2>
+
+
+              <div class="form-group d-none">
+                <label class="form-label" for="input-payment-company">{{ entry_company }}</label>
+                <input type="text" name="company" value="" placeholder="{{ entry_company }}" id="input-payment-company" class="form-control" />
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group mb-3 required">
+                    <label class="form-label" for="input-payment-address-1">{{ entry_address_1 }} <span class="text-danger">*</span></label>
+                    <input type="text" name="address_1" value="" placeholder="{{ entry_address_1 }}" id="input-payment-address-1" class="form-control" />
+              </div>
+            </div>
+            <div class="form-group d-none">
+                <label class="form-label" for="input-payment-address-2">{{ entry_address_2 }}</label>
+                <input type="text" name="address_2" value="" placeholder="{{ entry_address_2 }}" id="input-payment-address-2" class="form-control" />
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group mb-3 required">
+                    <label class="form-label" for="input-payment-city">{{ entry_city }} <span class="text-danger">*</span></label>
+                    <input type="text" name="city" value="" placeholder="{{ entry_city }}" id="input-payment-city" class="form-control" />
+              </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group mb-3 required">
+                    <label class="form-label" for="input-payment-postcode">{{ entry_postcode }} <span class="text-danger">*</span></label>
+                    <input type="text" name="postcode" value="{{ postcode }}" placeholder="{{ entry_postcode }}" id="input-payment-postcode" class="form-control" />
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group mb-3 required">
+                    <label class="form-label" for="input-payment-country">{{ entry_country }} <span class="text-danger">*</span></label>
+                    <select name="country_id" id="input-payment-country" class="form-control">
+                      <option value="">{{ text_select }}</option>
+                         {% for country in countries %}
+                          {% if country.country_id == country_id %}
+                          <option value="{{ country.country_id }}" selected="selected">{{ country.name }}</option>
+                          {% else %}
+                          <option value="{{ country.country_id }}">{{ country.name }}</option>
+                          {% endif %}
+                          {% endfor %}
+                    </select>
+                </div>
+            </div>
+              <div class="form-group d-none">
+                <label class="form-label" for="input-payment-zone">{{ entry_zone }}</label>
+                <select name="zone_id" id="input-payment-zone" class="form-control">
+                </select>
+              </div>
 
 
 
+    {{ captcha }}
 
+         <div class="col-sm-12 ">
+             <div class="form-group mb-1 checkbox ">
+              <label class="form-check-label" for="newsletter">
+                <input type="checkbox" name="newsletter" class="form-check-input" value="1" id="newsletter" /> {{ entry_newsletter }}</label>
+            </div>
+         </div>
+        {% if shipping_required %}
+        <div class="checkbox d-none">
+          <label>
+            <input type="checkbox" name="shipping_address" value="1" checked="checked" />
+            {{ entry_shipping }}</label>
+        </div>
+        {% endif %}
+        {% if text_agree %}
+             <div class="col-sm-12 ">
+                 <div class="form-group mb-3 checkbox ">
+                     <label class="form-check-label" for="agree">
+                         <input type="checkbox" name="agree" value="1" class="form-check-input"/> {{ text_agree }}</label>
+            <!--<input type="button" value="{{ button_continue }}" id="button-register" data-loading-text="{{ text_loading }}" class="btn btn-primary" /> -->
+                  </div>
+                </div>
+        {% else %}
+        <div class="buttons clearfix">
+          <div class="pull-right">
+            <input type="button" value="{{ button_continue }}" id="button-register" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
+          </div>
+        </div>
+        {% endif %}
+     </div>
 
-
-
-
-
-      <legend>{{ text_your_address }}</legend>
-      <div class="form-group">
-        <label class="form-label" for="input-payment-company">{{ entry_company }}</label>
-        <input type="text" name="company" value="" placeholder="{{ entry_company }}" id="input-payment-company" class="form-control" />
-      </div>
-      <div class="form-group required">
-        <label class="form-label" for="input-payment-address-1">{{ entry_address_1 }} <span class="text-danger">*</span></label>
-        <input type="text" name="address_1" value="" placeholder="{{ entry_address_1 }}" id="input-payment-address-1" class="form-control" />
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="input-payment-address-2">{{ entry_address_2 }}</label>
-        <input type="text" name="address_2" value="" placeholder="{{ entry_address_2 }}" id="input-payment-address-2" class="form-control" />
-      </div>
-      <div class="form-group required">
-        <label class="form-label" for="input-payment-city">{{ entry_city }} <span class="text-danger">*</span></label>
-        <input type="text" name="city" value="" placeholder="{{ entry_city }}" id="input-payment-city" class="form-control" />
-      </div>
-      <div class="form-group required">
-        <label class="form-label" for="input-payment-postcode">{{ entry_postcode }} <span class="text-danger">*</span></label>
-        <input type="text" name="postcode" value="{{ postcode }}" placeholder="{{ entry_postcode }}" id="input-payment-postcode" class="form-control" />
-      </div>
-      <div class="form-group required">
-        <label class="form-label" for="input-payment-country">{{ entry_country }} <span class="text-danger">*</span></label>
-        <select name="country_id" id="input-payment-country" class="form-control">
-          <option value="">{{ text_select }}</option>
-          
-          
-          
-         {% for country in countries %}
-          {% if country.country_id == country_id %}
-          
-          
-          
-          <option value="{{ country.country_id }}" selected="selected">{{ country.name }}</option>
-          
-          
-          
-          {% else %}
-          
-          
-          
-          <option value="{{ country.country_id }}">{{ country.name }}</option>
-          
-          
-          
-          {% endif %}
-          {% endfor %}
-        
-        
-        
-        </select>
-      </div>
-      <div class="form-group required">
-        <label class="form-label" for="input-payment-zone">{{ entry_zone }}</label>
-        <select name="zone_id" id="input-payment-zone" class="form-control">
-        </select>
-      </div>
-
-
-
-    {{ captcha }}</div>
-</div>
-<div class="checkbox">
-  <label for="newsletter">
-    <input type="checkbox" name="newsletter" value="1" id="newsletter" />
-    {{ entry_newsletter }}</label>
-</div>
-{% if shipping_required %}
-<div class="checkbox">
-  <label>
-    <input type="checkbox" name="shipping_address" value="1" checked="checked" />
-    {{ entry_shipping }}</label>
-</div>
-{% endif %}
-{% if text_agree %}
-<div class="buttons clearfix">
-  <div class="pull-right">{{ text_agree }} 
-    &nbsp;
-    <input type="checkbox" name="agree" value="1" />
-    <input type="button" value="{{ button_continue }}" id="button-register" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
-  </div>
-</div>
-{% else %}
-<div class="buttons clearfix">
-  <div class="pull-right">
-    <input type="button" value="{{ button_continue }}" id="button-register" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
-  </div>
-</div>
-{% endif %} 
+     <div class="d-flex pt-4 mt-3">
+         <div class="w-50 pe-3"><a class="btn btn-outline-primary d-block w-100" href="{{ cart }}"><i class="ci-arrow-left mt-sm-0 me-1"></i><span class="d-none d-sm-inline">Povratak na košaricu</span><span class="d-inline d-sm-none">Košarica</span></a></div>
+         <div class="w-50 ps-2"><button type="button" value="{{ button_continue }}" id="button-register" class="btn btn-primary d-block w-100" ><span class="d-none d-sm-inline">Nastavak na dostavu</span><span class="d-inline d-sm-none">Dostava</span><i class="ci-arrow-right mt-sm-0 ms-1"></i></button></div>
+     </div>
 <script type="text/javascript"><!--
 // Sort the custom fields
 
@@ -199,8 +177,6 @@
 
 
     });
-
-
 
     $('#collapse-payment-address input[name=\'customer_group_id\']').on('change', function() {
 	$.ajax({
@@ -280,8 +256,7 @@ $('#collapse-payment-address button[id^=\'button-payment-custom-field\']').on('c
 		}
 	}, 500);
 });
-//--></script> 
-
+//--></script>
 <script type="text/javascript"><!--
 $('#collapse-payment-address select[name=\'country_id\']').on('change', function() {
 	$.ajax({

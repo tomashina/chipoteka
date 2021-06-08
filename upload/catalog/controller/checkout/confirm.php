@@ -440,9 +440,16 @@ class ControllerCheckoutConfirm extends Controller {
             $data['zip'] = $this->session->data['payment_address']['postcode'];
             $data['city'] = $this->session->data['payment_address']['city'];
             $data['country'] = $this->session->data['payment_address']['country'];
+            if (isset($this->session->data['guest'])) {
+                $data['phone'] = $this->session->data['guest']['telephone'];
+                $data['email'] = $this->session->data['guest']['email'];
+            }
+            else{
 
-            $data['phone'] = $this->session->data['guest']['telephone'];
-            $data['email'] = $this->session->data['guest']['email'];
+                $data['email'] = $customer_info['email'];
+                $data['phone'] = $customer_info['telephone'];
+
+            }
 
             $data['payment_name'] = $this->session->data['payment_method']['title'];
             $data['shipping_name'] = $this->session->data['shipping_method']['title'];

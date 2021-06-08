@@ -21,6 +21,8 @@ class ControllerCheckoutRegister extends Controller {
 
 		$data['customer_group_id'] = $this->config->get('config_customer_group_id');
 
+        $data['cart'] = $this->url->link('checkout/cart', '', true);
+
 		if (isset($this->session->data['shipping_address']['postcode'])) {
 			$data['postcode'] = $this->session->data['shipping_address']['postcode'];
 		} else {

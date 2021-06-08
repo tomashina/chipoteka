@@ -5,6 +5,17 @@
 <div class="d-sm-flex justify-content-between align-items-center bg-secondary p-2 rounded-3 ">
     <div class="d-inline-flex align-items-center">
 
+
+        <div class="form-check form-check-inline">
+            {% if account == 'guest' %}
+                <input type="radio" class="form-check-input" name="account" value="guest" checked="checked" />
+            {% else %}
+                <input type="radio" class="form-check-input" name="account" value="guest" />
+            {% endif %}
+            <label class="form-check-label" >{{ text_guest }}</label>
+        </div>
+
+
         <div class="form-check form-check-inline">
             {% if account == 'register' %}
                 <input type="radio" class="form-check-input" name="account" value="register" checked="checked" />
@@ -15,14 +26,7 @@
             <label class="form-check-label" >{{ text_register }}</label>
         </div>
 
-        <div class="form-check form-check-inline">
-            {% if account == 'guest' %}
-                <input type="radio" class="form-check-input" name="account" value="guest" checked="checked" />
-            {% else %}
-                <input type="radio" class="form-check-input" name="account" value="guest" />
-            {% endif %}
-            <label class="form-check-label" >{{ text_guest }}</label>
-        </div>
+
 
 
     </div>
