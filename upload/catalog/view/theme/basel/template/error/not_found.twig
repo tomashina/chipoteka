@@ -1,25 +1,64 @@
 {{ header }}
-<div class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-md-9 col-sm-8' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
-    {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h1 id="page-title">{{ heading_title }}</h1>
-      <p>{{ text_error }}</p>
-      <div class="buttons">
-        <div class="pull-right"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
+<main  class="offcanvas-enabled" style="padding-top: 5rem;">
+  <!-- Page Title-->
+  <div class="page-title-overlap  pt-4 ps-lg-4 pe-lg-3">
+    <div class="container d-lg-flex justify-content-between py-2 py-lg-3 ">
+      <div class="order-lg-2 mb-3 mb-lg-0 pt-lg-2">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb breadcrumb-dark flex-lg-nowrap justify-content-center justify-content-lg-start">
+            {% for breadcrumb in breadcrumbs %}
+              <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+            {% endfor %}
+          </ol>
+        </nav>
       </div>
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
-</div>
+      <div class="order-lg-1 pe-lg-4 text-center text-lg-start">
+        <h1 class="h3 text-dark mb-0">{{ heading_title }}</h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-5 mb-lg-3">
+    <div class="row justify-content-center pt-lg-4 text-center">
+      <div class="col-lg-5 col-md-7 col-sm-9"><img class="d-block mx-auto mb-5" src="catalog/view/dist/img/pages/404.png" width="340" alt="404 Error">
+        <h1 class="h3">{{ heading_title }}</h1>
+        <h3 class="h5 fw-normal mb-4">{{ text_error }}</h3>
+        <p class="fs-md mb-4">
+          <u>Što možete učiniti?</u>
+        </p>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-xl-8 col-lg-10">
+        <div class="row">
+          <div class="col-sm-4 mb-3"><a class="card h-100 border-0 shadow-sm" href="{{ continue }}">
+              <div class="card-body">
+                <div class="d-flex align-items-center"><i class="ci-home text-primary h4 mb-0"></i>
+                  <div class="ps-3">
+                    <h5 class="fs-sm mb-0">Naslovnica</h5><span class="text-muted fs-ms">Povratak na naslovnicu</span>
+                  </div>
+                </div>
+              </div></a></div>
+          <div class="col-sm-4 mb-3"><a class="card h-100 border-0 shadow-sm" href="#">
+              <div class="card-body">
+                <div class="d-flex align-items-center"><i class="ci-search text-success h4 mb-0"></i>
+                  <div class="ps-3">
+                    <h5 class="fs-sm mb-0">Pretraga</h5><span class="text-muted fs-ms">Pronađi preko tražilice</span>
+                  </div>
+                </div>
+              </div></a></div>
+          <div class="col-sm-4 mb-3"><a class="card h-100 border-0 shadow-sm" href="help-topics.html">
+              <div class="card-body">
+                <div class="d-flex align-items-center"><i class="ci-help text-info h4 mb-0"></i>
+                  <div class="ps-3">
+                    <h5 class="fs-sm mb-0">Pomoć i podrška</h5><span class="text-muted fs-ms">Često postavljana pitanja</span>
+                  </div>
+                </div>
+              </div></a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 {{ footer }}

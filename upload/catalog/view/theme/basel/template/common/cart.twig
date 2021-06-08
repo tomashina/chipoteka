@@ -1,13 +1,13 @@
+{% if products or vouchers %}
 <div id="cart-content" class="dropdown-menu dropdown-menu-end">
-    {% if products or vouchers %}
     <div class="widget widget-cart px-3 pt-2 pb-3" style="width: 20rem;">
-      <div data-simplebar data-simplebar-auto-hide="false">
+        <div style="max-height: 15rem;" data-simplebar data-simplebar-auto-hide="false">
         {% for product in products %}
         <div class="widget-cart-item pb-2 border-bottom">
           <button class="btn-close text-danger" type="button" onclick="cart.remove('{{ product.cart_id }}');" aria-label="Remove"><span aria-hidden="true">&times;</span></button>
           <div class="d-flex align-items-center">
             {% if product.thumb %}
-            <a class="d-block" href="{{ product.href }}"><img src="{{ product.thumb }}" width="64" alt="{{ product.name }}"></a>
+            <a class="flex-shrink-0" href="{{ product.href }}"><img src="{{ product.thumb }}" width="64" alt="{{ product.name }}"></a>
             {% endif %}
             <div class="ps-2">
               <h6 class="widget-product-title"><a href="{{ product.href }}">{{ product.name }}</a></h6>
@@ -33,7 +33,7 @@
         </a>
       </div>
     </div>
-    {% endif %}
+
 </div>
 
-
+{% endif %}
