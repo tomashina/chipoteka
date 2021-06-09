@@ -27,6 +27,9 @@ class ControllerExtensionModuleBaselMegamenu extends Controller {
 		$data['heading_title'] = $this->language->get('heading_title');
    		
 		if ($this->config->get('theme_default_directory') == 'basel')
+
+
+
 		return $this->load->view('extension/module/basel_megamenu', $data);
     }	
 }

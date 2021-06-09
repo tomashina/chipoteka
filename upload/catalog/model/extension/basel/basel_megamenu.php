@@ -58,6 +58,7 @@ class ModelExtensionBaselBaselMegamenu extends Model {
 			// Parent
             $output[] = array(
                 'icon' => $icon,
+                'rowid' => $this->$row['id'],
                 'name' => unserialize($row['name']),
                 'link' => $row['link'],
 				'show_title' => $row['show_title'],
@@ -211,6 +212,7 @@ class ModelExtensionBaselBaselMegamenu extends Model {
 				'name' => unserialize($row['name']),
                 'content_width' => intval($row['content_width']),
 				'show_title' => $row['show_title'],
+                'id' => $row['id'],
 				'link' => $row['link'],
 				'icon_font' => $row['icon_font'],
 				'new_window' => $row['new_window'],
@@ -322,7 +324,7 @@ class ModelExtensionBaselBaselMegamenu extends Model {
             //$output .= '</div>';
         }
         $output .= '</div>';
-        return $output;
+      //  return $output;
     }
 
     public function getCategoriesChildren($array = array(), $path, $columns, $type, $submenu = false,$limit=4) {
@@ -445,6 +447,6 @@ class ModelExtensionBaselBaselMegamenu extends Model {
             }
             $output .= '</ul>';
         }
-        return $output;
+      //  return $output;
     }
 }

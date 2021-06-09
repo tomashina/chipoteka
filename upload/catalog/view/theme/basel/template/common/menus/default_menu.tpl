@@ -1,1 +1,0 @@
-<!-- This file is no longer in use from version 1.2.7 -->
