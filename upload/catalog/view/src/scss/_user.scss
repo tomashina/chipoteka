@@ -37,6 +37,25 @@ body > main.offcanvas-enabled {
     padding-top: 0 !important;
 }
 
+
+// Breadcrumbs 
+.breadcrumb {
+    font-size: 0.75rem;
+    color: $gray-d1;
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        margin-top: 0.01rem;
+        color: lighten($gray, 33);
+    }
+
+    .breadcrumb-item:last-child {
+        a {
+            color: $gray-l1;
+        }
+    }
+   
+}
+
 // main >  section {
 //         padding-left: $grid-gutter-width-10px;
 //         padding-right: $grid-gutter-width-10px;
