@@ -1,48 +1,73 @@
 
-<section class="pt-3 pt-md-4" {% if use_margin %}style="margin-bottom: {{ margin }}"{% endif %}>
+<section class="pt-3 pt-md-4 " {% if use_margin %}style="margin-bottom: {{ margin }}"{% endif %}>
     {% if block_title %}
     <!-- Heading-->
     <div class="d-flex flex-wrap justify-content-between align-items-center pt-1 border-bottom pb-4 mb-4">
         {% if title %}  <h2 class="h3 mb-0 pt-3 me-3">{{ title }}</h2>{% endif %}
         {% if use_button %}   <div class="pt-3"><a class="btn btn-outline-accent btn-sm" href="{{ link_href ? link_href : '' }}">{{ link_title }}<i class="ci-arrow-right ms-1 me-n1"></i></a></div>{% endif %}
     </div>
-
     {% endif %}
-
-
-    <div class="tns-carousel tns-controls-static tns-controls-outside tns-nav-enabled pt-2">
-        <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 2, &quot;gutter&quot;: 16, &quot;controls&quot;: true, &quot;autoHeight&quot;: true, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1}, &quot;480&quot;:{&quot;items&quot;:2}, &quot;720&quot;:{&quot;items&quot;:3}, &quot;991&quot;:{&quot;items&quot;:2}, &quot;1140&quot;:{&quot;items&quot;:3}, &quot;1300&quot;:{&quot;items&quot;:4}, &quot;1500&quot;:{&quot;items&quot;:5}}}">
-
-
+    <div class="tns-carousel tns-controls-static tns-controls-outside tns-nav-enabled product-holder py-3 mx-n2 ">
+        <div class="tns-carousel-inner " data-carousel-options="{&quot;items&quot;: 2, &quot;gutter&quot;: 16, &quot;controls&quot;: true, &quot;autoHeight&quot;: true, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1}, &quot;480&quot;:{&quot;items&quot;:2}, &quot;720&quot;:{&quot;items&quot;:3}, &quot;991&quot;:{&quot;items&quot;:2}, &quot;1140&quot;:{&quot;items&quot;:3}, &quot;1300&quot;:{&quot;items&quot;:4}, &quot;1500&quot;:{&quot;items&quot;:5}}}">
             <!-- Product Group(s) -->
             {% for key, tab in tabs %}
-
                     {% for product in tab.products %}
-
-
-                        <div>
-                            {% if product.price and product.special and product.sale_badge %}
-                            <div class="card product-card card-static pb-3"><span class="badge bg-danger badge-shadow">{{ product.sale_badge }}</span>
-                                {% endif %}
-                                <button class="btn-wishlist btn-sm" type="button" data-bs-toggle="tooltip" data-bs-placement="left" onclick="wishlist.add('{{ product.product_id }}');" title="{{ button_wishlist }}"><i class="ci-heart"></i></button><a class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}"></a>
-                                <div class="card-body py-2"><a class="product-meta d-block fs-xs pb-1" href="#">Snacks, Sweets and Chips</a>
-                                    <h3 class="product-title fs-sm text-truncate"><a href="grocery-single.html">{{ product.name }}</a></h3>
-
-                                    {% if product.price %}
-                                        <div class="product-price">
-                                            {% if product.special %}
-                                                <span class="text-accent">{{ product.price }}</span>
-                                                <del class="fs-sm text-muted">{{ product.special }}</del>
-                                            {% else %}
-                                                <span class="text-accent"> {{ product.price }}</span>
-                                            {% endif %}
-                                        </div><!-- .price -->
-                                    {% endif %}
-
+                        <div class="pt-3 pb-3">
+                            <div class="card product-card">
+                                {# <button class="btn-wishlist btn-sm" type="button" data-bs-toggle="tooltip" data-bs-placement="left" onclick="wishlist.add('{{ product.product_id }}');" title="{{ button_wishlist }}"><i class="ci-heart"></i></button> #}
+                                <div class="position-relative">
+                                    <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fad fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
+                                    <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}"></div>
+                                    <div class="product-badge-cpta product-badge-cpta__free-shipping">
+                                        <span> Besplatna dostava</span>
+                                        <i class="fas fa-shipping-fast"></i>
+                                    </div>
                                 </div>
-                                <div class="product-floating-btn">
-                                    <button class="btn btn-primary btn-shadow btn-sm" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');">+<i class="ci-cart fs-base ms-1"></i></button>
-                                </div>
+                                <a class="stretched-link" href="{{ product.href }}">
+
+                                    <div class="card-body">
+                                        <h3 class="product-title"><a href="{{ product.href }}">{{ product.name }}</a></h3>
+                                        {% if product.price %}
+                                            <div class="product-price">
+                                                {% if product.special %}
+                                                    <span>{{ product.price }}</span>
+                                                    <span><del>{{ product.special }}</del></span>
+                                                {% else %}
+                                                    <span> {{ product.price }}</span>
+                                                {% endif %}
+                                            </div><!-- .price -->
+                                        {% endif %}
+                                        {% if product.rating %}
+                                            <div class="star-rating {{ product.rating }}"><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div class="product-badge-cpta product-badge-cpta__discount">
+                                            <span> Black Friday</span>
+                                            <span> Uštedi <strong>54%</strong></span>
+                                        </div>
+                                        <div class="product-price--web">
+                <span>
+                    Web cijena:
+                </span>
+                                            <span>
+                    {{ product.price }}
+                </span>
+                                        </div>
+                                    </div>
+                                    <div class="product-delivery-time">
+                                        <i class="fas fa-shipping-timed"></i>
+                                        <div class="d-flex flex-column">
+               <span>
+               Proizvod kod dobavljača
+               </span>
+                                            <span>
+              Šaljemo do 05.05.2021
+               </span>
+                                        </div>
+                                    </div>
+
+                                </a>
+
                             </div>
                         </div>
 

@@ -1,20 +1,33 @@
 {{ header }}
 <main class="offcanvas-enabled" style="padding-top: 5rem;">
-    <section id="account-edit"  class="ps-lg-4 pe-lg-3 pt-4">
-        <div class="px-3 pt-2">
-            <!-- Page title + breadcrumb-->
-            <nav class="mb-4" aria-label="breadcrumb">
-                <ol class="breadcrumb flex-lg-nowrap">
-                    {% for breadcrumb in breadcrumbs %}
-                        <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-                    {% endfor %}
-                </ol>
-            </nav>
+
+    <!-- Custom page title-->
+    <div class="page-title-overlap pt-4 pe-lg-3">
+        <div class="container-fluid py-2">
+
+            <div class="pe-lg-4 text-center text-lg-start">
+                <h1 class="category-page-title" id="page-title">{{ heading_title }}</h1>
+            </div>
+            <div class=" mb-3 mb-lg-0">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb flex-lg-nowrap justify-content-center justify-content-lg-start">
+                        {% for breadcrumb in breadcrumbs %}
+                            <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                        {% endfor %}
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+
+    <section id="account-edit"  class="ps-lg-4 pe-lg-3">
+        <div class="px-3 ">
+
             <section class="d-md-flex justify-content-between align-items-center mb-4 pb-2">
                 <div class="row g-0 mx-n2 mb-4">
                   <div id="content" class="{{ class }} no-min-height">
                      {{ content_top }}
-                      <h1 id="page-title" class="h2 mb-3">{{ heading_title }}</h1>
                       <div class="row">
                         <div class="col-sm-6 mb-4">
                             <div class="card border-0 shadow">

@@ -1,28 +1,36 @@
 {{ header }}
 <main class="offcanvas-enabled" style="padding-top: 5rem;">
 
-<section class="ps-lg-4 pe-lg-3 pt-4">
-  <div class="px-3 pt-2">
-      <!-- Page title + breadcrumb-->
-          <nav class="mb-4" aria-label="breadcrumb">
-            <ol class="breadcrumb flex-lg-nowrap">
 
-              <li class="breadcrumb-item"><a class="text-nowrap" href="{{ home }}"><i class="ci-home"></i>Naslovnica</a></li>
-              {% for breadcrumb in breadcrumbs %}
-                {% if loop.last %}
+  <!-- Custom page title-->
+  <div class="page-title-overlap pt-4 pe-lg-3">
+    <div class="container-fluid py-2">
 
-                   <li class="breadcrumb-item text-nowrap active" aria-current="page">{{ breadcrumb.text }}</li>
-                {% endif %}
-              {% endfor %}
-            </ol>
-          </nav>
+      <div class="pe-lg-4 text-center text-lg-start">
+        <h1 class="category-page-title" id="page-title">{{ heading_title }}</h1>
+      </div>
+      <div class=" mb-3 mb-lg-0">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb flex-lg-nowrap justify-content-center justify-content-lg-start">
+            {% for breadcrumb in breadcrumbs %}
+              <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+            {% endfor %}
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+<section class="ps-lg-4 pe-lg-3 ">
+  <div class="px-3 ">
+
       {% if success %}
       <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}</div>
       {% endif %}
     <section class="d-md-flex justify-content-between align-items-center mb-4 pb-2">
       <div class="row g-0 mx-n2 mb-4">
         <div id="content" class="{{ class }}">{{ content_top }}
-        <h1 class="h2 mb-3">{{ text_my_account }}</h1>
+
           <h2 class="h5 mb-3">{{ text_my_account }}</h2>
           <ul class="list-unstyled margin-b30">
             <li><a href="{{ edit }}">{{ text_edit }}</a></li>
