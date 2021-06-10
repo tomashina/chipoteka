@@ -136,19 +136,12 @@ function DigitalElephantFilterContainerProducts() {
 
     this.preloaderOn = function () {
         // Basel
-<<<<<<< HEAD
-		$('body').append('<span class="basel-spinner ajax-call"></span>');
-		
-		if ( ! $('div').is('#'+this.preloaderId)) {
-            $(this.selector).append('<div class="row" id="' + this.preloaderId + '">' +
-                    '<div><i class="' + this.config.preloaderClass + '"></i></div>' +
-                '</div>');
-=======
+
 		$('body').append('');
 		
 		if ( ! $('div').is('#'+this.preloaderId)) {
             $(this.selector).append('');
->>>>>>> Admin2
+
         }
 
     };
@@ -168,11 +161,9 @@ function DigitalElephantFilterContainerProducts() {
 
     this.slideToTop = function() {
         var topProductWrap = $(this.selector).offset().top;
-<<<<<<< HEAD
-        $('html, body').animate({scrollTop: topProductWrap - 130}, '1200');
-=======
+
         $('html, body').animate({scrollTop: topProductWrap - 450}, '1200');
->>>>>>> Admin2
+
     };
 }
 

@@ -1,9 +1,6 @@
 <header class="page-header fixed-top" data-fixed-element>
     {% if notification_status %}
-        <div class="alert alert-warning alert-promo {% if top_promo_close %} alert-dismissible {% endif %}  fade show top_notificaiton mb-0 {{ top_promo_align }}" role="alert">
-            {{ top_promo_text }}
-            {% if top_promo_close %}  <button type="button" class="btn-close" onClick="addCookie('basel_top_promo', 1, 30);$(this).closest('.top_notificaiton').slideUp(); $('#sideNav').css({'margin-top':''});" data-bs-dismiss="alert" aria-label="Close"><i class="fal fa-times"></i></button>{% endif %}
-        </div>
+
     {% endif %}
     <div class="navbar navbar-expand-lg navbar-light py-0">
         <div class="container-fluid ps-0">
@@ -21,7 +18,7 @@
             </div>
             <!-- Toolbar-->
             <div class="navbar-toolbar d-flex flex-shrink-0 align-items-center ms-xl-2">
-           
+
                 <button class="navbar-tool navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideNav">
                 <div class="navbar-tool-icon-box"><i class="fal fa-bars navbar-tool-icon"></i></div></button><a class="navbar-tool d-flex d-lg-none" href="#searchBox" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="searchBox"><span class="navbar-tool-tooltip">Search</span>
                     <div class="navbar-tool-icon-box"> <i class="fal fa-search navbar-tool-icon start-0"></i></div></a><a class="navbar-tool d-none d-lg-flex" href="#"><span class="navbar-tool-tooltip">Wishlist</span>
@@ -55,7 +52,7 @@
         </div>
     </div>
 </header>
-<aside class="sidebar offcanvas offcanvas-expand w-100 border-end zindex-lg-5 pt-lg-5" id="sideNav"  style="{% if notification_status %} margin-top:50px  {% endif %}" >
+<aside id="sideNav" class="sidebar offcanvas offcanvas-expand w-100 border-end zindex-lg-5 pt-lg-5" id="sideNav"  {% if notification_status %} style="margin-top:50px"  {% endif %} >
     <div class="pt-2 d-none d-lg-block"></div>
     <ul class="nav nav-tabs nav-justified mt-0 mt-lg-5 mb-0" role="tablist">
         <li class="nav-item"><a class="nav-link active" href="#categories" data-bs-toggle="tab" role="tab"><i class="fas fa-store"></i> Web shop</a></li>
@@ -85,19 +82,26 @@
                 <div class="widget widget-categories">
                     <div class="accordion" id="shop-menu">
 
-                      {% if secondary_menu %}
-
-                            {% if secondary_menu == 'oc' %}
-
-                                {{ default_menu }}
-                            {% elseif secondary_menu is defined %}
-
-                                {% for key, row in secondary_menu_desktop %}
-                                    {% include 'basel/template/common/menus/mega_menu.twig' %}
-                                {% endfor %}
-                            {% endif %}
-
-                        {% endif %}
+                        <div class="accordion-item border-bottom">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#home" aria-expanded="false" aria-controls="home">Homepages</button>
+                            </h3>
+                            <div class="collapse" id="home" data-bs-parent="#shop-menu">
+                                <div class="px-grid-gutter pt-1 pb-4">
+                                    <div class="widget widget-links">
+                                        <ul class="widget-list">
+                                            <li class="widget-list-item"><a class="widget-list-link" href="#">Fashion Store v.1</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="#">Electronics Store</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="#">Multi-vendor Marketplace</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="#">Grocery Store</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="home-food-delivery.html">Food Delivery Service</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="home-fashion-store-v2.html">Fashion Store v.2</a></li>
+                                            <li class="widget-list-item"><a class="widget-list-link" href="home-single-store.html">Single Product/Brand Store</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                     </div>
                 </div>

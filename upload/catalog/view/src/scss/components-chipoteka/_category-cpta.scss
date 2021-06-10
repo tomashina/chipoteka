@@ -126,6 +126,14 @@
     }
 
 
+    // Product Badge Discount
+    .product-badge-cpta__discount {
+        margin: 0.625rem;
+        margin-top: 0;
+        padding: 0;
+        max-height: max-content;
+    }
+  
 
     // Common 
     .product-title,
@@ -140,9 +148,11 @@
  
  
 
-    // Product Title
-    .product-title {
-        font-size: 1.25rem;
+    // Product Delivery Time
+    .product-delivery-time {
+        padding-top: 0.375rem;
+        padding-bottom: 0.375rem;
+        font-size: 0.75rem;
         font-weight: 300;
         margin-bottom: 0;
         border-bottom: 1px solid $gray-l2;
@@ -150,6 +160,16 @@
         a {
             color: $gray-d1;
         }
+
+        i {
+            font-size: 1.125rem;
+            color: $gray-l1;
+            align-self: flex-start;
+            margin-right: 0.75rem;
+            margin-top: 0.375rem;
+        }
+
+        &--immediately { }
     }
 
 
@@ -201,6 +221,11 @@
         
     }
 
+        span:last-child {
+             color: $dark;
+             border-radius: 0 100px 100px 0;
+        }
+    }
 
     // Badge - Free shipping
     .product-badge-cpta__free-shipping {
@@ -294,6 +319,8 @@
 
         &--immediately { }
     }
+
+
 
 
 
