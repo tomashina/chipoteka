@@ -62,7 +62,13 @@
                             </div>
                             <!-- Product details-->
                             <div class="col-lg-6 pt-4 pt-lg-0">
-                                <div class="product-details ms-auto pb-3" id="product">
+                                <div class="ps-3 ms-auto pb-3" id="product">
+
+                                    {% if meta_description_status and meta_description %}
+                                        <p class="fs-md">{{ meta_description }}</p>
+                                    {% endif %}
+
+
                                     <div class="mb-3">
                                         {% if not special %}
                                             <span class="h3 fw-normal text-accent me-1">{{ price }}</span>
@@ -110,30 +116,17 @@
                                         <div class="alert alert-sm alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
                                     {% endif %}
 
-                                    <div class="d-flex mb-4">
+                                   <!-- <div class="d-flex mb-4">
                                         <div class="w-100 me-3">
                                             <button class="btn btn-secondary d-block w-100" type="button"><i class="ci-heart fs-lg me-2"></i><span class='d-none d-sm-inline'>Add to </span>Wishlist</button>
                                         </div>
                                         <div class="w-100">
                                             <button class="btn btn-secondary d-block w-100" type="button"><i class="ci-compare fs-lg me-2"></i>Compare</button>
                                         </div>
-                                    </div>
+                                    </div>-->
                                     <!-- Product panels-->
                                     <div class="accordion mb-4" id="productPanels">
-                                        <div class="accordion-item">
-                                            <h3 class="accordion-header"><a class="accordion-button" href="#productInfo" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="productInfo"><i class="ci-announcement text-muted fs-lg align-middle mt-n1 me-2"></i>Osnovne značajke</a></h3>
-                                            <div class="accordion-collapse collapse show" id="productInfo" data-bs-parent="#productPanels">
-                                                <div class="accordion-body">
-                                                    {% if meta_description_status and meta_description %}
-                                                        <p class="fs-md">{{ meta_description }}</p>
-                                                    {% endif %}
-                                                    <h6 class="fs-sm mb-2">{{ text_model }}</h6>
-                                                    <ul class="fs-sm ps-4 mb-0">
-                                                        <li>{{ model }}</li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
+
                                         <div class="accordion-item">
                                             <h3 class="accordion-header"><a class="accordion-button collapsed" href="#shippingOptions" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="shippingOptions"><i class="ci-delivery text-muted lead align-middle mt-n1 me-2"></i>Shipping options</a></h3>
                                             <div class="accordion-collapse collapse" id="shippingOptions" data-bs-parent="#productPanels">
@@ -195,6 +188,11 @@
                                         </div>
                                     </div>
 
+                                    <h6 class="fs-sm mb-2">{{ text_model }}</h6>
+                                    <ul class="fs-sm ps-4 mb-0">
+                                        <li>{{ model }}</li>
+                                    </ul>
+
                                 </div>
                             </div>
                         </div>
@@ -202,10 +200,25 @@
                     <!-- Tech specs tab-->
                     <div class="tab-pane fade" id="specs" role="tabpanel">
                         <div class="d-md-flex justify-content-between align-items-start pb-4 mb-4 border-bottom">
-                            <div class="d-flex align-items-center me-md-3"><img src="img/shop/single/gallery/th05.jpg" width="90" alt="Product thumb">
+                            <div class="d-flex align-items-center me-md-3">
+                                {% if thumb or images %}
+                                    {% if thumb %}
+                                      <img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"  width="90"/>
+
+                                    {% endif %}
+                                {% endif %}
+
+
                                 <div class="ps-3">
-                                    <h6 class="fs-base mb-2">Smartwatch Youth Edition</h6>
-                                    <div class="h4 fw-normal text-accent">$124.<small>99</small></div>
+                                    <h6 class="fs-base mb-2">{{ heading_title }}</h6>
+                                    {% if not special %}
+                                    <div class="h4 fw-normal text-accent">{{ price }}</div>
+                                    {% else %}
+
+                                    <div class="h4 fw-normal text-accent"><del class="text-muted fs-lg me-3">{{ special }}</del> {{ price }} </div>
+
+                                    {% endif %}
+
                                 </div>
                             </div>
                             <div class="d-flex align-items-center pt-3">
@@ -234,7 +247,7 @@
                             {% if manufacturer %}
                             <div class="col-lg-6 col-sm-6">
                                 <h3 class="h6">{{ manufacturer }}</h3>
-                                <a class="btn btn-secondary btn-icon" href="{{ manufacturers }}">Pregled svih {{ manufacturer }} proizvoda</a>
+                                <a class="btn btn-outline-secondary btn-icon" href="{{ manufacturers }}">Pregled svih {{ manufacturer }} proizvoda</a>
 
                             </div>
                             {% endif %}
