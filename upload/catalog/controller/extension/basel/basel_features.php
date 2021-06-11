@@ -76,6 +76,7 @@ public function add_to_cart() {
 				$quantity = $product_info['minimum'] ? $product_info['minimum'] : 1;
 			}
 
+
 			if (isset($this->request->post['option'])) {
 				$option = array_filter($this->request->post['option']);
 			} else {

@@ -18,8 +18,8 @@
                 {% if product.price %}
                     <div class="product-price">
                         {% if product.special %}
-                            <span>{{ product.price }}</span>
-                            <span><del>{{ product.special }}</del></span>
+                            <span>{{ product.special }}</span>
+                            <span><del>{{ product.price }}</del></span>
                         {% else %}
                             <span> {{ product.price }}</span>
                         {% endif %}
@@ -38,7 +38,7 @@
                     Web cijena: 
                 </span>
                 <span>
-                    {{ product.price }}
+                    {{ product.special }}
                 </span>
             </div>
         </div>

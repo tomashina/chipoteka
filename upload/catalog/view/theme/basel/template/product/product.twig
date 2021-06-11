@@ -18,7 +18,7 @@
         </div>
     </div>
     <div class="container">
-        <div class="bg-white shadow-lg rounded-3" id="note">
+        <div class="bg-white shadow-lg rounded-3" >
             <!-- Tabs-->
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item"><a class="nav-link py-4 px-sm-4 active" href="#general" data-bs-toggle="tab" role="tab">Fotogalerija <span class='d-none d-sm-inline'>Info</span></a></li>
@@ -33,15 +33,15 @@
                             <!-- Product gallery-->
                             <div class="col-lg-6 pe-lg-0">
                                 <div class="product-gallery" style="display: block !important;">
-                                    <div class="product-gallery-preview ">
+                                    <div class="product-gallery-preview gallery">
                                         {% if thumb or images %}
                                             {% if thumb %}
-                                                <div class="product-gallery-preview-item active" id="first"><img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}">
-                                                    <div class="image-zoom-pane"></div>
+                                                <div class="product-gallery-preview-item active" id="first"><a class="gallery-item" href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"></a>
+
                                                 </div>
                                             {% endif %}
                                             {% for image in images %}
-                                                <div class="product-gallery-preview-item" id="image{{ image.imageid }}"><img  src="{{ image.popup }}"  alt="Product image"></div>
+                                                <div class="product-gallery-preview-item" id="image{{ image.imageid }}"><a class="gallery-item" href="{{ image.popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ image.popup }}"  alt="{{ heading_title }}"></a></div>
                                             {% endfor %}
                                         {% endif %}
                                     </div>
@@ -63,8 +63,19 @@
                             <!-- Product details-->
                             <div class="col-lg-6 pt-4 pt-lg-0">
                                 <div class="ps-3 ms-auto pb-3" id="product">
+                                    <div class="mb-3 d-flex align-items-center">
+                                    <div class="product-badge-cpta product-badge-cpta__free-shipping me-3 w-100">
+                                        <span> Besplatna dostava</span>
+                                        <i class="fas fa-shipping-fast"></i>
+                                    </div>
 
+                                    <div class="product-badge-cpta product-badge-cpta__discount w-100">
+                                        <span class="p-0"> Black Friday</span>
+                                        <span> Uštedi <strong>54%</strong></span>
+                                    </div>
+                                    </div>
                                     {% if meta_description_status and meta_description %}
+                                        <h5>Osnovne značajke</h5>
                                         <p class="fs-md">{{ meta_description }}</p>
                                     {% endif %}
 
@@ -73,16 +84,14 @@
                                         {% if not special %}
                                             <span class="h3 fw-normal text-accent me-1">{{ price }}</span>
                                         {% else %}
-                                            <span class="h3 fw-normal text-accent me-1">{{ price }}</span>
-                                            <del class="text-muted fs-lg me-3">{{ special }}</del>
+                                            <span class="h3 fw-normal text-accent me-1">{{ special }}</span>
+                                            <del class="text-muted fs-lg me-3">{{ price }}</del>
                                             {% if price and special and sale_badge %}
                                                 <span class="badge bg-danger badge-shadow align-middle mt-n2">{{ sale_badge }}</span>
                                             {% endif %}
                                             <span id="special_countdown"></span>
                                         {% endif %}
                                     </div>
-
-
 
                                     <div class="mb-3 d-flex align-items-center">
 
@@ -97,17 +106,6 @@
 
                                         </div>
 
-                                       <script>
-                                        $(".ddd").on("click", function() {
-                                        var $button = $(this);
-                                        var $input = $button.closest('.sp-quantity').find("input.input-quantity");
-                                        $input.val((i, v) => Math.max(1, +v + 1 * $button.data('multi')));
-                                        });
-
-                                        </script>
-
-
-
                                     <input type="hidden" name="product_id" value="{{ product_id }}" />
                                     <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
                                     </div>
@@ -116,82 +114,77 @@
                                         <div class="alert alert-sm alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
                                     {% endif %}
 
-                                   <!-- <div class="d-flex mb-4">
-                                        <div class="w-100 me-3">
-                                            <button class="btn btn-secondary d-block w-100" type="button"><i class="ci-heart fs-lg me-2"></i><span class='d-none d-sm-inline'>Add to </span>Wishlist</button>
-                                        </div>
-                                        <div class="w-100">
-                                            <button class="btn btn-secondary d-block w-100" type="button"><i class="ci-compare fs-lg me-2"></i>Compare</button>
-                                        </div>
-                                    </div>-->
-                                    <!-- Product panels-->
                                     <div class="accordion mb-4" id="productPanels">
 
                                         <div class="accordion-item">
-                                            <h3 class="accordion-header"><a class="accordion-button collapsed" href="#shippingOptions" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="shippingOptions"><i class="ci-delivery text-muted lead align-middle mt-n1 me-2"></i>Shipping options</a></h3>
+                                            <h4 class="accordion-header"><a class="accordion-button collapsed" href="#shippingOptions" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="shippingOptions"><i class="far fa-map-marker-minus text-muted lead align-middle mt-n1 me-2"></i>Dostupnost proizvoda po poslovnicama</a></h4>
                                             <div class="accordion-collapse collapse" id="shippingOptions" data-bs-parent="#productPanels">
                                                 <div class="accordion-body fs-sm">
-                                                    <div class="d-flex justify-content-between border-bottom pb-2">
+                                                    <div class="d-flex justify-content-between border-bottom pb-3">
                                                         <div>
-                                                            <div class="fw-semibold text-dark">Courier</div>
-                                                            <div class="fs-sm text-muted">2 - 4 days</div>
+                                                            <div class="fw-semibold text-dark"><a href="#" >Zagreb
+                                                                Ulica grada Vukovara 269E</a>
+                                                            </div>
                                                         </div>
-                                                        <div>$26.50</div>
+                                                        <div><i class="far fa-map-marker-minus"></i></div>
+
+
                                                     </div>
-                                                    <div class="d-flex justify-content-between border-bottom py-2">
+                                                    <div class="d-flex justify-content-between border-bottom py-3">
                                                         <div>
-                                                            <div class="fw-semibold text-dark">Local shipping</div>
-                                                            <div class="fs-sm text-muted">up to one week</div>
+                                                            <div class="fw-semibold text-dark"><a href="#" >Zagreb Arena
+                                                                    Vice Vukova 6</a></div>
+
                                                         </div>
-                                                        <div>$10.00</div>
+                                                        <div><i class="far fa-map-marker-minus"></i></div>
+
                                                     </div>
-                                                    <div class="d-flex justify-content-between border-bottom py-2">
+                                                    <div class="d-flex justify-content-between border-bottom py-3">
                                                         <div>
-                                                            <div class="fw-semibold text-dark">Flat rate</div>
-                                                            <div class="fs-sm text-muted">5 - 7 days</div>
+                                                            <div class="fw-semibold text-dark"><a href="#" >Zadar
+                                                                    Franje Tuđmana 19</a></div>
+
                                                         </div>
-                                                        <div>$33.85</div>
+                                                        <div><i class="far fa-map-marker-minus"></i></div>
+
                                                     </div>
-                                                    <div class="d-flex justify-content-between border-bottom py-2">
+                                                    <div class="d-flex justify-content-between border-bottom py-3">
                                                         <div>
-                                                            <div class="fw-semibold text-dark">UPS ground shipping</div>
-                                                            <div class="fs-sm text-muted">4 - 6 days</div>
+                                                            <div class="fw-semibold text-dark"><a href="#" >Šibenik
+                                                                    Bože Peričića 26</a></div>
+
                                                         </div>
-                                                        <div>$18.00</div>
+                                                        <div><i class="far fa-map-marker-minus"></i></div>
+
                                                     </div>
-                                                    <div class="d-flex justify-content-between pt-2">
-                                                        <div>
-                                                            <div class="fw-semibold text-dark">Local pickup from store</div>
-                                                            <div class="fs-sm text-muted">&mdash;</div>
-                                                        </div>
-                                                        <div>$0.00</div>
-                                                    </div>
+
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="accordion-item">
-                                            <h3 class="accordion-header"><a class="accordion-button collapsed" href="#localStore" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="localStore"><i class="ci-location text-muted fs-lg align-middle mt-n1 me-2"></i>Find in local store</a></h3>
+                                            <h4 class="accordion-header"><a class="accordion-button collapsed" href="#localStore" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="localStore"><i class="far fa-tags text-muted fs-lg align-middle mt-n1 me-2"></i>Način plaćanja</a></h4>
                                             <div class="accordion-collapse collapse" id="localStore" data-bs-parent="#productPanels">
                                                 <div class="accordion-body">
-                                                    <select class="form-select">
-                                                        <option value>Select your country</option>
-                                                        <option value="Argentina">Argentina</option>
-                                                        <option value="Belgium">Belgium</option>
-                                                        <option value="France">France</option>
-                                                        <option value="Germany">Germany</option>
-                                                        <option value="Spain">Spain</option>
-                                                        <option value="UK">United Kingdom</option>
-                                                        <option value="USA">USA</option>
-                                                    </select>
+                                                    <h5>Jednokratno plaćanje:</h5>
+                                                    <ul>
+                                                        <li> Internet bankarstvo (virman)</li>
+                                                        <li> Pouzeće (prilikom preuzimanja)</li>
+                                                        <li>American Express, Maestro, MasterCard, Visa</li>
+                                                    </ul>
+
+                                                    <h5>Obročno plaćanje:</h5>
+                                                    <ul>
+                                                        <li>MasterCard 2-12 rate</li>
+                                                         <li> Visa Premium 2-10 rata</li>
+                                                    </ul>
+
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <h6 class="fs-sm mb-2">{{ text_model }}</h6>
-                                    <ul class="fs-sm ps-4 mb-0">
-                                        <li>{{ model }}</li>
-                                    </ul>
+                                    <p class="fs-sm mb-2"><strong>{{ text_model }}</strong> {{ model }}</p>
+
 
                                 </div>
                             </div>
@@ -215,38 +208,39 @@
                                     <div class="h4 fw-normal text-accent">{{ price }}</div>
                                     {% else %}
 
-                                    <div class="h4 fw-normal text-accent"><del class="text-muted fs-lg me-3">{{ special }}</del> {{ price }} </div>
+                                    <div class="h4 fw-normal text-accent"><del class="text-muted fs-lg me-3">{{ price }}</del> {{ special }} </div>
 
                                     {% endif %}
 
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center pt-3">
-                                <select class="form-select me-2" style="width: 5rem;">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                </select>
-                                <button class="btn btn-primary btn-shadow me-2" type="button"><i class="ci-cart fs-lg me-sm-2"></i><span class="d-none d-sm-inline">Add to Cart</span></button>
-                                <div class="me-2">
-                                    <button class="btn btn-secondary btn-icon" type="button" data-bs-toggle="tooltip" title="Add to Wishlist"><i class="ci-heart fs-lg"></i></button>
+                            <div class="mb-3 d-flex align-items-center">
+
+                                <div class="input-group me-3 sp-quantity">
+                                    <input type="text" step="1" min="{{ minimum }}" name="quantityo" value="{{ minimum }}"  class="form-control input-quantity " />
+                                    <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button class="btn btn-white border btn-icon ddd" data-multi="1" type="button">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+
                                 </div>
-                                <div>
-                                    <button class="btn btn-secondary btn-icon" type="button" data-bs-toggle="tooltip" title="Compare"><i class="ci-compare fs-lg"></i></button>
-                                </div>
+
+                                <input type="hidden" name="product_id" value="{{ product_id }}" />
+                                <button type="button" id="button-cart2" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
                             </div>
                         </div>
                         <!-- Specs table-->
                         <div class="row pt-2">
-                            <div class="col-lg-6 col-sm-6">
+                            <div class="col-lg-7 mb-3">
                                 <h3 class="h6">Opis</h3>
                                 {{ description }}
                             </div>
                             {% if manufacturer %}
-                            <div class="col-lg-6 col-sm-6">
+                            <div class="col-lg-5 mb-3">
                                 <h3 class="h6">{{ manufacturer }}</h3>
+                                <p>Garmin je međunarodna kompanija specijalizirana za GPS tehnologiju. Osnovana je 1989. godine u SAD-u. 1993. godine Garmin je predstavio prvi GPS uređaj s navigacijom. Renomirani je proizvođač GPS uređaja, fitness narukvica i pametnih satova. Chipoteka vam nudi GPS uređaje s  navigacijom, fitness narukvice, pametne satove, kamere i pripadajuću dodatnu opremu.</p>
                                 <a class="btn btn-outline-secondary btn-icon" href="{{ manufacturers }}">Pregled svih {{ manufacturer }} proizvoda</a>
 
                             </div>
@@ -264,21 +258,21 @@
                                     <div class="h4 fw-normal text-accent">$124.<small>99</small></div>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center pt-3">
-                                <select class="form-select me-2" style="width: 5rem;">
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                </select>
-                                <button class="btn btn-primary btn-shadow me-2" type="button"><i class="ci-cart fs-lg me-sm-2"></i><span class="d-none d-sm-inline">Add to Cart</span></button>
-                                <div class="me-2">
-                                    <button class="btn btn-secondary btn-icon" type="button" data-bs-toggle="tooltip" title="Add to Wishlist"><i class="ci-heart fs-lg"></i></button>
+                            <div class="mb-3 d-flex align-items-center">
+
+                                <div class="input-group me-3 sp-quantity">
+                                    <input type="text" step="1" min="{{ minimum }}" name="quantityr" value="{{ minimum }}"  class="form-control input-quantity " />
+                                    <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button class="btn btn-white border btn-icon ddd" data-multi="1" type="button">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+
                                 </div>
-                                <div>
-                                    <button class="btn btn-secondary btn-icon" type="button" data-bs-toggle="tooltip" title="Compare"><i class="ci-compare fs-lg"></i></button>
-                                </div>
+
+                                <input type="hidden" name="product_id" value="{{ product_id }}" />
+                                <button type="button" id="button-cart3" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
                             </div>
                         </div>
                         <!-- Reviews-->
@@ -498,8 +492,8 @@
                                     {% if product.price %}
                                         <div class="product-price">
                                             {% if product.special %}
-                                                <span>{{ product.price }}</span>
-                                                <span><del>{{ product.special }}</del></span>
+                                                <span>{{ product.special }}</span>
+                                                <span><del>{{ product.price }}</del></span>
                                             {% else %}
                                                 <span> {{ product.price }}</span>
                                             {% endif %}
@@ -518,7 +512,7 @@
                     Web cijena:
                 </span>
                                         <span>
-                    {{ product.price }}
+                    {{ product.special }}
                 </span>
                                     </div>
                                 </div>
@@ -543,8 +537,35 @@
         </div>
     </div>
     {% endif %}
-    <script><!--
-        $('#button-cart').on('click', function() {
+
+    <div class="modal fade" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+               <!-- <div class="modal-header">
+                    <h4 class="modal-title">Bravo</h4>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>-->
+                <div class="modal-body" id="note">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Nastavite kupnju</button>
+                    <button type="button" class="btn btn-primary ">Nastavi na naplatu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(".ddd").on("click", function() {
+            var $button = $(this);
+            var $input = $button.closest('.sp-quantity').find("input.input-quantity");
+            $input.val((i, v) => Math.max(1, +v + 1 * $button.data('multi')));
+        });
+
+    </script>
+    <script>
+       // $('#button-cart').on('click', function() {
+            $("#button-cart,#button-cart2,#button-cart3").on('click', function(){
             $.ajax({
                 url: 'index.php?route=extension/basel/basel_features/add_to_cart',
                 type: 'post',
@@ -556,7 +577,6 @@
                     $('.table-cell').removeClass('has-error');
 
                     if (json.error) {
-                        $('.basel-spinner.ajax-call').remove();
                         if (json.error.option) {
                             for (i in json.error.option) {
                                 var element = $('#input-option' + i.replace('_', '-'));
@@ -569,9 +589,6 @@
                             }
                         }
 
-                        if (json.error.recurring) {
-                            $('select[name=\'recurring_id\']').after('<div class="text-danger">' + json['error']['recurring'] + '</div>');
-                        }
 
                         // Highlight any found errors
                         $('.text-danger').parent().addClass('has-error');
@@ -583,7 +600,11 @@
 
                     } else if (json.success) {
 
-                        $('#note').prepend('<div class="alert alert-success alert-dismissible fade show popup-note" role="alert">'  + json.success + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                       // $('#note').prepend('<div class="alert alert-success alert-dismissible fade show popup-note" role="alert">'  + json.success + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+
+                        $('#myModal').modal('show');
+                        $('#note').html('<div class="row"><div class="col-sm-3"><img src="' + json.image + '" /></div><div class="col-sm-9 d-flex align-items-center"><p class="align-middle">' + json.success +'</p></div></div>');
+
 
                         $('.table-cell').removeClass('has-error');
 
@@ -595,6 +616,8 @@
                         }, 100);
 
                         $('#cart-content').load('index.php?route=common/cart/info #cart-content > *');
+
+
                     }
                 },
                 error: function(xhr, ajaxOptions, thrownError) {
@@ -602,5 +625,7 @@
                 }
             });
         });
-        //--></script>
+      </script>
+
+
 {{ footer }}
