@@ -12,6 +12,12 @@ $_['text_default']       = 'Glavna web trgovina (zadana)';
 $_['text_percent']       = 'Postotak';
 $_['text_amount']        = 'Fiksni iznos';
 
+$_['entry_description']      = 'Opis';
+$_['entry_meta_title']       = 'Meta Tag Title';
+$_['entry_meta_keyword']     = 'Meta Tag Keywords';
+$_['entry_meta_description'] = 'Meta Tag Description';
+$_['error_meta_title']       = 'Meta Title must be greater than 3 and less than 255 characters!';
+
 // Column
 $_['column_name']        = 'Naziv proizvođača';
 $_['column_sort_order']  = 'Redoslijed sortiranja';

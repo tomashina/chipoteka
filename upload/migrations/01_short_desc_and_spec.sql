@@ -1,0 +1,2 @@
+ALTER TABLE oc_product_description ADD short_description TEXT AFTER description
+ALTER TABLE oc_product_description ADD spec_description TEXT AFTER description

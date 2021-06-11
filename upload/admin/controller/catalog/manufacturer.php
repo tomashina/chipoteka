@@ -260,6 +260,12 @@ class ControllerCatalogManufacturer extends Controller {
 			$data['error_name'] = '';
 		}
 
+        if (isset($this->error['meta_title'])) {
+            $data['error_meta_title'] = $this->error['meta_title'];
+        } else {
+            $data['error_meta_title'] = array();
+        }
+
 		if (isset($this->error['keyword'])) {
 			$data['error_keyword'] = $this->error['keyword'];
 		} else {
@@ -306,6 +312,13 @@ class ControllerCatalogManufacturer extends Controller {
 
 		$data['user_token'] = $this->session->data['user_token'];
 
+        $this->load->model('localisation/language');
+        $data['entry_description'] = $this->language->get('entry_description');
+        $data['entry_meta_title'] = $this->language->get('entry_meta_title');
+        $data['entry_meta_description'] = $this->language->get('entry_meta_description');
+        $data['entry_meta_keyword'] = $this->language->get('entry_meta_keyword');
+        $data['languages'] = $this->model_localisation_language->getLanguages();
+
 		if (isset($this->request->post['name'])) {
 			$data['name'] = $this->request->post['name'];
 		} elseif (!empty($manufacturer_info)) {
@@ -339,6 +352,15 @@ class ControllerCatalogManufacturer extends Controller {
 		} else {
 			$data['manufacturer_store'] = array(0);
 		}
+
+
+        if (isset($this->request->post['manufacturer_description'])) {
+            $data['manufacturer_description'] = $this->request->post['manufacturer_description'];
+        } elseif (isset($this->request->get['manufacturer_id'])) {
+            $data['manufacturer_description'] = $this->model_catalog_manufacturer->getManufacturerDescriptions($this->request->get['manufacturer_id']);
+        } else {
+            $data['manufacturer_description'] = array();
+        }
 
 		if (isset($this->request->post['image'])) {
 			$data['image'] = $this->request->post['image'];
@@ -395,6 +417,14 @@ class ControllerCatalogManufacturer extends Controller {
 		if ((utf8_strlen($this->request->post['name']) < 1) || (utf8_strlen($this->request->post['name']) > 64)) {
 			$this->error['name'] = $this->language->get('error_name');
 		}
+
+        foreach ($this->request->post['manufacturer_description'] as $language_id => $value) {
+
+            if ((utf8_strlen($value['meta_title']) < 0) || (utf8_strlen($value['meta_title']) > 255)) {
+                $this->error['meta_title'][$language_id] = $this->language->get('error_meta_title');
+            }
+
+        }
 
 		if ($this->request->post['manufacturer_seo_url']) {
 			$this->load->model('design/seo_url');
