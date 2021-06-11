@@ -33,6 +33,8 @@ $_['text_week']                = 'tjedan';
 $_['text_semi_month']          = 'pola mjeseca';
 $_['text_month']               = 'mjesec';
 $_['text_year']                = 'godina';
+$_['text_short_description']              = 'Osnovne značajke';
+$_['text_spec_description']              = 'Specifikacije';
 
 // Entry
 $_['entry_qty']                = 'Kol';

@@ -11,6 +11,8 @@ class ModelCatalogProduct extends Model {
 
 		foreach ($data['product_description'] as $language_id => $value) {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "product_description SET product_id = '" . (int)$product_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', tag = '" . $this->db->escape($value['tag']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
+            $this->db->query("UPDATE " . DB_PREFIX . "product_description SET short_description = '" . $this->db->escape($value['short_description']) . "' WHERE product_id = '" . (int)$product_id . "' AND language_id='".(int)$language_id."'");
+            $this->db->query("UPDATE " . DB_PREFIX . "product_description SET spec_description = '" . $this->db->escape($value['spec_description']) . "' WHERE product_id = '" . (int)$product_id . "' AND language_id='".(int)$language_id."'");
 		}
 
 		if (isset($data['product_store'])) {
@@ -150,6 +152,8 @@ class ModelCatalogProduct extends Model {
 
 		foreach ($data['product_description'] as $language_id => $value) {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "product_description SET product_id = '" . (int)$product_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', tag = '" . $this->db->escape($value['tag']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
+            $this->db->query("UPDATE " . DB_PREFIX . "product_description SET short_description = '" . $this->db->escape($value['short_description']) . "' WHERE product_id = '" . (int)$product_id . "' AND language_id='".(int)$language_id."'");
+            $this->db->query("UPDATE " . DB_PREFIX . "product_description SET spec_description = '" . $this->db->escape($value['spec_description']) . "' WHERE product_id = '" . (int)$product_id . "' AND language_id='".(int)$language_id."'");
 		}
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_store WHERE product_id = '" . (int)$product_id . "'");
@@ -442,6 +446,8 @@ class ModelCatalogProduct extends Model {
 			$product_description_data[$result['language_id']] = array(
 				'name'             => $result['name'],
 				'description'      => $result['description'],
+                'short_description'      => $result['short_description'],
+                'spec_description'      => $result['spec_description'],
 				'meta_title'       => $result['meta_title'],
 				'meta_description' => $result['meta_description'],
 				'meta_keyword'     => $result['meta_keyword'],
