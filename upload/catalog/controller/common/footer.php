@@ -29,6 +29,16 @@ class ControllerCommonFooter extends Controller {
 		$data['wishlist'] = $this->url->link('account/wishlist', '', true);
 		$data['newsletter'] = $this->url->link('account/newsletter', '', true);
 
+        $data['cart'] = $this->load->controller('common/cart');
+
+        $data['shopping_cart'] = $this->url->link('checkout/cart');
+        // Cart Items
+        $data['cart_items'] = $this->cart->countProducts() + (isset($this->session->data['vouchers']) ? count($this->session->data['vouchers']) : 0);
+
+        // Cart Total
+        $data['cart_amount'] = $this->load->controller('extension/basel/basel_features/total_amount');
+
+
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
 
 		// Whos Online
