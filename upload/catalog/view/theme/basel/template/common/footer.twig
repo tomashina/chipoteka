@@ -252,6 +252,10 @@
                 </div>
             </div>
         </footer>
+<div class="handheld-toolbar" style="opacity: 0">
+    <div class="d-table table-layout-fixed w-100"><a class="d-table-cell handheld-toolbar-item" href="javascript:void(0)" data-bs-toggle="collapse" onclick="window.scrollTo(0, 0)" data-bs-target="#shop-filters"><span class="handheld-toolbar-icon"><i class="ci-filter-alt"></i></span><span class="handheld-toolbar-label">Filter</span></a><a class="d-table-cell handheld-toolbar-item" href="account-wishlist.html"><span class="handheld-toolbar-icon"><i class="ci-heart"></i></span><span class="handheld-toolbar-label">Lista želja</span></a><a class="d-table-cell handheld-toolbar-item" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#sideNav" ><span class="handheld-toolbar-icon"><i class="ci-menu"></i></span><span class="handheld-toolbar-label">Menu</span></a><a class="d-table-cell handheld-toolbar-item" href="shop-cart.html"><span class="handheld-toolbar-icon"><i class="ci-cart"></i><span class="badge bg-primary rounded-pill ms-1">4</span></span><span class="handheld-toolbar-label">0.00kn</span></a></div>
+</div>
+
     </main>
     <!-- Back To Top Button-->
         <a class="btn-scroll-top" href="#top" data-scroll data-fixed-element> <span class="btn-scroll-top-tooltip text-muted fs-sm me-2">Top</span>
@@ -266,5 +270,20 @@
 <script src="catalog/view/dist/vendor/lg-zoom.js/dist/lg-zoom.min.js"></script>
 <!--<script src="catalog/view/dist/vendor/drift-zoom/dist/Drift.min.js"></script>-->
 <script src="catalog/view/dist/js/theme.js"></script>
+<script>
+
+    var lastScrollTop = 0;
+    $(window).scroll(function(event){
+        var st = $(this).scrollTop();
+        if (st > lastScrollTop){
+            // downscroll code
+            $(".handheld-toolbar").css('opacity',1);
+        } else {
+            // upscroll code
+            $(".handheld-toolbar").css('opacity',0);
+        }
+        lastScrollTop = st;
+    });
+</script>
 </body>
 </html>
