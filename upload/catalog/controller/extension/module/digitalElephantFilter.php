@@ -1,11 +1,7 @@
 <?php
 
 /**
- * Created by PhpStorm.
- * User: Денис
- * Date: 9/23/2016
- * Time: 2:35 PM
- *
+
  * INTERFACE BY MANUFACTURER, CATEGORY, OPTIONS, ATTRIBUTES:
  * $input_name
  * $input_value

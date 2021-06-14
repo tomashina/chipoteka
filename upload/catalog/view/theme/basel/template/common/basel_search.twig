@@ -1,9 +1,10 @@
-<div class="search-field">
-<input type="text" name="search" value="{{ search }}" placeholder="{{ basel_text_search }}" class="form-control main-search-input" />
-<span class="btn btn-contrast do-search main">{{ basel_text_search }}</span>
+
+
+
+<div class="page-search input-group d-none search-field d-lg-flex flex-nowrap mx-4">
+    <i class="fal fa-search position-absolute top-50 start-0 translate-middle-y ms-3"></i>
+    <input class="form-control rounded-start w-100 main-search-input" name="search" type="text" value="{{ search }}" placeholder="{{ basel_text_search }}">
+
+    <span class="btn btn-contrast do-search main d-none">{{ basel_text_search }}</span>
+
 </div>
-<script>
-$(document).ready(function() {
-$('.search-holder-mobile input[name=\'search-mobile\']').attr("placeholder", "{{ basel_text_search }}").attr("value", "{{ search }}");
-});
-</script>

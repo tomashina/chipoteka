@@ -26,10 +26,14 @@
                     </div><!-- .price -->
                 {% endif %}
 
+            {% if product.price and product.special and salebadge_status %}
                 <div class="product-badge-cpta product-badge-cpta__discount">
                     <span> Black Friday</span>
-                    <span> Uštedi <strong>54%</strong></span>
+                    <span> Uštedi <strong>{{ product.sale_badge }}</strong></span>
                 </div>
+            {% endif %}
+
+
             <div class="product-price--web">
                 <span>
                     Web cijena: 

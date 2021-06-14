@@ -11,122 +11,48 @@
         <div class="row pb-2 ps-lg-4 pe-lg-3">
             <div class="col-md-9">
                 <div class="widget widget-links widget-light pb-2 mb-4">
+
+                    {% if custom_links %}
+                    {% for column in basel_footer_columns %}
+                    {% if column.title=='Web shop' %}
                     <h3 class="widget-title text-light">
-                        Web shop
-                                            
+                        {{ column.title }}
                     </h3>
-                    <ul class="widget-list">
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Sneakers & Athletic
-                                                            
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Athletic Apparel
-                                                            
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Sandals
-                                                            
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Jeans
-                                                            
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Shirts & Tops
-                                                            
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Shorts
-                                                            
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                T-Shirts
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Swimwear
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Clogs & Mules
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Bags & Wallets
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Accessories
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Sunglasses & Eyewear
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Watches
-                            </a>
-                        </li>
-                    </ul>
+                    {% if column.links is defined %}
+                        <ul class="widget-list">
+                            {% for link in column.links %}
+                                <li class="widget-list-item"><a class="widget-list-link" href="{{ link.target }}">{{ link.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+
+
+
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="widget widget-links widget-light pb-2 mb-4">
-                    <h3 class="widget-title text-light">
-                        Poslovnice
-                    </h3>
-                    <ul class="widget-list">
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Your account
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Shipping rates & policies
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Refunds & replacements
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Order tracking
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Delivery info
-                            </a>
-                        </li>
-                        <li class="widget-list-item">
-                            <a href="#" class="widget-list-link">
-                                Taxes & fees
-                            </a>
-                        </li>
-                    </ul>
+                    {% if custom_links %}
+                        {% for column in basel_footer_columns %}
+                            {% if column.title!='Web shop' %}
+                                <h3 class="widget-title text-light">
+                                    {{ column.title }}
+                                </h3>
+                                {% if column.links is defined %}
+                                    <ul class="widget-list">
+                                        {% for link in column.links %}
+                                            <li class="widget-list-item"><a class="widget-list-link" href="{{ link.target }}">{{ link.title }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -216,13 +142,13 @@
                 <hr class="hr-light mb-5">
                     <div class="row pb-2 ps-lg-4 pe-lg-3">
                         <div class="col mb-4 page-footer__links">
-                            <a class="mb-3" href="#">
+                            <a class="mb-3" href="index.php?route=information/information&information_id=3">
                                 Uvjeti kupovine                       
                             </a>
-                            <a class="mb-3" href="#">
+                            <a class="mb-3" href="index.php?route=information/information&information_id=5">
                                 Uvjeti korištenja internetske stranice                     
                             </a>
-                            <a class="mb-3" href="#">
+                            <a class="mb-3" href="index.php?route=information/information&information_id=6">
                                 Zaštita privatnosti i podataka                      
                             </a>
                             <a class="mb-3" href="#">
@@ -268,7 +194,7 @@
 <script src="catalog/view/dist/vendor/lightgallery.js/dist/js/lightgallery.min.js"></script>
 <script src="catalog/view/dist/vendor/lg-fullscreen.js/dist/lg-fullscreen.min.js"></script>
 <script src="catalog/view/dist/vendor/lg-zoom.js/dist/lg-zoom.min.js"></script>
-<!--<script src="catalog/view/dist/vendor/drift-zoom/dist/Drift.min.js"></script>-->
+<script src="catalog/view/dist/vendor/drift-zoom/dist/Drift.min.js"></script>
 <script src="catalog/view/dist/js/theme.js"></script>
 <script>
 

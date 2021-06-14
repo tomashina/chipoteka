@@ -55,7 +55,7 @@ class ControllerExtensionModuleBlogLatest extends Controller {
 		}
 		
 		if ($setting['characters']) {
-			$description = utf8_substr(strip_tags(html_entity_decode($result['short_description'], ENT_QUOTES, 'UTF-8')), 0, $setting['characters']) . '..';
+			$description = utf8_substr(strip_tags(html_entity_decode($result['short_description'], ENT_QUOTES, 'UTF-8')), 0, $setting['characters']) . '';
 		} else {
 			$description = false;
 		}
