@@ -44,7 +44,7 @@
     }
 }
 
- 
+
 // - - - - - - - - - - - - - - - -
 // Category Title
 .category-page-title {
@@ -52,9 +52,9 @@
     font-weight: 500;
     margin-bottom: 0.5rem;
 
-   a {
-    color: $dark;
-   }
+    a {
+        color: $dark;
+    }
 }
 
 
@@ -69,7 +69,6 @@
     padding-bottom: 0;
     box-shadow: 0px 1px 2px rgba($black, 0.03), 0px 3px 5px rgba($black, 0.04);
     line-height: 1.2;
-
 
 
     // Card Body
@@ -108,8 +107,14 @@
         position: absolute;
         right: 0.75rem;
         bottom: 1rem;
-        box-shadow: 0px 3px 54px rgba($black, 0.15), 0px 2px 36px rgba($black, 0.15), 0px 3px 12px rgba($black, 0.18);
-        border: 1px solid $primary-l1;
+        // box-shadow: 0px 3px 54px rgba($black, 0.15), 0px 2px 36px rgba($black, 0.15), 0px 3px 12px rgba($black, 0.18);
+        box-shadow: 0 0.5rem 1.125rem -0.5rem rgba(23, 23, 23, 0.9);
+
+        // border: 1px solid $primary-l1;
+
+        &:hover {
+            box-shadow: $box-shadow-sm;
+        }
 
         @media (any-pointer: fine) and (hover: hover) {
             opacity: 0;
@@ -133,7 +138,7 @@
         padding: 0;
         max-height: max-content;
     }
-  
+
 
     // Common 
     .product-title,
@@ -145,8 +150,8 @@
         padding: 0.625rem 0.75rem;
         align-items: center;
     }
- 
- 
+
+
 
     // Product Delivery Time
     .product-delivery-time {
@@ -169,7 +174,20 @@
             margin-top: 0.375rem;
         }
 
-        &--immediately { }
+        &--immediately {}
+    }
+
+
+    // Product Title
+    .product-title {
+        font-size: 1.25rem;
+        font-weight: 300;
+        margin-bottom: 0;
+        border-bottom: 1px solid $gray-l2;
+
+        a {
+            color: $gray-d1;
+        }
     }
 
 
@@ -192,9 +210,6 @@
         span:first-child {
             margin-right: 0.5rem;
         }
-
-        
-
     }
 
     // Product Price Web
@@ -218,14 +233,14 @@
             font-weight: 500;
         }
 
-        
+
     }
 
-        span:last-child {
-             color: $dark;
-             border-radius: 0 100px 100px 0;
-        }
-    }
+    // span:last-child {
+    //     color: $dark;
+    //     border-radius: 0 100px 100px 0;
+    // }
+
 
     // Badge - Free shipping
     .product-badge-cpta__free-shipping {
@@ -240,7 +255,7 @@
             margin-right: 0.5rem;
         }
 
-        @media (any-pointer: fine)  and (hover: hover){
+        @media (any-pointer: fine) and (hover: hover) {
             width: 50px;
 
             transition: all 0.2s $transition-animation-default;
@@ -283,7 +298,7 @@
         padding: 0;
         max-height: max-content;
     }
-  
+
 
     // Product Delivery Time
     .product-delivery-time {
@@ -317,7 +332,7 @@
             margin-top: 0.375rem;
         }
 
-        &--immediately { }
+        &--immediately {}
     }
 
 
@@ -331,13 +346,13 @@
     &:hover:not(.card-static) {
         box-shadow: 0px 3px 14px rgba($black, 0.06), 0px 3px 6px rgba($black, 0.09), 0px 3px 27px rgba($black, 0.09);
         // background-color: $white;
- 
+
 
 
         // Button Basket
         .btn-basket {
-            
-            @media (any-pointer: fine)  and (hover: hover) {
+
+            @media (any-pointer: fine) and (hover: hover) {
                 opacity: 1;
                 visibility: visible;
             }
@@ -363,11 +378,11 @@
                 width: 190px;
 
                 span {
-                        top: 0.07rem;
-                        visibility: visible;
-                        opacity: 1;
-                        transition: all 0.27s cubic-bezier(0.83, 0, 0.17, 1);
-                    }
+                    top: 0.07rem;
+                    visibility: visible;
+                    opacity: 1;
+                    transition: all 0.27s cubic-bezier(0.83, 0, 0.17, 1);
+                }
             }
 
             // @include media-breakpoint-up(lg) {
@@ -383,7 +398,7 @@
         }
 
     }
-   
+
 
 
 }
@@ -392,7 +407,6 @@
 
 // - - - - - - - - - - - - - - - -
 // Product Badge
-
 
 .product-badge-cpta {
     border-radius: 100px;
@@ -410,7 +424,7 @@
     &__free-shipping {
         color: $white;
         background-color: $accent;
-   
+
         i {
             font-size: 1.5rem;
             margin-left: auto;
@@ -418,9 +432,9 @@
         }
     }
 
-     
+
     // Discount
-    &__discount { 
+    &__discount {
         border: 1px solid $dark;
         // overflow: hidden;
         padding: 0;
@@ -440,8 +454,8 @@
         }
 
         span:last-child {
-             color: $dark;
-             border-radius: 0 100px 100px 0;
+            color: $dark;
+            border-radius: 0 100px 100px 0;
         }
     }
 
@@ -455,24 +469,24 @@
     margin-bottom: 2.25rem;
     // min-width: 16rem;
     // max-width: 22rem;
- 
-    @media only screen and (min-width: 565px)  {
+
+    @media only screen and (min-width: 565px) {
         width: 50%;
         min-width: 50%;
         max-width: 50%;
-   }
+    }
 
-   @media only screen and (min-width: 830px) {
+    @media only screen and (min-width: 830px) {
         width: 33.3333333333%;
         min-width: 33.3333333333%;
         max-width: 33.3333333333%;
-   }
+    }
 
-    @include media-breakpoint-up(lg)  {
+    @include media-breakpoint-up(lg) {
         width: 50%;
         min-width: 50%;
         max-width: 50%;
-   }
+    }
 
     @media only screen and (min-width: 1150px) {
         width: 33.3333333333%;
@@ -482,18 +496,17 @@
 
     // @include media-breakpoint-up(xl)  {}
 
-    @media only screen and (min-width: 1460px)  {
-         width: 25%;
-         min-width: 25%;
-         max-width: 25%;
+    @media only screen and (min-width: 1460px) {
+        width: 25%;
+        min-width: 25%;
+        max-width: 25%;
     }
 
-    @media only screen and (min-width: 1730px)  {
-         width: 20%;
-         min-width: 20%;
-         max-width: 20%;
+    @media only screen and (min-width: 1730px) {
+        width: 20%;
+        min-width: 20%;
+        max-width: 20%;
     }
- 
-    
-} 
 
+
+}
