@@ -35240,6 +35240,12 @@ body > main.offcanvas-enabled {
   color: #A8A8A8;
 }
 
+.navbar-tool.dropdown::before {
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+}
+
 .page-header {
   position: -webkit-sticky;
   position: sticky;
@@ -35788,6 +35794,12 @@ body > main.offcanvas-enabled {
   padding: 0;
 }
 
+.product-card .stretched-link {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .product-card .card-img-top {
   position: relative;
   border-radius: 0.563rem;
@@ -35813,7 +35825,7 @@ body > main.offcanvas-enabled {
   position: absolute;
   right: 0.75rem;
   bottom: 1rem;
-  box-shadow: 0 0.5rem 1.125rem -0.5rem rgba(23, 23, 23, 0.9);
+  box-shadow: 0 0.5rem 1.125rem -0.5rem rgba(227, 19, 24, 0.9), 0 0.5rem 1.125rem -0.5rem rgba(23, 23, 23, 0.3);
 }
 
 .product-card .btn-basket:hover {
@@ -35873,9 +35885,6 @@ body > main.offcanvas-enabled {
   font-weight: 300;
   margin-bottom: 0;
   border-bottom: 1px solid #E3E3E3;
-}
-
-.product-card .product-title a {
   color: #5C5C5C;
 }
 
@@ -36005,8 +36014,9 @@ body > main.offcanvas-enabled {
   }
 }
 
-.product-card:hover:not(.card-static) .product-title a {
+.product-card:hover:not(.card-static) .product-title {
   color: #E31318;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .product-card:hover:not(.card-static) .product-badge-cpta__free-shipping {
@@ -36141,6 +36151,43 @@ body > main.offcanvas-enabled {
   color: #5C5C5C;
   background-image: none;
   padding: 0 1rem;
+}
+
+.tns-carousel.tns-carousel-product .tns-outer {
+  margin-right: -0.2rem;
+  margin-left: -0.2rem;
+}
+
+.tns-carousel.tns-carousel-product .tns-ovh {
+  padding-left: 0.21rem !important;
+  padding-right: 0.21rem !important;
+}
+
+.tns-carousel.tns-carousel-product .tns-inner {
+  margin-right: 0 !important;
+}
+
+.tns-carousel.tns-carousel-product.tns-controls-outside {
+  padding: 0;
+}
+
+.tns-carousel.tns-carousel-product.tns-controls-outside [data-controls="next"] {
+  right: -15px;
+}
+
+.tns-carousel.tns-carousel-product.tns-controls-outside [data-controls="prev"] {
+  left: -15px;
+}
+
+.tns-carousel.tns-carousel-product.tns-controls-outside .tns-carousel-inner {
+  display: flex;
+}
+
+.tns-carousel.tns-carousel-product.tns-controls-outside .tns-carousel-inner .tns-item {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 24px;
+  padding-top: 24px;
 }
 
 /*# sourceMappingURL=theme.css.map */

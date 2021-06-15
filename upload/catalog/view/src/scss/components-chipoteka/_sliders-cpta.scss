@@ -1,0 +1,65 @@
+//
+// SLIDERS
+// --------------------------------------------------
+
+
+// - - - - - - - - - - - - - - - -
+// Tiny Carousel (TNS)
+
+
+.tns-carousel {
+
+    &.tns-carousel-product {
+
+
+
+        .tns-outer {
+            margin-right: -0.2rem;
+            margin-left: -0.2rem;
+        }
+    
+        .tns-ovh {
+            padding-left: 0.21rem !important;
+            padding-right: 0.21rem !important;
+        }
+    
+        .tns-inner {
+            margin-right: 0 !important;
+        }
+    
+    
+        &.tns-controls-outside {
+            // padding-right: 0;
+            // padding-left: 0;
+            padding: 0;
+     
+            // Left & Right Buttons
+            [data-controls="next"] {
+                right: -15px;
+             }
+        
+            [data-controls="prev"] {
+                left: -15px;
+             }
+            // 
+    
+            .tns-carousel-inner {
+                display: flex;
+    
+                // Item
+                .tns-item {
+                    padding-left: 1rem;
+                    padding-right: 1rem;
+
+                    padding-bottom: 24px;
+                    padding-top: 24px;
+                }
+    
+    
+            }
+        }
+            
+    }
+
+
+}
