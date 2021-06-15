@@ -108,14 +108,18 @@ class ControllerExtensionBlogBlogCategory extends Controller {
 
 		foreach ($results as $result) {
 
-			$data['blog_categories'][] = array(
-				'blog_category_id' => $result['blog_category_id'],
-				'name'        => $result['name'],
-				'sort_order'  => $result['sort_order'],
-				'status'  => $result['status'],
-				'selected'    => isset($this->request->post['selected']) && in_array($result['blog_category_id'], $this->request->post['selected']),
-				'edit'        => $this->url->link('extension/blog/blog_category/update', $token_prefix . '=' . $this->session->data[$token_prefix] . '&blog_category_id=' . $result['blog_category_id'] . $url, true)
-			);
+            if(isset($result['blog_category_id'])){
+
+                    $data['blog_categories'][] = array(
+                        'blog_category_id' => $result['blog_category_id'],
+                        'name'        => $result['name'],
+                        'sort_order'  => $result['sort_order'],
+                        'status'  => $result['status'],
+                        'selected'    => isset($this->request->post['selected']) && in_array($result['blog_category_id'], $this->request->post['selected']),
+                        'edit'        => $this->url->link('extension/blog/blog_category/update', $token_prefix . '=' . $this->session->data[$token_prefix] . '&blog_category_id=' . $result['blog_category_id'] . $url, true)
+                    );
+
+            }
 		}
 		
 		$data['heading_title'] = $this->language->get('heading_title');
