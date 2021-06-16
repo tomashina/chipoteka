@@ -14,6 +14,8 @@ $_['thousand_point']        = '.';
 $_['text_home']             = '<i class="ci-home"></i>';
 $_['text_yes']              = 'Da';
 $_['text_no']               = 'Ne';
+
+
 $_['text_none']             = ' --- Nepostojeći --- ';
 $_['text_select']           = ' --- Odaberite --- ';
 $_['text_all_zones']        = 'Sve zone (područja)';

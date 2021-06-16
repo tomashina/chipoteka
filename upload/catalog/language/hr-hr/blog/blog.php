@@ -1,17 +1,17 @@
 <?php
 // Moduli
 $_['heading_title_latest'] = 'Najnoviji postovi na blogu';
-$_['heading_title_category'] = 'Kategorije bloga';
+$_['heading_title_category'] = 'Kategorije';
 $_['text_show_all'] = 'Sve objave';
 
 // Blog
-$_['text_blog'] = 'Blog';
+$_['text_blog'] = 'Novosti i objave';
 $_['text_filter_by'] = 'Postovi na blogu označeni kao:';
 $_['text_posted_by'] = 'Objavio';
 $_['text_read'] = 'Pročitana vremena';
 $_['text_comments'] = 'Komentari';
 $_['text_related_blog'] = 'Povezani postovi';
-$_['text_related_products'] = 'Srodni proizvodi';
+$_['text_related_products'] = 'Povezani artikli';
 $_['text_write_comment'] = 'Napiši komentar';
 $_['text_no_blog_posts'] = 'Nema blogova na popisu';
 $_['text_error'] = 'Stranica nije pronađena';

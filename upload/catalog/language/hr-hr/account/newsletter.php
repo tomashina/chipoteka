@@ -10,3 +10,7 @@ $_['text_success']     = 'Prijava za Newsletter je uspješno upisana.';
 
 // Entry
 $_['entry_newsletter'] = 'Prijavite me za primanje obavijesti / newslettera';
+
+
+$_['text_yes_newsletter']              = 'Da, želim primati newsletter';
+$_['text_no_newsletter']               = 'Ne želim primati newsletter';

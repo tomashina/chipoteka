@@ -8,7 +8,7 @@ $_['text_account']                 = 'Moj korisnički račun';
 $_['text_login']                   = 'Prijava';
 $_['text_new_customer']            = 'Novi kupac';
 $_['text_register']                = 'Kreirajte korisnički račun';
-$_['text_register_account']        = '<p class=" mb-4">Registracijom ćete moći brže i lakše kupovati, pratiti stanje svojih narudžbi te steći mnoge druge pogodnosti:</p> <ul> <li>Brža i jednostavnija narudžba</li><li> Bolje korištenje na više uređaja</li><li> Posebne ponude</li></ul>';
+$_['text_register_account']        = '<p class=" mb-4">Registracijom ćete moći brže i lakše kupovati, pratiti stanje svojih narudžbi te steći mnoge druge pogodnosti:</p> <ul> <li>Brža i jednostavnija narudžba</li><li>Pregled povijesti naručivanja<li> Bolje korištenje na više uređaja</li><li>Poklon bonovi</li><li> Posebne ponude</li></ul>';
 $_['text_returning_customer']      = 'Registrirani korisnik';
 $_['text_i_am_returning_customer'] = 'Ja sam već kupovao ovdje';
 $_['text_forgotten']               = 'Zaboravljena lozinka';

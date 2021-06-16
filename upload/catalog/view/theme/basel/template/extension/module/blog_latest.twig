@@ -1,3 +1,28 @@
+
+{% if columns == 'list' %}
+
+    <div class="widget mb-grid-gutter pb-grid-gutter border-bottom mx-lg-2">
+        {% if block_title %}
+        {% if title %}  <h3 class="widget-title">{{ title }}</h3>{% endif %}
+        {% endif %}
+            {% if posts %}
+            {% for blog in posts %}
+                <div class="d-flex align-items-center mb-3">
+                    {% if blog.image and thumb %}
+                    <a class="flex-shrink-0" href="{{ blog.href }}"><img class="rounded" src="{{ blog.image }}"  alt="{{ blog.title }}"></a>
+                    {% endif %}
+                    <div class="ps-3">
+                        <h6 class="blog-entry-title fs-sm mb-0"><a href="{{ blog.href }}">{{ blog.title }}</a></h6><span class="fs-ms text-muted">{{ blog.date_added_day }} {{ blog.date_added_month }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+            {% endif %}
+
+    </div>
+
+
+{% else %}
+
 <section class="pt-0 " {% if use_margin %}style="margin-bottom: {{ margin }}"{% endif %}>
     {% if block_title %}
         <!-- Heading-->
@@ -19,13 +44,7 @@
                     <h2 class="h5 blog-entry-title mb-0"><a href="{{ blog.href }}">{{ blog.title }}</a></h2>
                 </div>
                 <div class="d-flex align-items-center fs-sm">
-                    {% if blog.tags %}
-                    <div class="fs-sm text-muted">
-                        {% for tag in blog.tags|slice(0,2) %}
-                        <a href="index.php?route=extension/blog/home&tag={{ tag|trim }}" class="blog-entry-meta-link">{{ tag|trim }}</a>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
+
                     {% if blog.short_description %}
                         <p class="fs-sm">{{ blog.short_description }}</p>
                     {% endif %}
@@ -37,3 +56,4 @@
     </div>
 
 </section>
+{% endif %}

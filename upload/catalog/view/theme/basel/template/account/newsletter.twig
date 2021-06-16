@@ -1,49 +1,81 @@
 {{ header }}
-<div class="container">
-  <ul class="breadcrumb">
-    {% for breadcrumb in breadcrumbs %}
-    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-    {% endfor %}
-  </ul>
-  <div class="row">{{ column_left }}
-    {% if column_left and column_right %}
-    {% set class = 'col-sm-6' %}
-    {% elseif column_left or column_right %}
-    {% set class = 'col-md-9 col-sm-8' %}
-    {% else %}
-    {% set class = 'col-sm-12' %}
-    {% endif %}
-    <div id="content" class="{{ class }}">{{ content_top }}
-      <h1 id="page-title">{{ heading_title }}</h1>
-      <legend>{{ entry_newsletter }}</legend>
+
+<main class="offcanvas-enabled" style="padding-top: 5rem;">
+
+  <!-- Page Title-->
+  <div class="page-title-overlap bg-dark pt-4 ps-lg-4 pe-lg-3">
+    <div class="container d-lg-flex justify-content-between py-2 py-lg-3 ">
+      <div class="order-lg-2 mb-3 mb-lg-0 pt-lg-2">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb breadcrumb-light flex-lg-nowrap justify-content-center justify-content-lg-start">
+            {% for breadcrumb in breadcrumbs %}
+              <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+            {% endfor %}
+          </ol>
+        </nav>
+      </div>
+      <div class="order-lg-1 pe-lg-4 text-center text-lg-start">
+        <h1 class="h2 text-light mb-0">{{ text_newsletter }}</h1>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="content" class="container pb-5 mb-2 mb-md-4 ps-lg-4 pe-lg-3">
+    <div class="row">
+      <!-- Sidebar-->
+
+      {{ column_left }}
+
+      <section class="col-lg-8" id="account-address">
+        <!-- Toolbar-->
+        <div class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-4 pb-lg-5 mb-lg-3">
+          <h6 class="fs-base text-light mb-0">{{ entry_newsletter }}</h6><a class="btn btn-primary " href="{{ logout }}"><i class="ci-sign-out me-2"></i>{{ text_logout }}</a>
+        </div>
+
       <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-horizontal">
-        <fieldset>
-          <div class="form-group">
+
+
             
             <div class="col-sm-12">
               {% if newsletter %}
-              <label class="radio-inline">
-                <input type="radio" name="newsletter" value="1" checked="checked" />
-                {{ text_yes }} </label>
-              <label class="radio-inline">
-                <input type="radio" name="newsletter" value="0" />
-                {{ text_no }}</label>
+              <div class="form-check-inline ">
+
+                <input type="radio" name="newsletter" class="form-check-input" value="1" checked="checked" />
+                <label class="form-check-label">   {{ text_yes_newsletter }} </label>
+              </div>
+              <div class="form-check-inline">
+
+                <input type="radio" name="newsletter" class="form-check-input" value="0" />
+                <label class="form-check-label"> {{ text_no_newsletter }}</label>
+              </div>
               {% else %}
-              <label class="radio-inline">
-                <input type="radio" name="newsletter" value="1" />
-                {{ text_yes }} </label>
-              <label class="radio-inline">
-                <input type="radio" name="newsletter" value="0" checked="checked" />
-                {{ text_no }}</label>
+                <div class="form-check-inline">
+
+                <input type="radio" name="newsletter" class="form-check-input" value="1" />
+                  <label class="form-check-label">  {{ text_yes_newsletter }} </label>
+                </div>
+                  <div class="form-check-inline">
+
+                <input type="radio" name="newsletter" value="0"  class="form-check-input" checked="checked" />
+                    <label class="form-check-label">{{ text_no_newsletter }}</label>
+                  </div>
               {% endif %}
             </div>
-          </div>
-        </fieldset>
-        <div class="buttons clearfix text-right">
-            <input type="submit" value="{{ button_continue }}" class="btn btn-contrast" />
+
+        <div class="col-12">
+          <hr class="mt-2 mb-3">
+          <div class="d-flex flex-wrap justify-content-between align-items-center">
+            <button type="submit"  class="btn btn-primary mt-3 mt-sm-0" >{{ button_continue }} </div>
         </div>
+    </div>
+
+
+
       </form>
-      {{ content_bottom }}</div>
-    {{ column_right }}</div>
-</div>
+      </section>
+
+    </div>
+  </div>
+
 {{ footer }}
