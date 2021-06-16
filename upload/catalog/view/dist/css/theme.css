@@ -36223,6 +36223,14 @@ body > main.offcanvas-enabled {
   padding: 0;
 }
 
+.featured-posts-carousel.tns-carousel.tns-controls-outside .tns-item img {
+  border-radius: 0.188rem 0.188rem 0.188rem 1.5rem;
+}
+
+.featured-posts-carousel.tns-carousel.tns-controls-outside .blog-entry-thumb {
+  border-radius: 0;
+}
+
 .ui-slider.ui-slider-horizontal {
   height: 0.188rem;
 }

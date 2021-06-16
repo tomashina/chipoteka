@@ -107,6 +107,18 @@
 
     &.tns-carousel.tns-controls-outside {
         padding: 0;
+
+
+        .tns-item {
+            img {
+                border-radius: $border-radius-sm $border-radius-sm $border-radius-sm $border-radius-big;
+            }
+             
+        }
+
+        .blog-entry-thumb {
+            border-radius: 0;
+        }
     }
 
 }
