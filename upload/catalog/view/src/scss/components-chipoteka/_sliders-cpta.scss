@@ -11,41 +11,40 @@
 
     &.tns-carousel-product {
 
-
-
         .tns-outer {
             margin-right: -0.2rem;
             margin-left: -0.2rem;
         }
-    
+
         .tns-ovh {
             padding-left: 0.21rem !important;
             padding-right: 0.21rem !important;
         }
-    
+
         .tns-inner {
             margin-right: 0 !important;
         }
-    
-    
+
+
         &.tns-controls-outside {
             // padding-right: 0;
             // padding-left: 0;
             padding: 0;
-     
+
             // Left & Right Buttons
             [data-controls="next"] {
                 right: -15px;
-             }
-        
+            }
+
             [data-controls="prev"] {
                 left: -15px;
-             }
+            }
+
             // 
-    
+
             .tns-carousel-inner {
                 display: flex;
-    
+
                 // Item
                 .tns-item {
                     padding-left: 1rem;
@@ -54,12 +53,78 @@
                     padding-bottom: 24px;
                     padding-top: 24px;
                 }
-    
-    
+
+
             }
         }
-            
+
     }
 
+
+}
+
+
+// - - - - - - - - - - - - - - - -
+// Price Slider (UI jQuery)
+
+// .price_slider {}
+
+.ui-slider {
+
+    &.ui-slider-horizontal {
+        height: 0.188rem;
+
+        &.ui-widget-content {
+            background-color: $gray-l2;
+            border: none;
+        }
+
+        .ui-slider-range {
+            background-color: $primary;
+        }
+
+        .ui-slider-handle {
+            border-radius: 100px;
+            width: 1.375rem;
+            height: 1.375rem;
+            top: -0.6rem;
+        }
+
+        // States
+        .ui-state-default,
+        .ui-widget-content .ui-state-default,
+        .ui-widget-header .ui-state-default,
+        .ui-button,
+        html .ui-button.ui-state-disabled:hover,
+        html .ui-button.ui-state-disabled:active {
+            border: 1px solid $light;
+            background: $white;
+            box-shadow: 0px 3px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .ui-state-hover,
+        .ui-widget-content .ui-state-hover,
+        .ui-widget-header .ui-state-hover,
+        .ui-state-focus,
+        .ui-widget-content .ui-state-focus,
+        .ui-widget-header .ui-state-focus,
+        .ui-button:hover,
+        .ui-button:focus {
+            background: $gray-l1;
+            border-color: $gray-l1;
+        }
+
+        .ui-state-active,
+        .ui-widget-content .ui-state-active,
+        .ui-widget-header .ui-state-active,
+        a.ui-button:active,
+        .ui-button:active,
+        .ui-button.ui-state-active:hover {
+            border: 1px solid $primary;
+            background: $primary;
+
+        }
+
+    }
 
 }
