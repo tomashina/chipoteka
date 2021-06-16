@@ -4,9 +4,53 @@
 
 
 // - - - - - - - - - - - - - - - -
+// Common - Tiny Carousel
+.tns-carousel.tns-controls-outside {
+
+    // Left & Right Buttons
+    [data-controls="next"] {
+        right: -21px;
+    }
+
+    [data-controls="prev"] {
+        left: -21px;
+    }
+
+    [data-controls="next"],
+    [data-controls="prev"] {
+
+        border-color: $light;
+
+        &:hover {
+            border-color: $primary-l3;
+            color: $primary;
+        }
+    }
+
+    @include media-breakpoint-up(lg) {
+        [data-controls="next"] {
+            right: -15px;
+        }
+
+        [data-controls="prev"] {
+            left: -15px;
+        }
+    }
+
+
+
+    // Nav
+    .tns-nav {
+        padding-top: 0;
+        display: flex;
+        justify-content: center;
+    }
+}
+
+
+
+// - - - - - - - - - - - - - - - -
 // Tiny Carousel (TNS)
-
-
 .tns-carousel {
 
     &.tns-carousel-product {
@@ -31,16 +75,6 @@
             // padding-left: 0;
             padding: 0;
 
-            // Left & Right Buttons
-            [data-controls="next"] {
-                right: -15px;
-            }
-
-            [data-controls="prev"] {
-                left: -15px;
-            }
-
-            // 
 
             .tns-carousel-inner {
                 display: flex;
@@ -58,8 +92,22 @@
             }
         }
 
+
     }
 
+
+}
+
+
+// - - - - - - - - - - - - - - - -
+// Featured Posts Carousel
+
+
+.featured-posts-carousel {
+
+    &.tns-carousel.tns-controls-outside {
+        padding: 0;
+    }
 
 }
 
