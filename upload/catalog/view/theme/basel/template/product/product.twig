@@ -32,16 +32,16 @@
                         <div class="row">
                             <!-- Product gallery-->
                             <div class="col-lg-6 pe-lg-0">
-                                <div class="product-gallery" style="display: block !important;">
+                                <div class="product-gallery " style="display: block !important;">
                                     <div class="product-gallery-preview gallery">
                                         {% if thumb or images %}
                                             {% if thumb %}
-                                                <div class="product-gallery-preview-item active" id="first"><a class="gallery-item" href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"></a>
+                                                <div class="product-gallery-preview-item active" id="first"><a class="gallery-item rounded-3 mb-grid-gutter " href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"></a>
 
                                                 </div>
                                             {% endif %}
                                             {% for image in images %}
-                                                <div class="product-gallery-preview-item" id="image{{ image.imageid }}"><a class="gallery-item" href="{{ image.popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ image.popup }}"  alt="{{ heading_title }}"></a></div>
+                                                <div class="product-gallery-preview-item" id="image{{ image.imageid }}"><a class="gallery-item rounded-3 mb-grid-gutter" href="{{ image.popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ image.popup }}"  alt="{{ heading_title }}"></a></div>
                                             {% endfor %}
                                         {% endif %}
                                     </div>
@@ -234,14 +234,15 @@
                         <!-- Specs table-->
                         <div class="row pt-2">
                             <div class="col-lg-7 mb-3">
-                                <h3 class="h6">Opis</h3>
+                                <h5>Opis</h5>
                                 {{ description }}
                             </div>
                             {% if manufacturer %}
                             <div class="col-lg-5 mb-3">
-                                <h3 class="h6">{{ manufacturer }}</h3>
-                                <p>Garmin je međunarodna kompanija specijalizirana za GPS tehnologiju. Osnovana je 1989. godine u SAD-u. 1993. godine Garmin je predstavio prvi GPS uređaj s navigacijom. Renomirani je proizvođač GPS uređaja, fitness narukvica i pametnih satova. Chipoteka vam nudi GPS uređaje s  navigacijom, fitness narukvice, pametne satove, kamere i pripadajuću dodatnu opremu.</p>
-                                <a class="btn btn-outline-secondary btn-icon" href="{{ manufacturers }}">Pregled svih {{ manufacturer }} proizvoda</a>
+                                <h5>{{ manufacturer }}</h5>
+                             <a href="{{ manufacturers }}">  <img src="{{ manufacturer_logo }}"  alt="{{ manufacturer }}"/></a>
+                                {{ manufacturer_description }}
+                                <a class="btn btn-outline-primary btn-icon" href="{{ manufacturers }}">Pregled svih {{ manufacturer }} proizvoda</a>
 
                             </div>
                             {% endif %}
@@ -301,9 +302,10 @@
                             </div>
                             {% if manufacturer %}
                                 <div class="col-lg-5 mb-3">
-                                    <h3 class="h6">{{ manufacturer }}</h3>
-                                    <p>Garmin je međunarodna kompanija specijalizirana za GPS tehnologiju. Osnovana je 1989. godine u SAD-u. 1993. godine Garmin je predstavio prvi GPS uređaj s navigacijom. Renomirani je proizvođač GPS uređaja, fitness narukvica i pametnih satova. Chipoteka vam nudi GPS uređaje s  navigacijom, fitness narukvice, pametne satove, kamere i pripadajuću dodatnu opremu.</p>
-                                    <a class="btn btn-outline-secondary btn-icon" href="{{ manufacturers }}">Pregled svih {{ manufacturer }} proizvoda</a>
+                                    <h5>{{ manufacturer }}</h5>
+                                    <a href="{{ manufacturers }}">  <img src="{{ manufacturer_logo }}"  alt="{{ manufacturer }}"/></a>
+                                    {{ manufacturer_description }}
+                                    <a class="btn btn-outline-primary btn-icon" href="{{ manufacturers }}">Pregled svih {{ manufacturer }} proizvoda</a>
 
                                 </div>
                             {% endif %}

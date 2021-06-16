@@ -457,15 +457,18 @@ $(document).delegate('.agree', 'click', function(e) {
 		type: 'get',
 		dataType: 'html',
 		success: function(data) {
-			html  = '<div id="modal-agree" class="modal">';
-			html += '  <div class="modal-dialog">';
+			html  = '<div id="modal-agree" class="modal" tabindex="-1" role="dialog">';
+			html += '  <div class="modal-dialog  modal-lg" role="document">';
 			html += '    <div class="modal-content">';
 			html += '      <div class="modal-header">';
-			html += '        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>';
-			html += '        <h4 class="modal-title">' + $(element).text() + '</h4>';
+			html += '        <h5 class="modal-title">' + $(element).text() + '</h5>';
+			html += '         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
 			html += '      </div>';
 			html += '      <div class="modal-body">' + data + '</div>';
-			html += '    </div';
+			html += ' <div class="modal-footer">';
+			html += ' <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Zatvori</button>';
+			html += ' </div>';
+			html += '    </div>';
 			html += '  </div>';
 			html += '</div>';
 			$('body').append(html);

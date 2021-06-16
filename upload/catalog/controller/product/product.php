@@ -236,7 +236,14 @@ class ControllerProductProduct extends Controller {
 
             $data['shopping_cart'] = $this->url->link('checkout/cart');
 
-			$data['product_id'] = (int)$this->request->get['product_id'];
+
+
+            $manufacturer_info = $this->model_catalog_manufacturer->getManufacturer($product_info['manufacturer_id']);
+
+
+            $data['manufacturer_description'] = html_entity_decode($manufacturer_info['description'], ENT_QUOTES, 'UTF-8');
+
+            $data['product_id'] = (int)$this->request->get['product_id'];
 			$data['manufacturer'] = $product_info['manufacturer'];
 			$data['manufacturers'] = $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $product_info['manufacturer_id']);
 			$data['model'] = $product_info['model'];
@@ -255,6 +262,15 @@ class ControllerProductProduct extends Controller {
 			}
 
 			$this->load->model('tool/image');
+
+
+
+
+            if ($manufacturer_info['image']) {
+                $data['manufacturer_logo'] = $this->model_tool_image->resize($manufacturer_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'));;
+            } else {
+                $data['manufacturer_logo'] = '';
+            }
 
 			if ($product_info['image']) {
 				$data['popup'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_height'));
