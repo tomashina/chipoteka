@@ -56,6 +56,13 @@ body > main.offcanvas-enabled {
    
 }
 
+// Navbar 
+.navbar-tool.dropdown::before {
+    width: max-content;
+}
+
+
+
 // main >  section {
 //         padding-left: $grid-gutter-width-10px;
 //         padding-right: $grid-gutter-width-10px;
