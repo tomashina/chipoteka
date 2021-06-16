@@ -18,8 +18,8 @@ class Pagination {
 	public $url = '';
 	public $text_first = 'Prva';
 	public $text_last = 'Zadnja';
-	public $text_next = '<i class="ci-arrow-right ms-2"></i>';
-	public $text_prev = '<i class="ci-arrow-left me-2"></i>';
+	public $text_next = '<i class="fal fa-chevron-right"></i>';
+	public $text_prev = '<i class="fal fa-chevron-left"></i>';
 
 	/**
      * 

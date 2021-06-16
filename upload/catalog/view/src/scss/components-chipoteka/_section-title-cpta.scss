@@ -1,0 +1,95 @@
+//
+// SECTION TITLE
+// --------------------------------------------------
+
+
+
+// - - - - - - - - - - - - - - - -
+// Title
+
+.section-title {
+    font-size: 1.688;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+
+    @include media-breakpoint-up(lg) {
+        font-size: 2.063rem;
+    }
+
+    &::after {
+        content: " ";
+        width: calc(100% - 1.45rem);
+        height: 1px;
+        background-color: $dark;
+        // border-radius: 3px 3px 6px 9px;
+
+        @include media-breakpoint-up(lg) {
+            width: calc(100% - 1rem);
+        }
+    }
+
+    // Title
+    .title {
+        display: flex;
+        color: $dark;
+        font-weight: 300;
+        margin-bottom: 0;
+    }
+
+
+    // Buttons
+    .btn {
+        font-size: 1.125rem;
+        font-weight: 300;
+        font-style: normal;
+        border-radius: 55px 55px 55px 0px;;
+        // margin-right: -0.09rem;
+
+        i {
+            margin-left: 1rem;
+        }
+
+        @include media-breakpoint-up(lg) {
+            margin-right: -0.36rem;
+        }
+    }
+
+    // Button - See All
+    .btn-see-all {
+        border-color: $dark;
+        color: $gray-d1;
+        margin-bottom: -1px;
+
+        &:hover {
+            background-color: $dark;
+            border-color: $dark;
+            color: $light;
+        }
+    }
+
+
+    // Discount
+    &--discount {
+        font-style: italic;
+
+        .title {
+            span {
+                height: max-content;
+                font-size: 1.125rem;
+                font-weight: 900;
+                line-height: 1;
+                text-transform: uppercase;
+                padding: 6px;
+                padding-right: 10px;
+                margin-right: 10px;
+                border-radius: 0 0 12px 0;
+                background-color: $primary;
+                color: $light;
+            }
+        }
+
+
+    }
+}
