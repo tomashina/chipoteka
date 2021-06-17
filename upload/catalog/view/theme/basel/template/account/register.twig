@@ -1,7 +1,7 @@
 {{ header }}
 <main  class="offcanvas-enabled" style="padding-top: 5rem;">
     <!-- Page Title-->
-    <div class=" pt-4 ps-lg-4 pe-lg-3">
+    <div class=" pt-4 ps-lg-4 pe-lg-3 ">
         <div class="container d-lg-flex justify-content-between py-2 py-lg-3 ">
             <div class="order-lg-2 mb-3 mb-lg-0 pt-lg-2">
                 <nav aria-label="breadcrumb">
@@ -13,20 +13,22 @@
                 </nav>
             </div>
             <div class="order-lg-1 pe-lg-4 text-center text-lg-start">
-                <h1 class="h3 text-dark mb-4">{{ heading_title }}</h1>
+                <h1 class="category-page-title" id="page-title">{{ heading_title }}</h1>
                 <p class="fs-md">{{ text_account_already }}</p>
             </div>
         </div>
     </div>
-    <div class="container pb-5 mb-2 mb-md-4 justify-content-center" id="account-register">
-            <section class="col-lg-8 col-md-10">
+
+    <div class="container pb-5 mb-2 mb-md-4 ps-lg-2 pe-lg-3 justify-content-between" id="account-register">
+
+            <section class="col-lg-8 col-md-10 px-3 ">
                 {% if error_warning %}
                     <div class="alert alert-primary alert-dismissible fade show" role="alert">
                         {{ error_warning }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 {% endif %}
-
+                <div class="row g-0  mb-4">
                 <div id="content" class="{{ class }}">
 
 
@@ -213,11 +215,11 @@
                   </form>
                   </div>
 
-
+                </div>
 
             </section>
 
-        </div>
+
     </div>
 <script><!--
 // Sort the custom fields
