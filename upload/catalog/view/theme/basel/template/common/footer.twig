@@ -1,192 +1,191 @@
-<div class="container">
+
     {{ position_bottom_half }}
-</div>
-<div class="container">
+
     {{ position_bottom }}
-</div>
+
 <!-- Dark footer -->
-<footer class="page-footer  pt-5">
-    <img class="logo-footer" src="catalog/view/dist/img/logo-dark.svg" alt="Chipoteka logo" />
-    <div class="container page-footer__top">
-        <div class="row pb-2 ps-lg-4 pe-lg-3">
-            <div class="col-md-9">
-                <div class="widget widget-links widget-light pb-2 mb-4">
+    <footer class="page-footer  pt-5">
+        <img class="logo-footer" src="catalog/view/dist/img/logo-dark.svg" alt="Chipoteka logo" />
+        <div class="container page-footer__top">
+            <div class="row pb-2 ps-lg-4 pe-lg-3">
+                <div class="col-md-9">
+                    <div class="widget widget-links widget-light pb-2 mb-4">
 
-                    {% if custom_links %}
-                    {% for column in basel_footer_columns %}
-                    {% if column.title=='Web shop' %}
-                    <h3 class="widget-title text-light">
-                        {{ column.title }}
-                    </h3>
-                    {% if column.links is defined %}
-                        <ul class="widget-list">
-                            {% for link in column.links %}
-                                <li class="widget-list-item"><a class="widget-list-link" href="{{ link.target }}">{{ link.title }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
-
-                {% endif %}
-                {% endfor %}
-                {% endif %}
-
-
-
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="widget widget-links widget-light pb-2 mb-4">
-                    {% if custom_links %}
+                        {% if custom_links %}
                         {% for column in basel_footer_columns %}
-                            {% if column.title!='Web shop' %}
-                                <h3 class="widget-title text-light">
-                                    {{ column.title }}
-                                </h3>
-                                {% if column.links is defined %}
-                                    <ul class="widget-list">
-                                        {% for link in column.links %}
-                                            <li class="widget-list-item"><a class="widget-list-link" href="{{ link.target }}">{{ link.title }}</a></li>
-                                        {% endfor %}
-                                    </ul>
-                                {% endif %}
+                        {% if column.title=='Web shop' %}
+                        <h3 class="widget-title text-light">
+                            {{ column.title }}
+                        </h3>
+                        {% if column.links is defined %}
+                            <ul class="widget-list">
+                                {% for link in column.links %}
+                                    <li class="widget-list-item"><a class="widget-list-link" href="{{ link.target }}">{{ link.title }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
 
-                            {% endif %}
-                        {% endfor %}
                     {% endif %}
+                    {% endfor %}
+                    {% endif %}
+
+
+
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="widget widget-links widget-light pb-2 mb-4">
+                        {% if custom_links %}
+                            {% for column in basel_footer_columns %}
+                                {% if column.title!='Web shop' %}
+                                    <h3 class="widget-title text-light">
+                                        {{ column.title }}
+                                    </h3>
+                                    {% if column.links is defined %}
+                                        <ul class="widget-list">
+                                            {% for link in column.links %}
+                                                <li class="widget-list-item"><a class="widget-list-link" href="{{ link.target }}">{{ link.title }}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="accent-links">
-        <a href="#">
-            <span>
-                Servis
-                <i class="fal fa-chevron-right"></i>
-            </span>
-        </a>
-        <a href="#">
-            <span>
-                Veleprodaja
-                <i class="fal fa-chevron-right"></i>
-            </span>
-        </a>
-    </div>
-    <div class="pt-5  page-footer__bottom">
-        <div class="container">
-            <div class="row pb-3 ps-lg-4 pe-lg-3 shop-features">
-                <div class="col-xl-3 col-sm-6 mb-4">
-                    <div class="d-flex">
-                        <i class="fas fa-badge-check"></i>
-                        <div class="ps-3 d-flex align-items-center">
-                            <h6 class="mb-1">
-                                Više od 30 godina sa vama
-                            </h6>
+        <div class="accent-links">
+            <a href="#">
+                <span>
+                    Servis
+                    <i class="fal fa-chevron-right"></i>
+                </span>
+            </a>
+            <a href="#">
+                <span>
+                    Veleprodaja
+                    <i class="fal fa-chevron-right"></i>
+                </span>
+            </a>
+        </div>
+        <div class="pt-5  page-footer__bottom">
+            <div class="container">
+                <div class="row pb-3 ps-lg-4 pe-lg-3 shop-features">
+                    <div class="col-xl-3 col-sm-6 mb-4">
+                        <div class="d-flex">
+                            <i class="fas fa-badge-check"></i>
+                            <div class="ps-3 d-flex align-items-center">
+                                <h6 class="mb-1">
+                                    Više od 30 godina sa vama
+                                </h6>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 mb-4">
-                    <div class="d-flex">
-                        <i class="fas fa-lock-alt"></i>
-                        <div class="ps-3 d-flex align-items-center">
-                            <h6 class="mb-1">
-                                100% sigurna trgovina
-                            </h6>
+                    <div class="col-xl-3 col-sm-6 mb-4">
+                        <div class="d-flex">
+                            <i class="fas fa-lock-alt"></i>
+                            <div class="ps-3 d-flex align-items-center">
+                                <h6 class="mb-1">
+                                    100% sigurna trgovina
+                                </h6>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 mb-4">
-                    <div class="d-flex">
-                        <i class="fas fa-shipping-fast"></i>
-                        <div class="ps-3 d-flex align-items-center">
-                            <h6 class="mb-1">
-                                Besplatna dostava  iznad 500 kn
-                            </h6>
+                    <div class="col-xl-3 col-sm-6 mb-4">
+                        <div class="d-flex">
+                            <i class="fas fa-shipping-fast"></i>
+                            <div class="ps-3 d-flex align-items-center">
+                                <h6 class="mb-1">
+                                    Besplatna dostava  iznad 500 kn
+                                </h6>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xl-3 col-sm-6 mb-4">
-                    <div class="d-flex">
-                        <i class="fab fa-facebook"></i>
-                        <div class="ps-3 d-flex align-items-center">
-                            <h6 class="mb-1">
-                                Pratite nas na facebooku
-                                                            
-                            </h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <hr class="hr-light mb-5">
-                <div class="row pb-2 ps-lg-4 pe-lg-3">
+                    <div class="col-xl-3 col-sm-6 mb-4">
+                        <div class="d-flex">
+                            <i class="fab fa-facebook"></i>
+                            <div class="ps-3 d-flex align-items-center">
+                                <h6 class="mb-1">
+                                    Pratite nas na facebooku
 
-                    <div class="col mb-4 payment-cards">
-
-                        <a class="mb-3" href="#">
-                            <img src="catalog/view/dist/img/americanexpress.png" alt="American Express Card" />
-                        </a>
-                        <a class="mb-3" href="#">
-                            <img src="catalog/view/dist/img/maestro.png" alt="Maestro Card" />
-                        </a>
-                        <a class="mb-3" href="#">
-                            <img src="catalog/view/dist/img/mastercard.png" alt="Master Card" />
-                        </a>
-                        <a class="mb-3" href="#">
-                            <img src="catalog/view/dist/img/visa.png" alt="Visa Card" />
-                        </a>
-                        <a class="mb-3" href="#">
-                            <img src="catalog/view/dist/img/ws-pay.png" alt="WS Pay" />
-                        </a>
-
+                                </h6>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <hr class="hr-light mb-5">
                     <div class="row pb-2 ps-lg-4 pe-lg-3">
-                        <div class="col mb-4 page-footer__links">
-                            <a class="mb-3" href="index.php?route=information/information&information_id=3">
-                                Uvjeti kupovine                       
-                            </a>
-                            <a class="mb-3" href="index.php?route=information/information&information_id=5">
-                                Uvjeti korištenja internetske stranice                     
-                            </a>
-                            <a class="mb-3" href="index.php?route=information/information&information_id=6">
-                                Zaštita privatnosti i podataka                      
+
+                        <div class="col mb-4 payment-cards">
+
+                            <a class="mb-3" href="#">
+                                <img src="catalog/view/dist/img/americanexpress.png" alt="American Express Card" />
                             </a>
                             <a class="mb-3" href="#">
-                                Kontakt                       
+                                <img src="catalog/view/dist/img/maestro.png" alt="Maestro Card" />
+                            </a>
+                            <a class="mb-3" href="#">
+                                <img src="catalog/view/dist/img/mastercard.png" alt="Master Card" />
+                            </a>
+                            <a class="mb-3" href="#">
+                                <img src="catalog/view/dist/img/visa.png" alt="Visa Card" />
+                            </a>
+                            <a class="mb-3" href="#">
+                                <img src="catalog/view/dist/img/ws-pay.png" alt="WS Pay" />
                             </a>
 
                         </div>
                     </div>
-                    <div class="row pb-2 ps-lg-4 pe-lg-3">
-                        <div class="col mb-4 eu-financing-logos">
-                            <a class="mb-3" href="#">
-                                <img src="catalog/view/dist/img/esif.jpg" alt="ESIF" />                      
-                            </a>
-                            <a class="mb-3" href="#">
-                                <img src="catalog/view/dist/img/hamag.jpg" alt="HAMAG" />                     
-                            </a>
-                            <a class="mb-3" href="#">
-                                <img src="catalog/view/dist/img/eu.jpg" alt="EU" />                    
-                            </a>
+                    <hr class="hr-light mb-5">
+                        <div class="row pb-2 ps-lg-4 pe-lg-3">
+                            <div class="col mb-4 page-footer__links">
+                                <a class="mb-3" href="index.php?route=information/information&information_id=3">
+                                    Uvjeti kupovine
+                                </a>
+                                <a class="mb-3" href="index.php?route=information/information&information_id=5">
+                                    Uvjeti korištenja internetske stranice
+                                </a>
+                                <a class="mb-3" href="index.php?route=information/information&information_id=6">
+                                    Zaštita privatnosti i podataka
+                                </a>
+                                <a class="mb-3" href="#">
+                                    Kontakt
+                                </a>
+
+                            </div>
+                        </div>
+                        <div class="row pb-2 ps-lg-4 pe-lg-3">
+                            <div class="col mb-4 eu-financing-logos">
+                                <a class="mb-3" href="#">
+                                    <img src="catalog/view/dist/img/esif.jpg" alt="ESIF" />
+                                </a>
+                                <a class="mb-3" href="#">
+                                    <img src="catalog/view/dist/img/hamag.jpg" alt="HAMAG" />
+                                </a>
+                                <a class="mb-3" href="#">
+                                    <img src="catalog/view/dist/img/eu.jpg" alt="EU" />
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="pb-4 fs-sm gray-d1 text-center text-md-start ps-lg-4 pe-lg-3 d-flex justify-content-center">
+                            © Copyright © 1990-2021 CHIPOTEKA / Z-EL D.O.O. Zagreb, Hrvatska.
+
                         </div>
                     </div>
-
-                    <div class="pb-4 fs-sm gray-d1 text-center text-md-start ps-lg-4 pe-lg-3 d-flex justify-content-center">
-                        © Copyright © 1990-2021 CHIPOTEKA / Z-EL D.O.O. Zagreb, Hrvatska. 
-
-                    </div>
-                </div>
-            </div>
-        </footer>
-<div class="handheld-toolbar" style="opacity: 0">
-    <div class="d-table table-layout-fixed w-100"><a class="d-table-cell handheld-toolbar-item" href="javascript:void(0)" data-bs-toggle="collapse" onclick="window.scrollTo(0, 0)" data-bs-target="#shop-filters"><span class="handheld-toolbar-icon"><i class="ci-filter-alt"></i></span><span class="handheld-toolbar-label">Filter</span></a><a class="d-table-cell handheld-toolbar-item" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#sideNav" ><span class="handheld-toolbar-icon"><i class="ci-menu"></i></span><span class="handheld-toolbar-label">Menu</span></a><a class="d-table-cell handheld-toolbar-item" href="{{ shopping_cart }}"><span class="handheld-toolbar-icon"><i class="ci-cart"></i><span class="cart-total-items badge bg-primary rounded-pill ms-1">{{ cart_items }}</span></span><span class="handheld-toolbar-label cart-total-amount">{{ cart_amount }}</span></a></div>
-</div>
-
-    </main>
+        </div>
+    </footer>
+    <div class="handheld-toolbar" style="opacity: 0">
+    <div class="d-table table-layout-fixed w-100"><a class="d-table-cell handheld-toolbar-item" href="javascript:void(0)" data-bs-toggle="collapse" onclick="window.scrollTo(0, 0)" data-bs-target="#shop-filters"><span class="handheld-toolbar-icon"><i class="ci-filter-alt"></i></span><span class="handheld-toolbar-label">Filter</span></a><a class="d-table-cell handheld-toolbar-item" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#sideNav" ><span class="handheld-toolbar-icon"><i class="ci-menu"></i></span><span class="handheld-toolbar-label">Menu</span></a><a class="d-table-cell handheld-toolbar-item" href="{{ shopping_cart }}"><span class="handheld-toolbar-icon"><i class="ci-cart"></i><span class="cart-total-items badge bg-primary rounded-pill ms-1">{{ cart_items }}</span></span><span class="handheld-toolbar-label cart-total-amount">{{ cart_amount }}</span></a>
+    </div>
+    </div>
+</main>
     <!-- Back To Top Button-->
-        <a class="btn-scroll-top" href="#top" data-scroll data-fixed-element> <span class="btn-scroll-top-tooltip text-muted fs-sm me-2">Top</span>
+     <!--   <a class="btn-scroll-top" href="#top" data-scroll data-fixed-element> <span class="btn-scroll-top-tooltip text-muted fs-sm me-2">Top</span>
             <i class="btn-scroll-top-icon ci-arrow-up"></i>
-        </a>
+        </a>-->
 <script src="catalog/view/dist/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="catalog/view/dist/vendor/simplebar/dist/simplebar.min.js"></script>
 <script src="catalog/view/dist/vendor/tiny-slider/dist/min/tiny-slider.js"></script>
