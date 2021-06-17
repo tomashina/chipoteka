@@ -2,7 +2,7 @@
     {% if block_title %}
     <div class="section-title section-title--discount">
         {% if title %}  <h2 class="title"><span>Akcija</span> {{ title }}</h2>{% endif %}
-        {% if use_button %}    <a class="btn btn-see-all" href="{{ link_href ? link_href : '' }}">{{ link_title }}<i class="fal fa-chevron-right"></i></a>{% endif %}
+        {% if use_button %}    <a class="btn btn-see-all" href="{{ link_href ? link_href : '' }}"><span>{{ link_title }}</span><i class="fal fa-chevron-right"></i></a>{% endif %}
     </div>
     {% endif %}
     <div class="tns-carousel tns-controls-static tns-controls-outside tns-nav-enabled tns-carousel-product product-holder py-3">

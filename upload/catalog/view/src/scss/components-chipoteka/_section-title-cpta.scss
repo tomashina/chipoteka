@@ -8,21 +8,28 @@
 // Title
 
 .section-title {
-    font-size: 1.688;
+    position: relative;
+    font-size: 1.688rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
+   // flex-wrap: wrap;
+
 
     @include media-breakpoint-up(lg) {
         font-size: 2.063rem;
     }
+
+
 
     &::after {
         content: " ";
         width: calc(100% - 1.45rem);
         height: 1px;
         background-color: $dark;
+        position: absolute;
+        bottom: 0;
+ 
         // border-radius: 3px 3px 6px 9px;
 
         @include media-breakpoint-up(lg) {
@@ -32,10 +39,20 @@
 
     // Title
     .title {
+        flex: 1;
         display: flex;
         color: $dark;
         font-weight: 300;
-        margin-bottom: 0;
+        margin-right: 10px;
+        flex-direction: column;
+
+        span {
+            margin-bottom: 5px;
+        }
+
+        @include media-breakpoint-up(sm) {
+            flex-direction: row;
+        }
     }
 
 
@@ -44,11 +61,14 @@
         font-size: 1.125rem;
         font-weight: 300;
         font-style: normal;
-        border-radius: 55px 55px 55px 0px;;
+        border-radius: 55px 55px 55px 0px;
+        align-self: flex-end;
         // margin-right: -0.09rem;
-
-        i {
-            margin-left: 1rem;
+ 
+        @include media-breakpoint-up(md) {
+            i {
+                margin-left: 1rem;
+            }
         }
 
         @include media-breakpoint-up(lg) {
@@ -60,7 +80,6 @@
     .btn-see-all {
         border-color: $dark;
         color: $gray-d1;
-        margin-bottom: -1px;
 
         &:hover {
             background-color: $dark;
@@ -68,9 +87,12 @@
             color: $light;
         }
 
-        @include media-breakpoint-up(lg) {
-            margin-right: -0.36rem;
-        }
+         @include media-breakpoint-down(md) {
+
+             span {
+                 @include sr-only;
+             }
+         }
     }
 
 
@@ -80,8 +102,9 @@
 
         .title {
             span {
+                width: max-content;
                 height: max-content;
-                font-size: 1.125rem;
+                @include font-size(1.125rem);
                 font-weight: 900;
                 line-height: 1;
                 text-transform: uppercase;
