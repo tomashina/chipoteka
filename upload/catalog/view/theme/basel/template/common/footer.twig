@@ -196,16 +196,20 @@
 <script src="catalog/view/dist/vendor/drift-zoom/dist/Drift.min.js"></script>
 <script src="catalog/view/dist/js/theme.js"></script>
 <script>
-
     var lastScrollTop = 0;
     $(window).scroll(function(event){
         var st = $(this).scrollTop();
         if (st > lastScrollTop){
             // downscroll code
             $(".handheld-toolbar").css('opacity',1);
+            $(".page-header").css('opacity',0);
+            $(".page-header").css('transition','all 0.3s 0.35s ease-in-out');
+
         } else {
             // upscroll code
             $(".handheld-toolbar").css('opacity',0);
+            $(".page-header").css('opacity',1);
+            $(".page-header").css('transition','all 0.3s 0.35s ease-in-out');
         }
         lastScrollTop = st;
     });
