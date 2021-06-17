@@ -27,7 +27,7 @@
         border-bottom: 1px solid $gray-d1;
 
         i {
-            margin-left: 10px;
+            margin-left: 6px;
         }
 
         > * {
@@ -44,15 +44,15 @@
 
     .shop-features {
         h6 {
-            font-size: 1.25rem;
+            @include font-size(1.25rem);
             font-weight: 300;
             color: $light;
         }
 
         i {
             color: $accent;
-            font-size: 2.5rem;
-        }
+            @include font-size(2.5rem);
+         }
     }
 
     .payment-cards,
