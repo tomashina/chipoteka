@@ -67,6 +67,10 @@
             border-color: $dark;
             color: $light;
         }
+
+        @include media-breakpoint-up(lg) {
+            margin-right: -0.36rem;
+        }
     }
 
 

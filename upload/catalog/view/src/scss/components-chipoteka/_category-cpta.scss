@@ -32,7 +32,8 @@
 // - - - - - - - - - - - - - - - -
 // Category Title
 .category-page-title {
-    font-size: 2.063rem;
+    @include font-size(2.063rem);
+    
     font-weight: 500;
     margin-bottom: 0.5rem;
 
@@ -357,9 +358,12 @@
             // }
         }
 
-        // Product Title
+        // Product Title 
         .product-title {
-            color: $primary;
+            
+            @media (any-pointer: fine) and (hover: hover) {
+                color: $primary;
+            } 
 
             transition: all $transition-default;
 
@@ -373,7 +377,8 @@
             width: max-content;
 
             @media (any-pointer: fine) and (hover: hover) {
-                width: 190px;
+                // width: 190px;
+                width: 200px;
 
                 span {
                     top: 0.07rem;

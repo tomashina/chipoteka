@@ -31,7 +31,7 @@
         <!-- Heading-->
         <div class="section-title">
             {% if title %}  <h2 class="title">{{ title }}</h2>{% endif %}
-            {% if use_button %}  <div class="pt-3"><a class="btn btn-see-all" href="{{ blog_show_all }}">{{ text_show_all }}<i class="fal fa-chevron-right"></i></a></div>{% endif %}
+            {% if use_button %} <a class="btn btn-see-all" href="{{ blog_show_all }}">{{ text_show_all }}<i class="fal fa-chevron-right"></i></a>{% endif %}
         </div>
     {% endif %}
 
