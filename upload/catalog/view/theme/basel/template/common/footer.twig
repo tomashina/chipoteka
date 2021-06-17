@@ -202,14 +202,14 @@
         if (st > lastScrollTop){
             // downscroll code
             $(".handheld-toolbar").css('opacity',1);
-            $(".page-header").css('opacity',0);
-            $(".page-header").css('transition','all 0.3s 0.35s ease-in-out');
+           /* $(".page-header").css('opacity',0);
+            $(".page-header").css('transition','all 0.3s 0.35s ease-in-out');*/
 
         } else {
             // upscroll code
             $(".handheld-toolbar").css('opacity',0);
-            $(".page-header").css('opacity',1);
-            $(".page-header").css('transition','all 0.3s 0.35s ease-in-out');
+            /*$(".page-header").css('opacity',1);
+            $(".page-header").css('transition','all 0.3s 0.35s ease-in-out');*/
         }
         lastScrollTop = st;
     });
