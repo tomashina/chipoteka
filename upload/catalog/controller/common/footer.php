@@ -38,8 +38,14 @@ class ControllerCommonFooter extends Controller {
         // Cart Total
         $data['cart_amount'] = $this->load->controller('extension/basel/basel_features/total_amount');
 
-
+        $data['login'] = $this->url->link('account/login', '', true);
 		$data['powered'] = sprintf($this->language->get('text_powered'), $this->config->get('config_name'), date('Y', time()));
+
+        $data['year'] = date('Y', time());
+        if (isset($this->request->get['route'])){
+            $data['kategorija'] = $this->request->get['route'];
+        }
+
 
 		// Whos Online
 		if ($this->config->get('config_customer_online')) {

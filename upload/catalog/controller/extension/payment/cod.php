@@ -2,6 +2,7 @@
 class ControllerExtensionPaymentCod extends Controller {
 	public function index() {
 		return $this->load->view('extension/payment/cod');
+        $data['checkout'] = $this->url->link('checkout/checkout', '', true);
 	}
 
 	public function confirm() {

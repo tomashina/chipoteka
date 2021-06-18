@@ -161,7 +161,7 @@
                                                             
                             </a>
                             <a class="mb-3" href="index.php?route=information/information&information_id=5">
-                                Uvjeti korištenja internetske stranice                     
+                                Uvjeti korištenja
                                                             
                             </a>
                             <a class="mb-3" href="index.php?route=information/information&information_id=6">
@@ -190,15 +190,18 @@
                     </div>
 
                     <div class="pb-4 fs-sm gray-d1 text-center text-md-start ps-lg-4 pe-lg-3 d-flex justify-content-center">
-                        © Copyright © 1990-2021 CHIPOTEKA / Z-EL D.O.O. Zagreb, Hrvatska. 
+                        © Copyright © 1990-{{ year }} CHIPOTEKA / Z-EL D.O.O. Zagreb, Hrvatska.
                         
                                             
                     </div>
                 </div>
             </div>
         </footer>
-        <div class="handheld-toolbar" style="opacity: 0">
+        <div class="handheld-toolbar" >
             <div class="d-table table-layout-fixed w-100">
+
+
+                {% if kategorija=='product/category' %}
                 <a class="d-table-cell handheld-toolbar-item" href="javascript:void(0)" data-bs-toggle="collapse" onclick="window.scrollTo(0, 0)" data-bs-target="#shop-filters">
                     <span class="handheld-toolbar-icon">
                     <i class="fas fa-filter"></i>
@@ -207,12 +210,25 @@
                         Filter
                     </span>
                 </a>
+                {% endif %}
+
+
+
                 <a class="d-table-cell handheld-toolbar-item" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#sideNav">
                     <span class="handheld-toolbar-icon">
                     <i class="fal fa-bars"></i>
                     </span>
                     <span class="handheld-toolbar-label">
                         Menu
+                    </span>
+                </a>
+
+                <a class="d-table-cell handheld-toolbar-item" href="{{ login }}" >
+                    <span class="handheld-toolbar-icon">
+                    <i class="fal fa-user"></i>
+                    </span>
+                    <span class="handheld-toolbar-label">
+                        PRIJAVA
                     </span>
                 </a>
                 <a class="d-table-cell handheld-toolbar-item" href="{{ shopping_cart }}">
@@ -246,19 +262,4 @@
     <script src="catalog/view/dist/vendor/lg-zoom.js/dist/lg-zoom.min.js"></script>
     <script src="catalog/view/dist/vendor/drift-zoom/dist/Drift.min.js"></script>
     <script src="catalog/view/dist/js/theme.js"></script>
-    <script>
-
-    var lastScrollTop = 0;
-    $(window).scroll(function(event){
-        var st = $(this).scrollTop();
-        if (st > lastScrollTop){
-            // downscroll code
-            $(".handheld-toolbar").css('opacity',1);
-        } else {
-            // upscroll code
-            $(".handheld-toolbar").css('opacity',0);
-        }
-        lastScrollTop = st;
-    });
-</script>
 </body></html>

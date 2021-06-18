@@ -60,7 +60,7 @@
 
 
                         <div id="collapse-checkout-option">
-                            <div class="card-body px-0"></div>
+                            <div class="card-body p-0"></div>
                         </div>
 
                     {% if not logged and account != 'guest' %}
@@ -78,25 +78,25 @@
 
 
                             <div  id="collapse-shipping-address">
-                                <div class="card-body px-0"></div>
+                                <div class="card-body p-0"></div>
                             </div>
 
 
 
                             <div  id="collapse-shipping-method">
-                                <div class="card-body px-0"></div>
+                                <div class="card-body p-0"></div>
                             </div>
 
                     {% endif %}
 
 
                         <div  id="collapse-payment-method">
-                            <div class="card-body px-0"></div>
+                            <div class="card-body p-0"></div>
                         </div>
 
 
                         <div  id="collapse-checkout-confirm">
-                            <div class="card-body px-0"></div>
+                            <div class="card-body p-0"></div>
                         </div>
 
                 </div>
@@ -181,6 +181,7 @@
         // Checkout
       //  $(document).delegate('#button-account', 'click', function() {
 
+
         $(document).on('change', 'input[name=\'account\']', function() {
 
         //$(document).ready(function() {
@@ -228,7 +229,7 @@
                     if (json['redirect']) {
                         location = json['redirect'];
                     } else if (json['error']) {
-                        $('#collapse-checkout-option .card-body').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                        $('#collapse-checkout-option .card-body').prepend('<div class="alert alert-danger alert-dismissible mt-3"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
 
                         // Highlight any found errors
                         $('input[name=\'email\']').parent().addClass('has-error');
@@ -240,6 +241,9 @@
                 }
             });
         });
+
+
+
 
         // Register
         $(document).delegate('#button-register', 'click', function() {
@@ -261,7 +265,7 @@
                         $('#button-register').button('reset');
 
                         if (json['error']['warning']) {
-                            $('#collapse-payment-address .card-body').prepend('<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                            $('#collapse-payment-address .card-body').prepend('<div class="alert alert-danger alert-dismissible mt-3"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
                         }
 
                         for (i in json['error']) {
@@ -382,7 +386,7 @@
                         location = json['redirect'];
                     } else if (json['error']) {
                         if (json['error']['warning']) {
-                            $('#collapse-payment-address .card-body').prepend('<div class="alert alert-warning alert-dismissible">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                            $('#collapse-payment-address .card-body').prepend('<div class="alert alert-warning alert-dismissible mt-3">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
                         }
 
                         for (i in json['error']) {
@@ -474,7 +478,7 @@
                         $('#button-shipping-address').button('reset');
 
                         if (json['error']['warning']) {
-                            $('#collapse-shipping-address .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>');
+                            $('#collapse-shipping-address .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show mt-3" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>');
                         }
 
                         for (i in json['error']) {
@@ -564,7 +568,7 @@
                         $('#button-guest').button('reset');
 
                         if (json['error']['warning']) {
-                            $('#collapse-payment-address .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                            $('#collapse-payment-address .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show mt-3" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
                         }
 
                         for (i in json['error']) {
@@ -681,7 +685,7 @@
                         $('#button-guest-shipping').button('reset');
 
                         if (json['error']['warning']) {
-                            $('#collapse-shipping-address .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                            $('#collapse-shipping-address .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show mt-3" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
                         }
 
                         for (i in json['error']) {
@@ -737,7 +741,7 @@
                         $('#button-shipping-method').button('reset');
 
                         if (json['error']['warning']) {
-                            $('#collapse-shipping-method .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                            $('#collapse-shipping-method .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show mt-3" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
                         }
                     } else {
                         $.ajax({
@@ -790,7 +794,7 @@
                         $('#button-payment-method').button('reset');
 
                         if (json['error']['warning']) {
-                            $('#collapse-payment-method .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+                            $('#collapse-payment-method .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show mt-3" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
                         }
                     } else {
                         $.ajax({

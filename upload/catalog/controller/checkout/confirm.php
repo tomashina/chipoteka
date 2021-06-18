@@ -1,6 +1,8 @@
 <?php
 class ControllerCheckoutConfirm extends Controller {
 	public function index() {
+
+
 		$redirect = '';
 
 		if ($this->cart->hasShipping()) {

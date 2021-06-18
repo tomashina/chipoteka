@@ -1,5 +1,5 @@
 
-<h2 class="h6 pt-1 pb-3 mb-3 border-bottom">{{ text_your_details }}</h2>
+<h2 class="h6 pt-1 pb-3 mb-3 mt-3 border-bottom">{{ text_your_details }}</h2>
 <div class="row" id="account">
                  <div class="form-group" style="display: {% if customer_groups|length > 10 %} block {% else %} none {% endif %};">
                         <label class="control-label">{{ entry_customer_group }}</label>
@@ -167,7 +167,7 @@
 
 <div class="d-flex pt-4 mt-3">
     <div class="w-50 pe-3"><a class="btn btn-outline-primary d-block w-100" href="{{ cart }}"><i class="ci-arrow-left mt-sm-0 me-1"></i><span class="d-none d-sm-inline">Povratak na košaricu</span><span class="d-inline d-sm-none">Košarica</span></a></div>
-    <div class="w-50 ps-2"><button type="button" value="{{ button_continue }}" id="button-guest" class="btn btn-primary d-block w-100" href="checkout-shipping.html"><span class="d-none d-sm-inline">Nastavak na dostavu</span><span class="d-inline d-sm-none">Dostava</span><i class="ci-arrow-right mt-sm-0 ms-1"></i></button></div>
+    <div class="w-50 ps-2"><button type="button" value="{{ button_continue }}" id="button-guest" onclick="window.scrollTo(0, 0)" class="btn btn-primary d-block w-100" ><span class="d-none d-sm-inline">Nastavak na dostavu</span><span class="d-inline d-sm-none">Dostava</span><i class="ci-arrow-right mt-sm-0 ms-1"></i></button></div>
 </div>
 
 

@@ -1,8 +1,12 @@
-<div class="buttons">
-  <div class="pull-right">
-    <input type="button" value="{{ button_confirm }}" id="button-confirm" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
-  </div>
+
+
+<div class=" d-flex pt-4">
+  <div class="w-50 pe-3"><a class="btn btn-outline-primary d-block w-100" href="{{ checkout }}"><i class="ci-arrow-left mt-sm-0 me-1"></i><span class="d-none d-sm-inline">Vaši podaci</span><span class="d-inline d-sm-none">Vaši podaci</span></a></div>
+  <div class="w-50 ps-2"><button class="btn btn-primary d-block w-100" type="button" id="button-confirm" ><span class="d-none d-sm-inline">{{ button_confirm }}</span><span class="d-inline d-sm-none">{{ button_confirm }}</span><i class="ci-arrow-right mt-sm-0 ms-1"></i></button></div>
 </div>
+
+
+
 <script type="text/javascript"><!--
 $('#button-confirm').on('click', function() {
 	$.ajax({
