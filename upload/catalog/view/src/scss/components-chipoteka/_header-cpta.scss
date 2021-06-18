@@ -415,6 +415,50 @@
 }
 
 
+
+
+// - - - - - - - - - - - - - - - - - 
+// Handheld Toolbar
+.handheld-toolbar {
+    background-color: $primary;
+    box-shadow: $box-shadow-bottom-header;
+    border-top: none;
+
+    .handheld-toolbar-item {
+    border-left-color: rgba($white, 0.33);
+    padding-bottom: 3px;
+
+    &:first-child {
+        border: none;
+    }
+
+    }
+
+    .handheld-toolbar-label,
+    .handheld-toolbar-icon {
+        color: $white;
+    }
+
+    .handheld-toolbar-label  {
+        font-size: 0.81rem;
+        text-transform: uppercase;
+    }
+    
+    .cart-total-items {
+        padding: 2px 0.313rem;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-align: center;
+        line-height: 1.25rem;
+
+        background-color: #fff;
+        color: #E31318;
+    }
+}
+
+
+
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
 /////////////////////////////////////////////////////
@@ -422,10 +466,14 @@
 
 // - - - - - - - - - 
 // Ofcanvas
-.offcanvas,
+
 .offcanvas.show {
     max-width: unset;
 
+    @include media-breakpoint-up(sm) {
+        max-width: calc(#{$offcanvas-width} + 6rem);
+    }
+ 
     @include media-breakpoint-up(lg) {
         max-width: $offcanvas-width;
     }
@@ -436,3 +484,4 @@
         padding-left: $offcanvas-width;
     }
 }
+
