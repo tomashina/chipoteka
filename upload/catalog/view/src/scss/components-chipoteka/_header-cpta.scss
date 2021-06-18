@@ -9,9 +9,13 @@
     background-color: $white;
     box-shadow: $box-shadow-header;
 
-    // @include media-breakpoint-down(lg) {
-    //     border-radius: 0 0 $border-radius-lg 0;
-    //  }
+    @include media-breakpoint-up(lg) {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: 1030;
+    }
 
 
     // - - - - - - - - - - - - - - - -
@@ -210,7 +214,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            
+
 
             &.active {
                 background-color: $light;
@@ -225,7 +229,7 @@
                 font-size: 1rem;
             }
 
-        
+
             @include media-breakpoint-up(sm) {
                 font-size: 1.25rem;
             }
@@ -371,10 +375,10 @@
 
                         }
 
-                         // Active .widget-list-item
-                         .widget-list-link+[id*="subid"] {
+                        // Active .widget-list-item
+                        .widget-list-link+[id*="subid"] {
                             background-color: darken($light, 5);
-                         }
+                        }
 
 
 
@@ -425,12 +429,12 @@
     border-top: none;
 
     .handheld-toolbar-item {
-    border-left-color: rgba($white, 0.33);
-    padding-bottom: 3px;
+        border-left-color: rgba($white, 0.33);
+        padding-bottom: 3px;
 
-    &:first-child {
-        border: none;
-    }
+        &:first-child {
+            border: none;
+        }
 
     }
 
@@ -439,11 +443,11 @@
         color: $white;
     }
 
-    .handheld-toolbar-label  {
+    .handheld-toolbar-label {
         font-size: 0.81rem;
         text-transform: uppercase;
     }
-    
+
     .cart-total-items {
         padding: 2px 0.313rem;
         border-radius: 15px;
@@ -473,7 +477,7 @@
     @include media-breakpoint-up(sm) {
         max-width: calc(#{$offcanvas-width} + 6rem);
     }
- 
+
     @include media-breakpoint-up(lg) {
         max-width: $offcanvas-width;
     }
@@ -484,4 +488,3 @@
         padding-left: $offcanvas-width;
     }
 }
-
