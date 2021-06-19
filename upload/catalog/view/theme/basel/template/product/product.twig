@@ -1,10 +1,10 @@
 {{ header }}
-<main class="offcanvas-enabled" style="padding-top: 5rem;">
+<main class="offcanvas-enabled product-container" style="padding-top: 5rem;">
     <!-- Custom page title-->
-    <div class="page-title-overlap  pt-4 ps-lg-4 pe-lg-3">
-        <div class="container  py-2 py-lg-3">
+    <div class="page-title-overlap  pt-4">
+        <div class="container-fluid py-2">
             <div class="pe-lg-4 text-center text-lg-start">
-                <h1 class="category-page-title" id="page-title">{{ heading_title }}</h1>
+                <h1 class="product-page-title" id="page-title">{{ heading_title }}</h1>
             </div>
             <div class=" mb-3 mb-lg-0">
                 <nav aria-label="breadcrumb">
@@ -17,21 +17,21 @@
             </div>
         </div>
     </div>
-    <div class="container">
+    <div class="container-fluid">
         <div class="bg-white shadow-lg rounded-3" >
             <!-- Tabs-->
             <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item"><a class="nav-link py-4 px-sm-4 active" href="#general" data-bs-toggle="tab" role="tab">Info</a></li>
-                <li class="nav-item"><a class="nav-link py-4 px-sm-4" href="#description" data-bs-toggle="tab" role="tab">Opis  </a></li>
-                <li class="nav-item"><a class="nav-link py-4 px-sm-4" href="#specs" data-bs-toggle="tab" role="tab">Specifikacije </a></li>
+                <li class="nav-item"><a class="nav-link active" href="#general" data-bs-toggle="tab" role="tab">Info</a></li>
+                <li class="nav-item"><a class="nav-link" href="#description" data-bs-toggle="tab" role="tab">Opis  </a></li>
+                <li class="nav-item"><a class="nav-link" href="#specs" data-bs-toggle="tab" role="tab">Specifikacije </a></li>
             </ul>
-            <div class="px-4 pt-lg-3 pb-3 mb-5">
+            <div class="pb-3 mb-5">
                 <div class="tab-content px-lg-3">
                     <!-- General info tab-->
                     <div class="tab-pane fade show active" id="general" role="tabpanel">
                         <div class="row">
                             <!-- Product gallery-->
-                            <div class="col-lg-6 pe-lg-0">
+                            <div class="col-md col-xl-auto">
                                 <div class="product-gallery " style="display: block !important;">
                                     <div class="product-gallery-preview gallery">
                                         {% if thumb or images %}
@@ -61,26 +61,31 @@
                                 </div>
                             </div>
                             <!-- Product details-->
-                            <div class="col-lg-6 pt-4 pt-lg-0">
-                                <div class="ps-3 ms-auto pb-3" id="product">
-                                    <div class="mb-3 d-flex align-items-center">
-                                    <div class="product-badge-cpta product-badge-cpta__free-shipping me-3 w-100">
-                                        <span> Besplatna dostava</span>
-                                        <i class="fas fa-shipping-fast"></i>
+                            <div class="col">
+                                <div class="product-features" id="product">
+
+                                    <div class="badges-wrapper">
+
+                                        <div class="product-badge-cpta product-badge-cpta__free-shipping me-3">
+                                            <span> Besplatna dostava</span>
+                                            <i class="fas fa-shipping-fast"></i>
+                                        </div>
+
+                                        <div class="product-badge-cpta product-badge-cpta__discount">
+                                            <span> Black Friday</span>
+                                            <span> Uštedi <strong>54%</strong></span>
+                                        </div>
                                     </div>
 
-                                    <div class="product-badge-cpta product-badge-cpta__discount w-100">
-                                        <span class="p-0"> Black Friday</span>
-                                        <span> Uštedi <strong>54%</strong></span>
-                                    </div>
-                                    </div>
+                                    <div class="description-short">
                                     {% if short_description %}
-                                        <h5>{{ text_short_description }}</h5>
-                                        <p class="fs-md">{{ short_description }}</p>
+                                        <h5 class="title">{{ text_short_description }}</h5>
+                                        {{ short_description }}
                                     {% endif %}
+                                    </div>
 
 
-                                    <div class="mb-3">
+                                    <div class="product-price">
                                         {% if not special %}
                                             <span class="h3 fw-normal text-accent me-1">{{ price }}</span>
                                         {% else %}
@@ -92,6 +97,16 @@
                                             <span id="special_countdown"></span>
                                         {% endif %}
                                     </div>
+
+                                    <div class="product-price--web">
+                                    <span>
+                                        Web cijena: 
+                                    </span>
+                                    <span>
+                                        2.500,00kn
+                                    </span>
+                                </div>
+
 
                                     <div class="mb-3 d-flex align-items-center">
 
@@ -184,6 +199,18 @@
                                     </div>
 
                                     <p class="fs-sm mb-2"><strong>{{ text_model }}</strong> {{ model }}</p>
+
+                                        <div class="product-delivery-time">
+                                    <i class="fas fa-shipping-timed"></i>
+                                       <div class="d-flex flex-column">
+                                       <span>
+                                       Proizvod kod dobavljača
+                                       </span>
+                                       <span>
+                                      Šaljemo do 05.05.2021
+                                       </span>
+                                       </div>
+                                </div>
 
 
                                 </div>
@@ -317,7 +344,7 @@
     </div>
     {% if products %}
     <!-- Product carousel (You may also like)-->
-    <div class="container pt-lg-2 pb-5 mb-md-3 ">
+    <div class="container-fluid pt-lg-2 pb-5 mb-md-3 ">
         <h2 class="h3 text-center pb-4">{{ text_related }}</h2>
         <div class="tns-carousel tns-controls-static tns-controls-outside ">
             <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 2, &quot;gutter&quot;: 16, &quot;controls&quot;: true, &quot;autoHeight&quot;: true, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1}, &quot;480&quot;:{&quot;items&quot;:2}, &quot;720&quot;:{&quot;items&quot;:3}, &quot;991&quot;:{&quot;items&quot;:2}, &quot;1140&quot;:{&quot;items&quot;:3}, &quot;1300&quot;:{&quot;items&quot;:4}, &quot;1500&quot;:{&quot;items&quot;:4}}}">

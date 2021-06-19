@@ -33,10 +33,17 @@ body {
     background-color: $white;
 }
  
+// Offcanvas padding
 body > main.offcanvas-enabled {
     padding-top: 0 !important;
 }
-
+ 
+@include media-breakpoint-up(lg) {
+    body > main.offcanvas-enabled {
+        padding-top: 5rem !important;
+    }
+}
+//
 
 // Breadcrumbs 
 .breadcrumb {
