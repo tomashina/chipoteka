@@ -140,8 +140,8 @@
                 success: function(html) {
                     {% if not logged  %}
                     $('#collapse-checkout-option .card-body').html(html);
-                    $('#sazetak').load('index.php?route=common/total/info #total-content > *');
                     {% endif %}
+                    $('#sazetak').load('index.php?route=common/total/info #total-content > *');
                     $( "#stepcheckout" ).addClass( 'active current');
 
                 },
@@ -407,6 +407,7 @@
                             url: 'index.php?route=checkout/shipping_address',
                             dataType: 'html',
                             success: function(html) {
+                                $('#collapse-payment-address').hide();
                                 $('#collapse-shipping-address .card-body').html(html);
 
 

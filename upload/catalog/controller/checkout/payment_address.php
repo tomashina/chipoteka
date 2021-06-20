@@ -9,7 +9,7 @@ class ControllerCheckoutPaymentAddress extends Controller {
            $data['address_id'] = $this->customer->getAddressId();
 		}
 
-
+        $data['cart'] = $this->url->link('checkout/cart', '', true);
 
 		$this->load->model('account/address');
 
