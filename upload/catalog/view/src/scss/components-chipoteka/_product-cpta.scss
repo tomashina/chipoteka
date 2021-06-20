@@ -5,7 +5,7 @@
 
 .product-container {
 
- 
+
 
     // - - - - - - - - - - - - - - - -
     // Title
@@ -39,46 +39,238 @@
     // Product Features
     .product-features {
 
+
+        // Common
+        .description-short, 
+        .price-wrapper {
+            margin-bottom: 1.5rem;
+        }
+
+        .description-short,
+        .product-accordion,
+        .product-delivery-time {
+            max-width: $product-feature-width;
+        }
+
+
+
         // Badges
         .badges-wrapper {
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            margin-top: -12px;
-            margin-bottom: 0.5rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
 
-            > div {
+           @include media-breakpoint-up(md) {
+            margin-top: -12px;
+           }
+
+            >div {
                 margin-bottom: 0.5rem;
             }
         }
 
         .product-badge-cpta {
-               width: 200px; 
-        } 
+            width: 200px;
+        }
 
 
         // Description Short
         .description-short {
-            margin-bottom: 1rem;
-
+ 
             .title,
             p {
                 font-size: 1rem;
                 margin-bottom: 3px;
             }
+
+        }
+
+        .price-wrapper {
+            display: flex;
+            align-items: center;
+
+            @media screen and (max-width: 441px) {
+                flex-direction: column;
+                align-items: flex-start;
+
+                .product-price {
+                    flex-direction: row;
+                    align-items: center;
+                  
+                    del {
+                        line-height: 1;
+                    }
+        
+                    span:first-child,
+                    span:only-child {
+                        font-size: 1.3rem;
+                        margin-right: 0.5rem;
+                    }
+         
+                }
+
+                .product-price--web {
+                    padding-left: 0;
+                    border: none;
+                    border-top:  1px solid $gray-l2;
+                    padding-top: 0.45rem;
+                    margin-top: 0.33rem;
+                    width: 100%;
+                    flex-direction: row;
+                    align-items: center;
+
+                    span {
+                        line-height: 1;
+                    }
+
+                    span:first-child {
+                        margin-right: 0.5rem;
+                    }
+
+                    span:last-child {
+                        font-size: 1.3rem;
+                    }
+                }
+            }
+        }
+
+
+        // Product Price
+        .product-price {
+            flex-direction: column;
+            display: flex;
+            font-size: 1.688rem;
+            flex-wrap: wrap;
+            margin-right: 20px;
+
+            del {
+                color: $gray;
+                font-size: 1.125rem;
+                font-weight: 300;
+            }
+
+            span:first-child,
+            span:only-child {
+                font-weight: 600;
+                color: $gray-d1;
+            }
+
+            span:first-child {
+                line-height: 1;
+            }
+
+        }
+
+        // Product Price Web
+        .product-price--web {
+            flex-direction: column;
+            display: flex;
+            font-size: 1.125rem;
+            flex-wrap: wrap;
+            border-bottom: 0;
+            border-left: 1px solid $gray-l2;
+            padding-left: 20px;
+            // border-top: 1px solid $gray-l2;
+
+            span:first-child {
+                text-transform: uppercase;
+                font-weight: 300;
+                color: $gray;
+                min-width: max-content;
+            }
+
+            span:last-child {
+                color: $accent;
+                font-weight: 500;
+                font-size: 1.688rem;
+                line-height: 1;
+            }
+
+        }
+
+        // Quanttiy & Button Basket
+        .product-quantity-button {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+ 
+            // Quantity   
+            .quantity {
+                width: auto;
+                margin-bottom: 0.5rem;
+
+                .input-quantity {
+                    max-width: 81px;
+                }
+            }
+
+            // Button
+            #button-cart {
+                flex: 1;
+                max-width: 200px;
+                margin-bottom: 0.5rem;
+                box-shadow: 0 0.5rem 1.125rem -0.5rem rgba(227, 19, 24, 0.9), 0 0.5rem 1.125rem -0.5rem rgba(23, 23, 23, 0.3);
+           
+                &:hover {
+                    box-shadow: none;
+                }
+            }
+
+
+            @media screen and (max-width: 441px) {
+                flex-direction: column;
+                align-items: flex-start;
+
+                .quantity {
+                    width: 100%;
+    
+                    .input-quantity {
+                        max-width: unset;
+                    }
+                }
+
+                #button-cart {
+                    max-width: unset;
+                } 
+            }
+
+
+        }
+
+        // Product Accordion
+        .product-accordion {
             
+            .accordion-body,
+            .accordion-button {
+                padding: 0.313rem 1rem;
+            }
+ 
         }
 
 
-        // Price
-        .product-price {}
+        // Product Delivery Time
+        .product-delivery-time {
+            margin-bottom: 1rem;
+            border: 2px solid #F5F5F5;
+            border-radius: $border-radius-lg;
+            padding: 0.313rem 1rem;
 
-
-        // Button
-
-        .button-cart {
-            box-shadow:  0 0.5rem 1.125rem -0.5rem rgba(227, 19, 24, 0.9), 0 0.5rem 1.125rem -0.5rem rgba(23, 23, 23, 0.3);
+              i {
+                font-size: 1.875rem;
+                color: rgba($accent, 0.27);
+            }
         }
+
+        // Product ID
+        .product-id {
+            color: $gray-l1;
+            font-size: 0.875rem;
+        }
+
+
 
 
     }

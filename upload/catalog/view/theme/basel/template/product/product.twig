@@ -26,7 +26,7 @@
                 <li class="nav-item"><a class="nav-link" href="#specs" data-bs-toggle="tab" role="tab">Specifikacije </a></li>
             </ul>
             <div class="pb-3 mb-5">
-                <div class="tab-content px-lg-3">
+                <div class="tab-content px-3">
                     <!-- General info tab-->
                     <div class="tab-pane fade show active" id="general" role="tabpanel">
                         <div class="row">
@@ -84,33 +84,35 @@
                                     {% endif %}
                                     </div>
 
-
-                                    <div class="product-price">
+                                    <div class="price-wrapper">
+                                        <div class="product-price">
                                         {% if not special %}
-                                            <span class="h3 fw-normal text-accent me-1">{{ price }}</span>
+                                            <span>{{ price }}</span>
                                         {% else %}
-                                            <span class="h3 fw-normal text-accent me-1">{{ special }}</span>
-                                            <del class="text-muted fs-lg me-3">{{ price }}</del>
-                                            {% if price and special and sale_badge %}
+                                            <span>{{ special }}</span>
+                                            <del>{{ price }}</del>
+                                            {# {% if price and special and sale_badge %}
                                                 <span class="badge bg-danger badge-shadow align-middle mt-n2">{{ sale_badge }}</span>
-                                            {% endif %}
+                                            {% endif %} #}
                                             <span id="special_countdown"></span>
                                         {% endif %}
+                                         </div>
+
+                                        <div class="product-price--web">
+                                        <span>
+                                            Web cijena: 
+                                        </span>
+                                        <span>
+                                          2.500,00kn
+                                        </span>
+                                        </div>
+
                                     </div>
 
-                                    <div class="product-price--web">
-                                    <span>
-                                        Web cijena: 
-                                    </span>
-                                    <span>
-                                        2.500,00kn
-                                    </span>
-                                </div>
 
+                                    <div class="product-quantity-button">
 
-                                    <div class="mb-3 d-flex align-items-center">
-
-                                        <div class="input-group me-3 sp-quantity">
+                                        <div class="input-group me-3 quantity">
                                             <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}" id="input-quantity"   class="form-control input-quantity " />
                                             <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
                                                 <i class="fas fa-minus"></i>
@@ -129,13 +131,13 @@
                                         <div class="alert alert-sm alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
                                     {% endif %}
 
-                                    <div class="accordion mb-4" id="productPanels">
+                                    <div class="accordion product-accordion mb-4" id="productPanels">
 
                                         <div class="accordion-item">
                                             <h4 class="accordion-header"><a class="accordion-button collapsed" href="#shippingOptions" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="shippingOptions"><i class="far fa-map-marker-minus text-muted lead align-middle mt-n1 me-2"></i>Dostupnost proizvoda po poslovnicama</a></h4>
                                             <div class="accordion-collapse collapse" id="shippingOptions" data-bs-parent="#productPanels">
                                                 <div class="accordion-body fs-sm">
-                                                    <div class="d-flex justify-content-between border-bottom pb-3">
+                                                    <div class="d-flex justify-content-between border-bottom pb-1">
                                                         <div>
                                                             <div class="fw-semibold text-dark"><a href="#" >Zagreb
                                                                 Ulica grada Vukovara 269E</a>
@@ -145,7 +147,7 @@
 
 
                                                     </div>
-                                                    <div class="d-flex justify-content-between border-bottom py-3">
+                                                    <div class="d-flex justify-content-between border-bottom py-1">
                                                         <div>
                                                             <div class="fw-semibold text-dark"><a href="#" >Zagreb Arena
                                                                     Vice Vukova 6</a></div>
@@ -154,7 +156,7 @@
                                                         <div><i class="far fa-map-marker-minus"></i></div>
 
                                                     </div>
-                                                    <div class="d-flex justify-content-between border-bottom py-3">
+                                                    <div class="d-flex justify-content-between border-bottom py-1">
                                                         <div>
                                                             <div class="fw-semibold text-dark"><a href="#" >Zadar
                                                                     Franje Tuđmana 19</a></div>
@@ -163,7 +165,7 @@
                                                         <div><i class="far fa-map-marker-minus"></i></div>
 
                                                     </div>
-                                                    <div class="d-flex justify-content-between border-bottom py-3">
+                                                    <div class="d-flex justify-content-between border-bottom py-1">
                                                         <div>
                                                             <div class="fw-semibold text-dark"><a href="#" >Šibenik
                                                                     Bože Peričića 26</a></div>
@@ -198,19 +200,23 @@
                                         </div>
                                     </div>
 
-                                    <p class="fs-sm mb-2"><strong>{{ text_model }}</strong> {{ model }}</p>
 
-                                        <div class="product-delivery-time">
-                                    <i class="fas fa-shipping-timed"></i>
-                                       <div class="d-flex flex-column">
-                                       <span>
-                                       Proizvod kod dobavljača
-                                       </span>
-                                       <span>
-                                      Šaljemo do 05.05.2021
-                                       </span>
-                                       </div>
-                                </div>
+                                    <div class="product-delivery-time">
+                                                        <i class="fas fa-shipping-timed"></i>
+                                              <div class="d-flex flex-column">
+                                              <span>
+                                               Proizvod kod dobavljača
+                                             </span>
+                                              <span>
+                                              Šaljemo do 05.05.2021
+                                        </span>
+                                        </div>
+                                    </div>
+
+
+                                    <p class="product-id"><strong>{{ text_model }}</strong> {{ model }}</p>
+
+                                 
 
 
                                 </div>
@@ -232,10 +238,10 @@
                                 <div class="ps-3">
                                     <h6 class="fs-base mb-2">{{ heading_title }}</h6>
                                     {% if not special %}
-                                    <div class="h4 fw-normal text-accent">{{ price }}</div>
+                                    <div class="h4">{{ price }}</div>
                                     {% else %}
 
-                                    <div class="h4 fw-normal text-accent"><del class="text-muted fs-lg me-3">{{ price }}</del> {{ special }} </div>
+                                    <div class="h4"><del class="fs-lg me-3">{{ price }}</del> {{ special }} </div>
 
                                     {% endif %}
 
@@ -292,10 +298,10 @@
                                 <div class="ps-3">
                                     <h6 class="fs-base mb-2">{{ heading_title }}</h6>
                                     {% if not special %}
-                                        <div class="h4 fw-normal text-accent">{{ price }}</div>
+                                        <div class="h4 ">{{ price }}</div>
                                     {% else %}
 
-                                        <div class="h4 fw-normal text-accent"><del class="text-muted fs-lg me-3">{{ price }}</del> {{ special }} </div>
+                                        <div class="h4  "><del class=" me-3">{{ price }}</del> {{ special }} </div>
 
                                     {% endif %}
 
