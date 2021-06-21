@@ -31,7 +31,7 @@
                     <div class="tab-pane fade show active" id="general" role="tabpanel">
                         <div class="row">
                             <!-- Product gallery-->
-                            <div class="col-md " style="max-width:550px">
+                            <div class="col-md col-xl-auto">
                                 <div class="product-gallery " style="display: block !important;">
                                     <div class="product-gallery-preview gallery">
                                         {% if thumb or images %}
@@ -136,8 +136,8 @@
                                         <div class="accordion-item">
                                             <h4 class="accordion-header"><a class="accordion-button collapsed" href="#shippingOptions" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="shippingOptions"><i class="far fa-map-marker-minus text-muted lead align-middle mt-n1 me-2"></i>Dostupnost proizvoda po poslovnicama</a></h4>
                                             <div class="accordion-collapse collapse" id="shippingOptions" data-bs-parent="#productPanels">
-                                                <div class="accordion-body fs-sm">
-                                                    <div class="d-flex justify-content-between border-bottom pb-1">
+                                                <div class="accordion-body">
+                                                    <div class="d-flex justify-content-between border-bottom pt-2 pb-3">
                                                         <div>
                                                             <div class="fw-semibold text-dark"><a href="#" >Zagreb
                                                                 Ulica grada Vukovara 269E</a>
@@ -147,7 +147,7 @@
 
 
                                                     </div>
-                                                    <div class="d-flex justify-content-between border-bottom py-1">
+                                                    <div class="d-flex justify-content-between border-bottom py-3">
                                                         <div>
                                                             <div class="fw-semibold text-dark"><a href="#" >Zagreb Arena
                                                                     Vice Vukova 6</a></div>
@@ -156,7 +156,7 @@
                                                         <div><i class="far fa-map-marker-minus"></i></div>
 
                                                     </div>
-                                                    <div class="d-flex justify-content-between border-bottom py-1">
+                                                    <div class="d-flex justify-content-between border-bottom py-3">
                                                         <div>
                                                             <div class="fw-semibold text-dark"><a href="#" >Zadar
                                                                     Franje Tuđmana 19</a></div>
@@ -165,7 +165,7 @@
                                                         <div><i class="far fa-map-marker-minus"></i></div>
 
                                                     </div>
-                                                    <div class="d-flex justify-content-between border-bottom py-1">
+                                                    <div class="d-flex justify-content-between pt-3 pb-2">
                                                         <div>
                                                             <div class="fw-semibold text-dark"><a href="#" >Šibenik
                                                                     Bože Peričića 26</a></div>
@@ -182,15 +182,15 @@
                                             <h4 class="accordion-header"><a class="accordion-button collapsed" href="#localStore" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="localStore"><i class="far fa-tags text-muted fs-lg align-middle mt-n1 me-2"></i>Način plaćanja</a></h4>
                                             <div class="accordion-collapse collapse" id="localStore" data-bs-parent="#productPanels">
                                                 <div class="accordion-body">
-                                                    <h5>Jednokratno plaćanje:</h5>
+                                                    <h6 class="mt-2">Jednokratno plaćanje:</h6>
                                                     <ul>
                                                         <li> Internet bankarstvo (virman)</li>
                                                         <li> Pouzeće (prilikom preuzimanja)</li>
                                                         <li>American Express, Maestro, MasterCard, Visa</li>
                                                     </ul>
 
-                                                    <h5>Obročno plaćanje:</h5>
-                                                    <ul>
+                                                    <h6 class="mt-3">Obročno plaćanje:</h6>
+                                                    <ul class="mb-2">
                                                         <li>MasterCard 2-12 rate</li>
                                                          <li> Visa Premium 2-10 rata</li>
                                                     </ul>
@@ -225,7 +225,7 @@
                     </div>
                     <!-- Tech specs tab-->
                     <div class="tab-pane fade" id="description" role="tabpanel">
-                        <div class="d-md-flex justify-content-between align-items-start pb-4 mb-4 mt-4 border-bottom">
+                        <div class="d-md-flex justify-content-between align-items-start pb-4 mt-3 mb-4 border-bottom">
                             <div class="d-flex align-items-center me-md-3">
                                 {% if thumb or images %}
                                     {% if thumb %}
@@ -285,7 +285,7 @@
                     </div>
                     <!-- Reviews tab-->
                     <div class="tab-pane fade" id="specs" role="tabpanel">
-                        <div class="d-md-flex justify-content-between align-items-start pb-4 mb-4 mt-4 border-bottom">
+                        <div class="d-md-flex justify-content-between align-items-start pb-4 mt-3 mb-4 border-bottom">
                             <div class="d-flex align-items-center me-md-3">
                                 {% if thumb or images %}
                                     {% if thumb %}
@@ -351,15 +351,9 @@
     {% if products %}
     <!-- Product carousel (You may also like)-->
     <div class="container-fluid pt-lg-2 pb-5 mb-md-3 ">
-
-        <div class="section-title section-title--discount">
-              <h2 class="title">{{ text_related }}</h2>
-
-        </div>
-
-
+        <h2 class="h3 text-center pb-4">{{ text_related }}</h2>
         <div class="tns-carousel tns-controls-static tns-controls-outside ">
-            <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 2, &quot;gutter&quot;: 16, &quot;controls&quot;: false, &quot;autoHeight&quot;: true, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1}, &quot;480&quot;:{&quot;items&quot;:2}, &quot;720&quot;:{&quot;items&quot;:3}, &quot;991&quot;:{&quot;items&quot;:2}, &quot;1140&quot;:{&quot;items&quot;:3}, &quot;1300&quot;:{&quot;items&quot;:4}, &quot;1500&quot;:{&quot;items&quot;:5}}}">
+            <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 2, &quot;gutter&quot;: 16, &quot;controls&quot;: true, &quot;autoHeight&quot;: true, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1}, &quot;480&quot;:{&quot;items&quot;:2}, &quot;720&quot;:{&quot;items&quot;:3}, &quot;991&quot;:{&quot;items&quot;:2}, &quot;1140&quot;:{&quot;items&quot;:3}, &quot;1300&quot;:{&quot;items&quot;:4}, &quot;1500&quot;:{&quot;items&quot;:4}}}">
                 {% for product in products %}
                     <div class="pt-3 pb-3">
                         <div class="card product-card">
