@@ -264,7 +264,7 @@ var cart = {
 			dataType: 'json',
 			
 			beforeSend: function(json) {
-			$('body').append('<span class="basel-spinner ajax-call"></span>');
+			//$('body').append('<span class="basel-spinner ajax-call"></span>');
 			},
 			
 			success: function(json) {
@@ -279,8 +279,13 @@ var cart = {
 					location = json['success_redirect'];
 				
 				} else if (json['success']) {
-										
-					$('.alert, .popup-note, .basel-spinner.ajax-call, .text-danger').remove();
+
+
+					$('#myModal').modal('show');
+					$('#note').html('<div class="row"><div class="col-sm-3"><img src="' + json.image + '" /></div><div class="col-sm-9 d-flex align-items-center"><p class="align-middle">' + json.success +'</p></div></div>');
+
+
+				/*	$('.alert, .popup-note, .basel-spinner.ajax-call, .text-danger').remove();
 					html = '<div class="popup-note">';
 					html += '<div class="inner">';
 					html += '<a class="popup-note-close" onclick="$(this).parent().parent().remove()">&times;</a>';
@@ -291,7 +296,7 @@ var cart = {
 					html += '</div>';
 					html += '</div>';
 					$('body').append(html);
-					setTimeout(function() {$('.popup-note').hide();}, 8100);
+					setTimeout(function() {$('.popup-note').hide();}, 8100);*/
 					// Need to set timeout otherwise it wont update the total
 					setTimeout(function () {
 					$('.cart-total-items').html( json['total_items'] );
