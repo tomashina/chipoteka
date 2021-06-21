@@ -28,8 +28,8 @@ $('#button-coupon').on('click', function() {
 			$('.alert').remove();
 
 			if (json['error']) {
-				$('#content').before('<div class="alert alert-danger alert-dismissible fade show" role="alert"> ' + json['error'] + '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button></div>');
-
+				$('#content').before('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert"> ' + json['error'] + '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button></div>');
+                $('#accordion').before('<div class="alert alert-danger alert-dismissible fade show mt-3" role="alert"> ' + json['error'] + '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button></div>');
 				$('html, body').animate({ scrollTop: 0 }, 'slow');
 			}
 
