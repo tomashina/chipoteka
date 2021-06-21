@@ -10,6 +10,9 @@ class ControllerExtensionBlogBlog extends Controller {
 		$this->load->model('extension/blog/blog');
 
 		$this->load->model('tool/image');
+
+
+        $data['shopping_cart'] = $this->url->link('checkout/cart');
 		
 		$data['breadcrumbs'] = array();
 
