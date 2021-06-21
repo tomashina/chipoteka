@@ -26,6 +26,8 @@
         border-top: 1px solid $gray-d1;
         border-bottom: 1px solid $gray-d1;
 
+      
+
         i {
             margin-left: 6px;
         }
@@ -36,8 +38,26 @@
             justify-content: center;
             align-items: center;
 
-            &:last-child {
+            &:not(:first-child){
                 border-left: 1px solid $gray-d1;
+            }
+        }
+
+
+        @include media-breakpoint-down(sm) {
+            flex-direction: column;
+
+            > * {
+                padding: 1rem 5px;
+                border: none;
+
+                &:not(:first-child){
+                    border:none;
+                }
+    
+                &:not(:first-child){
+                    border-top: 1px solid $gray-d1;
+                }
             }
         }
     }

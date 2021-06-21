@@ -214,7 +214,7 @@
 
     // Badge - Free shipping
     .product-badge-cpta__free-shipping {
-        width: max-content;
+        width: 50px;
         position: absolute;
         top: 1rem;
         left: 0.75rem;
@@ -226,7 +226,7 @@
         }
 
         @media (any-pointer: fine) and (hover: hover) {
-            width: 50px;
+            // width: 50px;
 
             transition: all 0.2s $transition-animation-default;
 
@@ -236,7 +236,7 @@
                 left: 10px;
                 visibility: hidden;
                 opacity: 0;
-                margin-right: 0;
+                // margin-right: 0;
 
                 transition: all 0.1s $transition-animation-default;
             }
@@ -314,10 +314,10 @@
 
         // Badge - Free shipping
         .product-badge-cpta__free-shipping {
-            width: max-content;
+            width: 210px;
 
             @media (any-pointer: fine) and (hover: hover) {
-                width: 200px;
+                // width: 200px;
  
                 span {
                     top: 0.07rem;
@@ -358,7 +358,6 @@
     padding: 0.375rem 0.625rem;
     text-transform: uppercase;
     font-size: 0.75rem;
-    max-height: 20px;
     letter-spacing: 0.03rem;
  
 
@@ -370,6 +369,8 @@
     &__free-shipping {
         color: $white;
         background-color: $accent;
+        max-height: 20px;
+
 
         i {
             font-size: 1.5rem;

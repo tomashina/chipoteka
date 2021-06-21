@@ -250,10 +250,21 @@
         .accordion-item {
 
             // Active - accordion item
-            .accordion-header+[id*="catid"] {
+            .accordion-header+[id*="catid"],
+            .accordion-header+[data-bs-parent*="shop-menu"] {
                 background-color: $light;
                 transition: all $transition-default;
             }
+
+            // INFO Tab
+            .accordion-header+[data-bs-parent*="shop-menu"] {
+                .widget-list-link {
+                    &::after {
+                        content: "" !important;
+                    }
+                }
+            }
+          
 
             // Header
             .accordion-header {
