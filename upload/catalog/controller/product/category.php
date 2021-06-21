@@ -9,6 +9,8 @@ class ControllerProductCategory extends Controller {
 
 		$this->load->model('tool/image');
 
+        $data['shopping_cart'] = $this->url->link('checkout/cart');
+
 		if (isset($this->request->get['filter'])) {
 			$filter = $this->request->get['filter'];
 		} else {

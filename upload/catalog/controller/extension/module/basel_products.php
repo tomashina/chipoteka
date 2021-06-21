@@ -29,9 +29,11 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 		$data['title'] = false;
 		$data['title_subline'] = false;
 		$data['link_title'] = false;
-		
+
 		$data['contrast'] = $setting['contrast'];
 		$data['items_mobile_fw'] = $this->config->get('items_mobile_fw');
+
+        $data['shopping_cart'] = $this->url->link('checkout/cart');
 		
 		if (!empty($setting['title_pl'][$this->config->get('config_language_id')])) {
 		$data['title_preline'] = html_entity_decode($setting['title_pl'][$this->config->get('config_language_id')], ENT_QUOTES, 'UTF-8');
