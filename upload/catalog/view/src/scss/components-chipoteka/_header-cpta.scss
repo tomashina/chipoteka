@@ -9,7 +9,7 @@
     background-color: $white;
     box-shadow: $box-shadow-header;
 
-    @include media-breakpoint-up(lg) {
+    @include media-breakpoint-up(xl) {
         position: fixed;
         top: 0;
         right: 0;
@@ -31,12 +31,14 @@
                 width: 225px;
                 margin-left: -1px;
 
-                @include media-breakpoint-only(lg) {
-                    padding-top: 7px;
-                    padding-bottom: 7px;
-                    background-color: $primary;
-                    border-radius: 0 0 15px 0;
-                }
+            
+
+                // @include media-breakpoint-only(xl) {
+                //     padding-top: 7px;
+                //     padding-bottom: 7px;
+                //     background-color: $primary;
+                //     border-radius: 0 0 15px 0;
+                // }
 
                 @include media-breakpoint-up(xl) {
                     width: 265px;
@@ -48,7 +50,7 @@
         // Navbar icons
         .navbar-tool {
 
-            @include media-breakpoint-up(lg) {
+            @include media-breakpoint-up(xl) {
 
                 padding-right: 0.54rem;
                 padding-left: 0.54rem;
@@ -101,7 +103,7 @@
         // - - - - - - - - - - - - - - - - - - -
         // Mobile
 
-        @include media-breakpoint-down(lg) {
+        @include media-breakpoint-down(xl) {
             // border-radius: 0 0 $border-radius-lg 0;
             background-color: $primary;
             min-height: 60px;
@@ -489,13 +491,13 @@
         max-width: calc(#{$offcanvas-width} + 6rem);
     }
 
-    @include media-breakpoint-up(lg) {
+    @include media-breakpoint-up(xl) {
         max-width: $offcanvas-width;
     }
 }
 
 .offcanvas-enabled {
-    @include media-breakpoint-up(lg) {
+    @include media-breakpoint-up(xl) {
         padding-left: $offcanvas-width;
     }
 }

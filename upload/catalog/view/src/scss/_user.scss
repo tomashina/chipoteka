@@ -38,7 +38,7 @@ body > main.offcanvas-enabled {
     padding-top: 0 !important;
 }
  
-@include media-breakpoint-up(lg) {
+@include media-breakpoint-up(xl) {
     body > main.offcanvas-enabled {
         padding-top: 5rem !important;
     }
@@ -66,6 +66,13 @@ body > main.offcanvas-enabled {
 // Navbar 
 .navbar-tool.dropdown::before {
     width: max-content;
+}
+
+
+
+// Blog
+.gallery-item > img {
+    border-radius: $blog-image-radius;
 }
 
 
