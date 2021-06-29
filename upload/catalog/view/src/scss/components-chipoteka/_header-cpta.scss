@@ -344,12 +344,18 @@
                             border-top: 1px solid $white;
                         }
 
+
                         .widget-list-link {
                             padding: 0.75rem 1.25rem;
                             padding-right: 1rem;
                             // padding-left: 1.75rem;
                             font-size: 0.906rem;
                             display: flex;
+                            transition: all $transition-default;
+                          
+                            &:hover {
+                                background-color: darken($light, 5);
+                            } 
 
                             // Icon
                             &::after {
@@ -407,6 +413,10 @@
 
                                 .widget-list-link {
                                     // padding-left: 2.25rem;
+
+                                    &:hover {
+                                        background-color: darken($light, 11);
+                                    } 
 
                                     // Icon
                                     &::after {

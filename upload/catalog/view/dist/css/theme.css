@@ -35397,6 +35397,10 @@ body > main.offcanvas-enabled {
   border-radius: 0.188rem 0.188rem 0.188rem 1.5rem;
 }
 
+.info-wrapper {
+  max-width: 768px;
+}
+
 .page-header {
   position: -webkit-sticky;
   position: sticky;
@@ -35659,6 +35663,13 @@ body > main.offcanvas-enabled {
   padding-right: 1rem;
   font-size: 0.906rem;
   display: flex;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sidebar #account .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link:hover,
+.sidebar #menu .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link:hover,
+.sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link:hover {
+  background-color: #e8e8e8;
 }
 
 .sidebar #account .accordion-item .widget-links .widget-list .widget-list-item .widget-list-link::after,
@@ -35705,6 +35716,12 @@ body > main.offcanvas-enabled {
 .sidebar #menu .accordion-item .widget-links .widget-list .widget-list-item > .widget-list .widget-list-item,
 .sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item > .widget-list .widget-list-item {
   border-bottom: 1px solid #fff;
+}
+
+.sidebar #account .accordion-item .widget-links .widget-list .widget-list-item > .widget-list .widget-list-item .widget-list-link:hover,
+.sidebar #menu .accordion-item .widget-links .widget-list .widget-list-item > .widget-list .widget-list-item .widget-list-link:hover,
+.sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item > .widget-list .widget-list-item .widget-list-link:hover {
+  background-color: #d9d9d9;
 }
 
 .sidebar #account .accordion-item .widget-links .widget-list .widget-list-item > .widget-list .widget-list-item .widget-list-link::after,
@@ -35895,6 +35912,11 @@ body > main.offcanvas-enabled {
   margin-left: 10px;
 }
 
+.page-footer__links > *:hover {
+  background-color: #E31318;
+  color: #fff;
+}
+
 .page-search {
   position: absolute;
   width: 100%;
@@ -35986,14 +36008,14 @@ body > main.offcanvas-enabled {
 }
 
 .category-page-title {
-  font-size: calc(1.1063rem + 1.02048vw);
+  font-size: calc(1.15rem + 1.44vw);
   font-weight: 500;
   margin-bottom: 0.5rem;
 }
 
 @media (min-width: 1500px) {
   .category-page-title {
-    font-size: 2.063rem;
+    font-size: 2.5rem;
   }
 }
 
@@ -36340,14 +36362,14 @@ body > main.offcanvas-enabled {
 
 .product-container .product-page-title {
   font-weight: 400;
-  font-size: calc(1.125rem + 1.2vw);
+  font-size: calc(1.15rem + 1.44vw);
   margin-bottom: 0.5rem;
   color: #171717;
 }
 
 @media (min-width: 1500px) {
   .product-container .product-page-title {
-    font-size: 2.25rem;
+    font-size: 2.5rem;
   }
 }
 
