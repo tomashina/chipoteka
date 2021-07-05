@@ -31,7 +31,7 @@
                     <div class="tab-pane fade show active" id="general" role="tabpanel">
                         <div class="row">
                             <!-- Product gallery-->
-                            <div class="col-md " style="max-width:550px">
+                            <div class="col-md col-xl-auto">
                                 <div class="product-gallery " style="display: block !important;">
                                     <div class="product-gallery-preview gallery">
                                         {% if thumb or images %}
@@ -86,9 +86,9 @@
 
                                     <div class="price-wrapper">
                                         <div class="product-price">
-                                        {% if not special %}
-                                            <span>{{ price }}</span>
-                                        {% else %}
+                                            {% if not special %}
+                                                <span>{{ price }}</span>
+                                            {% else %}
                                             <span>{{ special }}</span>
                                             <del>{{ price }}</del>
                                             {# {% if price and special and sale_badge %}
@@ -99,12 +99,12 @@
                                          </div>
 
                                         <div class="product-price--web">
-                                        <span>
-                                            Web cijena: 
-                                        </span>
-                                        <span>
-                                          2.500,00kn
-                                        </span>
+                                         <span>
+                                                Web cijena: 
+                                         </span>
+                                            <span>
+                                              2.500,00kn
+                                            </span>
                                         </div>
 
                                     </div>
@@ -113,7 +113,7 @@
                                     <div class="product-quantity-button">
 
                                         <div class="input-group me-3 quantity">
-                                            <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}" id="input-quantity"   class="form-control input-quantity " />
+                                            <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}" id="input-quantity"   class="form-control input-quantity" />
                                             <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
                                                 <i class="fas fa-minus"></i>
                                             </button>
@@ -225,32 +225,49 @@
                     </div>
                     <!-- Tech specs tab-->
                     <div class="tab-pane fade" id="description" role="tabpanel">
-                        <div class="d-md-flex justify-content-between align-items-start pb-4 mt-4 mb-4 border-bottom">
-                            <div class="d-flex align-items-center me-md-3">
+                        <div class="d-md-flex justify-content-between pb-4 mt-3 mb-4 border-bottom product-features flex-column flex-lg-row">
+                            <div class="d-flex align-items-center flex-column flex-sm-row mt-3 mb-3 mt-lg-0 mb-lg-0">
                                 {% if thumb or images %}
                                     {% if thumb %}
-                                      <img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"  width="90"/>
+                                      <img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"  width="90" class="me-2" />
 
                                     {% endif %}
                                 {% endif %}
 
+                                <div class="price-wrapper mb-0">
+                                 <div class="product-price">
 
-                                <div class="ps-3">
-                                    <h6 class="fs-base mb-2">{{ heading_title }}</h6>
-                                    {% if not special %}
-                                    <div class="h4">{{ price }}</div>
+                                     {% if not special %}
+                                <span>{{ price }}</span>
                                     {% else %}
-
-                                    <div class="h4"><del class="fs-lg me-3">{{ price }}</del> {{ special }} </div>
+                                <span>{{ special }}</span>
+                                  <del>{{ price }}</del>   
+                         
 
                                     {% endif %}
 
                                 </div>
-                            </div>
-                            <div class="mb-3 d-flex align-items-center">
 
-                                <div class="input-group me-3 sp-quantity">
-                                    <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}"  class="form-control input-quantity " />
+                                <div class="product-price--web">
+                                     <span>
+                                       Web cijena: 
+                                     </span>
+                                   <span>
+                                     2.500,00kn
+                                   </span>
+                               </div>
+
+
+                                </div>
+
+
+
+                            </div>
+
+                            <div class="product-quantity-button mb-0">
+
+                                <div class="input-group me-3 quantity">
+                                    <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}"  class="form-control input-quantity" />
                                     <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
                                         <i class="fas fa-minus"></i>
                                     </button>
@@ -285,32 +302,46 @@
                     </div>
                     <!-- Reviews tab-->
                     <div class="tab-pane fade" id="specs" role="tabpanel">
-                        <div class="d-md-flex justify-content-between align-items-start pb-4 mt-4 mb-4 border-bottom">
-                            <div class="d-flex align-items-center me-md-3">
+                        <div class="d-md-flex justify-content-between pb-4 mt-3 mb-4 border-bottom product-features flex-column flex-lg-row">
+                            <div class="d-flex align-items-center flex-column flex-sm-row mt-3 mb-3 mt-lg-0 mb-lg-0">
                                 {% if thumb or images %}
                                     {% if thumb %}
-                                        <img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"  width="90"/>
+                                        <img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"  width="90" class="me-2" />
 
                                     {% endif %}
                                 {% endif %}
 
 
-                                <div class="ps-3">
-                                    <h6 class="fs-base mb-2">{{ heading_title }}</h6>
+                                <div class="price-wrapper mb-0">
+                                 <div class="product-price">
+                        
                                     {% if not special %}
-                                        <div class="h4 ">{{ price }}</div>
+                                        <span>{{ price }}</span>
                                     {% else %}
-
-                                        <div class="h4  "><del class=" me-3">{{ price }}</del> {{ special }} </div>
+                                <span>{{ special }} </span>
+                                        <del class=" me-3">{{ price }}</del>
 
                                     {% endif %}
 
                                 </div>
-                            </div>
-                            <div class="mb-3 d-flex align-items-center">
 
-                                <div class="input-group me-3 sp-quantity">
-                                    <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}"  class="form-control input-quantity " />
+
+                                <div class="product-price--web">
+                                <span>
+                                  Web cijena: 
+                                </span>
+                              <span>
+                                2.500,00kn
+                              </span>
+                          </div>
+
+                                </div>
+
+
+                            </div>
+                            <div class="product-quantity-button mb-0">
+                                <div class="input-group me-3 quantity">
+                                    <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}"  class="form-control input-quantity" />
                                     <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
                                         <i class="fas fa-minus"></i>
                                     </button>
@@ -351,12 +382,8 @@
     {% if products %}
     <!-- Product carousel (You may also like)-->
     <div class="container-fluid pt-lg-2 pb-5 mb-md-3 ">
-
-        <div class="section-title section-title--discount">
-            <h2 class="title">{{ text_related }}</h2>
-
-        </div>
-        <div class="tns-carousel tns-controls-static tns-controls-static ">
+        <h2 class="h3 text-center pb-4">{{ text_related }}</h2>
+        <div class="tns-carousel tns-controls-static tns-controls-outside ">
             <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 2, &quot;gutter&quot;: 16, &quot;controls&quot;: true, &quot;autoHeight&quot;: true, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1}, &quot;480&quot;:{&quot;items&quot;:2}, &quot;720&quot;:{&quot;items&quot;:3}, &quot;991&quot;:{&quot;items&quot;:2}, &quot;1140&quot;:{&quot;items&quot;:3}, &quot;1300&quot;:{&quot;items&quot;:4}, &quot;1500&quot;:{&quot;items&quot;:4}}}">
                 {% for product in products %}
                     <div class="pt-3 pb-3">
@@ -434,7 +461,7 @@
                 <div class="modal-body" id="note">
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Nastavite kupnju</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Zatvori</button>
                     <a href="{{ shopping_cart }}" class="btn btn-primary ">Na plaćanje</a>
                 </div>
             </div>

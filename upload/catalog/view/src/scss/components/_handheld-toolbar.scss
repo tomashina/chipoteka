@@ -36,7 +36,7 @@
   color: $toolbar-label-color;
   font-size: $toolbar-label-font-size;
 }
-@include media-breakpoint-down(lg) {
+@include media-breakpoint-down(xl) {
   .handheld-toolbar-enabled { padding-bottom: 3.5rem; }
   .handheld-toolbar {
     display: block;

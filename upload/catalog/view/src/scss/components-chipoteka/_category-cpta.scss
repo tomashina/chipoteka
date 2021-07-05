@@ -33,7 +33,7 @@
 // Category Title
 
 .category-page-title {
-    @include font-size(2.063rem);
+    @include font-size(2.5rem);
     font-weight: 500;
     margin-bottom: 0.5rem;
 
@@ -214,7 +214,7 @@
 
     // Badge - Free shipping
     .product-badge-cpta__free-shipping {
-        width: 50px;
+        width: 210px;
         position: absolute;
         top: 1rem;
         left: 0.75rem;
@@ -226,7 +226,7 @@
         }
 
         @media (any-pointer: fine) and (hover: hover) {
-            // width: 50px;
+            width: 50px;
 
             transition: all 0.2s $transition-animation-default;
 
@@ -317,7 +317,7 @@
             width: 210px;
 
             @media (any-pointer: fine) and (hover: hover) {
-                // width: 200px;
+                // width: 210px;
  
                 span {
                     top: 0.07rem;
@@ -370,6 +370,7 @@
         color: $white;
         background-color: $accent;
         max-height: 20px;
+        // width: 210px;  
 
 
         i {
@@ -484,17 +485,17 @@
         max-width: 33.3333333333%;
     }
 
-    @include media-breakpoint-up(lg) {
-        width: 50%;
-        min-width: 50%;
-        max-width: 50%;
-    }
+    // @include media-breakpoint-up(lg) {
+    //     width: 50%;
+    //     min-width: 50%;
+    //     max-width: 50%;
+    // }
 
-    @media only screen and (min-width: 1150px) {
-        width: 33.3333333333%;
-        min-width: 33.3333333333%;
-        max-width: 33.3333333333%;
-    }
+    // @media only screen and (min-width: 1150px) {
+    //     width: 33.3333333333%;
+    //     min-width: 33.3333333333%;
+    //     max-width: 33.3333333333%;
+    // }
 
     // @include media-breakpoint-up(xl)  {}
 

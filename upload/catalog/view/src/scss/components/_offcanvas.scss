@@ -137,15 +137,15 @@
 
 
 // Control the breakpoint at which off-canvas expands or collapses
-@include media-breakpoint-up(lg) {
+@include media-breakpoint-up(xl) {
 
-  // Expand off-canvas from lg breakpoint
+  // Expand off-canvas from xl breakpoint
   .offcanvas-expand {
     transform: none;
     &.offcanvas-end { transform: none; }
   }
 
-  // Collapse off-canvas down from lg breakpoint
+  // Collapse off-canvas down from xl breakpoint
   .offcanvas-collapse {
     display: block;
     position: static;

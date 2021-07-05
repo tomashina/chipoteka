@@ -2,8 +2,8 @@
 <main class="offcanvas-enabled" style="padding-top: 5rem;">
 
 
-    <div class="page-title-overlap  pt-4 ps-lg-4 pe-lg-3">
-        <div class="container  py-2 py-lg-3">
+    <div class="page-title-overlap  pt-4">
+        <div class="container-fluid  py-2">
             <div class="pe-lg-4 text-center text-lg-start">
                 <h1 class="category-page-title" id="page-title">{{ heading_title }}</h1>
             </div>
@@ -23,15 +23,15 @@
 
 
 
-    <div class="container pb-5 ps-lg-3 pe-lg-3">
-        <div class="row pt-0 mt-md-2 py-2 py-lg-3">
+    <div class="container-fluid pb-5">
+        <div class="row pt-0 py-2 ">
             <section class="col-lg-8">
 
                 {% if main_thumb and blogsetting_post_thumb %}
                 <!-- Gallery-->
                 <div class="gallery row pb-2">
                     <div class="col-sm-12">
-                        <a class="gallery-item rounded-3 mb-grid-gutter" href="{{ main_thumb }}" data-bs-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;Gallery image caption #1&lt;/h6&gt;"><img src="{{ main_thumb }}" alt="{{ heading_title }}"><span class="gallery-item-caption">{{ heading_title }}</span></a>
+                        <a class="gallery-item mb-grid-gutter" href="{{ main_thumb }}" data-bs-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;Gallery image caption #1&lt;/h6&gt;"><img src="{{ main_thumb }}" alt="{{ heading_title }}"><span class="gallery-item-caption">{{ heading_title }}</span></a>
 
 
 
@@ -64,7 +64,7 @@
 
             </section>
             <aside class="col-lg-4">
-            <div class="offcanvas offcanvas-collapse offcanvas-end border-start ms-lg-auto" id="blog-sidebar" style="max-width: 22rem;">
+            <div class="offcanvas offcanvas-collapse offcanvas-end border-start ms-lg-3" id="blog-sidebar" style="max-width: 22rem;">
                 <div class="offcanvas-cap align-items-center shadow-sm">
                     <h2 class="h5 mb-0">Sidebar</h2>
                     <button class="btn-close ms-auto" type="button" data-bs-dismiss="offcanvas" aria-label="Close"></button>

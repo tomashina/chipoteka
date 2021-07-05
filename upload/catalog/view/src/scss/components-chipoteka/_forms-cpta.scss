@@ -10,7 +10,7 @@
     box-shadow: $box-shadow-header;
     margin-right: auto !important;
  
-    @include media-breakpoint-up(lg) {
+    @include media-breakpoint-up(xl) {
         box-shadow: none;
         position: relative;
         max-width: 999px;

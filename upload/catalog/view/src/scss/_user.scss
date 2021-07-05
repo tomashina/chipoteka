@@ -38,7 +38,7 @@ body > main.offcanvas-enabled {
     padding-top: 0 !important;
 }
  
-@include media-breakpoint-up(lg) {
+@include media-breakpoint-up(xl) {
     body > main.offcanvas-enabled {
         padding-top: 5rem !important;
     }
@@ -69,6 +69,19 @@ body > main.offcanvas-enabled {
 }
 
 
+
+// Blog
+.gallery-item > img {
+    border-radius: $blog-image-radius;
+}
+
+
+// Information Pages
+
+.info-wrapper {
+    max-width: $md;
+}
+ 
 
 // main >  section {
 //         padding-left: $grid-gutter-width-10px;
