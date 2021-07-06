@@ -3,6 +3,8 @@ class ControllerCheckoutGuestShipping extends Controller {
 	public function index() {
 		$this->load->language('checkout/checkout');
 
+        $data['cart'] = $this->url->link('checkout/cart', '', true);
+
 		if (isset($this->session->data['shipping_address']['firstname'])) {
 			$data['firstname'] = $this->session->data['shipping_address']['firstname'];
 		} else {
