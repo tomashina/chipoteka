@@ -23,7 +23,7 @@ $_['text_guest']                     = 'Bez registracije';
 $_['text_register_account']          = 'Kreiranjem korisničkog računa bit ćete u mogućnosti brže i jednostavnije kupovati, provjeravati statuse narudžbi, te pregledavati prošle narudžbe.';
 $_['text_forgotten']                 = 'Zaboravljena lozinka';
 $_['text_your_details']              = 'Vaši osobni podaci';
-$_['text_your_address']              = 'Adresa dostave';
+$_['text_your_address']              = 'Adresa';
 $_['text_your_password']             = 'Vaša lozinka';
 $_['text_agree']                     = 'Pročitao sam i slažem se s <a href="%s" class="agree"><b>%s</b></a>';
 $_['text_address_new']               = 'Želim koristiti novu adresu';
