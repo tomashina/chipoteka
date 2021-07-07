@@ -18,12 +18,21 @@ class ModelExtensionShippingFlat extends Model {
 		if ($status) {
 			$quote_data = array();
 
+
+            if ($this->cart->getSubTotal() < $this->config->get('shipping_free_total')) {
+                $shipping_price = $this->config->get('shipping_flat_cost');
+            }
+
+            else{
+                $shipping_price = 0;
+            }
+
 			$quote_data['flat'] = array(
 				'code'         => 'flat.flat',
 				'title'        => $this->language->get('text_description'),
-				'cost'         => $this->config->get('shipping_flat_cost'),
+				'cost'         => $shipping_price,
 				'tax_class_id' => $this->config->get('shipping_flat_tax_class_id'),
-				'text'         => $this->currency->format($this->tax->calculate($this->config->get('shipping_flat_cost'), $this->config->get('shipping_flat_tax_class_id'), $this->config->get('config_tax')), $this->session->data['currency'])
+				'text'         => $this->currency->format($this->tax->calculate($shipping_price, $this->config->get('shipping_flat_tax_class_id'), $this->config->get('config_tax')), $this->session->data['currency'])
 			);
 
 			$method_data = array(
