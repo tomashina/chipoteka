@@ -1,13 +1,23 @@
 <header class="page-header" data-fixed-element>
     {% if notification_status %}
     <div class="top_notificaiton">
-        <div class="alert alert-dark alert-dismissible fade show mb-0 text-center rounded-0" role="alert">
+        <div class="alert alert-warning alert-promo {% if top_promo_close %} alert-dismissible {% endif %}  fade show top_notificaiton mb-0 {{ top_promo_align }}" role="alert">
              {{ top_promo_text }}
-            <button type="button" onClick="addCookie('basel_top_promo', 1, 30);$(this).closest('.top_notificaiton').slideUp();" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" onClick="addCookie('basel_top_promo', 1, 30);$(this).closest('.top_notificaiton').slideUp();$('#sideNav').css('margin-top', '');$('main.offcanvas-enabled').css('margin-top', '')"  data-bs-dismiss="alert" aria-label="Close"><i class="fal fa-times"></i></button>
         </div>
     </div>
+<script>
+    $(document).ready(function() {
+        if ($(window).width() > 1280) {
+            $('body > main.offcanvas-enabled').css('margin-top', '3rem');
+        }
+    });
+</script>
+
 
     {% endif %}
+
+
     <div class="navbar navbar-expand-xl navbar-light py-0">
         <div class="container-fluid ps-0">
             <a class="navbar-brand me-0 me-xl-4 flex-shrink-0 py-0" href="{{ home }}">
@@ -54,7 +64,7 @@
         </div>
     </div>
 </header>
-<aside id="sideNav" class="sidebar offcanvas offcanvas-expand w-100 border-end zindex-xl-5 pt-xl-5" id="sideNav"  {% if notification_status %}  {% endif %} >
+<aside id="sideNav" class="sidebar offcanvas offcanvas-expand w-100 border-end zindex-xl-5 pt-xl-5" id="sideNav"  {% if notification_status %} style="margin-top:3rem" {% endif %} >
     <div class="pt-2 d-none d-xl-block"></div>
     <ul class="nav nav-tabs nav-justified mt-0 mt-xl-5 mb-0" role="tablist">
         <li class="nav-item"><a class="nav-link active" href="#categories" data-bs-toggle="tab" role="tab"><i class="fas fa-store"></i> Web shop</a></li>
