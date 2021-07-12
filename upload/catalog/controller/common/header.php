@@ -24,6 +24,28 @@ class ControllerCommonHeader extends Controller {
 			$this->document->addLink($server . 'image/' . $this->config->get('config_icon'), 'icon');
 		}
 
+
+        $this->load->model('extension/information_parent');
+
+        $data['informations'] = array();
+
+        foreach ($this->model_extension_information_parent->getInformations() as $result) {
+            $data['informations_children'] = array();
+            foreach ($this->model_extension_information_parent->getInformations($result['information_id']) as $child_result) {
+                $data['informations_children'][] = array(
+                    'title' => $child_result['title'],
+                    'href'  => $this->url->link('information/information', 'information_id=' . $child_result['information_id'])
+                );
+            }
+
+            $data['informations'][] = array(
+                'title' => $result['title'],
+                'infoid' => $result['information_id'],
+                'href'  => $this->url->link('information/information', 'information_id=' . $result['information_id']),
+                'informations_children'  => $data['informations_children'],
+            );
+        }
+
 		$data['title'] = $this->document->getTitle();
 
 		$data['base'] = $server;

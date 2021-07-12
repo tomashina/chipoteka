@@ -172,9 +172,15 @@ class ControllerCatalogInformation extends Controller {
 		$results = $this->model_catalog_information->getInformations($filter_data);
 
 		foreach ($results as $result) {
+            /* Parent Work Starts */
+            $parent_info = $this->model_catalog_information->getInformationData($result['parent_id']);
+            /* Parent Work Ends */
 			$data['informations'][] = array(
 				'information_id' => $result['information_id'],
 				'title'          => $result['title'],
+                /* Parent Work Starts */
+                'parent'    		 => ($parent_info) ? $parent_info['title'] : $this->language->get('text_none'),
+                /* Parent Work Ends */
 				'sort_order'     => $result['sort_order'],
 				'edit'           => $this->url->link('catalog/information/edit', 'user_token=' . $this->session->data['user_token'] . '&information_id=' . $result['information_id'] . $url, true)
 			);
@@ -317,6 +323,9 @@ class ControllerCatalogInformation extends Controller {
 		}
 
 		$data['user_token'] = $this->session->data['user_token'];
+        /* Parent Work Starts */
+        $data['column_parent'] = $this->language->get('column_parent');
+        /* Parent Work Ends */
 
 		$this->load->model('localisation/language');
 
@@ -399,6 +408,39 @@ class ControllerCatalogInformation extends Controller {
 		$this->load->model('design/layout');
 
 		$data['layouts'] = $this->model_design_layout->getLayouts();
+        /* Parent Work Starts */
+        $data['entry_parent'] = $this->language->get('entry_parent');
+        $data['entry_image'] = $this->language->get('entry_image');
+        $data['text_none'] = $this->language->get('text_none');
+        $data['information_parents'] = $this->model_catalog_information->getInformations();
+        $data['information_id'] = (isset($this->request->get['information_id']) ? $this->request->get['information_id'] : 0);
+
+        if (isset($this->request->post['parent_id'])) {
+            $data['parent_id'] = $this->request->post['parent_id'];
+        } elseif (!empty($information_info)) {
+            $data['parent_id'] = $information_info['parent_id'];
+        } else {
+            $data['parent_id'] = '';
+        }
+
+        if (isset($this->request->post['image'])) {
+            $data['image'] = $this->request->post['image'];
+        } elseif (!empty($information_info)) {
+            $data['image'] = $information_info['image'];
+        } else {
+            $data['image'] = '';
+        }
+
+        $this->load->model('tool/image');
+
+        if (isset($this->request->post['image']) && is_file(DIR_IMAGE . $this->request->post['image'])) {
+            $data['thumb'] = $this->model_tool_image->resize($this->request->post['image'], 100, 100);
+        } elseif (!empty($information_info) && is_file(DIR_IMAGE . $information_info['image'])) {
+            $data['thumb'] = $this->model_tool_image->resize($information_info['image'], 100, 100);
+        } else {
+            $data['thumb'] = $this->model_tool_image->resize('no_image.png', 100, 100);
+        }
+        /* Parent Work Ends */
 
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');

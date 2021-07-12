@@ -1,0 +1,19 @@
+<h3 class="breadcrumb" style="padding:10px">{{ heading_title }}</h3>
+<div class="list-group">
+   
+	{% for information in informations %}
+		
+	<a href="{{ information.href }}" class="list-group-item">{{ information.title }}
+		{% if information.informations_children %}
+		
+			{% for informations_child in information.informations_children %}
+			<a href="{{ informations_child.href }}" class="list-group-item">&nbsp;&nbsp;&nbsp;- {{ informations_child.title }}</a>
+			{% endfor %}
+		
+		{% endif %}
+	</a>
+	  {% endfor %}
+	
+	<a href="{{ contact }}" class="list-group-item">{{ text_contact }}</a>
+	<a href="{{ sitemap }}" class="list-group-item">{{ text_sitemap }}</a>
+</div>
