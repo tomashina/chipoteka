@@ -1,6 +1,7 @@
 <?php
 
 use Agmedia\Luceed\Facade\LuceedGroup;
+use Agmedia\Luceed\Facade\LuceedManufacturer;
 use Agmedia\Luceed\Facade\LuceedProduct;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Action;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Category;
@@ -106,11 +107,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function importManufacturers()
     {
-        $_loc = new LOC_Manufacturer();
+        $_loc = new LOC_Manufacturer(LuceedManufacturer::all());
 
-        $imported = $_loc->getFromProducts(LuceedProduct::all())
-                         ->checkDiff()
-                         ->import();
+        $imported = $_loc->checkDiff()->import();
 
         return $this->response($imported, 'manufacturers');
     }

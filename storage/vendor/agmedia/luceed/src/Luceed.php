@@ -60,6 +60,15 @@ class Luceed
     // MANUFACTURERS
 
     /**
+     * @return false|mixed
+     */
+    public function getManufacturerList()
+    {
+        return $this->service->get($this->end_points['manufacturer_list']);
+    }
+
+
+    /**
      * @return mixed
      */
     public function getManufacturer(string $manufacturer_uid)

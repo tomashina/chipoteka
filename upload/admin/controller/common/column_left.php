@@ -162,6 +162,16 @@ class ControllerCommonColumnLeft extends Controller {
 					'children' => array()
 				);
 			}
+			
+			// fj.agmedia.hr
+            if ($this->user->hasPermission('access', 'extension/module/luceed_sync')) {
+                $marketplace[] = array(
+                    'name'	   => 'Luceed Sync. Manager',
+                    'href'     => $this->url->link('extension/module/luceed_sync', 'user_token=' . $this->session->data['user_token'], true),
+                    'children' => array()
+                );
+            }
+            // END ::: fj.agmedia.hr
 
 			if ($this->user->hasPermission('access', 'marketplace/event')) {
 				$marketplace[] = array(
