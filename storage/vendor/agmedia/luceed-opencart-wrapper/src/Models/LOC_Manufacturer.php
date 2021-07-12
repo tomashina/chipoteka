@@ -65,7 +65,7 @@ class LOC_Manufacturer
     {
         $list = json_decode($products)->result[0]->artikli;
         
-        $this->manufacturers = collect($list)->unique('proizvodac')->toArray();
+        $this->manufacturers = collect($list)->unique('robna_marka')->toArray();
         
         return $this;
     }
@@ -79,13 +79,14 @@ class LOC_Manufacturer
         if ($this->manufacturers) {
             $existing = Manufacturer::pluck('luceed_uid');
             $list_diff = $this->getManufacturers()
-                ->where('proizvodac', '!=', '')
-                ->where('proizvodac_naziv', '!=', '')
-                ->pluck('proizvodac')
+                ->where('enabled', 'D')
+                ->where('robna_marka', '!=', '')
+                ->where('naziv', '!=', '')
+                ->pluck('robna_marka')
                 ->diff($existing)
                 ->flatten();
     
-            $this->manufacturers_to_add = $this->getManufacturers()->whereIn('proizvodac', $list_diff);
+            $this->manufacturers_to_add = $this->getManufacturers()->whereIn('robna_marka', $list_diff);
         }
         
         return $this;
@@ -116,8 +117,8 @@ class LOC_Manufacturer
     private function save($manufacturer)
     {
         $id = Manufacturer::insertGetId([
-            'luceed_uid' => $manufacturer->proizvodac,
-            'name' => $manufacturer->proizvodac_naziv,
+            'luceed_uid' => $manufacturer->robna_marka,
+            'name' => $manufacturer->naziv,
             'image' => '',
             'sort_order' => 0
         ]);
@@ -140,6 +141,6 @@ class LOC_Manufacturer
     {
         $man = json_decode($manufacturers);
         
-        return $man->result[0]->artikli;
+        return $man->result[0]->robne_marke;
     }
 }

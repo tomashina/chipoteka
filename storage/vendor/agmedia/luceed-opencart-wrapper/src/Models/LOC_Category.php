@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Agmedia\LuceedOpencartWrapper\Models;
-
 
 use Agmedia\Helpers\Log;
 use Agmedia\Models\Category\Category;
@@ -21,28 +19,28 @@ use Illuminate\Support\Str;
  */
 class LOC_Category
 {
-    
+
     /**
      * @var array
      */
     private $list;
-    
+
     /**
      * @var array
      */
     private $categories;
-    
+
     /**
      * @var array
      */
     private $existing;
-    
+
     /**
      * @var array
      */
     private $categories_to_add = [];
-    
-    
+
+
     /**
      * LOC_Category constructor.
      *
@@ -55,8 +53,8 @@ class LOC_Category
             $this->setCategories($categories)
         );
     }
-    
-    
+
+
     /**
      * @return Collection
      */
@@ -64,8 +62,8 @@ class LOC_Category
     {
         return collect($this->list);
     }
-    
-    
+
+
     /**
      * @return Collection
      */
@@ -73,8 +71,8 @@ class LOC_Category
     {
         return collect($this->categories);
     }
-    
-    
+
+
     /**
      * @return $this
      */
@@ -82,41 +80,42 @@ class LOC_Category
     {
         $this->existing = Category::pluck('luceed_uid');
         $list_diff      = $this->getList()
-            ->where('grupa_artikla_uid', '!=', '')
-            ->where('naziv', '!=', '')
-            ->pluck('grupa_artikla_uid')
-            ->diff($this->existing)
-            ->flatten();
+                               ->where('enabled', 'D')
+                               ->where('grupa_artikla', '!=', '')
+                               ->where('naziv', '!=', '')
+                               ->pluck('grupa_artikla')
+                               ->diff($this->existing)
+                               ->flatten();
 
         //Log::write($this->existing, 'cats_diff');
         //Log::write($list_diff->count(), 'cats');
-        
-        $categories = $this->getList()->whereIn('grupa_artikla_uid', $list_diff);
+
+        $categories = $this->getList()->whereIn('grupa_artikla', $list_diff);
 
         //Log::write($categories, 'cats');
-        
+
         foreach ($categories as $category) {
-            $parent = Category::where('luceed_uid', $category->nadgrupa__grupa_artikla_uid)->first();
-            
+            $parent = Category::where('luceed_uid', $category->nadgrupa_artikla)->first();
+
             if (isset($parent->luceed_uid) && $parent->luceed_uid != '') {
                 $top_parent = Category::where('category_id', $parent->parent_id)->first();
-                
+
                 if ($top_parent) {
                     $this->pushToAdd($top_parent);
                 }
-    
+
                 $this->pushToAdd($parent);
             }
-            
+
             $this->pushToAdd($category, false);
         }
 
         //Log::write($this->categories_to_add, 'cats_to_add');
-        
+
         return $this;
     }
-    
-    
+
+
     /**
      * @param $parent
      *
@@ -124,16 +123,16 @@ class LOC_Category
      */
     private function addDummy($parent): \stdClass
     {
-        $new_cats   = new \stdClass();
-        $top = Category::where('category_id', $parent->parent_id)->first();
-    
-        $new_cats->grupa_artikla_uid           = $parent->luceed_uid;
-        $new_cats->nadgrupa__grupa_artikla_uid = $top ? $top->luceed_uid : null;
-        
+        $new_cats = new \stdClass();
+        $top      = Category::where('category_id', $parent->parent_id)->first();
+
+        $new_cats->grupa_artikla    = $parent->luceed_uid;
+        $new_cats->nadgrupa_artikla = $top ? $top->luceed_uid : null;
+
         return $new_cats;
     }
-    
-    
+
+
     /**
      * @param      $obj
      * @param bool $dummy
@@ -142,14 +141,14 @@ class LOC_Category
     {
         array_push($this->categories_to_add, $dummy ? $this->addDummy($obj) : $obj);
     }
-    
-    
+
+
     /**
      * @return int
      */
     public function import()
     {
-        $count = 0;
+        $count      = 0;
         $categories = $this->sort($this->categories_to_add);
 
         //Log::write($categories, 'cats_sorted');
@@ -157,29 +156,29 @@ class LOC_Category
         //return $count;
 
         foreach ($categories as $i => $category) {
-            $exist = Category::where('luceed_uid', $category->grupa_artikla_uid)->first();
-            
+            $exist = Category::where('luceed_uid', $category->grupa_artikla)->first();
+
             if ( ! $exist) {
                 $cat_id = $this->save($category, 0, $i);
                 $count++;
             } else {
                 $cat_id = $exist->category_id;
             }
-            
+
             if (isset($category->sub) && ! empty($category->sub)) {
                 foreach ($category->sub as $k => $subcat) {
-                    $exist = Category::where('luceed_uid', $subcat->grupa_artikla_uid)->first();
-    
+                    $exist = Category::where('luceed_uid', $subcat->grupa_artikla)->first();
+
                     if ( ! $exist) {
                         $sub_cat_id = $this->save($subcat, $cat_id, $k);
                         $count++;
                     } else {
                         $sub_cat_id = $exist->category_id;
                     }
-                    
+
                     if (isset($subcat->sub) && ! empty($subcat->sub)) {
                         foreach ($subcat->sub as $n => $subsubcat) {
-                            $exist = Category::where('luceed_uid', $subsubcat->grupa_artikla_uid)->first();
+                            $exist = Category::where('luceed_uid', $subsubcat->grupa_artikla)->first();
 
                             if ( ! $exist) {
                                 $this->save($subsubcat, $sub_cat_id, $n);
@@ -190,11 +189,11 @@ class LOC_Category
                 }
             }
         }
-        
+
         return $count;
     }
-    
-    
+
+
     /**
      * @param     $category
      * @param int $parent_id
@@ -206,7 +205,7 @@ class LOC_Category
     {
         $id = Category::insertGetId([
             'parent_id'     => $parent_id,
-            'luceed_uid'    => $category->grupa_artikla_uid,
+            'luceed_uid'    => $category->grupa_artikla,
             'top'           => $parent_id ? 0 : 1,
             'column'        => 1,
             'sort_order'    => $sort,
@@ -214,7 +213,7 @@ class LOC_Category
             'date_added'    => Carbon::now(),
             'date_modified' => Carbon::now()
         ]);
-        
+
         CategoryDescription::insert([
             'category_id'      => $id,
             'language_id'      => 2,
@@ -224,49 +223,49 @@ class LOC_Category
             'meta_description' => $category->naziv,
             'meta_keyword'     => $category->naziv,
         ]);
-        
+
         $level = 0;
-        
+
         $paths = CategoryPath::where('category_id', $parent_id)->orderBy('level')->pluck('path_id');
-        
+
         foreach ($paths as $path) {
             CategoryPath::insert([
                 'category_id' => $id,
                 'path_id'     => $path,
                 'level'       => $level
             ]);
-            
+
             $level++;
         }
-        
+
         CategoryPath::insert([
             'category_id' => $id,
             'path_id'     => $id,
             'level'       => $level
         ]);
-        
+
         CategoryToLayout::insert([
             'category_id' => $id,
             'store_id'    => 0,
             'layout_id'   => 0
         ]);
-        
+
         CategoryToStore::insert([
             'category_id' => $id,
             'store_id'    => 0
         ]);
-        
+
         SeoUrl::insert([
             'store_id'    => 0,
             'language_id' => 2,
             'query'       => 'category_id=' . $id,
             'keyword'     => Str::slug($category->naziv)
         ]);
-        
+
         return $id;
     }
-    
-    
+
+
     /**
      * @param $category
      *
@@ -274,14 +273,14 @@ class LOC_Category
      */
     public function hasUid($category): bool
     {
-        if (empty($category->grupa_artikla_uid)) {
+        if (empty($category->grupa_artikla)) {
             return false;
         }
-        
+
         return true;
     }
-    
-    
+
+
     /**
      * @param $category
      *
@@ -292,11 +291,11 @@ class LOC_Category
         if (empty($category->naziv)) {
             return false;
         }
-        
+
         return true;
     }
-    
-    
+
+
     /**
      * @param $category_list
      *
@@ -305,10 +304,10 @@ class LOC_Category
     public function sort($category_list): array
     {
         $temp_category = [];
-        
+
         foreach ($category_list as $category) {
-            if (empty($category->nadgrupa__grupa_artikla_uid)) {
-                $temp_category[$category->grupa_artikla_uid] = $category;
+            if (empty($category->nadgrupa_artikla)) {
+                $temp_category[$category->grupa_artikla] = $category;
             }
         }
 
@@ -318,19 +317,19 @@ class LOC_Category
 
         foreach ($category_list as $category) {
             for ($i = 0; $i < count($temp_category); $i++) {
-                if ($category->nadgrupa__grupa_artikla_uid == $temp_category[$i]->grupa_artikla_uid) {
+                if ($category->nadgrupa_artikla == $temp_category[$i]->grupa_artikla) {
                     $temp_category[$i]->sub[] = $category;
                 }
             }
         }
 
         //Log::write(array_values($temp_category), 'cats_sorting21');
-        
+
         foreach ($category_list as $category) {
             for ($i = 0; $i < count($temp_category); $i++) {
                 if (isset($temp_category[$i]->sub) && is_array($temp_category[$i]->sub)) {
                     for ($k = 0; $k < count($temp_category[$i]->sub); $k++) {
-                        if ($category->nadgrupa__grupa_artikla_uid == $temp_category[$i]->sub[$k]->grupa_artikla_uid) {
+                        if ($category->nadgrupa_artikla == $temp_category[$i]->sub[$k]->grupa_artikla) {
                             $temp_category[$i]->sub[$k]->sub[] = $category;
                         }
                     }
@@ -339,11 +338,11 @@ class LOC_Category
         }
 
         //Log::write($temp_category, 'cats_sorting3');
-        
+
         return $temp_category;
     }
-    
-    
+
+
     /**
      * @param $categories
      *
@@ -352,7 +351,7 @@ class LOC_Category
     private function setCategories($categories): array
     {
         $cats = json_decode($categories);
-        
+
         return $cats->result[0]->grupe_artikala;
     }
 }
