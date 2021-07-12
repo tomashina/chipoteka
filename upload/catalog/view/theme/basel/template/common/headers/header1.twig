@@ -6,18 +6,14 @@
             <button type="button" class="btn-close" onClick="addCookie('basel_top_promo', 1, 30);$(this).closest('.top_notificaiton').slideUp();$('#sideNav').css('margin-top', '');$('main.offcanvas-enabled').css('margin-top', '')"  data-bs-dismiss="alert" aria-label="Close"><i class="fal fa-times"></i></button>
         </div>
     </div>
-<script>
-    $(document).ready(function() {
-        if ($(window).width() > 1280) {
-            $('body > main.offcanvas-enabled').css('margin-top', '3rem');
-        }
-    });
-</script>
-
-
+            <script>
+                $(document).ready(function() {
+                    if ($(window).width() > 1280) {
+                        $('body > main.offcanvas-enabled').css('margin-top', '3rem');
+                    }
+                });
+            </script>
     {% endif %}
-
-
     <div class="navbar navbar-expand-xl navbar-light py-0">
         <div class="container-fluid ps-0">
             <a class="navbar-brand me-0 me-xl-4 flex-shrink-0 py-0" href="{{ home }}">
@@ -94,17 +90,14 @@
                 <div class="widget widget-categories">
                     <div class="accordion" id="shop-menu">
                         {% for information in informations %}
-
                             {% if information.informations_children %}
                                 <div class="accordion-item border-bottom">
                                     <h3 class="accordion-header">
                                         <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#id{{ information.infoid }}" aria-expanded="false" aria-controls="home">{{ information.title }}</button>
                                     </h3>
-
                                     <div class="collapse" id="id{{ information.infoid }}" data-bs-parent="#shop-menu">
                                         <div class="pt-1">
                                             <div class="widget widget-links">
-
                                                 <ul class="widget-list">
                                                     {% for informations_child in information.informations_children %}
                                                         <li class="widget-list-item"> <a href="{{ informations_child.href }}" class="widget-list-link">{{ informations_child.title }}</a></li>
@@ -115,36 +108,34 @@
                                     </div>
                                 </div>
                             {% else %}
-
                             <div class="accordion-item border-bottom">
                                 <h3 class="accordion-header">
                                     <a class="accordion-button noneafter collapsed py-3" href="{{ information.href }}">{{ information.title }}</a>
                                 </h3>
                                 <style>.sidebar #menu .accordion-item .accordion-header .accordion-button.noneafter::after{content:unset}</style>
                             </div>
-
                             {% endif %}
-
-
-
                         {% endfor %}
-
-
-
-
-
-
-
-
-
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    {# <div class="offcanvas-cap d-block px-grid-gutter pt-5 pb-4 mb-2">
-
-        <h6 class="pt-2 pb-1">Follow us</h6><a class="btn-social bs-outline bs-twitter me-2 mb-2" href="#"><i class="ci-twitter"></i></a><a class="btn-social bs-outline bs-facebook me-2 mb-2" href="#"><i class="ci-facebook"></i></a><a class="btn-social bs-outline bs-instagram me-2 mb-2" href="#"><i class="ci-instagram"></i></a><a class="btn-social bs-outline bs-youtube me-2 mb-2" href="#"><i class="ci-youtube"></i></a>
-    </div> #}
+    <div class="offcanvas-cap d-block px-grid-gutter pt-5 pb-4 mb-2">
+        <div class="d-flex mb-3"> <i class="fas fa-user-headset h4 mb-0 fw-normal text-primary mt-1 me-1"></i>
+            <div class="ps-2">
+                <div class="text-muted fs-sm">Podrška</div><a class="nav-link-style fs-md" href="tel:+38512338844">+385 1 233 88 44</a>
+            </div>
+        </div>
+        <div class="d-flex mb-3"><i class="far fa-envelope h5 mb-0 fw-normal text-primary mt-1 me-1"></i>
+            <div class="ps-2">
+                <div class="text-muted fs-sm">Email</div><a class="nav-link-style fs-md" href="webnarudzba@chipoteka.hr">webnarudzba@chipoteka.hr</a>
+            </div>
+        </div>
+        <h6 class="pt-2 pb-1">Pratite nas</h6>
+        <a class="btn-social bs-outline bs-facebook me-2 mb-2" href="https://www.facebook.com/Chipoteka"><i class="ci-facebook"></i></a>
+        <a class="btn-social bs-outline bs-twitter me-2 mb-2" href="https://twitter.com/chipoteka"><i class="ci-twitter"></i></a>
+        <a class="btn-social bs-outline bs-instagram me-2 mb-2" href="#"><i class="ci-instagram"></i></a>
+        <a class="btn-social bs-outline bs-youtube me-2 mb-2" href="#"><i class="ci-youtube"></i></a>
+    </div>
 </aside>
