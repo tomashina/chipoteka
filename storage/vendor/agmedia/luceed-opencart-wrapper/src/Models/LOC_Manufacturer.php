@@ -79,6 +79,7 @@ class LOC_Manufacturer
         if ($this->manufacturers) {
             $existing = Manufacturer::pluck('luceed_uid');
             $list_diff = $this->getManufacturers()
+                ->where('enabled', 'D')
                 ->where('robna_marka', '!=', '')
                 ->where('naziv', '!=', '')
                 ->pluck('robna_marka')
