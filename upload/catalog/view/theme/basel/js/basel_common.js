@@ -41,6 +41,9 @@ $(document).ready(function() {
 	}
 
 
+
+
+
 	
 	// Mobile menu open
 	$(".menu-trigger").click(function(){
