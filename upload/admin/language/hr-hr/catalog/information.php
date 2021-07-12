@@ -10,6 +10,10 @@ $_['text_add']               = 'Dodaj informaciju';
 $_['text_edit']              = 'Izmjeni informaciju';
 $_['text_default']           = 'Osnovni';
 
+$_['entry_parent']           = 'Nadređena stranica';
+$_['entry_image']            = 'Slika';
+$_['column_parent']            = 'Nadređena stranica';
+
 // Column
 $_['column_title']           = 'Naziv informacija';
 $_['column_sort_order']      = 'Redoslijed sortiranja';

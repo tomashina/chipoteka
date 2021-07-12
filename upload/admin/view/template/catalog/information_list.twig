@@ -39,7 +39,10 @@
                     <a href="{{ sort_title }}" class="{{ order|lower }}">{{ column_title }}</a>
                     {% else %}
                     <a href="{{ sort_title }}">{{ column_title }}</a>
-                    {% endif %}</td>
+                    {% endif %}
+                    <!-- /* Parent Work Starts */	-->
+                  <td class="text-left">{{ column_parent }}</td>
+                  <!-- /* Parent Work Ends */ -->
                   <td class="text-right">{% if sort == 'i.sort_order' %}
                     <a href="{{ sort_sort_order }}" class="{{ order|lower }}">{{ column_sort_order }}</a>
                     {% else %}
@@ -58,6 +61,9 @@
                     <input type="checkbox" name="selected[]" value="{{ information.information_id }}" />
                     {% endif %}</td>
                   <td class="text-left">{{ information.title }}</td>
+                  <!-- /* Parent Work Starts */	-->
+                  <td class="text-left">{{ information.parent }}</td>
+                  <!-- /* Parent Work Ends */	-->
                   <td class="text-right">{{ information.sort_order }}</td>
                   <td class="text-right"><a href="{{ information.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a></td>
                 </tr>

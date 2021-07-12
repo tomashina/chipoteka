@@ -20,7 +20,9 @@
                                             </ul>
                                         </li>
                                     {% else %}
-                                        <li class="widget-list-item"><a class="widget-list-link" href="{{ child.href }}">{{ child.name }}</a></li>
+                                        <li class="widget-list-item nochild"><a class="widget-list-link" href="{{ child.href }}">{{ child.name }}</a></li>
+
+                                        <style>.sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item.nochild .widget-list-link::after{content:unset}</style>
                                     {% endif %}
                                 {% endfor %}
                             </ul>

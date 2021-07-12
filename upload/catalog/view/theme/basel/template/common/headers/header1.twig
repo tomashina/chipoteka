@@ -1,5 +1,11 @@
 <header class="page-header" data-fixed-element>
     {% if notification_status %}
+    <div class="top_notificaiton">
+        <div class="alert alert-dark alert-dismissible fade show mb-0 text-center rounded-0" role="alert">
+             {{ top_promo_text }}
+            <button type="button" onClick="addCookie('basel_top_promo', 1, 30);$(this).closest('.top_notificaiton').slideUp();" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
 
     {% endif %}
     <div class="navbar navbar-expand-xl navbar-light py-0">
@@ -77,27 +83,50 @@
             <div class="sidebar-nav tab-pane fade" id="menu" role="tabpanel">
                 <div class="widget widget-categories">
                     <div class="accordion" id="shop-menu">
+                        {% for information in informations %}
 
-                        <div class="accordion-item border-bottom">
-                            <h3 class="accordion-header">
-                                <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#home" aria-expanded="false" aria-controls="home">Opće informacije</button>
-                            </h3>
-                            <div class="collapse" id="home" data-bs-parent="#shop-menu">
-                                <div class="pt-1">
-                                    <div class="widget widget-links">
+                            {% if information.informations_children %}
+                                <div class="accordion-item border-bottom">
+                                    <h3 class="accordion-header">
+                                        <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#id{{ information.infoid }}" aria-expanded="false" aria-controls="home">{{ information.title }}</button>
+                                    </h3>
 
+                                    <div class="collapse" id="id{{ information.infoid }}" data-bs-parent="#shop-menu">
+                                        <div class="pt-1">
+                                            <div class="widget widget-links">
 
-                                        <ul class="widget-list">
-                                            <li class="widget-list-item"><a class="widget-list-link" href="">Poslovnice</a></li>
-                                            <li class="widget-list-item"><a class="widget-list-link" href="">Dostava</a></li>
-                                            <li class="widget-list-item"><a class="widget-list-link" href="">Načini plaćanja</a></li>
-                                            <li class="widget-list-item"><a class="widget-list-link" href="">Poslije kupovine</a></li>
-                                            <li class="widget-list-item"><a class="widget-list-link" href="">O Chipoteci</a></li>
-                                        </ul>
+                                                <ul class="widget-list">
+                                                    {% for informations_child in information.informations_children %}
+                                                        <li class="widget-list-item"> <a href="{{ informations_child.href }}" class="widget-list-link">{{ informations_child.title }}</a></li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                            {% else %}
+
+                            <div class="accordion-item border-bottom">
+                                <h3 class="accordion-header">
+                                    <a class="accordion-button noneafter collapsed py-3" href="{{ information.href }}">{{ information.title }}</a>
+                                </h3>
+                                <style>.sidebar #menu .accordion-item .accordion-header .accordion-button.noneafter::after{content:unset}</style>
                             </div>
-                        </div>
+
+                            {% endif %}
+
+
+
+                        {% endfor %}
+
+
+
+
+
+
+
+
+
 
                     </div>
                 </div>

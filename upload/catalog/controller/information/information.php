@@ -31,6 +31,14 @@ class ControllerInformationInformation extends Controller {
 			);
 
 			$data['heading_title'] = $information_info['title'];
+            /* Parent Work Starts */
+            $this->load->model('tool/image');
+            if ($information_info['image']) {
+                $data['thumb'] = $this->model_tool_image->resize($information_info['image'], 228, 228);
+            } else {
+                $data['thumb'] = '';
+            }
+            /* Parent Work Ends */
 
 			$data['description'] = html_entity_decode($information_info['description'], ENT_QUOTES, 'UTF-8');
 

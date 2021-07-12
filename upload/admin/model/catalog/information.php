@@ -5,6 +5,10 @@ class ModelCatalogInformation extends Model {
 
 		$information_id = $this->db->getLastId();
 
+        /* Parent Work Starts */
+        $this->db->query("UPDATE " . DB_PREFIX . "information SET parent_id = '" . (int)$data['parent_id'] . "', image = '" . $this->db->escape($data['image']) . "' WHERE information_id = '" . (int)$information_id . "'");
+        /* Parent Work Ends */
+
 		foreach ($data['information_description'] as $language_id => $value) {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "information_description SET information_id = '" . (int)$information_id . "', language_id = '" . (int)$language_id . "', title = '" . $this->db->escape($value['title']) . "', description = '" . $this->db->escape($value['description']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
 		}
@@ -41,6 +45,10 @@ class ModelCatalogInformation extends Model {
 		$this->db->query("UPDATE " . DB_PREFIX . "information SET sort_order = '" . (int)$data['sort_order'] . "', bottom = '" . (isset($data['bottom']) ? (int)$data['bottom'] : 0) . "', status = '" . (int)$data['status'] . "' WHERE information_id = '" . (int)$information_id . "'");
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "information_description WHERE information_id = '" . (int)$information_id . "'");
+
+        /* Parent Work Starts */
+        $this->db->query("UPDATE " . DB_PREFIX . "information SET parent_id = '" . (int)$data['parent_id'] . "', image = '" . $this->db->escape($data['image']) . "' WHERE information_id = '" . (int)$information_id . "'");
+        /* Parent Work Ends */
 
 		foreach ($data['information_description'] as $language_id => $value) {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "information_description SET information_id = '" . (int)$information_id . "', language_id = '" . (int)$language_id . "', title = '" . $this->db->escape($value['title']) . "', description = '" . $this->db->escape($value['description']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
@@ -92,6 +100,14 @@ class ModelCatalogInformation extends Model {
 
 		return $query->row;
 	}
+
+    /* Parent Work Starts */
+    public function getInformationData($information_id) {
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "information i LEFT JOIN " . DB_PREFIX . "information_description id on(i.information_id=id.information_id)  WHERE i.information_id = '" . (int)$information_id . "' AND id.language_id = '". (int)$this->config->get('config_language_id') ."'");
+
+        return $query->row;
+    }
+    /* Parent Work Ends */
 
 	public function getInformations($data = array()) {
 		if ($data) {
