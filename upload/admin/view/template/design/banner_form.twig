@@ -81,7 +81,14 @@
                       <br> <label>Opis</label><textarea  name="banner_image[{{ language.language_id }}][{{ image_row }}][text]" value="{{ banner_image.text }}" placeholder="{{ entry_text }}" class="form-control" >{{ banner_image.text }}</textarea>
 
                      </td>
-                    <td class="text-left" style="width: 30%;"><input type="text" name="banner_image[{{ language.language_id }}][{{ image_row }}][link]" value="{{ banner_image.link }}" placeholder="{{ entry_link }}" class="form-control" /></td>
+                    <td class="text-left" style="width: 30%;"><label>Link</label><input type="text" name="banner_image[{{ language.language_id }}][{{ image_row }}][link]" value="{{ banner_image.link }}" placeholder="{{ entry_link }}" class="form-control" /><br>
+                      <label>Boja pozadine</label>    <div id="boja{{ image_row }}" class="input-group colorpicker-component">
+                        <input type="text" name="banner_image[{{ language.language_id }}][{{ image_row }}][bojapozadine]" value="{{ banner_image.bojapozadine }}" class="form-control" />
+                        <span class="input-group-addon"><i></i></span>
+                      </div>
+
+                    <br>
+                    </td>
                     <td class="text-center"><a href="" id="thumb-image{{ image_row }}" data-toggle="image" class="img-thumbnail"><img src="{{ banner_image.thumb }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a>
                       <input type="hidden" name="banner_image[{{ language.language_id }}][{{ image_row }}][image]" value="{{ banner_image.image }}" id="input-image{{ image_row }}" /></td>
                     <td class="text-right" style="width: 10%;"><input type="text" name="banner_image[{{ language.language_id }}][{{ image_row }}][sort_order]" value="{{ banner_image.sort_order }}" placeholder="{{ entry_sort_order }}" class="form-control" /></td>
@@ -89,6 +96,10 @@
                   </tr>
                   {% set image_row = image_row + 1 %}
                   {% endfor %}
+
+
+
+
                   {% endif %}
                 </tbody>
                 <tfoot>
@@ -111,7 +122,7 @@ var image_row = {{ image_row }};
 function addImage(language_id) {
 	html  = '<tr id="image-row' + image_row + '">';
     html += '  <td class="text-left"><label>Naslov</label><input type="text" name="banner_image[' + language_id + '][' + image_row + '][title]" value="" placeholder="{{ entry_title }}" class="form-control" /><br><label>Naziv akcije</label><input type="text" name="banner_image[' + language_id + '][' + image_row + '][actiontitle]" value="" placeholder="{{ entry_actiontitle }}" class="form-control" /><br><label>Opis</label><textarea name="banner_image[' + language_id + '][' + image_row + '][text]" value="" placeholder="{{ entry_text }}" class="form-control" ></textarea></td>';
-	html += '  <td class="text-left" style="width: 30%;"><input type="text" name="banner_image[' + language_id + '][' + image_row + '][link]" value="" placeholder="{{ entry_link }}" class="form-control" /></td>';	
+	html += '<td class="text-left" style="width: 30%;"><label>Link</label><input type="text" name="banner_image[' + language_id + '][' + image_row + '][link]" value="" placeholder="{{ entry_link }}" class="form-control" /><br><label>Boja pozadine</label><div id="boja' + image_row + '" class="input-group colorpicker-component"><input type="text" name="banner_image[' + language_id + '][' + image_row + '][bojapozadine]" value="#e31318" class="form-control" /><span class="input-group-addon"><i></i></span> </div> </td>';
 	html += '  <td class="text-center"><a href="" id="thumb-image' + image_row + '" data-toggle="image" class="img-thumbnail"><img src="{{ placeholder }}" alt="" title="" data-placeholder="{{ placeholder }}" /></a><input type="hidden" name="banner_image[' + language_id + '][' + image_row + '][image]" value="" id="input-image' + image_row + '" /></td>';
 	html += '  <td class="text-right" style="width: 10%;"><input type="text" name="banner_image[' + language_id + '][' + image_row + '][sort_order]" value="" placeholder="{{ entry_sort_order }}" class="form-control" /></td>';
 	html += '  <td class="text-left"><button type="button" onclick="$(\'#image-row' + image_row  + ', .tooltip\').remove();" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger"><i class="fa fa-minus-circle"></i></button></td>';
@@ -121,7 +132,20 @@ function addImage(language_id) {
 	
 	image_row++;
 }
-//--></script> 
+//--></script>
+
+  <script>
+    $(function () {
+      $('#boja0, #boja1, #boja2, #boja3, #boja4, #boja5, #boja6, #boja7, #boja8, #boja9').colorpicker({
+        colorSelectors: {
+          '#000000': '#000000',
+          '#1b84e5': '#1b84e5',
+          '#e31318': '#e31318'
+        }
+      });
+    });
+  </script>
+
   <script type="text/javascript"><!--
 $('#language a:first').tab('show');
 //--></script> 
