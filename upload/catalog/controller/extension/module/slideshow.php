@@ -18,6 +18,8 @@ class ControllerExtensionModuleSlideshow extends Controller {
 			if (is_file(DIR_IMAGE . $result['image'])) {
 				$data['banners'][] = array(
 					'title' => $result['title'],
+                    'actiontitle' => $result['actiontitle'],
+                    'text' => $result['text'],
 					'link'  => $result['link'],
 					'image' => $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height'])
 				);
