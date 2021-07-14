@@ -9,6 +9,7 @@
     background-color: $white;
     box-shadow: $box-shadow-header;
     z-index: 1030;
+    margin-top: 0 !important;
 
     // Fix for Top notification only if content is i none line on all screen sizes
     // .sidebar also influenced - fix it
@@ -226,6 +227,14 @@
 // - - - - - - - - - - - - - - - - - 
 // Sidebar
 .sidebar {
+
+    &.active-top-notification {
+        @include media-breakpoint-up(xl) {
+            margin-top: 3rem;
+         }
+    }
+
+  
 
     // - - - - - - - - - 
     // 0 - Main level

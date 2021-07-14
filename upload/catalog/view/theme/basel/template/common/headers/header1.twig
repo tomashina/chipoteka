@@ -3,16 +3,25 @@
    
         <div class="alert alert-warning alert-promo {% if top_promo_close %} alert-dismissible {% endif %}  fade show top_notificaiton mb-0 {{ top_promo_align }}" role="alert">
              {{ top_promo_text }}
-            <button type="button" class="btn-close" onClick="addCookie('basel_top_promo', 1, 30);$(this).closest('.top_notificaiton').slideUp();$('#sideNav').css('margin-top', '');$('main.offcanvas-enabled').css('margin-top', '')"  data-bs-dismiss="alert" aria-label="Close"><i class="fal fa-times"></i></button>
+            <button type="button" class="btn-close" onClick="addCookie('basel_top_promo', 1, 30);$(this).closest('.top_notificaiton').slideUp();$('#sideNav').toggleClass('active-top-notification');"  data-bs-dismiss="alert" aria-label="Close"><i class="fal fa-times"></i></button>
         </div>
     
-            <script>
+            {# <script>
                 $(document).ready(function() {
                     if ($(window).width() > 1280) {
                         $('body > main.offcanvas-enabled').css('margin-top', '3rem');
                     }
                 });
+            </script> #}
+
+            <script>
+                $(document).ready(function() {
+                    if ($(window).width() > 1280) {
+                        $('body > aside.offcanvas').toggleClass( "active-top-notification");
+                    }
+                });
             </script>
+            
     {% endif %}
     <div class="navbar navbar-expand-xl navbar-light py-0">
         <div class="container-fluid px-0">
@@ -60,12 +69,13 @@
         </div>
     </div>
 </header>
-<aside id="sideNav" class="sidebar offcanvas offcanvas-expand w-100 border-end zindex-xl-5 pt-xl-5" id="sideNav"  {% if notification_status %} style="margin-top:3rem" {% endif %} >
+ 
+<aside id="sideNav" class="sidebar offcanvas offcanvas-expand w-100 border-end zindex-xl-5 pt-xl-5" id="sideNav"  {% if notification_status %}  {% endif %} >
     <div class="pt-2 d-none d-xl-block"></div>
     <ul class="nav nav-tabs nav-justified mt-0 mt-xl-5 mb-0" role="tablist">
         <li class="nav-item"><a class="nav-link active" href="#categories" data-bs-toggle="tab" role="tab"><i class="fas fa-store"></i> Web shop</a></li>
         <li class="nav-item"><a class="nav-link" href="#menu" data-bs-toggle="tab" role="tab"><i class="fas fa-info-circle"></i> Info </a></li>
-        <li class="nav-item d-lg-none"><a class="nav-link fs-sm" href="#" data-bs-dismiss="offcanvas" role="tab"><i class="fal fa-times fs-xl"></i><span class="sr-only">Close</span></a></li>
+        <li class="nav-item d-xl-none"><a class="nav-link fs-sm" href="#" data-bs-dismiss="offcanvas" role="tab"><i class="fal fa-times fs-xl"></i><span class="sr-only">Close</span></a></li>
     </ul>
     <div class="offcanvas-body px-0 pb-0" data-simplebar>
         <div class="tab-content">
@@ -139,3 +149,4 @@
         <a class="btn-social bs-outline bs-youtube me-2 mb-2" href="#"><i class="ci-youtube"></i></a>
     </div>
 </aside>
+ 
