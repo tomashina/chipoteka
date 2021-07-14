@@ -35429,6 +35429,12 @@ body > main.offcanvas-enabled {
   font-size: 1rem;
 }
 
+.pagination-navigation .pagination {
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
 .page-header {
   position: -webkit-sticky;
   position: sticky;

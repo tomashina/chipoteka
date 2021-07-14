@@ -126,6 +126,18 @@ body > main.offcanvas-enabled {
 }
  
 
+// Pagination
+
+.pagination-navigation {
+   
+
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
 
 // main >  section {
 //         padding-left: $grid-gutter-width-10px;
