@@ -5,8 +5,6 @@
 
 .product-container {
 
-
-
     // - - - - - - - - - - - - - - - -
     // Title
 
@@ -245,9 +243,12 @@
         // Product Accordion
         .product-accordion {
             
-            .accordion-body,
-            .accordion-button {
+            .accordion-body {
                 padding: 0.313rem 1rem;
+            }
+
+            .accordion-button {
+                padding: 0.72rem 1rem;
             }
  
         }

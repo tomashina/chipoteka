@@ -36626,9 +36626,12 @@ body > main.offcanvas-enabled {
   }
 }
 
-.product-container .product-features .product-accordion .accordion-body,
-.product-container .product-features .product-accordion .accordion-button {
+.product-container .product-features .product-accordion .accordion-body {
   padding: 0.313rem 1rem;
+}
+
+.product-container .product-features .product-accordion .accordion-button {
+  padding: 0.72rem 1rem;
 }
 
 .product-container .product-features .product-delivery-time {
