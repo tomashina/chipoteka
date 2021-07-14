@@ -87,7 +87,45 @@ body > main.offcanvas-enabled {
 .info-wrapper {
     max-width: $md;
 }
+
+
+// Modal
+
+.modal {
+
+    a {
+        // color: $primary;
  
+        &:hover {
+            color: $dark;
+        }
+    }
+
+}
+
+
+// Font Fixed Sizes - Font Size Chipoteka (fsc)
+
+.fsc-1 {
+    font-size: 2.5rem;
+}
+.fsc-2 {
+    font-size: 2rem;
+}
+.fsc-3 {
+    font-size: 1.75rem;
+}
+.fsc-4 {
+    font-size: 1.5rem;
+}
+.fsc-5 {
+    font-size: 1.25rem;
+}
+.fsc-6 {
+    font-size: 1rem;
+}
+ 
+
 
 // main >  section {
 //         padding-left: $grid-gutter-width-10px;

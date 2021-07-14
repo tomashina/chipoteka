@@ -35401,6 +35401,34 @@ body > main.offcanvas-enabled {
   max-width: 768px;
 }
 
+.modal a:hover {
+  color: #171717;
+}
+
+.fsc-1 {
+  font-size: 2.5rem;
+}
+
+.fsc-2 {
+  font-size: 2rem;
+}
+
+.fsc-3 {
+  font-size: 1.75rem;
+}
+
+.fsc-4 {
+  font-size: 1.5rem;
+}
+
+.fsc-5 {
+  font-size: 1.25rem;
+}
+
+.fsc-6 {
+  font-size: 1rem;
+}
+
 .page-header {
   position: -webkit-sticky;
   position: sticky;
