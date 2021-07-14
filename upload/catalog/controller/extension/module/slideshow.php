@@ -19,6 +19,7 @@ class ControllerExtensionModuleSlideshow extends Controller {
 				$data['banners'][] = array(
 					'title' => $result['title'],
                     'actiontitle' => $result['actiontitle'],
+                    'buttontitle' => $result['buttontitle'],
                     'text' => $result['text'],
 					'link'  => $result['link'],
                     'bojapozadine'  => $result['bojapozadine'],

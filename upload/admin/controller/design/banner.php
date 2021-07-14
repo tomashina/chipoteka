@@ -351,6 +351,7 @@ class ControllerDesignBanner extends Controller {
 				$data['banner_images'][$key][] = array(
 					'title'      => $banner_image['title'],
                     'actiontitle'      => $banner_image['actiontitle'],
+                    'buttontitle'      => $banner_image['buttontitle'],
                     'text'      => $banner_image['text'],
 					'link'       => $banner_image['link'],
                     'bojapozadine'       => $banner_image['bojapozadine'],
