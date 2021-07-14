@@ -10,11 +10,17 @@
     box-shadow: $box-shadow-header;
     z-index: 1030;
 
+    // Fix for Top notification only if content is i none line on all screen sizes
+    // .sidebar also influenced - fix it
+    display: flex;
+    flex-direction: column;
+    height: max-content;
+
 
     @include media-breakpoint-up(xl) {
-        position: fixed;
-        top: 0;
-        right: 0; 
+        // position: fixed;
+        top: 0; 
+        right: 0;
         left: 0;
     }
 
@@ -102,7 +108,7 @@
         }
 
 
-        
+
         // - - - - - - - - - - - - - - - - - - -
         // Mobile
 
@@ -164,7 +170,7 @@
             }
         }
 
-         
+
         @include media-breakpoint-down(sm) {
             .navbar-brand {
                 img {
@@ -189,7 +195,7 @@
             .navbar-tool {
                 padding: 0 0.72rem;
             }
- 
+
         }
 
 
@@ -203,8 +209,8 @@
             .navbar-tool {
                 flex: 1;
                 justify-content: center;
-            } 
- 
+            }
+
         }
 
     }

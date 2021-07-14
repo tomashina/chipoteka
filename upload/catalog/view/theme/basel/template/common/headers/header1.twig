@@ -1,11 +1,11 @@
 <header class="page-header" data-fixed-element>
     {% if notification_status %}
-    <div class="top_notificaiton">
+   
         <div class="alert alert-warning alert-promo {% if top_promo_close %} alert-dismissible {% endif %}  fade show top_notificaiton mb-0 {{ top_promo_align }}" role="alert">
              {{ top_promo_text }}
             <button type="button" class="btn-close" onClick="addCookie('basel_top_promo', 1, 30);$(this).closest('.top_notificaiton').slideUp();$('#sideNav').css('margin-top', '');$('main.offcanvas-enabled').css('margin-top', '')"  data-bs-dismiss="alert" aria-label="Close"><i class="fal fa-times"></i></button>
         </div>
-    </div>
+    
             <script>
                 $(document).ready(function() {
                     if ($(window).width() > 1280) {

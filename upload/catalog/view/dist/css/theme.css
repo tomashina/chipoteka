@@ -35364,13 +35364,11 @@ body {
 }
 
 body > main.offcanvas-enabled {
-  padding-top: 0 !important;
   padding-bottom: 3.3rem;
 }
 
 @media (min-width: 1280px) {
   body > main.offcanvas-enabled {
-    padding-top: 5rem !important;
     padding-bottom: 0;
   }
 }
@@ -35409,11 +35407,15 @@ body > main.offcanvas-enabled {
   background-color: #fff;
   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.09), 0px 1px 21px rgba(0, 0, 0, 0.15);
   z-index: 1030;
+  display: flex;
+  flex-direction: column;
+  height: -webkit-max-content;
+  height: -moz-max-content;
+  height: max-content;
 }
 
 @media (min-width: 1280px) {
   .page-header {
-    position: fixed;
     top: 0;
     right: 0;
     left: 0;

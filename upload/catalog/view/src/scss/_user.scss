@@ -35,15 +35,19 @@ body {
  
 // Offcanvas padding
 body > main.offcanvas-enabled {
-    padding-top: 0 !important;
+    // padding-top: 0 !important;
     padding-bottom: 3.3rem;
 }
  
 @include media-breakpoint-up(xl) {
     body > main.offcanvas-enabled {
-        padding-top: 5rem !important;
+        // padding-top: 5rem !important;
         padding-bottom: 0;
     }
+
+    // If Top notification is visible and one line of text on all screen sizes
+    // .sidebar also influenced - fix it
+    // padding-top: 123px;
 }
 //
 
