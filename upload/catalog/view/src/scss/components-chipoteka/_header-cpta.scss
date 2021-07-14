@@ -8,13 +8,14 @@
     position: sticky;
     background-color: $white;
     box-shadow: $box-shadow-header;
+    z-index: 1030;
+
 
     @include media-breakpoint-up(xl) {
         position: fixed;
         top: 0;
-        right: 0;
+        right: 0; 
         left: 0;
-        z-index: 1030;
     }
 
 
