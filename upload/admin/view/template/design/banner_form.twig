@@ -129,8 +129,14 @@ function addImage(language_id) {
 	html += '</tr>';
 	
 	$('#images' + language_id + ' tbody').append(html);
-	
-	image_row++;
+
+    $('#boja' + image_row).colorpicker({
+        colorSelectors: {
+            '#e31318': '#e31318'
+        }
+    });
+
+    image_row++;
 }
 //--></script>
 
