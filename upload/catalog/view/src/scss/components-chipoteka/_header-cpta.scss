@@ -31,7 +31,7 @@
                 width: 225px;
                 margin-left: -1px;
 
-            
+
 
                 // @include media-breakpoint-only(xl) {
                 //     padding-top: 7px;
@@ -100,6 +100,8 @@
             }
         }
 
+
+        
         // - - - - - - - - - - - - - - - - - - -
         // Mobile
 
@@ -161,13 +163,47 @@
             }
         }
 
-        // 450px below
-        @media only screen and (max-width: 450px) {
+         
+        @include media-breakpoint-down(sm) {
             .navbar-brand {
                 img {
-                    width: 117px;
+                    width: 126px;
                 }
             }
+
+            .navbar-tool {
+                padding: 0 0.9rem;
+            }
+        }
+
+
+
+        @media screen and (max-width: 374px) {
+            .navbar-brand {
+                img {
+                    width: 102px;
+                }
+            }
+
+            .navbar-tool {
+                padding: 0 0.72rem;
+            }
+ 
+        }
+
+
+        @media screen and (max-width: 321px) {
+
+            .navbar-toolbar {
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .navbar-tool {
+                flex: 1;
+                justify-content: center;
+            } 
+ 
         }
 
     }
@@ -266,7 +302,7 @@
                     }
                 }
             }
-          
+
 
             // Header
             .accordion-header {
@@ -352,10 +388,10 @@
                             font-size: 0.906rem;
                             display: flex;
                             transition: all $transition-default;
-                          
+
                             &:hover {
                                 background-color: darken($light, 5);
-                            } 
+                            }
 
                             // Icon
                             &::after {
@@ -416,7 +452,7 @@
 
                                     &:hover {
                                         background-color: darken($light, 11);
-                                    } 
+                                    }
 
                                     // Icon
                                     &::after {
