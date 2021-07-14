@@ -35364,13 +35364,11 @@ body {
 }
 
 body > main.offcanvas-enabled {
-  padding-top: 0 !important;
   padding-bottom: 3.3rem;
 }
 
 @media (min-width: 1280px) {
   body > main.offcanvas-enabled {
-    padding-top: 5rem !important;
     padding-bottom: 0;
   }
 }
@@ -35403,17 +35401,56 @@ body > main.offcanvas-enabled {
   max-width: 768px;
 }
 
+.modal a:hover {
+  color: #171717;
+}
+
+.fsc-1 {
+  font-size: 2.5rem;
+}
+
+.fsc-2 {
+  font-size: 2rem;
+}
+
+.fsc-3 {
+  font-size: 1.75rem;
+}
+
+.fsc-4 {
+  font-size: 1.5rem;
+}
+
+.fsc-5 {
+  font-size: 1.25rem;
+}
+
+.fsc-6 {
+  font-size: 1rem;
+}
+
+.pagination-navigation .pagination {
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
 .page-header {
   position: -webkit-sticky;
   position: sticky;
   background-color: #fff;
   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.09), 0px 1px 21px rgba(0, 0, 0, 0.15);
   z-index: 1030;
+  margin-top: 0 !important;
+  display: flex;
+  flex-direction: column;
+  height: -webkit-max-content;
+  height: -moz-max-content;
+  height: max-content;
 }
 
 @media (min-width: 1280px) {
   .page-header {
-    position: fixed;
     top: 0;
     right: 0;
     left: 0;
@@ -35550,6 +35587,12 @@ body > main.offcanvas-enabled {
   .page-header .navbar .navbar-tool {
     flex: 1;
     justify-content: center;
+  }
+}
+
+@media (min-width: 1280px) {
+  .sidebar.active-top-notification {
+    margin-top: 3rem;
   }
 }
 
@@ -35943,7 +35986,6 @@ body > main.offcanvas-enabled {
 }
 
 .page-search {
-  position: absolute;
   width: 100%;
   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.09), 0px 1px 21px rgba(0, 0, 0, 0.15);
   margin-right: auto !important;
@@ -36441,6 +36483,13 @@ body > main.offcanvas-enabled {
   min-width: 200px;
 }
 
+@media (max-width: 499.98px) {
+  .product-container .product-features .product-badge-cpta {
+    width: 100%;
+    margin-right: 0 !important;
+  }
+}
+
 .product-container .product-features .description-short .title,
 .product-container .product-features .description-short p {
   font-size: 1rem;
@@ -36583,9 +36632,12 @@ body > main.offcanvas-enabled {
   }
 }
 
-.product-container .product-features .product-accordion .accordion-body,
-.product-container .product-features .product-accordion .accordion-button {
+.product-container .product-features .product-accordion .accordion-body {
   padding: 0.313rem 1rem;
+}
+
+.product-container .product-features .product-accordion .accordion-button {
+  padding: 0.72rem 1rem;
 }
 
 .product-container .product-features .product-delivery-time {

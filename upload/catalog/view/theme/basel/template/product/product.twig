@@ -1,5 +1,5 @@
 {{ header }}
-<main class="offcanvas-enabled product-container" style="padding-top: 5rem;">
+<main class="offcanvas-enabled product-container">
     <!-- Custom page title-->
     <div class="page-title-overlap  pt-4">
         <div class="container-fluid py-2">
@@ -31,17 +31,17 @@
                     <div class="tab-pane fade show active" id="general" role="tabpanel">
                         <div class="row">
                             <!-- Product gallery-->
-                            <div class="col-md col-xl-auto">
+                            <div class="col-md col-xxl-auto">
                                 <div class="product-gallery " style="display: block !important;">
                                     <div class="product-gallery-preview gallery">
                                         {% if thumb or images %}
                                             {% if thumb %}
-                                                <div class="product-gallery-preview-item active" id="first"><a class="gallery-item rounded-3 mb-grid-gutter " href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"></a>
+                                                <div class="product-gallery-preview-item active" id="first"><a class="gallery-item rounded-3" href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"></a>
 
                                                 </div>
                                             {% endif %}
                                             {% for image in images %}
-                                                <div class="product-gallery-preview-item" id="image{{ image.imageid }}"><a class="gallery-item rounded-3 mb-grid-gutter" href="{{ image.popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ image.thumb_lg }}"  alt="{{ heading_title }}"></a></div>
+                                                <div class="product-gallery-preview-item" id="image{{ image.imageid }}"><a class="gallery-item rounded-3" href="{{ image.popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ image.thumb_lg }}"  alt="{{ heading_title }}"></a></div>
                                             {% endfor %}
                                         {% endif %}
                                     </div>
@@ -61,7 +61,7 @@
                                 </div>
                             </div>
                             <!-- Product details-->
-                            <div class="col">
+                            <div class="col" style="min-width: 1px;">
                                 <div class="product-features" id="product">
 
                                     <div class="badges-wrapper">
@@ -134,7 +134,7 @@
                                     <div class="accordion product-accordion mb-4" id="productPanels">
 
                                         <div class="accordion-item">
-                                            <h4 class="accordion-header"><a class="accordion-button collapsed" href="#shippingOptions" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="shippingOptions"><i class="far fa-map-marker-minus text-muted lead align-middle mt-n1 me-2"></i>Dostupnost proizvoda po poslovnicama</a></h4>
+                                            <h4 class="accordion-header"><a class="accordion-button collapsed" href="#shippingOptions" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="shippingOptions"><i class="far fa-map-marker-minus text-muted lead align-middle mt-n1 me-3"></i>Dostupnost proizvoda po poslovnicama</a></h4>
                                             <div class="accordion-collapse collapse" id="shippingOptions" data-bs-parent="#productPanels">
                                                 <div class="accordion-body">
                                                     <div class="d-flex justify-content-between border-bottom pt-2 pb-3">
@@ -143,7 +143,7 @@
                                                                 Ulica grada Vukovara 269E</a>
                                                             </div>
                                                         </div>
-                                                        <div><i class="far fa-map-marker-minus"></i></div>
+                                                        <div><i class="far fa-map-marker-minus me-2"></i></div>
 
 
                                                     </div>
@@ -153,7 +153,7 @@
                                                                     Vice Vukova 6</a></div>
 
                                                         </div>
-                                                        <div><i class="far fa-map-marker-minus"></i></div>
+                                                        <div><i class="far fa-map-marker-minus me-2"></i></div>
 
                                                     </div>
                                                     <div class="d-flex justify-content-between border-bottom py-3">
@@ -162,7 +162,7 @@
                                                                     Franje Tuđmana 19</a></div>
 
                                                         </div>
-                                                        <div><i class="far fa-map-marker-minus"></i></div>
+                                                        <div><i class="far fa-map-marker-minus me-2"></i></div>
 
                                                     </div>
                                                     <div class="d-flex justify-content-between pt-3 pb-2">
@@ -171,7 +171,7 @@
                                                                     Bože Peričića 26</a></div>
 
                                                         </div>
-                                                        <div><i class="far fa-map-marker-minus"></i></div>
+                                                        <div><i class="far fa-map-marker-minus me-2"></i></div>
 
                                                     </div>
 
@@ -179,7 +179,7 @@
                                             </div>
                                         </div>
                                         <div class="accordion-item">
-                                            <h4 class="accordion-header"><a class="accordion-button collapsed" href="#localStore" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="localStore"><i class="far fa-tags text-muted fs-lg align-middle mt-n1 me-2"></i>Način plaćanja</a></h4>
+                                            <h4 class="accordion-header"><a class="accordion-button collapsed" href="#localStore" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="localStore"><i class="far fa-tags text-muted fs-lg align-middle mt-n1 me-3"></i>Način plaćanja</a></h4>
                                             <div class="accordion-collapse collapse" id="localStore" data-bs-parent="#productPanels">
                                                 <div class="accordion-body">
                                                     <h6 class="mt-2">Jednokratno plaćanje:</h6>
@@ -524,7 +524,7 @@
                        // $('#note').prepend('<div class="alert alert-success alert-dismissible fade show popup-note" role="alert">'  + json.success + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
 
                         $('#myModal').modal('show');
-                        $('#note').html('<div class="row"><div class="col-sm-3"><img src="' + json.image + '" /></div><div class="col-sm-9 d-flex align-items-center"><p class="align-middle">' + json.success +'</p></div></div>');
+                        $('#note').html('<div class="row"><div class="col-sm-3 col-lg-4"><img src="' + json.image + '" /></div><div class="col-sm d-flex align-items-center"><p class="align-middle">' + json.success +'</p></div></div>');
 
 
                         $('.table-cell').removeClass('has-error');

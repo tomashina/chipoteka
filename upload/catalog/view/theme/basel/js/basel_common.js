@@ -285,7 +285,7 @@ var cart = {
 
 
 					$('#myModal').modal('show');
-					$('#note').html('<div class="row"><div class="col-sm-3"><img src="' + json.image + '" /></div><div class="col-sm-9 d-flex align-items-center"><p class="align-middle">' + json.success +'</p></div></div>');
+					$('#note').html('<div class="row"><div class="col-sm-3 col-lg-4"><img src="' + json.image + '" /></div><div class="col-sm d-flex align-items-center"><p class="align-middle">' + json.success +'</p></div></div>');
 
 
 				/*	$('.alert, .popup-note, .basel-spinner.ajax-call, .text-danger').remove();

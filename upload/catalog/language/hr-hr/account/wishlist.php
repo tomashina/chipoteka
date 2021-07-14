@@ -8,7 +8,7 @@ $_['text_account']  = 'Korisnički račun';
 $_['text_instock']  = 'Na skladištu (lageru)';
 $_['text_wishlist'] = 'Lista želja (%s)';
 $_['text_login']    = 'Morate se <a href="%s">prijaviti (logirati)</a> ili <a href="%s">kreirati korisnički račun</a> da možete snimiti <a href="%s">%s</a> u Vašu <a href="%s">listu želja</a>!';
-$_['text_success']  = 'Uspješno: Dodali ste <a href="%s">%s</a> u Vašu <a href="%s">listu želja</a>!';
+$_['text_success']  = '<span class="text-uppercase d-block fw-lighter fsc-4 mb-2">Uspješno:</span> Dodali ste <strong><a class="text-accent" href="%s">%s</a></strong> u Vašu <a class="text-decoration-underline" href="%s">listu želja</a>!';
 // $_['text_exists']   = '<a href="%s">%s</a> već je dodan u Vašu <a href="%s">listu želja</a>!'; // postojalo u verziji OC 2.0.3.1
 $_['text_remove']   = 'Uspješno: Ažurirali ste svoju listu želja!';
 $_['text_empty']    = 'Vaša lista želja je prazna.';

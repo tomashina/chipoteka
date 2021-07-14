@@ -11,7 +11,7 @@ $_['decimal_point']         = ',';
 $_['thousand_point']        = '.';
 
 // Text
-$_['text_home']             = '<i class="ci-home"></i>';
+$_['text_home']             = '<i class="fal fa-home"></i>';
 $_['text_yes']              = 'Da';
 $_['text_no']               = 'Ne';
 

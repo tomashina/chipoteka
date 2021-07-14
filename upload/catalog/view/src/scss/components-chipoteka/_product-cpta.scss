@@ -5,8 +5,6 @@
 
 .product-container {
 
-
-
     // - - - - - - - - - - - - - - - -
     // Title
 
@@ -73,6 +71,11 @@
 
         .product-badge-cpta {
             min-width: 200px;
+
+            @include media-breakpoint-down(sm) {
+                width: 100%;
+                margin-right: 0 !important
+               }
         }
 
 
@@ -245,9 +248,12 @@
         // Product Accordion
         .product-accordion {
             
-            .accordion-body,
-            .accordion-button {
+            .accordion-body {
                 padding: 0.313rem 1rem;
+            }
+
+            .accordion-button {
+                padding: 0.72rem 1rem;
             }
  
         }

@@ -18,6 +18,6 @@ $_['text_summary']      = 'Kratki pregeld (rezime)';
 $_['text_weight']       = 'Težina';
 $_['text_dimension']    = 'Dimenzije (D x Š x V)';
 $_['text_compare']      = 'Usporedi artikle (%s)';
-$_['text_success']      = 'Uspješno: Dodali ste <a href="%s">%s</a> u Vašu <a href="%s">usporedbu artikala</a>!';
+$_['text_success']      = '<span class="text-uppercase d-block fw-lighter fsc-4 mb-2">Uspješno:</span> Dodali ste <strong><a class="text-accent" href="%s">%s</a></strong> u Vašu <a class="text-decoration-underline" href="%s">usporedbu artikala</a>!';
 $_['text_remove']       = 'Uspješno: Ažurirali ste artikle za usporedbu!';
 $_['text_empty']        = 'Niste odabrali niti jedan artikl za usporedbu.';

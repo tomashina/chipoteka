@@ -1,5 +1,5 @@
 {{ header }}
-<main class="offcanvas-enabled" style="padding-top: 5rem;">
+<main class="offcanvas-enabled">
     <!-- Custom page title-->
     <div class="page-title-overlap pt-4 pe-lg-3 ">
         <div class="container-fluid py-2">
@@ -30,11 +30,11 @@
             <div class="product-filter  rounded-3 p-4 mt-n5 mb-4">
                 <div class="d-flex justify-content-between align-items-center ">
                     <div class="dropdown me-2 "><a class="btn btn-outline-secondary dropdown-toggle " href="#shop-filters" data-bs-toggle="collapse"><i class="fas fa-filter me-2"></i> <span ></span>Filter</a></div>
-                    <div class="d-flex pagination-navigation">
+                    <div class="d-flex pagination-navigation px-3">
                         {{ pagination }}
                     </div>
                     <div class="d-flex">
-                        <label class="text-light fs-sm opacity-75 text-nowrap me-2 d-none d-sm-block" for="sorting">{{ text_sort }}</label>
+                        <label class="fs-sm opacity-75 text-nowrap me-2 sr-only" for="sorting">{{ text_sort }}</label>
                         <select id="input-sort" class="form-select " onchange="location = this.value;">
                             {% for sorts in sorts %}
                                 {% if sorts.value == '%s-%s'|format(sort, order) %}
@@ -64,7 +64,7 @@
                     <p>{{ text_empty }}</p>
                 {% endif %}
             </div>
-            <hr class="my-3">
+      
 
             <nav class="d-flex justify-content-center pt-2 pagination-navigation" aria-label="Page navigation">
                 {{ pagination }}
