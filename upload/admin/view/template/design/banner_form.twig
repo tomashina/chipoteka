@@ -119,6 +119,15 @@
   <script type="text/javascript"><!--
 var image_row = {{ image_row }};
 
+
+    for (let i = 0; i < image_row; i++) {
+      $('#boja' + i).colorpicker({colorSelectors: {
+          '#000000': '#000000',
+          '#1b84e5': '#1b84e5',
+          '#e31318': '#e31318'
+        }});
+    }
+
 function addImage(language_id) {
 	html  = '<tr id="image-row' + image_row + '">';
     html += '  <td class="text-left"><label>Naslov</label><input type="text" name="banner_image[' + language_id + '][' + image_row + '][title]" value="" placeholder="{{ entry_title }}" class="form-control" /><br><label>Naziv akcije</label><input type="text" name="banner_image[' + language_id + '][' + image_row + '][actiontitle]" value="" placeholder="{{ entry_actiontitle }}" class="form-control" /><br><label>Opis</label><textarea name="banner_image[' + language_id + '][' + image_row + '][text]" value="" placeholder="{{ entry_text }}" class="form-control" ></textarea></td>';
@@ -132,7 +141,10 @@ function addImage(language_id) {
 
     $('#boja' + image_row).colorpicker({
         colorSelectors: {
-            '#e31318': '#e31318'
+          '#000000': '#000000',
+            '#e31318': '#e31318',
+          '#1b84e5': '#1b84e5'
+
         }
     });
 
@@ -140,17 +152,7 @@ function addImage(language_id) {
 }
 //--></script>
 
-  <script>
-    $(function () {
-      $('#boja0, #boja1, #boja2, #boja3, #boja4, #boja5, #boja6, #boja7, #boja8, #boja9').colorpicker({
-        colorSelectors: {
-          '#000000': '#000000',
-          '#1b84e5': '#1b84e5',
-          '#e31318': '#e31318'
-        }
-      });
-    });
-  </script>
+
 
   <script type="text/javascript"><!--
 $('#language a:first').tab('show');
