@@ -66,7 +66,7 @@ class ControllerCheckoutSuccess extends Controller {
 
         ///orderinfo
         ///
-        if($order_id){
+        if (isset($order_id)) {
             $this->load->language('account/order');
             $this->load->model('account/order');
         $data['order_id'] = (int)$order_id;
@@ -242,24 +242,49 @@ class ControllerCheckoutSuccess extends Controller {
 
         }
         /// orderinoend
+          if (isset($data['paymethod'])) {
 
-        if ($data['paymethod']=='cod'){
+              if ($data['paymethod'] == 'cod') {
 
-            $data['text_message'] = sprintf($this->language->get('text_pouzece'), $order_id);
+                  $data['text_message'] = sprintf($this->language->get('text_pouzece'), $order_id);
 
-        }
+              }
+              else if ($data['paymethod'] == 'bank_transfer') {
 
-        else if ($data['paymethod']=='bank_transfer'){
+                  $data['text_message'] = sprintf($this->language->get('text_bank'), $order_id, $ukupno, $order_id);
 
-            $data['text_message'] = sprintf($this->language->get('text_bank'), $order_id, $ukupno, $order_id);
 
-        }
+                  $curl = curl_init();
 
-        else if ($data['paymethod']=='wspay'){
+                  curl_setopt_array($curl, array(
+                      CURLOPT_URL => "https://hub3.bigfish.software/api/v1/barcode",
+                      CURLOPT_RETURNTRANSFER => true,
+                      CURLOPT_ENCODING => "",
+                      CURLOPT_MAXREDIRS => 10,
+                      CURLOPT_TIMEOUT => 0,
+                      CURLOPT_FOLLOWLOCATION => true,
+                      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                      CURLOPT_CUSTOMREQUEST => "POST",
+                      CURLOPT_POSTFIELDS => "{\n    \"renderer\": \"image\",\n    \"options\": {\n        \"format\": \"png\",\n        \"scale\": 3,\n        \"ratio\": 3,\n        \"color\": \"#2c3e50\",\n        \"bgColor\": \"#eee\",\n        \"padding\": 20\n    },\n    \"data\": {\n        \"amount\": 100000,\n        \"sender\": {\n            \"name\": \"Ivan Habunek\",\n            \"street\": \"Savska cesta 13\",\n            \"place\": \"10000 Zagreb\"\n        },\n        \"receiver\": {\n            \"name\": \"Big Fish Software d.o.o.\",\n            \"street\": \"Savska cesta 13\",\n            \"place\": \"10000 Zagreb\",\n            \"iban\": \"HR6623400091110651272\",\n            \"model\": \"00\",\n            \"reference\": \"123-456-789\"\n        },\n        \"purpose\": \"ANTS\",\n        \"description\": \"Developing a HUB-3 API\"\n    }\n}",
+                      CURLOPT_HTTPHEADER => array(
+                          "Content-Type: application/json"
+                      ),
+                  ));
 
-            $data['text_message'] = sprintf($this->language->get('text_wspay'), $order_id);
+                  $response = curl_exec($curl);
 
-        }
+                  curl_close($curl);
+                  $data['uplatnica'] = $response;
+
+
+              }
+              else if ($data['paymethod'] == 'wspay') {
+
+                  $data['text_message'] = sprintf($this->language->get('text_wspay'), $order_id);
+
+              }
+
+          }
 
 		$data['continue'] = $this->url->link('common/home');
 
