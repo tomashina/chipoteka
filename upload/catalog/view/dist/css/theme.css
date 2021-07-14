@@ -36483,6 +36483,13 @@ body > main.offcanvas-enabled {
   min-width: 200px;
 }
 
+@media (max-width: 499.98px) {
+  .product-container .product-features .product-badge-cpta {
+    width: 100%;
+    margin-right: 0 !important;
+  }
+}
+
 .product-container .product-features .description-short .title,
 .product-container .product-features .description-short p {
   font-size: 1rem;

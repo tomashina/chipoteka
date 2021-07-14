@@ -31,17 +31,17 @@
                     <div class="tab-pane fade show active" id="general" role="tabpanel">
                         <div class="row">
                             <!-- Product gallery-->
-                            <div class="col-md col-xl-auto">
+                            <div class="col-md col-xxl-auto">
                                 <div class="product-gallery " style="display: block !important;">
                                     <div class="product-gallery-preview gallery">
                                         {% if thumb or images %}
                                             {% if thumb %}
-                                                <div class="product-gallery-preview-item active" id="first"><a class="gallery-item rounded-3 mb-grid-gutter " href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"></a>
+                                                <div class="product-gallery-preview-item active" id="first"><a class="gallery-item rounded-3" href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"></a>
 
                                                 </div>
                                             {% endif %}
                                             {% for image in images %}
-                                                <div class="product-gallery-preview-item" id="image{{ image.imageid }}"><a class="gallery-item rounded-3 mb-grid-gutter" href="{{ image.popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ image.thumb_lg }}"  alt="{{ heading_title }}"></a></div>
+                                                <div class="product-gallery-preview-item" id="image{{ image.imageid }}"><a class="gallery-item rounded-3" href="{{ image.popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ image.thumb_lg }}"  alt="{{ heading_title }}"></a></div>
                                             {% endfor %}
                                         {% endif %}
                                     </div>
@@ -61,7 +61,7 @@
                                 </div>
                             </div>
                             <!-- Product details-->
-                            <div class="col">
+                            <div class="col" style="min-width: 1px;">
                                 <div class="product-features" id="product">
 
                                     <div class="badges-wrapper">
