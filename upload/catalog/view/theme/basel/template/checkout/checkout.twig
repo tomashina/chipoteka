@@ -25,7 +25,7 @@
                         <div class="step-progress"><span class="step-count">1</span></div>
                         <div class="step-label"><i class="ci-cart"></i>Košarica</div></a><a id="stepcheckout" class="step-item  " href="{{ checkout }}">
                         <div class="step-progress"><span class="step-count">2</span></div>
-                        <div class="step-label"><i class="ci-user-circle"></i>Vaši podaci</div></a><a id="button-guest" href="javascript:;" class="step-item"  >
+                        <div class="step-label"><i class="ci-user-circle"></i>Vaši podaci</div></a><a id="button-guest" href="javascript:;" class="step-item">
                         <div class="step-progress"><span class="step-count">3</span></div>
                         <div class="step-label"><i class="ci-package"></i>Dostava</div></a><a id="button-shipping-method" class="step-item" href="javascript:;" >
                         <div class="step-progress"><span class="step-count">4</span></div>
@@ -44,30 +44,30 @@
 
             <section class="col-lg-8 "  >
 
-                    {% if error_warning %}
+                {% if error_warning %}
 
-                        <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                            {{ error_warning }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
+                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                        {{ error_warning }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
 
 
-                  {% endif %}
+                {% endif %}
 
                 <hr>
-                 <!--shipping-address -->
+                <!--shipping-address -->
                 <div class="panel-group" id="accordion">
 
 
-                        <div id="collapse-checkout-option">
-                            <div class="card-body p-0"></div>
-                        </div>
+                    <div id="collapse-checkout-option">
+                        <div class="card-body p-0"></div>
+                    </div>
 
                     {% if not logged and account != 'guest' %}
 
-                            <div  id="collapse-payment-address">
-                                <div class="card-body p-0"></div>
-                            </div>
+                        <div  id="collapse-payment-address">
+                            <div class="card-body p-0"></div>
+                        </div>
 
                     {% else %}
                         <div id="collapse-payment-address">
@@ -77,53 +77,53 @@
                     {% if shipping_required %}
 
 
-                            <div  id="collapse-shipping-address">
-                                <div class="card-body p-0"></div>
-                            </div>
+                        <div  id="collapse-shipping-address">
+                            <div class="card-body p-0"></div>
+                        </div>
 
 
 
-                            <div  id="collapse-shipping-method">
-                                <div class="card-body p-0"></div>
-                            </div>
+                        <div  id="collapse-shipping-method">
+                            <div class="card-body p-0"></div>
+                        </div>
 
                     {% endif %}
 
 
-                        <div  id="collapse-payment-method">
-                            <div class="card-body p-0"></div>
-                        </div>
+                    <div  id="collapse-payment-method">
+                        <div class="card-body p-0"></div>
+                    </div>
 
 
-                        <div  id="collapse-checkout-confirm">
-                            <div class="card-body p-0"></div>
-                        </div>
+                    <div  id="collapse-checkout-confirm">
+                        <div class="card-body p-0"></div>
+                    </div>
 
                 </div>
-            <!-- end shipping-address -->
+                <!-- end shipping-address -->
 
 
             </section>
 
-             <aside class="d-none d-lg-block col-lg-4 pt-4 pt-lg-0 ps-xl-5">
-            <div class="bg-white rounded-3 shadow-lg p-4">
-                <div class="py-2 px-xl-2">
-                    <div  id="sazetak">
+            <aside class="d-none d-lg-block col-lg-4 pt-4 pt-lg-0 ps-xl-5">
+                <div class="bg-white rounded-3 shadow-lg p-4">
+                    <div class="py-2 px-xl-2">
+                        <div  id="sazetak">
+
+                        </div>
+                        <div class="accordion" id="order-options">
+                            {% if modules %}
+                                {% for module in modules %}
+                                    {{ module }}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+
+
 
                     </div>
-                    <div class="accordion" id="order-options">
-                        {% if modules %}
-                            {% for module in modules %}
-                                {{ module }}
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-
-
-
                 </div>
-            </div>
-        </aside>
+            </aside>
 
 
 
@@ -550,7 +550,7 @@
         });
 
         // Guest
-        $(document).delegate('#button-guest', 'click', function() {
+        $(document).delegate('#button-guest, #button-back-to-shipping-method', 'click', function() {
             $.ajax({
                 url: 'index.php?route=checkout/guest/save',
                 type: 'post',
@@ -601,7 +601,6 @@
                                         url: 'index.php?route=checkout/guest_shipping',
                                         dataType: 'html',
                                         success: function(html) {
-
                                             $('#collapse-shipping-address .card-body').html(html);
 
                                           },
@@ -611,15 +610,16 @@
                                     });
 
                                     $('#collapse-shipping-method .card-body').html(html);
+                                    $('#collapse-shipping-method').show();
+                                    $( "#button-shipping-method" ).removeClass('current active');
 
                                     $('#collapse-payment-address').hide();
+                                    $('#collapse-payment-method').hide();
                                     $('#collapse-shipping-address').hide();
                                     $('#collapse-checkout-option').hide();
 
                                     $( "#stepcheckout" ).removeClass( 'current');
                                     $( "#button-guest" ).addClass( 'current active');
-
-
                                 },
                                 error: function(xhr, ajaxOptions, thrownError) {
                                     alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -768,6 +768,7 @@
                                 $('#sazetak').load('index.php?route=common/total/info #total-content > *');
 
                                 $('#collapse-payment-method .card-body').html(html);
+                                $('#collapse-payment-method').show();
 
                             },
                             error: function(xhr, ajaxOptions, thrownError) {
