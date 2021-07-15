@@ -35,7 +35,7 @@
       </tr>
     </tbody>
   </table>
-  {% if comment %}
+
   <table style="border-collapse: collapse; width: 100%; border-top: 1px solid #DDDDDD; border-left: 1px solid #DDDDDD; margin-bottom: 20px;">
     <thead>
       <tr>
@@ -56,12 +56,15 @@
 
       </td>
     </tr>
+    {% if comment %}
       <tr>
         <td style="font-size: 12px;	border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: left; padding: 7px;">{{ comment }}</td>
       </tr>
+    {% endif %}
+
     </tbody>
   </table>
-  {% endif %}
+
   <table style="border-collapse: collapse; width: 100%; border-top: 1px solid #DDDDDD; border-left: 1px solid #DDDDDD; margin-bottom: 20px;">
     <thead>
       <tr>
