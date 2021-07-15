@@ -15,6 +15,14 @@
 
 
         {{ text_message }}
+       <div class="mb-3">
+         {% if uplatnica =='error' %}
+        <p> Došlo je do greške prilikom generiranje 2D koda.</p>
+         {% else %}
+           <img src="data:image/png;base64,{{ uplatnica }}" class="img-responsive"/>
+         {% endif %}
+       </div>
+
         {% if order_id %}
         <table class="table table-bordered table-striped">
           <thead>
