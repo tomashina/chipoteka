@@ -15,9 +15,10 @@
 
 
         {{ text_message }}
+       <div class="mb-3">
+         <img src="data:image/png;base64,{{ uplatnica }}" class="img-responsive"/>
 
-       <img src="{{ uplatnica }}" />
-
+       </div>
 
         {% if order_id %}
         <table class="table table-bordered table-striped">

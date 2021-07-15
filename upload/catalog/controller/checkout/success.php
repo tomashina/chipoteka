@@ -55,17 +55,7 @@ class ControllerCheckoutSuccess extends Controller {
 			'href' => $this->url->link('checkout/success')
 		);
 
-	/*	if ($this->customer->isLogged()) {
-			$data['text_message'] = sprintf($this->language->get('text_customer'), $this->url->link('account/account', '', true), $this->url->link('account/order', '', true), $this->url->link('account/download', '', true), $this->url->link('information/contact'));
-		} else {
-			$data['text_message'] = sprintf($this->language->get('text_guest'), $this->url->link('information/contact'));
-		}*/
-
-
-
-
         ///orderinfo
-        ///
         if (isset($order_id)) {
             $this->load->language('account/order');
             $this->load->model('account/order');
@@ -218,6 +208,7 @@ class ControllerCheckoutSuccess extends Controller {
             if ($total['title']=='Ukupno'){
 
                 $ukupno = $this->currency->format($total['value'], $order_info['currency_code'], $order_info['currency_value']);
+                $ukupnohub = number_format((float)$total['value'], 2, '.', '');
             }
             $data['totals'][] = array(
                 'title' => $total['title'],
@@ -253,8 +244,72 @@ class ControllerCheckoutSuccess extends Controller {
 
                   $data['text_message'] = sprintf($this->language->get('text_bank'), $order_id, $ukupno, $order_id);
 
+                  $hubstring = array (
+                      'renderer' => 'image',
+                      'options' =>
+                          array (
+                              "format" => "jpg",
+                              "scale" =>  3,
+                              "ratio" =>  3,
+                              "color" =>  "#2c3e50",
+                              "bgColor" => "#fff",
+                              "padding" => 20
+                          ),
+                      'data' =>
+                          array (
+                              //'amount' => floatval($ukupnohub),
 
-                  $data['uplatnica'] = "https://hub3.bigfish.software/api/v1/barcode?renderer=image&options%5Bformat%5D=png&options%5Bcolor%5D=%23000000&data%5Bamount%5D=100000&data%5Bsender%5D%5Bname%5D=Ivan+Habunek&data%5Bsender%5D%5Bstreet%5D=Savska+cesta+13&data%5Bsender%5D%5Bplace%5D=10000+Zagreb&data%5Breceiver%5D%5Bname%5D=Big+Fish+Software+d.o.o.&data%5Breceiver%5D%5Bstreet%5D=Savska+cesta+13&data%5Breceiver%5D%5Bplace%5D=10000+Zagreb&data%5Breceiver%5D%5Biban%5D=HR6623400091110651272&data%5Breceiver%5D%5Bmodel%5D=00&data%5Breceiver%5D%5Breference%5D=123-456-789&data%5Bpurpose%5D=ANTS&data%5Bdescription%5D=Developing+a+HUB-3+API";
+                              'amount' => '1000',
+                              'sender' =>
+                                  array (
+                                      'name' => $order_info['payment_firstname'].' '.$order_info['payment_lastname'],
+                                      'street' => $order_info['shipping_address_1'],
+                                      'place' => $order_info['shipping_postcode'].' '.$order_info['shipping_city'],
+                                  ),
+                              'receiver' =>
+                                  array (
+                                      'name' => 'Z - EL d.o.o.',
+                                      'street' => 'Industrijska cesta 28',
+                                      'place' => '10360 Sesvete ',
+                                      'iban' => 'HR4424070001100582698',
+                                      'model' => '05',
+                                      'reference' => '21416540',
+                                  ),
+                              'purpose' => 'CMDT',
+                              'description' => 'Web narudžba Chipoteka',
+                          ),
+                  );
+
+                  $postString = json_encode($hubstring);
+
+                  $url = 'https://hub3.bigfish.software/api/v1/barcode';
+                  $ch = curl_init($url);
+
+                  # Setting our options
+                  curl_setopt($ch, CURLOPT_POST, 1);
+                  curl_setopt($ch, CURLOPT_POSTFIELDS, $postString);
+                  curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+                  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                  curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+                  # Get the response
+
+                  $response = curl_exec($ch);
+                  curl_close($ch);
+
+
+                  $json = json_decode($response);
+
+
+                 if(isset($json->message)){
+                      $this->db->query("UPDATE " . DB_PREFIX . "order SET scanimage = '" . $response->errors[0] . "' WHERE order_id = '" . (int)$order_id . "'");
+                      $data['uplatnica'] = 'error';
+                 }
+                 else{
+                     $response = base64_encode($response);
+                     $data['uplatnica'] = $response;
+                     $this->db->query("UPDATE " . DB_PREFIX . "order SET scanimage = '" . $response . "' WHERE order_id = '" . (int)$order_id . "'");
+
+                 }
 
 
               }
