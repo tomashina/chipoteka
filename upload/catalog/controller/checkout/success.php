@@ -257,9 +257,7 @@ class ControllerCheckoutSuccess extends Controller {
                           ),
                       'data' =>
                           array (
-                              //'amount' => floatval($ukupnohub),
-
-                              'amount' => '1000',
+                              'amount' => floatval($ukupnohub),
                               'sender' =>
                                   array (
                                       'name' => $order_info['payment_firstname'].' '.$order_info['payment_lastname'],
@@ -301,7 +299,7 @@ class ControllerCheckoutSuccess extends Controller {
 
 
                  if(isset($json->message)){
-                      $this->db->query("UPDATE " . DB_PREFIX . "order SET scanimage = '" . $response->errors[0] . "' WHERE order_id = '" . (int)$order_id . "'");
+                      $this->db->query("UPDATE " . DB_PREFIX . "order SET scanimage = '" . $json->errors[0] . "' WHERE order_id = '" . (int)$order_id . "'");
                       $data['uplatnica'] = 'error';
                  }
                  else{
