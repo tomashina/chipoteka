@@ -16,10 +16,12 @@
 
         {{ text_message }}
        <div class="mb-3">
+         {% if paymethod=='bank_transfer'%}
          {% if uplatnica =='error' %}
         <p> Došlo je do greške prilikom generiranje 2D koda.</p>
          {% else %}
            <img src="data:image/png;base64,{{ uplatnica }}" class="img-responsive"/>
+         {% endif %}
          {% endif %}
        </div>
 
