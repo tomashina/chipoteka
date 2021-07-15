@@ -34,3 +34,13 @@ $_['text_update_order_status']  = 'Vaša narudžba ažurirana je na slijedeći s
 $_['text_update_comment']       = 'Komentari uz Vašu narudžbu su:';
 $_['text_update_link']          = 'Da biste pregledali Vašu narudžbu, kliknite na link ispod:';
 $_['text_update_footer']        = 'Ako imate bilo kakvih dodatnih pitanja, molim odgovorite na ovaj e-mail.';
+
+$_['text_pouzece']           = '<p>Uredno smo zaprimili Vašu narudžbu kao i uplatu za narudžbu broj  %s</p><p>Naš tim u webshopu će je obraditi u najbržem mogućem roku.</p><p>Podsjećamo Vas da ćete plaćanje obaviti kod kurira naše dostavne službe pri preuzimanju paketa, te Vas molimo ukoliko ste u mogućnosti da pripremite točan iznos novca za Vašu narudžbu.</p>';
+
+$_['text_bank']           = '<p>Uredno smo zaprimili Vašu narudžbu broj %s i zahvaljujemo Vam.</p><p>Molimo vas da izvršite uplatu po sljedećim uputama za plaćanje.</p><p> Rok za uplatu je maksimalno 48h tijekom koga robu koju ste naručili držimo rezerviranu za vas.</p><p> Ukoliko u tom roku ne zaprimimo uplatu, nažalost moramo poništiti ovu narudžbu.</p>
+IBAN RAČUN: HR4424070001100582698<br>
+MODEL: 05 POZIV NA BROJ: %s</p>
+
+<p>ILI JEDNOSTAVNO POSKENIRAJTE 2D BARKOD</p>';
+
+$_['text_wspay']           = '<p>Uredno smo zaprimili Vašu narudžbu kao i uplatu za narudžbu broj  %s</p><p>Naš tim u webshopu će je obraditi u najbržem mogućem roku.</p>';
