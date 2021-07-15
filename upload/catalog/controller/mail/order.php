@@ -113,7 +113,7 @@ class ControllerMailOrder extends Controller {
 
               $data['text_message'] = sprintf($this->language->get('text_bank'), $order_info['order_id'], $order_info['order_id']);
 
-              $data['scainimage'] = $order_info['scainimage'];
+              $data['scanimage'] = $order_info['scanimage'];
 
           }
 
