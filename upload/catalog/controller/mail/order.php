@@ -105,13 +105,13 @@ class ControllerMailOrder extends Controller {
 
         if ($order_info['payment_code'] == 'cod') {
 
-            $data['text_message'] = sprintf($this->language->get('text_pouzece'), $order_info['order_id']);
+            $data['text_message'] = sprintf($language->get('text_pouzece'), $order_info['order_id']);
 
         }
 
           else if ($order_info['payment_code'] == 'bank_transfer') {
 
-              $data['text_message'] = sprintf($this->language->get('text_bank'), $order_info['order_id'], $order_info['order_id']);
+              $data['text_message'] = sprintf($language->get('text_bank'), $order_info['order_id'], $order_info['order_id']);
 
               $data['scanimage'] = $order_info['scanimage'];
 
@@ -119,7 +119,7 @@ class ControllerMailOrder extends Controller {
 
           else if ($order_info['payment_code'] == 'wspay') {
 
-              $data['text_message'] = sprintf($this->language->get('text_wspay'), $order_id);
+              $data['text_message'] = sprintf($language->get('text_wspay'),  $order_info['order_id']);
 
           }
 
