@@ -254,27 +254,7 @@ class ControllerCheckoutSuccess extends Controller {
                   $data['text_message'] = sprintf($this->language->get('text_bank'), $order_id, $ukupno, $order_id);
 
 
-                  $curl = curl_init();
-
-                  curl_setopt_array($curl, array(
-                      CURLOPT_URL => "https://hub3.bigfish.software/api/v1/barcode",
-                      CURLOPT_RETURNTRANSFER => true,
-                      CURLOPT_ENCODING => "",
-                      CURLOPT_MAXREDIRS => 10,
-                      CURLOPT_TIMEOUT => 0,
-                      CURLOPT_FOLLOWLOCATION => true,
-                      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                      CURLOPT_CUSTOMREQUEST => "POST",
-                      CURLOPT_POSTFIELDS => "{\n    \"renderer\": \"image\",\n    \"options\": {\n        \"format\": \"png\",\n        \"scale\": 3,\n        \"ratio\": 3,\n        \"color\": \"#2c3e50\",\n        \"bgColor\": \"#eee\",\n        \"padding\": 20\n    },\n    \"data\": {\n        \"amount\": 100000,\n        \"sender\": {\n            \"name\": \"Ivan Habunek\",\n            \"street\": \"Savska cesta 13\",\n            \"place\": \"10000 Zagreb\"\n        },\n        \"receiver\": {\n            \"name\": \"Big Fish Software d.o.o.\",\n            \"street\": \"Savska cesta 13\",\n            \"place\": \"10000 Zagreb\",\n            \"iban\": \"HR6623400091110651272\",\n            \"model\": \"00\",\n            \"reference\": \"123-456-789\"\n        },\n        \"purpose\": \"ANTS\",\n        \"description\": \"Developing a HUB-3 API\"\n    }\n}",
-                      CURLOPT_HTTPHEADER => array(
-                          "Content-Type: application/json"
-                      ),
-                  ));
-
-                  $response = curl_exec($curl);
-
-                  curl_close($curl);
-                  $data['uplatnica'] = $response;
+                  $data['uplatnica'] = "https://hub3.bigfish.software/api/v1/barcode?renderer=image&options%5Bformat%5D=png&options%5Bcolor%5D=%23000000&data%5Bamount%5D=100000&data%5Bsender%5D%5Bname%5D=Ivan+Habunek&data%5Bsender%5D%5Bstreet%5D=Savska+cesta+13&data%5Bsender%5D%5Bplace%5D=10000+Zagreb&data%5Breceiver%5D%5Bname%5D=Big+Fish+Software+d.o.o.&data%5Breceiver%5D%5Bstreet%5D=Savska+cesta+13&data%5Breceiver%5D%5Bplace%5D=10000+Zagreb&data%5Breceiver%5D%5Biban%5D=HR6623400091110651272&data%5Breceiver%5D%5Bmodel%5D=00&data%5Breceiver%5D%5Breference%5D=123-456-789&data%5Bpurpose%5D=ANTS&data%5Bdescription%5D=Developing+a+HUB-3+API";
 
 
               }
