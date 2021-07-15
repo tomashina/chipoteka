@@ -29,7 +29,7 @@
                         <div class="step-progress"><span class="step-count">3</span></div>
                         <div class="step-label"><i class="ci-package"></i>Dostava</div></a><a id="button-shipping-method" class="step-item" href="javascript:;" >
                         <div class="step-progress"><span class="step-count">4</span></div>
-                        <div class="step-label"><i class="ci-card"></i>Plaćanje</div></a><a id="stepreview" class="step-item" href="checkout-review.html">
+                        <div class="step-label"><i class="ci-card"></i>Plaćanje</div></a><a id="stepreview" class="step-item" href="javascript:;">
                         <div class="step-progress"><span class="step-count">5</span></div>
                         <div class="step-label"><i class="ci-check-circle"></i>Pregledaj</div></a>
 
@@ -609,9 +609,12 @@
                                         }
                                     });
 
+                                    console.log('Tu sam IF')
+
                                     $('#collapse-shipping-method .card-body').html(html);
                                     $('#collapse-shipping-method').show();
-                                    $( "#button-shipping-method" ).removeClass('current active');
+                                    $("#button-shipping-method" ).removeClass('current active');
+                                    $("#stepreview" ).removeClass('current active');
 
                                     $('#collapse-payment-address').hide();
                                     $('#collapse-payment-method').hide();
@@ -634,7 +637,13 @@
                                 },
                                 success: function(html) {
                                     $('#collapse-payment-address').hide();
+                                    $('#collapse-payment-method').hide();
                                     $('#collapse-shipping-address .card-body').html(html);
+
+                                    $('#collapse-shipping-method').show();
+                                    $( "#button-shipping-method" ).removeClass('current active');
+
+                                    console.log('Tu sam ELSE')
 
                                     $('a[href=\'#collapse-shipping-address\']').trigger('click');
 
@@ -711,10 +720,17 @@
                                 $('#button-guest-shipping').button('reset');
                             },
                             success: function(html) {
+                                console.log('button-guest-shipping .click')
+
                                 $('#collapse-shipping-address').hide();
                                 $( "#button-guest" ).addClass( 'active');
                                 $( "#stepcheckout" ).removeClass( 'current');
                                 $('#collapse-shipping-method .card-body').html(html);
+
+                                $('#collapse-shipping-method').show();
+                                $("#button-shipping-method" ).removeClass('current active');
+                                $('#collapse-checkout-option').hide();
+                                $("#stepreview").removeClass('current active');
 
                             },
                             error: function(xhr, ajaxOptions, thrownError) {
@@ -729,7 +745,7 @@
             });
         });
 
-        $(document).delegate('#button-shipping-method', 'click', function() {
+        $(document).delegate('#button-shipping-method, #back-to-payment-method', 'click', function() {
             $.ajax({
                 url: 'index.php?route=checkout/shipping_method/save',
                 type: 'post',
@@ -758,8 +774,10 @@
                             },
                             success: function(html) {
 
+                                console.log('button-shipping-method, back-to-payment-method .click')
 
                                 $('#collapse-shipping-method').hide();
+                                $('#collapse-checkout-confirm').hide();
 
                                 $( "#button-guest" ).removeClass( 'current');
                                 $( "#button-shipping-method" ).addClass( 'current active');
@@ -769,6 +787,8 @@
 
                                 $('#collapse-payment-method .card-body').html(html);
                                 $('#collapse-payment-method').show();
+                                $("#stepreview").removeClass('current active');
+
 
                             },
                             error: function(xhr, ajaxOptions, thrownError) {
@@ -811,12 +831,15 @@
                                 $('#button-payment-method').button('reset');
                             },
                             success: function(html) {
+                                console.log('button-payment-method .click')
+
                                 $('#collapse-checkout-confirm .card-body').html(html);
+                                $('#collapse-checkout-confirm').show();
                                 $('#sazetak').load('index.php?route=common/review/info #total-content > *');
 
                                 $('#collapse-payment-method').hide();
 
-                                $( "#utton-shipping-method" ).removeClass( 'current');
+                                $( "#button-shipping-method" ).removeClass( 'current');
                                 $( "#stepreview" ).addClass( 'current active');
 
 
