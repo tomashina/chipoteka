@@ -43,6 +43,19 @@
       </tr>
     </thead>
     <tbody>
+    <tr>
+      <td style="font-size: 12px;	border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: left; padding: 7px;">
+        {{ text_message }}
+
+        {% if payment_code =='bank_transfer' %}
+
+          <img src="data:image/png;base64,{{ scainimage }}" class="img-responsive"/>
+        {% endif %}
+
+
+
+      </td>
+    </tr>
       <tr>
         <td style="font-size: 12px;	border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: left; padding: 7px;">{{ comment }}</td>
       </tr>

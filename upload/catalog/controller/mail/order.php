@@ -101,6 +101,31 @@ class ControllerMailOrder extends Controller {
 		$data['order_id'] = $order_info['order_id'];
 		$data['date_added'] = date($language->get('date_format_short'), strtotime($order_info['date_added']));
 		$data['payment_method'] = $order_info['payment_method'];
+        $data['payment_code'] = $order_info['payment_code'];
+
+        if ($order_info['payment_code'] == 'cod') {
+
+            $data['text_message'] = sprintf($this->language->get('text_pouzece'), $order_info['order_id']);
+
+        }
+
+          else if ($order_info['payment_code'] == 'bank_transfer') {
+
+              $data['text_message'] = sprintf($this->language->get('text_bank'), $order_info['order_id'], $order_info['order_id']);
+
+              $data['scainimage'] = $order_info['scainimage'];
+
+          }
+
+          else if ($order_info['payment_code'] == 'wspay') {
+
+              $data['text_message'] = sprintf($this->language->get('text_wspay'), $order_id);
+
+          }
+
+
+
+
 		$data['shipping_method'] = $order_info['shipping_method'];
 		$data['email'] = $order_info['email'];
 		$data['telephone'] = $order_info['telephone'];
