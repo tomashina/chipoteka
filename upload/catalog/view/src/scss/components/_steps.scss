@@ -28,6 +28,20 @@
     border-bottom-left-radius: 0;
   }
 }
+
+.step-item.active {
+  &.current {
+
+    .step-label {
+      color: $primary;
+      font-weight: 500;
+    }
+
+  }
+
+}
+
+
 .step-progress {
   position: relative;
   width: 100%;
@@ -55,9 +69,16 @@
     vertical-align: middle;
   }
 }
+@include media-breakpoint-down('md') {
+  .step-label {
+    font-size: $font-size-md;
+    > i { display: none; }
+  }
+}
+
 @include media-breakpoint-down('sm') {
   .step-label {
-    font-size: $font-size-xs;
+     font-size: $font-size-xs;
     > i { display: none; }
   }
 }
@@ -108,6 +129,12 @@
     &.current {
       color: $step-light-active-color;
       pointer-events: none;
+
+      .step-label {
+        color: $primary;
+        font-weight: 700;
+      }
+
     }
     .step-count,
     .step-progress {
