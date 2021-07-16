@@ -303,9 +303,19 @@ class ControllerCheckoutSuccess extends Controller {
                       $data['uplatnica'] = 'error';
                  }
                  else{
+
                      $response = base64_encode($response);
                      $data['uplatnica'] = $response;
                      $this->db->query("UPDATE " . DB_PREFIX . "order SET scanimage = '" . $response . "' WHERE order_id = '" . (int)$order_id . "'");
+
+
+                     $scimg = 'data:image/png;base64,'.$response;
+
+                     list($type, $scimg) = explode(';', $scimg);
+                     list(, $scimg)      = explode(',', $scimg);
+                     $scimg = base64_decode($scimg);
+
+                     file_put_contents(DIR_IMAGE.'tmp/'.$order_id.'.png', $scimg);
 
                  }
 

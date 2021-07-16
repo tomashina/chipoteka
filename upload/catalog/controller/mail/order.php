@@ -113,7 +113,9 @@ class ControllerMailOrder extends Controller {
 
               $data['text_message'] = sprintf($language->get('text_bank'), $order_info['order_id'], $order_info['order_id']);
 
-              $data['scanimage'] = $order_info['scanimage'];
+              $data['scanimage'] = HTTP_SERVER.'image/tmp/'.$order_info['order_id'].'.png';
+
+
 
           }
 
