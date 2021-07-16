@@ -9,7 +9,7 @@
                                 <label class="form-check-label" for="customer_group_id">{{ customer_group.name }}</label>
                             </div>
                         {% else %}
-                            <div class="form-check form-check-inline">
+                            <div class="form-check form-check-inline mt-4 mt-md-1">
                                 <input class="form-check-input" type="radio" name="customer_group_id" value="{{ customer_group.customer_group_id }}" id="cg{{ customer_group.customer_group_id }}">
                                 <label class="form-check-label" for="customer_group_id"> {{ customer_group.name }}</label>
                             </div>
@@ -55,7 +55,7 @@
             </div>
               {% endfor %}
             <div class="col-sm-12">
-            <h2 class="h6 pt-1 pb-3 mb-3 mt-3 mx-3 ps-0 border-bottom">{{ text_your_password }}</h2>
+            <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">{{ text_your_password }}</h2>
             </div>
             <div class="col-sm-6">
                 <div class="form-group mb-3 required">
@@ -71,7 +71,7 @@
             </div>
 
             <div class="col-sm-12">
-            <h2 class="h6 pt-1 pb-3 mb-3 mt-3 mx-3 ps-0 border-bottom">{{ text_your_address }}</h2>
+            <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">{{ text_your_address }}</h2>
             </div>
 
               <div class="form-group d-none">
@@ -142,7 +142,7 @@
              <div class="col-sm-12 ">
                  <div class="form-group mb-3 checkbox ">
                      <label class="form-check-label" for="agree">
-                         <input type="checkbox" name="agree" value="1" class="form-check-input"/> {{ text_agree }}</label>
+                         <input type="checkbox" name="agree" value="1" class="form-check-input"/> <span>{{ text_agree }}</span></label>
             <!--<input type="button" value="{{ button_continue }}" id="button-register" data-loading-text="{{ text_loading }}" class="btn btn-primary" /> -->
                   </div>
                 </div>
@@ -156,8 +156,8 @@
      </div>
 
      <div class="d-flex pt-4 mt-3">
-         <div class="w-50 pe-3"><a class="btn btn-outline-primary d-block w-100" href="{{ cart }}"><i class="ci-arrow-left mt-sm-0 me-1"></i><span class="d-none d-sm-inline">Povratak na košaricu</span><span class="d-inline d-sm-none">Košarica</span></a></div>
-         <div class="w-50 ps-2"><button type="button" value="{{ button_continue }}" id="button-register" class="btn btn-primary d-block w-100" ><span class="d-none d-sm-inline">Nastavak na dostavu</span><span class="d-inline d-sm-none">Dostava</span><i class="ci-arrow-right mt-sm-0 ms-1"></i></button></div>
+         <div class="w-50 pe-3"><a class="btn btn-outline-primary d-flex align-items-center justify-content-center w-100" href="{{ cart }}"><i class="ci-arrow-left mt-sm-0 me-1"></i><span class="d-none d-sm-inline">Povratak na košaricu</span><span class="d-inline d-sm-none">Košarica</span></a></div>
+         <div class="w-50 ps-2"><button type="button" value="{{ button_continue }}" id="button-register" class="btn btn-primary d-flex align-items-center justify-content-center w-100" ><span class="d-none d-sm-inline">Nastavak na dostavu</span><span class="d-inline d-sm-none">Dostava</span><i class="ci-arrow-right mt-sm-0 ms-1"></i></button></div>
      </div>
 <script type="text/javascript"><!--
 // Sort the custom fields

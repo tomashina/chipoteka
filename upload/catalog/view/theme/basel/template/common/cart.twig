@@ -3,7 +3,7 @@
     <div class="widget widget-cart px-3 pt-2 pb-3" style="width: 20rem;">
         <div style="max-height: 15rem;" data-simplebar data-simplebar-auto-hide="false">
         {% for product in products %}
-        <div class="widget-cart-item pb-2 border-bottom">
+        <div class="widget-cart-item pb-2 pt-2 border-bottom">
           <button class="btn-close text-danger" type="button" onclick="cart.remove('{{ product.cart_id }}');" aria-label="Remove"><span aria-hidden="true">&times;</span></button>
           <div class="d-flex align-items-center">
             {% if product.thumb %}

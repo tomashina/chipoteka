@@ -18,29 +18,49 @@
 // Color classes
 
 // Custom Grayscale
-.light { color: $light; }
-.gray-l2 { color: $gray-l2; }
-.gray-l1 { color: $gray-l1; }
-.gray { color: $gray ; }
-.gray-d1 { color: $gray-d1; }
-.gray-d2 { color: $gray-d2; }
-.dark { color: $dark; }
+.light {
+    color: $light;
+}
 
- 
+.gray-l2 {
+    color: $gray-l2;
+}
+
+.gray-l1 {
+    color: $gray-l1;
+}
+
+.gray {
+    color: $gray;
+}
+
+.gray-d1 {
+    color: $gray-d1;
+}
+
+.gray-d2 {
+    color: $gray-d2;
+}
+
+.dark {
+    color: $dark;
+}
+
+
 
 body {
     background: linear-gradient(180deg, #F5F5F5 0, rgba(245, 245, 245, 0) 333px);
     background-color: $white;
 }
- 
+
 // Offcanvas padding
-body > main.offcanvas-enabled {
+body>main.offcanvas-enabled {
     // padding-top: 0 !important;
     padding-bottom: 3.3rem;
 }
- 
+
 @include media-breakpoint-up(xl) {
-    body > main.offcanvas-enabled {
+    body>main.offcanvas-enabled {
         // padding-top: 5rem !important;
         padding-bottom: 0;
     }
@@ -49,6 +69,7 @@ body > main.offcanvas-enabled {
     // .sidebar also influenced - fix it
     // padding-top: 123px;
 }
+
 //
 
 // Breadcrumbs 
@@ -56,7 +77,7 @@ body > main.offcanvas-enabled {
     font-size: 0.75rem;
     color: $gray-d1;
 
-    .breadcrumb-item + .breadcrumb-item::before {
+    .breadcrumb-item+.breadcrumb-item::before {
         margin-top: 0.01rem;
         color: lighten($gray, 33);
     }
@@ -66,7 +87,7 @@ body > main.offcanvas-enabled {
             color: $gray-l1;
         }
     }
-   
+
 }
 
 // Navbar 
@@ -77,7 +98,7 @@ body > main.offcanvas-enabled {
 
 
 // Blog
-.gallery-item > img {
+.gallery-item>img {
     border-radius: $blog-image-radius;
 }
 
@@ -95,7 +116,7 @@ body > main.offcanvas-enabled {
 
     a {
         // color: $primary;
- 
+
         &:hover {
             color: $dark;
         }
@@ -109,27 +130,32 @@ body > main.offcanvas-enabled {
 .fsc-1 {
     font-size: 2.5rem;
 }
+
 .fsc-2 {
     font-size: 2rem;
 }
+
 .fsc-3 {
     font-size: 1.75rem;
 }
+
 .fsc-4 {
     font-size: 1.5rem;
 }
+
 .fsc-5 {
     font-size: 1.25rem;
 }
+
 .fsc-6 {
     font-size: 1rem;
 }
- 
+
 
 // Pagination
 
 .pagination-navigation {
-   
+
 
     .pagination {
         flex-wrap: wrap;
@@ -137,6 +163,58 @@ body > main.offcanvas-enabled {
         align-items: center;
     }
 }
+
+
+// Forms
+.form-check {
+    display: flex;
+    align-items: flex-end;
+
+    @include media-breakpoint-up(md) {
+        align-items: flex-start;
+    }
+
+
+    .form-check-input {
+        cursor: pointer;
+        border-radius: 50px;
+
+        @include media-breakpoint-down(md) {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+
+        &+label {
+            margin-left: 0.5rem;
+        }
+    }
+}
+
+
+.form-check-label {     
+    
+    display: flex;
+    align-items: center;
+
+    @include media-breakpoint-up(md) {
+        align-items: unset;
+    }
+
+
+    .form-check-input {
+        cursor: pointer;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+ 
+        @include media-breakpoint-down(md) {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+ 
+    }
+}
+
 
 
 // main >  section {
@@ -152,5 +230,5 @@ body > main.offcanvas-enabled {
 //         padding-left: $grid-gutter-width;
 //         padding-right: $grid-gutter-width;
 //     }
-    
+
 // }

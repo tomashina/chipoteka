@@ -38,9 +38,7 @@
             img {
                 width: 225px;
                 margin-left: -1px;
-
-
-
+ 
                 // @include media-breakpoint-only(xl) {
                 //     padding-top: 7px;
                 //     padding-bottom: 7px;
@@ -75,6 +73,11 @@
                     color: $primary;
                 }
             }
+
+
+             .dropdown-menu {
+                 margin-top: 0 !important;
+             }
         }
 
         .navbar-tool-icon-box {
