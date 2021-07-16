@@ -244,8 +244,19 @@ class ControllerMailOrder extends Controller {
 				);
 			}
 
+            $product_image = $this->model_checkout_order->getProductImage($order_product['order_product_id']);
+
+            $this->load->model('tool/image');
+
+            if ($product_image) {
+                $product_image = $this->model_tool_image->resize($product_image, '120', '120');
+            }
+
+
+
 			$data['products'][] = array(
 				'name'     => $order_product['name'],
+                'image' => $product_image,
 				'model'    => $order_product['model'],
 				'option'   => $option_data,
 				'quantity' => $order_product['quantity'],

@@ -272,8 +272,17 @@ class ControllerAccountOrder extends Controller {
 					$reorder = '';
 				}
 
+                $product_image = $this->model_account_order->getProductImage($product['product_id']);
+
+                $this->load->model('tool/image');
+
+                if ($product_image) {
+                    $product_image = $this->model_tool_image->resize($product_image, '120', '120');
+                }
+
 				$data['products'][] = array(
 					'name'     => $product['name'],
+                    'image' => $product_image,
 					'model'    => $product['model'],
 					'option'   => $option_data,
 					'quantity' => $product['quantity'],

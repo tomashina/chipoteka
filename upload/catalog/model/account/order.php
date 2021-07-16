@@ -100,6 +100,17 @@ class ModelAccountOrder extends Model {
 		}
 	}
 
+
+    public function getProductImage($product_id){
+        $query = $this->db->query("SELECT `image` FROM `".DB_PREFIX."product` WHERE product_id = '".(int)$product_id."'");
+
+        if ($query->row) {
+            return $query->row['image'];
+        } else {
+            return false;
+        }
+    }
+
 	public function getOrders($start = 0, $limit = 20) {
 		if ($start < 0) {
 			$start = 0;

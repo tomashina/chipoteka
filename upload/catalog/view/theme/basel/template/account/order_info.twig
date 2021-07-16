@@ -105,6 +105,7 @@
         <table class="table table-striped margin-b0">
           <thead>
             <tr>
+              <td class="text-left"></td>
               <td class="text-left">{{ column_name }}</td>
               <td class="text-left hidden-xs hidden-sm">{{ column_model }}</td>
               <td class="text-right hidden-xs hidden-sm">{{ column_quantity }}</td>
@@ -118,6 +119,7 @@
           <tbody>
             {% for product in products %}
             <tr>
+              <td class="text-left"><img src="{{ product.image }}"/></td>
               <td class="text-left">{{ product.name }}
                 {% for option in product.option %}
                 <br />
