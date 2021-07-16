@@ -2127,7 +2127,7 @@ progress {
   font-size: 1rem;
   font-weight: 300;
   line-height: 1.5;
-  color: #828282;
+  color: #363636;
   background-color: #fff;
   background-clip: padding-box;
   border: 1px solid #E7DADA;
@@ -2743,7 +2743,7 @@ textarea.form-control-lg {
   font-size: 1rem;
   font-weight: 300;
   line-height: 1.5;
-  color: #828282;
+  color: #363636;
   text-align: center;
   white-space: nowrap;
   background-color: #fff;
@@ -30630,7 +30630,7 @@ input[type="search"]::-webkit-search-results-decoration {
 }
 
 .password-toggle-btn .password-toggle-indicator:hover {
-  color: #828282;
+  color: #363636;
 }
 
 .password-toggle-btn .password-toggle-check {
