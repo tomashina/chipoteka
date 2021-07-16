@@ -260,7 +260,7 @@
 		$font_list .= $basel_font['import'] . '%7C';
 	}
 	}
-	$this->document->addStyle('//fonts.googleapis.com/css?family=' . $font_list);
+	//$this->document->addStyle('//fonts.googleapis.com/css?family=' . $font_list);
 	if ($this->cache->get('basel_fonts_cache_store_' . $this->config->get('config_store_id'))) {
 	$data['basel_fonts_cache'] = $this->cache->get('basel_fonts_cache_store_' . $this->config->get('config_store_id'));
 	} else {
@@ -289,5 +289,5 @@
 	$data['basel_fonts_cache'] = $this->cache->get('basel_fonts_cache_store_' . $this->config->get('config_store_id'));
 	} 
 	} else {
-	$this->document->addStyle('//fonts.googleapis.com/css?family=Karla:400,400i,700,700i%7CLora:400,400i');
+	//$this->document->addStyle('//fonts.googleapis.com/css?family=Karla:400,400i,700,700i%7CLora:400,400i');
 	}

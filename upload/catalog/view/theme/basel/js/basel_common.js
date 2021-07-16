@@ -101,7 +101,7 @@ $(document).ready(function() {
 	});
 
 	/* Search */
-	$('.search-trigger').on('click', function() {setTimeout(function(object) {$('.main-search-input').focus();},500);});
+	/*$('.search-trigger').on('click', function() {setTimeout(function(object) {$('.main-search-input').focus();},500);});
 	
 	$(".main-search-input").focus(function(){$(this).parent().parent().addClass('focus');}).blur(function(){$(this).parent().parent().removeClass('focus');})
 	
@@ -119,16 +119,16 @@ $(document).ready(function() {
 		if (e.keyCode == 13) {
 			$('.do-search.main').trigger('click');
 		}
-	});
-	/* Mobile Search */
-	$('.search-holder-mobile input[name=\'search-mobile\']').parent().find('.fa-search').on('click', function() {
+	});*/
+
+	$('#searchmobile input[name=\'search-mobile\']').parent().find('.fa-search').on('click', function() {
 		var url = $('base').attr('href') + 'index.php?route=product/search';
-		var value = $('.search-holder-mobile input[name=\'search-mobile\']').val();
+		var value = $('#searchmobile input[name=\'search-mobile\']').val();
 		if (value) {url += '&search=' + encodeURIComponent(value);}
 		location = url;
 	});
-	$('.search-holder-mobile input[name=\'search-mobile\']').on('keydown', function(e) {
-	if (e.keyCode == 13) {$('.search-holder-mobile input[name=\'search-mobile\']').parent().find('.fa-search').trigger('click');}
+	$('#searchmobile input[name=\'search-mobile\']').on('keydown', function(e) {
+	if (e.keyCode == 13) {$('#searchmobile input[name=\'search-mobile\']').parent().find('.fa-search').trigger('click');}
 	});
 	
 	// Keep Menu In Viewport
