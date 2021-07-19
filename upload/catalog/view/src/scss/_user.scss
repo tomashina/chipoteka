@@ -208,7 +208,7 @@ body>main.offcanvas-enabled {
         margin-bottom: 0.5rem;
  
         @include media-breakpoint-down(md) {
-            width: 1.5rem;
+            min-width: 1.5rem;
             height: 1.5rem;
         }
  

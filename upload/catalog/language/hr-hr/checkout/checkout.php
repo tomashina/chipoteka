@@ -25,7 +25,7 @@ $_['text_forgotten']                 = 'Zaboravljena lozinka';
 $_['text_your_details']              = 'Vaši osobni podaci';
 $_['text_your_address']              = 'Adresa';
 $_['text_your_password']             = 'Vaša lozinka';
-$_['text_agree']                     = 'Pročitao sam i slažem se s <a href="%s" class="agree"><b>%s</b></a>';
+$_['text_agree']                     = '<span><span>Pročitao sam i slažem se s </span> <a href="%s" class="agree"><b>%s</b></a></span>';
 $_['text_address_new']               = 'Želim koristiti novu adresu';
 $_['text_address_existing']          = 'Želim koristiti postojeću adresu';
 $_['text_shipping_method']           = 'Odaberite način dostave ';

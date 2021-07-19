@@ -35500,7 +35500,7 @@ body > main.offcanvas-enabled {
 
 @media (max-width: 767.98px) {
   .form-check-label .form-check-input {
-    width: 1.5rem;
+    min-width: 1.5rem;
     height: 1.5rem;
   }
 }
