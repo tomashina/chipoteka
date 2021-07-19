@@ -49,7 +49,11 @@ class ControllerExtensionModuleBaselCarousel extends Controller {
 			if (is_file(DIR_IMAGE . $result['image'])) {
 				$data['banners'][] = array(
 					'title' => $result['title'],
-					'link'  => $result['link'],
+                    'actiontitle' => $result['actiontitle'],
+                    'buttontitle' => $result['buttontitle'],
+                    'text' => $result['text'],
+                    'link'  => $result['link'],
+                    'bojapozadine'  => $result['bojapozadine'],
 					'image' => $this->model_tool_image->resize($result['image'], $setting['image_width'], $setting['image_height'])
 				);
 			}
