@@ -36706,6 +36706,60 @@ body > main.offcanvas-enabled {
   }
 }
 
+.product-container .product-features .buying-choices {
+  display: inline-flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.03rem;
+  background-color: #F5F5F5;
+  padding: 6px;
+  padding-right: 12px;
+  margin-right: 0.75rem;
+  border-radius: 50px;
+}
+
+.product-container .product-features .buying-choices i {
+  font-size: 27px;
+  margin-right: 10px;
+  color: #A8A8A8;
+}
+
+.product-container .product-features .buying-choices .first {
+  border-right: 1px solid #A8A8A8;
+  padding-right: 10px;
+  margin-right: 10px;
+}
+
+.product-container .product-features .choices-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.product-container .product-features .warranty-time {
+  display: inline-flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 300;
+  text-transform: uppercase;
+  letter-spacing: 0.03rem;
+  background-color: #F5F5F5;
+  padding: 6px;
+  padding-right: 12px;
+  border-radius: 50px;
+}
+
+.product-container .product-features .warranty-time i {
+  font-size: 27px;
+  margin-right: 10px;
+  color: #A8A8A8;
+}
+
+.product-container .product-features .warranty-time strong {
+  text-transform: lowercase;
+  font-weight: 500;
+}
+
 .product-container .product-features .product-accordion .accordion-body {
   padding: 0.313rem 1rem;
 }

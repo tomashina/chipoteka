@@ -110,6 +110,19 @@
                                     </div>
 
 
+                                    <div class="buying-choices mb-1 mt-n1 mt-md-n3">
+                                        <div class="choices-wrapper">
+                                          <i class="fas fa-badge-percent"></i> 
+                                          <span class="first"> 12 x 355,42 kn</span> 
+                                         <span class="second">24 x 190,15 kn</span>
+                                        </div>
+                                    </div>
+
+                                     <div class="warranty-time mb-4"><i class="fas fa-clock"></i> <span>Jamstvo: <strong>12 mjeseci</strong></span></div>
+                                   
+
+
+
                                     <div class="product-quantity-button">
 
                                         <div class="input-group me-3 quantity">
@@ -123,8 +136,8 @@
 
                                         </div>
 
-                                    <input type="hidden" name="product_id" value="{{ product_id }}" />
-                                    <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
+                                        <input type="hidden" name="product_id" value="{{ product_id }}" />
+                                        <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
                                     </div>
 
                                     {% if minimum > 1 %}

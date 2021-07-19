@@ -245,6 +245,65 @@
 
         }
 
+
+        // Buying Choices & Warranty Time
+        .buying-choices {
+            display: inline-flex;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 0.03rem;
+            background-color: $light;
+            padding: 6px;
+            padding-right: 12px;
+            margin-right: 0.75rem;
+            border-radius: 50px;
+
+            i {
+                font-size: 27px;
+                margin-right: 10px;
+                color: $gray-l1;
+            }
+
+            .first {
+                border-right: 1px solid $gray-l1;
+                padding-right: 10px;
+                margin-right: 10px;
+            }
+        }
+
+        .choices-wrapper {
+            display: flex;
+            align-items: center;
+        }
+
+        .warranty-time {
+            display: inline-flex;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 0.03rem;
+            background-color: $light;
+            padding: 6px;
+            padding-right: 12px;
+            border-radius: 50px;
+
+            i {
+                font-size: 27px;
+                margin-right: 10px;
+                color: $gray-l1;
+            }
+
+            strong {
+                text-transform: lowercase;
+                font-weight: 500;
+            }
+     
+        }
+
+
+
         // Product Accordion
         .product-accordion {
             
