@@ -1,38 +1,34 @@
 {{ header }}
-
 <main class="offcanvas-enabled">
     <!-- Custom page title-->
     <div class="page-title-overlap pt-4 pe-lg-3 ">
         <div class="container-fluid py-2">
-
             <div class="pe-lg-4 text-center text-lg-start">
-                <h1 class="category-page-title text-primary" id="page-title">{{ heading_title }}</h1>
-            </div>
-            <div class=" mb-3 mb-lg-0">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb flex-lg-nowrap justify-content-center justify-content-lg-start">
-                        {% for breadcrumb in breadcrumbs %}
-                            <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-                        {% endfor %}
-                    </ol>
-                </nav>
+                <h1 class="category-page-title text-primary" id="page-title">
+                    {% if izborkarte=='servis' %}
+                    Servis
+                    {% elseif izborkarte=='veleprodaja' %}
+                        Veleprodaja
+                    {% else %}
+                  Poslovnice
+                    {% endif  %}
+                </h1>
             </div>
 
         </div>
     </div>
-
     <div id="content" class="container-fluid pb-3 mb-2 mb-md-4">
-
-
-
+        {% if izborkarte=='servis' %}
+            <script src="https://apps.elfsight.com/p/platform.js" defer></script>
+            <div class="elfsight-app-82207754-9f67-4a35-a682-d9f14fccb35a"></div>
+        {% elseif izborkarte=='veleprodaja' %}
+            <script src="https://apps.elfsight.com/p/platform.js" defer></script>
+            <div class="elfsight-app-1a057ae4-7660-4bc0-946d-990609f573e8"></div>
+            {% else %}
         <script src="https://apps.elfsight.com/p/platform.js" defer></script>
-        <div class="elfsight-app-3a1038e1-bfa2-4b09-be87-5a1d9531f40d"></div>
+        <div class="elfsight-app-a3c638ca-4d12-497c-8096-07ca2caabc79"></div>
+        {% endif  %}
         {{ content_top }}
-
-
         {{ content_bottom }}
-
-
     </div>
-
 {{ footer }}

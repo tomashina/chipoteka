@@ -5,7 +5,15 @@ class ControllerInformationContact extends Controller {
 	public function index() {
 		$this->load->language('information/contact');
 
-		$this->document->setTitle($this->language->get('heading_title'));
+        if(isset($_GET['name'])) {
+            $data['izborkarte'] = $_GET['name'];
+        } else {
+            $data['izborkarte'] = '';
+        }
+
+
+
+        $this->document->setTitle($this->language->get('heading_title'));
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$mail = new Mail($this->config->get('config_mail_engine'));
@@ -58,6 +66,9 @@ class ControllerInformationContact extends Controller {
 		}
 
 		$data['button_submit'] = $this->language->get('button_submit');
+
+
+
 
 		$data['action'] = $this->url->link('information/contact', '', true);
 
