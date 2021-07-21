@@ -116,6 +116,20 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading darker-bg">
+                        <h3 class="panel-title"><i class="fa fa-list"></i> Skladišta</h3>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-5 text-center">
+                                <a href="javascript:void(0)" id="import-new-warehouse" data-toggle="tooltip" title="Import Skladišta" class="btn btn-info btn-block">Import Skladišta</a>
+                            </div>
+                            <p class="col-sm-7">Import se vrši prema predefiniranoj listi šifri skladišta.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -124,6 +138,7 @@
         $(() => {
             $('#import-new-categories')     .on('click', e => { callApi(e, 'importCategories'); });
             $('#import-new-manufacturer')   .on('click', e => { callApi(e, 'importManufacturers'); });
+            $('#import-new-warehouse')      .on('click', e => { callApi(e, 'importWarehouses'); });
             $('#import-new-products')       .on('click', e => { callApi(e, 'importProducts'); });
             $('#import-new-actions')        .on('click', e => { callApi(e, 'importActions'); });
             $('#check-active-min')          .on('click', e => { callApi(e, 'checkMinQty'); });

@@ -3,10 +3,12 @@
 use Agmedia\Luceed\Facade\LuceedGroup;
 use Agmedia\Luceed\Facade\LuceedManufacturer;
 use Agmedia\Luceed\Facade\LuceedProduct;
+use Agmedia\Luceed\Facade\LuceedWarehouse;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Action;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Category;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Manufacturer;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Product;
+use Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse;
 use Agmedia\Models\Category\Category;
 use Agmedia\Models\Product\Product;
 use Agmedia\Models\Product\ProductCategory;
@@ -112,6 +114,19 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $imported = $_loc->checkDiff()->import();
 
         return $this->response($imported, 'manufacturers');
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function importWarehouses()
+    {
+        $_loc = new LOC_Warehouse(LuceedWarehouse::all());
+
+        $imported = $_loc->import($_loc->getWarehouses());
+
+        return $this->response($imported, 'warehouses');
     }
 
 

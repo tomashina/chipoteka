@@ -40,7 +40,7 @@ $ip_server = $_SERVER['SERVER_ADDR'];
 
 // http://luceedapi-test.tomsoft.hr:3676/datasnap/rest/partneri/email/ljubica.polimac@amds.hr
 
-$url = 'http://sechip.dyndns.org:8889/datasnap/rest/artikli/sifra/9504000452';
+$url = 'http://sechip.dyndns.org:8889/datasnap/rest/artikliŒ';
 $username = 'webshop';
 $password = 'test.bJ8tn63Q';
 $ch = curl_init($url);
