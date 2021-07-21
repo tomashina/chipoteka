@@ -10,7 +10,7 @@
     <table class="table table-hover fs-sm border-top">
       <thead>
       <tr>
-        <th class="align-middle"></th>
+
         <th class="align-middle">Način dostave</th>
 
         <th class="align-middle">Cijena</th>
@@ -20,24 +20,29 @@
   {% for shipping_method in shipping_methods %}
     {% if not shipping_method.error %}
       {% for quote in shipping_method.quote %}
-        <tr>
+        <tr >
           <td>
 
             <div class="form-check mb-0 mt-1">
               {% if quote.code == code or not code %}
-              <label class="form-check-label" for="{{ quote.code }}">
+
                 {% set code = quote.code %}
+              <label class="form-check-label" for="{{ quote.code }}">
                 <input class="form-check-input" type="radio" name="shipping_method" id="{{ quote.code }}" value="{{ quote.code }}" checked="checked" />
-
-              {% else %}
-                <input class="form-check-input" type="radio" name="shipping_method" id="{{ quote.code }}" value="{{ quote.code }}" />
-
-              {% endif %}
+                <span class="text-dark fw-medium me-3">{{ quote.title }}</span>
               </label>
+              {% else %}
+                <label class="form-check-label" for="{{ quote.code }}">
+                <input class="form-check-input" type="radio" name="shipping_method" id="{{ quote.code }}" value="{{ quote.code }}" />
+                <span class="text-dark fw-medium me-3">{{ quote.title }}</span>
+                </label>
+              {% endif %}
+
+
             </div>
 
           </td>
-          <td class="align-middle"><span class="text-dark fw-medium">{{ shipping_method.title }}</span><br><span class="text-muted"> {{ quote.title }}</span></td>
+         <!-- <td class="align-middle"><span class="text-dark fw-medium">{{ shipping_method.title }}</span><br><span class="text-muted"> {{ quote.title }}</span></td> -->
           <td class="align-middle">{{ quote.text }}</td>
         </tr>
       {% endfor %}
