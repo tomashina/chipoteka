@@ -393,21 +393,10 @@ var wishlist = {
 				if (json['success_redirect']) {
 					location = json['success_redirect'];
 				} else if (json['success']) {
-					$('.alert, .popup-note, .basel-spinner.ajax-call, .text-danger').remove();
-					html = '<div class="popup-note">';
-					html += '<div class="inner">';
-					html += '<a class="popup-note-close" onclick="$(this).parent().parent().remove()">&times;</a>';
-					html += '<div class="table">';
-					html += '<div class="table-cell v-top img"><img src="' + json['image'] + '" /></div>';
-					html += '<div class="table-cell v-top">' + json['success'] + '</div>';
-					html += '</div>';
-					html += '</div>';
-					html += '</div>';
-					$('body').append(html);
-					setTimeout(function() {$('.popup-note').hide();}, 8100);
+					$('#myModal').modal('show');
+					$('#note').html('<div class="row"><div class="col-sm-3 col-lg-4"><img src="' + json.image + '" /></div><div class="col-sm d-flex align-items-center"><p class="align-middle">' + json.success +'</p></div></div>');
+
 				}
-				$('.wishlist-total span').html(json['total']);
-				$('.wishlist-counter').html(json['total_counter']);
 			},
 			error: function(xhr, ajaxOptions, thrownError) {
 				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);

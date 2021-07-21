@@ -1,11 +1,11 @@
 <?php
 // Heading
-$_['heading_title']    	= 'Basel Products';
+$_['heading_title']    	= 'Chipoteka Products';
 
 // Text
 $_['text_module']      	= 'Modules';
-$_['text_success']     	= 'Success: You have modified module Basel Products';
-$_['text_edit']        	= 'Edit Basel Products';
+$_['text_success']     	= 'Success: You have modified module Chipoteka Products';
+$_['text_edit']        	= 'Edit Chipoteka Products';
 $_['text_grid6']     	= '6 Columns';
 $_['text_grid5']     	= '5 Columns';
 $_['text_grid4']     	= '4 Columns';
@@ -27,7 +27,7 @@ $_['entry_width']  		= 'Image Width';
 $_['entry_height']  	= 'Image Height';
 $_['entry_tabs']  	   	= 'Groups to include';
 $_['entry_tabs_help']  	= 'Select one or more product groups to include in the module.';
-$_['groups_text']  		= 'Product groups can be managed from Extensions > Basel Theme > Product Groups';
+$_['groups_text']  		= 'Product groups can be managed from Extensions > Chipoteka Theme > Product Groups';
 $_['entry_tabstyle']  	= 'Tabs Style';
 $_['entry_tabstyle_help']  = 'Only when including two or more groups.';
 $_['text_tabs_floating'] = 'Plain centered text links (Small)';
@@ -51,5 +51,5 @@ $_['text_use_margin']  	= '<span data-toggle="tooltip" title="Use it to override
 $_['text_margin']   	= '<span data-toggle="tooltip" title="Margin bottom, e.g: 60px">Margin Bottom</span>';
 
 // Error
-$_['error_permission'] 	= 'Warning: You do not have permission to modify module Basel Product Groups';
+$_['error_permission'] 	= 'Warning: You do not have permission to modify module Chipoteka Product Groups';
 $_['error_name']       	= 'Module Name must be between 3 and 64 characters!';

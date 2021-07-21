@@ -48,7 +48,7 @@
             </div>                   
             </div>
             
-            <div class="form-group">
+            <div class="form-group" style="display:none">
             <label class="col-sm-2 control-label">{{ entry_contrast }}</label>
             <div class="col-sm-10 toggle-btn">
             {% if contrast %}
@@ -98,7 +98,7 @@
             </div>
             </div>
             
-            <div class="form-group title_field" style="display:{% if use_title %}block{% else %}none{% endif %}">
+            <div class="form-group title_field" style="display:none">
             <label class="col-sm-2 control-label">{{ text_block_sub_line }}</label>
             <div class="col-sm-10">
             {% for language in languages %}
@@ -131,7 +131,7 @@
           </div>
           
 
-          <div class="form-group">
+          <div class="form-group" style="display:none">
             <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ entry_tabstyle_help }}">{{ entry_tabstyle }}</span></label>
             <div class="col-sm-10">
               <select name="tabstyle" class="form-control">
@@ -177,7 +177,7 @@
               <input type="text" name="image_height" value="{{ image_height }}" id="input-image_height" class="form-control" />
             </div>
           </div>
-          <div class="form-group">
+          <div class="form-group" style="display:none">
             <label class="col-sm-2 control-label" for="input-columns">{{ entry_columns }}</label>
             <div class="col-sm-10">
               <select name="columns" id="input-columns" class="form-control">
@@ -224,7 +224,7 @@
           </div>
           
           
-          	<div class="form-group">
+          	<div class="form-group" style="display:none">
             <label class="col-sm-2 control-label">{{ entry_carousel }}</label>
             <div class="col-sm-10 toggle-btn">
             {% if carousel %}
@@ -237,7 +237,7 @@
             </div>                   
             </div>
           
-           <div class="form-group carousel_field" style="display:{% if carousel %}block{% else %}none{% endif %}">
+           <div class="form-group carousel_field" style="display:none">
             <label class="col-sm-2 control-label" for="input-carousel">{{ entry_rows }}</label>
             <div class="col-sm-10">
               <input type="text" name="rows" value="{{ rows }}"  id="input-rows" class="form-control" />
@@ -245,7 +245,7 @@
           </div>
           
           
-          	<div class="form-group carousel_field" style="display:{% if carousel %}block{% else %}none{% endif %}">
+          	<div class="form-group carousel_field" style="display:none">
             <label class="col-sm-2 control-label">{{ entry_carousel_a }}</label>
             <div class="col-sm-10 toggle-btn">
             {% if carousel_a %}
@@ -258,7 +258,7 @@
             </div>                   
             </div>
           
-            <div class="form-group carousel_field" style="display:{% if carousel %}block{% else %}none{% endif %}">
+            <div class="form-group carousel_field" style="display:none">
             <label class="col-sm-2 control-label">{{ entry_carousel_b }}</label>
             <div class="col-sm-10 toggle-btn">
             {% if carousel_b %}
@@ -273,7 +273,7 @@
           
 
           
-          <div class="form-group">
+          <div class="form-group" style="display:none">
             <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="{{ entry_countdown_h }}">{{ entry_countdown }}</span></label>
             <div class="col-sm-10 toggle-btn">
 			{% if countdown %}

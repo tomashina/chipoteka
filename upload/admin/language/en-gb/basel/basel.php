@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title']     = 'Basel Theme Settings';
+$_['heading_title']     = 'Chipoteka Theme Settings';
 
 
 $_['text_disabled']     = 'Disabled';

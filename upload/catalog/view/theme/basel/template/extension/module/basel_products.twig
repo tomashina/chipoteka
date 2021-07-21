@@ -1,7 +1,7 @@
 <section class="pt-3 pt-md-5" {% if use_margin %}style="margin-bottom: {{ margin }}"{% endif %}>
     {% if block_title %}
     <div class="section-title section-title--discount">
-        {% if title %}  <h2 class="title"><span>Akcija</span> {{ title }}</h2>{% endif %}
+        {% if title %}  <h2 class="title">{% if title_preline %}<span>{{ title_preline }}</span> {% endif %}{{ title }}</h2>{% endif %}
         {% if use_button %}    <a class="btn btn-see-all" href="{{ link_href ? link_href : '' }}"><span>{{ link_title }}</span><i class="fal fa-chevron-right"></i></a>{% endif %}
     </div>
     {% endif %}
@@ -12,7 +12,7 @@
                     {% for product in tab.products %}
                         <div>
                             <div class="card product-card">
-                                {# <button class="btn-wishlist btn-sm" type="button" data-bs-toggle="tooltip" data-bs-placement="left" onclick="wishlist.add('{{ product.product_id }}');" title="{{ button_wishlist }}"><i class="ci-heart"></i></button> #}
+                                 <button class="btn-wishlist btn-sm" type="button" data-bs-toggle="tooltip" data-bs-placement="left" onclick="wishlist.add('{{ product.product_id }}');" title="{{ button_wishlist }}"><i class="ci-heart"></i></button>
                                 <div class="position-relative">
                                     <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fad fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
                                     <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}"></div>

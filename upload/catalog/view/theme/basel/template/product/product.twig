@@ -64,6 +64,7 @@
                             <div class="col" style="min-width: 1px;">
                                 <div class="product-features" id="product">
 
+
                                     <div class="badges-wrapper">
 
                                         <div class="product-badge-cpta product-badge-cpta__free-shipping me-3">
@@ -138,6 +139,14 @@
 
                                         <input type="hidden" name="product_id" value="{{ product_id }}" />
                                         <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
+
+                                    </div>
+
+                                    <div class="d-flex mb-4">
+                                        <div class="w-100 me-3">
+                                            <button class="btn btn-outline-secondary d-block " onclick="wishlist.add('{{ product_id }}');" type="button"><i class="ci-heart fs-lg "></i></button>
+                                        </div>
+
                                     </div>
 
                                     {% if minimum > 1 %}
@@ -410,7 +419,7 @@
             {% for product in products|slice(0, 5) %}
                 <div>
                     <div class="card product-card">
-                        {# <button class="btn-wishlist btn-sm" type="button" data-bs-toggle="tooltip" data-bs-placement="left" onclick="wishlist.add('{{ product.product_id }}');" title="{{ button_wishlist }}"><i class="ci-heart"></i></button> #}
+                        <button class="btn-wishlist btn-sm" type="button"  onclick="wishlist.add('{{ product.product_id }}');" ><i class="ci-heart"></i></button>
                         <div class="position-relative">
                             <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fad fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
                             <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" alt="{{ product.name }}"></div>

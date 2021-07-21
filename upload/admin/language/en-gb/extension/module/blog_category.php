@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title']    = 'Basel Blog: Categories';
+$_['heading_title']    = 'Chipoteka Blog: Categories';
 
 // Text
 $_['text_module']      = 'Modules';
