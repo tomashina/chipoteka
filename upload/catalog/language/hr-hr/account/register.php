@@ -11,7 +11,7 @@ $_['text_your_details']    = 'Vaši osobni podaci';
 $_['text_your_address']    = 'Vaša adresa';
 $_['text_newsletter']      = 'Newsletter';
 $_['text_your_password']   = 'Vaša lozinka';
-$_['text_agree']           = 'Pročitao sam i slažem se s <a href="%s" class="agree"><b>%s</b></a>';
+$_['text_agree']                     = '<span><span>Pročitao sam i slažem se s </span> <a href="%s" class="agree"><b>%s</b></a></span>';
 
 // Entry
 $_['entry_customer_group'] = 'Korisnička grupa';

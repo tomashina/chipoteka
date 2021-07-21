@@ -43,13 +43,15 @@
                                   {% for customer_group in customer_groups %}
                                       {% if customer_group.customer_group_id == customer_group_id %}
                                           <div class="form-check form-check-inline">
+                                              <label class="form-check-label" for="customer_group_id">
                                               <input class="form-check-input" type="radio" name="customer_group_id" value="{{ customer_group.customer_group_id }}" id="cg{{ customer_group.customer_group_id }}"  checked="checked">
-                                              <label class="form-check-label" for="customer_group_id">{{ customer_group.name }}</label>
+                                            {{ customer_group.name }}</label>
                                           </div>
                                           {% else %}
                                           <div class="form-check form-check-inline">
+                                              <label class="form-check-label" for="customer_group_id">
                                               <input class="form-check-input" type="radio" name="customer_group_id" value="{{ customer_group.customer_group_id }}" id="cg{{ customer_group.customer_group_id }}">
-                                              <label class="form-check-label" for="customer_group_id"> {{ customer_group.name }}</label>
+                                            {{ customer_group.name }}</label>
                                           </div>
                                       {% endif %}
                                   {% endfor %}
@@ -120,8 +122,10 @@
                                   {% endfor %}
 
 
-
+                          <div class="col-12">
                           <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">{{ text_your_password }}</h2>
+
+                          </div>
 
                           <div class="col-sm-6">
                               <div class="form-group mb-3 required">
@@ -153,10 +157,10 @@
                               </div>
                           </div>
 
-
+                          <div class="col-12 d-none">
                           <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">{{ text_newsletter }}</h2>
-
-                          <div class="col-sm-12 ">
+                          </div>
+                          <div class="col-sm-12 d-none">
                               <div class="form-group mb-3 required">
                                   <label class="form-label me-3">{{ entry_newsletter }}</label>
                                           {% if newsletter %}
@@ -192,15 +196,21 @@
 
                                       <div class="col-sm-12 mt-3">
                                             <div class="form-check form-check-inline">
-                                                {% if agree %}
-                                                <input class="form-check-input" type="checkbox" name="agree" value="1"  checked="checked">
-                                                {% else %}
-                                                    <input class="form-check-input" type="checkbox" name="agree" value="1"  >
-                                                {% endif %}
-                                                <label class="form-check-label" for="ex-check-4">{{ text_agree }}</label>
+                                                <label class="form-check-label" >
+
+                                                    {% if agree %}
+                                                        <input type="checkbox" class="form-check-input" name="agree" value="1" checked="checked" />
+                                                    {% else %}
+                                                        <input type="checkbox" class="form-check-input" name="agree" value="1" />
+                                                    {% endif %}
+
+                                                    {{ text_agree }}</label>
                                             </div>
 
                                       </div>
+
+
+
 
                                     <div class="col-sm-12 mt-4 mb-5">
                                     <input type="submit" value="{{ text_register }}" class="btn btn-primary  mt-3 mt-sm-0 " />
