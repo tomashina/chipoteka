@@ -7,8 +7,7 @@ class ControllerProductManufacturer extends Controller {
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
-        $this->document->setDescription($manufacturer_info['meta_description']);
-        $this->document->setKeywords($manufacturer_info['meta_keyword']);
+
 
 		$data['breadcrumbs'] = array();
 
@@ -26,6 +25,9 @@ class ControllerProductManufacturer extends Controller {
 
 		$results = $this->model_catalog_manufacturer->getManufacturers();
 
+
+        $this->load->model('tool/image');
+
 		foreach ($results as $result) {
 			if (is_numeric(utf8_substr($result['name'], 0, 1))) {
 				$key = '0 - 9';
@@ -37,8 +39,16 @@ class ControllerProductManufacturer extends Controller {
 				$data['categories'][$key]['name'] = $key;
 			}
 
+
+            if ($result['image']) {
+                $image = $this->model_tool_image->resize($result['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_category_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_category_height'));
+            } else {
+                $image = $this->model_tool_image->resize('placeholder.png', $this->config->get('theme_' . $this->config->get('config_theme') . '_image_category_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_category_height'));
+            }
+
 			$data['categories'][$key]['manufacturer'][] = array(
 				'name' => $result['name'],
+                'image' => $image,
 				'href' => $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $result['manufacturer_id'])
 			);
 		}
