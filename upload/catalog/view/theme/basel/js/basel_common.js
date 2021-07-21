@@ -393,8 +393,8 @@ var wishlist = {
 				if (json['success_redirect']) {
 					location = json['success_redirect'];
 				} else if (json['success']) {
-					$('#myModal').modal('show');
-					$('#note').html('<div class="row"><div class="col-sm-3 col-lg-4"><img src="' + json.image + '" /></div><div class="col-sm d-flex align-items-center"><p class="align-middle">' + json.success +'</p></div></div>');
+					$('#myModalw').modal('show');
+					$('#notew').html('<div class="row"><div class="col-sm-3 col-lg-4"><img src="' + json.image + '" /></div><div class="col-sm d-flex align-items-center"><p class="align-middle">' + json.success +'</p></div></div>');
 
 				}
 			},
