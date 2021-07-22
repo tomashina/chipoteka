@@ -265,6 +265,9 @@ class ControllerCatalogCategory extends Controller {
 		$pagination->limit = $this->config->get('config_limit_admin');
 		$pagination->url = $this->url->link('catalog/category', 'user_token=' . $this->session->data['user_token'] . $url . '&page={page}', true);
 
+        $pagination->text_next = '&gt;'; //change the html for the next link here
+        $pagination->text_prev = '&lt;'; //change the html for the previous link here
+
 		$data['pagination'] = $pagination->render();
 
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($category_total) ? (($page - 1) * $this->config->get('config_limit_admin')) + 1 : 0, ((($page - 1) * $this->config->get('config_limit_admin')) > ($category_total - $this->config->get('config_limit_admin'))) ? $category_total : ((($page - 1) * $this->config->get('config_limit_admin')) + $this->config->get('config_limit_admin')), $category_total, ceil($category_total / $this->config->get('config_limit_admin')));

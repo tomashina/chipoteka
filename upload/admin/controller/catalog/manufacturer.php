@@ -230,6 +230,8 @@ class ControllerCatalogManufacturer extends Controller {
 		$pagination->page = $page;
 		$pagination->limit = $this->config->get('config_limit_admin');
 		$pagination->url = $this->url->link('catalog/manufacturer', 'user_token=' . $this->session->data['user_token'] . $url . '&page={page}', true);
+        $pagination->text_next = '&gt;'; //change the html for the next link here
+        $pagination->text_prev = '&lt;'; //change the html for the previous link here
 
 		$data['pagination'] = $pagination->render();
 
