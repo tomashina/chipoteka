@@ -4,7 +4,7 @@
 $_['text_search']              = 'Pretraživanje';
 $_['text_brand']               = 'Dobavljač';
 $_['text_manufacturer']        = 'Dobavljač:';
-$_['text_model']               = 'Model:';
+$_['text_model']               = 'Šifra:';
 $_['text_reward']              = 'Nagradni bodovi:';
 $_['text_points']              = 'Cijena u nagradnim bodovima:';
 $_['text_stock']               = 'Dostupnost:';

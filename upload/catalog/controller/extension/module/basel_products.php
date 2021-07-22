@@ -125,9 +125,21 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 					if ((float)$result['special']) {
 						$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 						$date_end = $this->model_extension_basel_basel->getSpecialEndDate($result['product_id']);
+                        if($result['special'] >= FREESHIPPING){
+                            $freeshipping = true;
+                        }
+                        else{
+                            $freeshipping = false;
+                        }
 					} else {
 						$special = false;
 						$date_end = false;
+                        if($result['price'] >= FREESHIPPING){
+                            $freeshipping = true;
+                        }
+                        else{
+                            $freeshipping = false;
+                        }
 					}
 					
 					if ( (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
@@ -135,7 +147,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 							$sale_badge = '-' . number_format(((($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
 						} else {
 							$sale_badge = $this->language->get('basel_text_sale');
-						}		
+						}
 					} else {
 						$sale_badge = false;
 					}
@@ -162,6 +174,8 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 					} else {
 						$rating = false;
 					}
+
+                    $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + 5, date('Y')));
 					
 					$products[] = array(
 						'product_id' => $result['product_id'],
@@ -173,6 +187,8 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 						'price'   	 => $price,
 						'new_label'  => $is_new,
 						'sale_badge' => $sale_badge,
+                        'saljemodo'     => $saljemodo,
+                        'freeshipping' => $freeshipping,
 						'special' 	 => $special,
 						'tax'        => $tax,
 						'minimum'    => $result['minimum'] > 0 ? $result['minimum'] : 1,

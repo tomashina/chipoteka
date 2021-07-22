@@ -265,9 +265,6 @@ class ControllerProductProduct extends Controller {
 
 			$this->load->model('tool/image');
 
-
-
-
             if ( isset($manufacturer_info['image']) && $manufacturer_info['image']) {
                 $data['manufacturer_logo'] = $this->model_tool_image->resize($manufacturer_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_additional_height'));;
             } else {
@@ -307,10 +304,34 @@ class ControllerProductProduct extends Controller {
 			if (!is_null($product_info['special']) && (float)$product_info['special'] >= 0) {
 				$data['special'] = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				$tax_price = (float)$product_info['special'];
+				$ratedvanaest = $product_info['special'] / 12;
+                $ratedvacetiri = $product_info['special'] / 24;
+				$data['ratedvanaest'] = $this->currency->format($this->tax->calculate($ratedvanaest, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                $data['ratedvacetiri'] = $this->currency->format($this->tax->calculate($ratedvacetiri, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                if($product_info['special']>= FREESHIPPING){
+
+                    $data['freeshipping'] = true;
+
+                }
 			} else {
 				$data['special'] = false;
 				$tax_price = (float)$product_info['price'];
+                $ratedvanaest = $product_info['price'] / 12;
+                $ratedvacetiri = $product_info['price'] / 24;
+                $data['ratedvanaest'] = $this->currency->format($this->tax->calculate($ratedvanaest, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                $data['ratedvacetiri'] = $this->currency->format($this->tax->calculate($ratedvacetiri, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                if($product_info['price']>= FREESHIPPING){
+
+                    $data['freeshipping'] = true;
+
+                }
+
 			}
+
+
+            $data['saljemodo'] = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + 5, date('Y')));
+
+
 
 			if ($this->config->get('config_tax')) {
 				$data['tax'] = $this->currency->format($tax_price, $this->session->data['currency']);
@@ -418,11 +439,25 @@ class ControllerProductProduct extends Controller {
 				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 					$tax_price = (float)$result['special'];
+                    if($result['special'] >= FREESHIPPING){
+                        $freeshipping = true;
+                    }
+                    else{
+                        $freeshipping = false;
+                    }
 				} else {
 					$special = false;
 					$tax_price = (float)$result['price'];
+
+                    if($result['price'] >= FREESHIPPING){
+                        $freeshipping = true;
+                    }
+                    else{
+                        $freeshipping = false;
+                    }
+
 				}
-	
+
 				if ($this->config->get('config_tax')) {
 					$tax = $this->currency->format($tax_price, $this->session->data['currency']);
 				} else {
@@ -435,6 +470,8 @@ class ControllerProductProduct extends Controller {
 					$rating = false;
 				}
 
+                $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + 5, date('Y')));
+
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,
@@ -442,6 +479,8 @@ class ControllerProductProduct extends Controller {
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 					'price'       => $price,
 					'special'     => $special,
+					'freeshipping' => $freeshipping,
+                    'saljemodo'     => $saljemodo,
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $rating,

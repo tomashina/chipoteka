@@ -162,8 +162,20 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 
             if ((float)$result['special']) {
                 $special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                if($result['special'] >= FREESHIPPING){
+                    $freeshipping = true;
+                }
+                else{
+                    $freeshipping = false;
+                }
             } else {
                 $special = false;
+                if($result['price'] >= FREESHIPPING){
+                    $freeshipping = true;
+                }
+                else{
+                    $freeshipping = false;
+                }
             }
 			
 			$image2 = $this->model_catalog_product->getProductImages($result['product_id']);
@@ -213,6 +225,8 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                 $description = utf8_substr(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get($this->config->get('config_theme') . '_product_description_length')) . '..';
             }
 
+            $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + 5, date('Y')));
+
             $products[] = array(
                 'product_id'  => $result['product_id'],
                 'thumb'       => $image,
@@ -222,6 +236,8 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 				'quantity'  => $result['quantity'],
                 'description' => $description,
                 'price'       => $price,
+                'saljemodo'     => $saljemodo,
+                'freeshipping' => $freeshipping,
 				'sale_badge'  => $sale_badge,
 				'new_label'   => $is_new,
                 'special'     => $special,

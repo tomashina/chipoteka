@@ -11,7 +11,7 @@ $_['text_all_status']   = 'Svi statusi';
 $_['column_date_start'] = 'Početni datum';
 $_['column_date_end']   = 'Krajnji datum';
 $_['column_name']       = 'Naziv artikla';
-$_['column_model']      = 'Model';
+$_['column_model']      = 'Šifra';
 $_['column_quantity']   = 'Količina';
 $_['column_total']      = 'Ukupno';
 

@@ -1,19 +1,17 @@
-
 <div class="col-12  product-card-wrapper">
-
     <div class="card product-card">
         <button class="btn-wishlist btn-sm" type="button"  onclick="wishlist.add('{{ product.product_id }}');" ><i class="ci-heart"></i></button>
         <div class="position-relative" >
             <button class="btn btn-primary btn-basket "  type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fad fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
             <div class="card-img-top d-block overflow-hidden" ><img src="{{ product.thumb }}" alt="{{ product.name }}"></div>
+            {% if product.freeshipping %}
             <div class="product-badge-cpta product-badge-cpta__free-shipping">
                 <span> Besplatna dostava</span>
                 <i class="fas fa-shipping-fast"></i>
             </div>
+            {% endif %}
         </div>
       <a class="stretched-link"  href="{{ product.href }}">
-
-
         <div class="card-body">
             <h3 class="product-title">{{ product.name }}</h3>
                 {% if product.price %}
@@ -26,39 +24,37 @@
                         {% endif %}
                     </div><!-- .price -->
                 {% endif %}
-
-            {% if product.price and product.special and salebadge_status %}
+            {% if product.price and product.special  %}
                 <div class="product-badge-cpta product-badge-cpta__discount">
-                    <span> Black Friday</span>
+                    <span> AKCIJA</span>
                     <span> Uštedi <strong>{{ product.sale_badge }}</strong></span>
                 </div>
             {% endif %}
-
-
             <div class="product-price--web">
                 <span>
                     Web cijena: 
                 </span>
                 <span>
+                          {% if  product.special  %}
                     {{ product.special }}
+                          {% else %}
+                              {{ product.price }}
+                    {% endif %}
                 </span>
             </div>
         </div>
-        
         <div class="product-delivery-time">
             <i class="fas fa-shipping-timed"></i>
                <div class="d-flex flex-column">
-               <span>
-               Proizvod kod dobavljača
-               </span>
-               <span>
-              Šaljemo do 05.05.2021
-               </span>
+                   {% if (product.quantity < 1)  %}
+                       <span>Trenutno nedostupno</span>
+                       <span></span>
+                   {% else %}
+                       <span>Proizvod kod dobavljača</span>
+                       <span>Šaljemo do {{ product.saljemodo }}</span>
+                   {% endif %}
                </div>
         </div>
-
     </a>
-
   </div>
-    
 </div>

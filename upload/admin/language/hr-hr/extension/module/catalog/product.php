@@ -128,7 +128,7 @@ $_['action_vw'] = 'V';
 $_['action_ed'] = 'E';
 
 $_['column_name'] = 'Naziv artikla';
-$_['column_model'] = 'Model';
+$_['column_model'] = 'Šifra';
 $_['column_image'] = 'Slika';
 $_['column_price'] = 'Cijena';
 $_['column_gross_price'] = 'Bruto cijena';
