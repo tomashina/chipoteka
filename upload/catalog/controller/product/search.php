@@ -204,9 +204,21 @@ class ControllerProductSearch extends Controller {
 				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 					$tax_price = (float)$result['special'];
+                    if($result['special'] >= FREESHIPPING){
+                        $freeshipping = true;
+                    }
+                    else{
+                        $freeshipping = false;
+                    }
 				} else {
 					$special = false;
 					$tax_price = (float)$result['price'];
+                    if($result['price'] >= FREESHIPPING){
+                        $freeshipping = true;
+                    }
+                    else{
+                        $freeshipping = false;
+                    }
 				}
 	
 				if ($this->config->get('config_tax')) {
@@ -221,6 +233,8 @@ class ControllerProductSearch extends Controller {
 					$rating = false;
 				}
 
+                $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + 5, date('Y')));
+
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,
@@ -228,6 +242,8 @@ class ControllerProductSearch extends Controller {
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 					'price'       => $price,
 					'special'     => $special,
+                    'freeshipping' => $freeshipping,
+                    'saljemodo'     => $saljemodo,
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $result['rating'],
