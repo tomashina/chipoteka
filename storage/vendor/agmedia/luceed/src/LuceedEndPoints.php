@@ -17,7 +17,9 @@ class LuceedEndPoints
         return [
             'group_list'        => 'grupeartikala_lista.json',
             'manufacturer_list' => 'robnemarke_lista.json',
-            'product_list'      => 'artikli_atribut_uid.json',
+            'warehouse_list'    => 'skladista_lista.json',
+            'product_list'      => 'artikli_lista.json',
+            'product'           => '....json',
             'product_actions'   => 'akcije.json',
             'product_image'     => 'product_image.json',
             'manufacturer_uid'  => 'partner_single.json',
@@ -39,8 +41,10 @@ class LuceedEndPoints
         return [
             'group_list'        => 'grupeartikala/lista',
             'manufacturer_list' => 'robnemarke/lista',
+            'warehouse_list'    => 'skladista/lista',
             'product_list'      => 'artikli/atribut/atribut_uid/59-2987',
-            'product_actions'   => 'akcije/lista',
+            'product'           => '...',
+            'product_actions'   => 'prodajneakcije/lista',
             'product_image'     => 'artikli/dokumenti/',
             'manufacturer_uid'  => 'partneri/uid/',
             'customer_email'    => 'partneri/email/',

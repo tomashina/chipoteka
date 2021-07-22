@@ -21,19 +21,6 @@ class LuceedProduct extends Facade
     
     
     /**
-     * @param array $chunks
-     *
-     * @return mixed
-     */
-    public static function chunk(array $chunks)
-    {
-        $luceed = new Luceed();
-        
-        return $luceed->getProductsList($chunks);
-    }
-    
-    
-    /**
      * @param string $id
      *
      * @return mixed

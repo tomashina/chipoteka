@@ -82,9 +82,15 @@ class LOC_Category
         $list_diff      = $this->getList()
                                ->where('enabled', 'D')
                                ->where('grupa_artikla', '!=', '')
+                               //->whereIn('grupa_artikla', '!=', agconf('import.category.exluded'))
                                ->where('naziv', '!=', '')
                                ->pluck('grupa_artikla')
                                ->diff($this->existing)
+                               ->reject(function ($value, $key) {
+                                   if (in_array($value, agconf('import.category.excluded'))) {
+                                       return $value;
+                                   }
+                               })
                                ->flatten();
 
         //Log::write($this->existing, 'cats_diff');
@@ -213,6 +219,10 @@ class LOC_Category
             'date_added'    => Carbon::now(),
             'date_modified' => Carbon::now()
         ]);
+
+        if (substr($category->naziv, 0, 1) == '-') {
+            $category->naziv = substr($category->naziv, 1);
+        }
 
         CategoryDescription::insert([
             'category_id'      => $id,

@@ -37,7 +37,6 @@ class Luceed
         $this->end_points = LuceedEndPoints::get($this->env);
     }
 
-
     /*******************************************************************************
      *                                Copyright : AGmedia                           *
      *                              email: filip@agmedia.hr                         *
@@ -51,7 +50,6 @@ class Luceed
     {
         return $this->service->get($this->end_points['group_list']);
     }
-
 
     /*******************************************************************************
      *                                Copyright : AGmedia                           *
@@ -76,6 +74,29 @@ class Luceed
         return $this->service->get($this->end_points['manufacturer_uid'] . $manufacturer_uid);
     }
 
+    /*******************************************************************************
+     *                                Copyright : AGmedia                           *
+     *                              email: filip@agmedia.hr                         *
+     *******************************************************************************/
+    // MANUFACTURERS
+
+    /**
+     * @return false|mixed
+     */
+    public function getWarehouseList()
+    {
+        return $this->service->get($this->end_points['warehouse_list']);
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function getWarehouse(string $warehouse_uid)
+    {
+        return $this->service->get($this->end_points['warehouse'] . $warehouse_uid);
+    }
+
 
     /*******************************************************************************
      *                                Copyright : AGmedia                           *
@@ -90,7 +111,18 @@ class Luceed
      */
     public function getProductsList(array $query = null)
     {
-        return $this->service->get($this->end_points['product_list'] . ($query ? $query : ''));
+        return $this->service->get($this->end_points['product_list'] . ($query ?: ''));
+    }
+
+
+    /**
+     * @param string|array $product_id
+     *
+     * @return false|mixed
+     */
+    public function getProduct($product_id)
+    {
+        return $this->service->get($this->end_points['product'], $product_id);
     }
 
 
@@ -101,7 +133,7 @@ class Luceed
      */
     public function getProductsActions(array $query = null)
     {
-        return $this->service->get($this->end_points['product_actions'] . ($query ? $query : ''));
+        return $this->service->get($this->end_points['product_actions'] . ($query ?: ''));
     }
 
 
