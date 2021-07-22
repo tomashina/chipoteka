@@ -248,6 +248,13 @@
 
         .nav-item {
 
+            // Shop
+            @include media-breakpoint-up(xl) {
+                &:nth-child(1) {
+                    flex-basis: 18%;
+                }
+            }
+
             // Close 
             &:nth-child(3) {
                 flex: 0 0 3.5rem;
@@ -264,14 +271,13 @@
             font-size: 1rem;
             font-weight: 600;
             text-transform: uppercase;
-            padding-left: 0.8rem;
-            padding-right: 0.8rem;
+            // padding-left: 0.8rem;
+            padding-left: 1.25rem;
+            padding-right: 0.6rem;
             border-left: 1px solid $light;
-
             display: flex;
             align-items: center;
-            justify-content: center;
-
+            // justify-content: center;
 
             &.active {
                 background-color: $light;

@@ -9,16 +9,13 @@
     width: 100%;
     box-shadow: $box-shadow-header;
     margin-right: auto !important;
- 
+
     @include media-breakpoint-up(xl) {
         box-shadow: none;
         position: relative;
         max-width: 999px;
     }
 
-
-
-    
     // Input
     input {
         padding-left: 4rem !important;
@@ -34,7 +31,7 @@
         @include media-breakpoint-up(xl) {
             font-size: 1.5rem;
         }
-       
+
         &::placeholder {
             color: $gray-l1;
         }
@@ -57,13 +54,88 @@
         i {
             color: $gray-l2;
         }
-        
+
         input::placeholder {
             color: $dark;
         }
     }
 
 
+
+
+    // MSMART Search Live Filter - Ayax search plugin
+    .msmart-search-live-filter {
+
+        .mss-header  {
+            text-align: left;
+            padding-left: 15px;
+            font-weight: 500;
+
+            &.mss-header-products {
+                background-color: white;
+                color: $gray-d1;
+            }
+
+            &.mss-header-categories {
+                background-color: $light;
+                color: $gray-d1;
+            }
+        }
+     
+        
+
+
+        .mss-button-more {
+            background-color: white;
+            color: $accent;
+            border: none;
+            font-weight: normal;
+
+            &:hover {
+                background-color: $accent;
+                color: $light;
+            }
+        }
+
+
+        .tt-menu {
+
+             .tt-dataset-products tr td:nth-child(2) {
+                 border-left: none;
+             }
+
+            .tt-suggestion {
+                transition: background-color $transition-default;
+
+                &:hover {
+                    box-shadow: none;
+                    background-color: rgba($primary, 0.03);
+                }
+
+                .tt-highlight {
+                    color: $primary;
+                    font-weight: inherit;
+                }
+
+                img {
+                    margin-right: 1rem;
+                }
+            }
+
+            .mslf-price {
+                color: $gray-d1 !important;
+                font-weight: 600;
+    
+                strike {
+                    color: $gray;
+                    font-size: 0.9rem;
+                    font-weight: 300;
+                }
+            }
+        }
+
+
+    }
 }
 
 // - - - - - - - - - - - - - - - - -
@@ -75,7 +147,7 @@
         // background-color: #fff;
         border-color: $accent;
         box-shadow: inset 0 1px 2px transparent, 0 0.375rem 0.625rem -0.3125rem rgba($secondary, 0.15);
-}
+    }
 }
 
 
@@ -83,8 +155,3 @@
 // Buttons
 
 // .btn {}
-
-
-
-
- 
