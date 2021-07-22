@@ -52,8 +52,12 @@
 # Upload Files
 /upload/system/storage/upload/*
 !/upload/system/storage/upload/index.html
+!/upload/storage/upload/luceed_json/
+!/upload/storage/upload/assets/
 /storage/upload/*
 !/storage/upload/index.html
+!/storage/upload/luceed_json/
+!/storage/upload/assets/
 
 # IDE Project files
 /.idea
