@@ -182,7 +182,7 @@ class LOC_Action
     {
         $prods = json_decode($actions);
 
-        return $prods->result[0]->akcije;
+        return $prods->result[0]->prodajneakcije;
     }
 
 
