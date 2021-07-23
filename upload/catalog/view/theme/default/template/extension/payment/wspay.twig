@@ -1,4 +1,40 @@
 <form name="pay" action="{{ action }}" method="post">
+
+    <div class="card border-0 shadow mt-3">
+        <div class="card-body">
+            <h5 class="card-title">Želite platiti na rate?</h5>
+            <p class="card-text fs-sm text-muted">beskamatno do 10 rata Premium Visa (American Express).<br>
+
+            beskamatno do 24 rate Mastercard karticama Zagrebačke banke.
+            </p>
+        <div class="row gx-4 gy-3 mt-3">
+
+            <div class="col-sm-6  required">
+                <label class="form-label" for="credit_card_type">Kartica</label>
+                <select name="CreditCardName" id="CreditCardName" class="form-select mt-2">
+                    <option value="" selected="selected">Odaberite karticu</option>
+                    <option value="MAESTRO" >Maestro</option>
+                    <option value="VISA">Visa</option>
+                    <option value="MASTERCARD">MasterCard</option>
+                    <option value="AMEX">Visa Premium</option>
+
+                </select>
+            </div>
+            <div class="col-sm-6  required">
+                <label class="form-label" for="PaymentPlan">Broj rata</label>
+                <select name="PaymentPlan" id="PaymentPlan" class="form-select mt-2">
+                    <option value="" selected="selected">Odaberite broj rata</option>
+                    <option value="0000">Jednokratno</option>
+                    <option value="0200">2 rate</option>
+                    <option value="0600">6 rate</option>
+
+
+                </select>
+            </div>
+        </div>
+
+        </div>
+    </div>
  <input type="hidden" name="ShopID" value="{{ merchant }}">
 <input type="hidden" name="ShoppingCartID" value="{{ order_id }}">
 <input type="hidden" name="TotalAmount" value="{{ total }}">
@@ -11,13 +47,9 @@
 <input type="hidden" name="CustomerZIP" value="{{ postcode }}">
 <input type="hidden" name="CustomerPhone" value="{{ telephone }}">
 <input type="hidden" name="CustomerEmail" value="{{ email }}">
-
 <input type="hidden" name="Lang" value="HR">
-
 <input type="hidden" name="valuta" value="{{ currency }}">
-
 <input type="hidden" name="tecaj" value="{{ tecaj }}">
-
 <input type="hidden" name="ReturnErrorURL" value="{{ cancel_url }}">
 <input type="hidden" name="ReturnURL" value="{{ return_url }}">
 <input type="hidden" name="CancelURL" value="{{ cancel_url }}">
@@ -33,3 +65,5 @@
     <div class="clearfix"></div>
     
 </form>
+
+

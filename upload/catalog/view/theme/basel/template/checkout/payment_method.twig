@@ -28,17 +28,18 @@
         {% if payment_method.code == code or not code %}
 
           {% set code = payment_method.code %}
+
+
           <label class="form-check-label" for="{{ payment_method.code }}">
           <input class="form-check-input" type="radio" name="payment_method" id="{{ payment_method.code }}" value="{{ payment_method.code }}" checked="checked" />
-          <span class="text-dark fw-medium"> {{ payment_method.title }}</span><br><span class="text-muted">  {% if payment_method.terms %}
-            ({{ payment_method.terms }})
-          {% endif %}</span> </label>
+          <span class="text-dark fw-medium"> {{ payment_method.title }}</span>   </label>
+
+
+
           {% else %}
             <label class="form-check-label" for="{{ payment_method.code }}">
             <input class="form-check-input" type="radio" name="payment_method" id="{{ payment_method.code }}" value="{{ payment_method.code }}" />
-            <span class="text-dark fw-medium"> {{ payment_method.title }}</span><br><span class="text-muted">  {% if payment_method.terms %}
-              ({{ payment_method.terms }})
-            {% endif %}</span> </label>
+            <span class="text-dark fw-medium"> {{ payment_method.title }}</span> </label>
           {% endif %}
 
       </div>
