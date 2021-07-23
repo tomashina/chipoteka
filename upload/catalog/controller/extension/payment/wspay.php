@@ -7,9 +7,14 @@ class ControllerExtensionPaymentWSPay extends Controller {
 
         $this->load->language('extension/payment/wspay');
     
-       $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']); 
+       $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
-       $this->load->model('localisation/currency');
+
+
+
+
+
+      $this->load->model('localisation/currency');
       //$this->data['allcurrencies'] = array();
       $results = $this->model_localisation_currency->getCurrencies();   
  
@@ -45,6 +50,9 @@ class ControllerExtensionPaymentWSPay extends Controller {
         $data['country'] = $order_info['payment_iso_code_2'];
         $data['telephone'] = $order_info['telephone'];
         $data['email'] = $order_info['email'];
+
+      $data['creditcardname'] = $this->session->data['creditcardname'];
+      $data['paymentplan'] = $this->session->data['paymentplan'];
 
         $data['return_url'] = $this->url->link('checkout/success');
     $data['cancel_url'] = $this->url->link('checkout/checkout', '', true);

@@ -1,6 +1,8 @@
 <?php
 class ControllerCheckoutGuestShipping extends Controller {
 	public function index() {
+        unset($this->session->data['creditcardname']);
+        unset($this->session->data['paymentplan']);
 		$this->load->language('checkout/checkout');
 
         $data['cart'] = $this->url->link('checkout/cart', '', true);

@@ -28,17 +28,37 @@
         {% if payment_method.code == code or not code %}
 
           {% set code = payment_method.code %}
+
+
           <label class="form-check-label" for="{{ payment_method.code }}">
           <input class="form-check-input" type="radio" name="payment_method" id="{{ payment_method.code }}" value="{{ payment_method.code }}" checked="checked" />
-          <span class="text-dark fw-medium"> {{ payment_method.title }}</span><br><span class="text-muted">  {% if payment_method.terms %}
-            ({{ payment_method.terms }})
-          {% endif %}</span> </label>
+          <span class="text-dark fw-medium"> {{ payment_method.title }}</span>   </label>
+        {% if payment_method.code == 'wspay' %}
+          <div class="row gx-4 gy-3 mt-1">
+
+            <div class="col-sm-6  required">
+              <label class="form-label" for="credit_card_type">Kartica</label>
+              <select name="CreditCardName" id="CreditCardName" class="form-select mt-2">
+                <option value=""  value="NO" selected="selected">Odaberite karticu</option>
+                <option value="MAESTRO" id="MAESTRO">Maestro</option>
+                <option value="VISA" id="VISA">Visa</option>
+                <option value="MASTERCARD" id="MASTERCARD">MasterCard</option>
+                <option value="AMEX" id="VISAPREMIUM">Visa Premium</option>
+
+              </select>
+            </div>
+            <div class="col-sm-6  required">
+              <label class="form-label" for="PaymentPlan">Broj rata</label>
+              <select name="PaymentPlan" id="PaymentPlan" class="form-select mt-2">
+              </select>
+            </div>
+          </div>
+        {% endif %}
+
           {% else %}
             <label class="form-check-label" for="{{ payment_method.code }}">
             <input class="form-check-input" type="radio" name="payment_method" id="{{ payment_method.code }}" value="{{ payment_method.code }}" />
-            <span class="text-dark fw-medium"> {{ payment_method.title }}</span><br><span class="text-muted">  {% if payment_method.terms %}
-              ({{ payment_method.terms }})
-            {% endif %}</span> </label>
+            <span class="text-dark fw-medium"> {{ payment_method.title }}</span> </label>
           {% endif %}
 
       </div>
@@ -81,4 +101,23 @@
   </div>
 
 
-
+<script>
+  $(document).ready(function () {
+    $("#PaymentPlan").html("<option value='0000' selected='selected'>Jednokratno</option>");
+    $("#CreditCardName").change(function () {
+      var id = $(this).children(":selected").attr("id");
+      if (id == "MAESTRO") {
+        $("#PaymentPlan").html("<option value='0000' selected='selected'>Jednokratno</option>");
+      } else if (id == "VISA") {
+        $("#PaymentPlan").html("<option value='0000' selected='selected'>Jednokratno</option>");
+      } else if (id == "MASTERCARD") {
+        $("#PaymentPlan").html("<option value='0000' selected='selected'>Jednokratno</option><option value='0200' >2 rate</option><option value='0300'>3 rate</option><option value='0400' '>4 rate</option><option value='0500' >5 rata</option><option value='0600'>6 rata</option><option value='0700' >7 rata</option><option value='0800' >8 rata</option><option value='0900' >9 rata</option><option value='1000' >10 rata</option><option value='1100' >11 rata</option><option value='1200' >12 rata</option><option value='1300' >14 rata</option><option value='1400' >14 rata</option><option value='1500' >15 rata</option><option value='1600' >16 rata</option><option value='1700' >17 rata</option><option value='1800' >18 rata</option><option value='1900' >19 rata</option><option value='20000' >20 rata</option><option value='2100' >21 rata</option><option value='2200' >22 rate</option><option value='2300' >23 rate</option><option value='2400' >24 rate</option>");
+      } else if (id == "VISAPREMIUM") {
+        $("#PaymentPlan").html("<option value='0000' selected='selected'>Jednokratno</option><option value='0200' >2 rate</option><option value='0300'>3 rate</option><option value='0400' '>4 rate</option><option value='0500' >5 rata</option><option value='0600'>6 rata</option><option value='0700' >7 rata</option><option value='0800' >8 rata</option><option value='0900' >9 rata</option><option value='1000' >10 rata</option>");
+      }
+      else if (id == "NO") {
+        $("#PaymentPlan").html("<option value='0000' selected='selected'>Jednokratno</option>");
+      }
+    });
+  });
+</script>

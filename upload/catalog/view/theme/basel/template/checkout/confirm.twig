@@ -34,7 +34,7 @@
     </div>
     <div class="pt-2 pt-sm-0 ps-sm-3 mx-auto mx-sm-0 text-center text-sm-start" style="max-width: 9rem;">
       <label class="form-label" for="quantity1">{{ column_quantity }}</label>
-      <input type="number" min="1" step="1" name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" class="form-control qty-form" />
+      <input type="text"  name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" class="form-control "  readonly/>
       <button class="btn btn-link px-0 text-danger" type="button" onclick="cart.remove('{{ product.cart_id }}');" ><i class="ci-close-circle me-2"></i><span class="fs-sm">{{ button_remove }}</span>
       </button>
     </div>

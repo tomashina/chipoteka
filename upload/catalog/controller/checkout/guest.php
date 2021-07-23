@@ -1,6 +1,8 @@
 <?php
 class ControllerCheckoutGuest extends Controller {
 	public function index() {
+        unset($this->session->data['creditcardname']);
+        unset($this->session->data['paymentplan']);
 		$this->load->language('checkout/checkout');
 
 		$data['customer_groups'] = array();

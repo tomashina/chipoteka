@@ -3,6 +3,9 @@ class ControllerCheckoutPaymentMethod extends Controller {
 	public function index() {
 		$this->load->language('checkout/checkout');
 
+        unset($this->session->data['creditcardname']);
+        unset($this->session->data['paymentplan']);
+
 		if (isset($this->session->data['payment_address'])) {
 			// Totals
 			$totals = array();
@@ -165,6 +168,7 @@ class ControllerCheckoutPaymentMethod extends Controller {
 
 
 
+
         //end
 
 		if (!isset($this->request->post['payment_method'])) {
@@ -187,9 +191,23 @@ class ControllerCheckoutPaymentMethod extends Controller {
 			$this->session->data['payment_method'] = $this->session->data['payment_methods'][$this->request->post['payment_method']];
 
 			//$this->session->data['comment'] = strip_tags($this->request->post['comment']);
+            if (isset($this->request->post['CreditCardName'])) {
+
+                $this->session->data['creditcardname'] = $this->request->post['CreditCardName'];
+
+            }
+
+            if (isset($this->request->post['PaymentPlan'])) {
+
+                $this->session->data['paymentplan'] = $this->request->post['PaymentPlan'];
+
+            }
 		}
 
-		$this->response->addHeader('Content-Type: application/json');
+
+
+
+        $this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
 }
