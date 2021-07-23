@@ -1,7 +1,7 @@
 <?php
 // Croatian   v.2.x.x     Datum: 01.10.2014		Author: Gigo (Igor Ilić - igor@iligsoft.hr)
 // Heading
-$_['heading_title']    = 'Naknada za preniske narudžbe';
+$_['heading_title']    = 'Naknada za plaćanje na rate';
 
 // Text
 $_['text_total']       = 'Sumiranje na narudžbi';
@@ -10,7 +10,7 @@ $_['text_edit']        = 'Izmjeni Naknada za preniske narudžbe';
 
 // Entry
 $_['entry_total']      = 'Sumiranje na narudžbi';
-$_['entry_fee']        = 'Cijena';
+$_['entry_fee']        = 'Postotak uvećanja';
 $_['entry_tax_class']  = 'Porezna stopa';
 $_['entry_status']     = 'Status';
 $_['entry_sort_order'] = 'Redoslijed sortiranja';
