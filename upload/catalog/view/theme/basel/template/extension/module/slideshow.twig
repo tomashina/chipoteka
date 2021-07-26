@@ -18,7 +18,7 @@
             </div>
              <div>
                  {% if banner.link %}  <a  href="{{ banner.link }}" >   {% endif %}
-                     <img src="{{ banner.image }}" alt="{{ banner.title }}">
+                     <img loading="lazy" src="{{ banner.image }}" alt="{{ banner.title }}">
                      {% if banner.link %}   </a>{% endif %}
              </div>
         </div>
