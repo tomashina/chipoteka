@@ -22,7 +22,7 @@
 @import "fa/mixins";
 @import "fa/core";
 @import "fa/larger";
-@import "fa/fixed-width";
+// @import "fa/fixed-width";
 // @import "fa/list";
 // @import "fa/bordered-pulled";
 // @import "fa/animated";
@@ -30,17 +30,17 @@
 // @import "fa/stacked";
 @import "fa/icons";
 @import "fa/screen-reader";
-@import "fa/regular";
 @import "fa/solid";
 @import "fa/light";
-@import "fa/brands";
-@import "fa/duotone";
+// @import "fa/regular";
+// @import "fa/brands";
+// @import "fa/duotone";
 
 // Layout & components
 @import 'reboot';
 @import 'components';   
 
-// User custom styles   
+// User custom styles    
 @import 'user'; 
 
 // Chipoteka components
