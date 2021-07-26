@@ -41,7 +41,7 @@
             {% for blog in posts %}
             <article>
                 {% if blog.image and thumb %}
-                <a class="blog-entry-thumb mb-3" href="{{ blog.href }}"><span class="blog-entry-meta-label fs-sm"><i class="ci-time"></i>{{ blog.date_added_day }} {{ blog.date_added_month }} </span><img src="{{ blog.image }}" alt="{{ blog.title }}"></a>
+                <a class="blog-entry-thumb mb-3" href="{{ blog.href }}"><span class="blog-entry-meta-label fs-sm"><i class="ci-time"></i>{{ blog.date_added_day }} {{ blog.date_added_month }} </span><img loading="lazy" src="{{ blog.image }}" alt="{{ blog.title }}"></a>
                 {% endif %}
                 <div class="d-flex justify-content-between mb-2 pt-1">
                     <h2 class="h5 blog-entry-title mb-0"><a href="{{ blog.href }}">{{ blog.title }}</a></h2>

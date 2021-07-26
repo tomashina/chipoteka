@@ -41,7 +41,7 @@
                             <article class="masonry-grid-item">
                                 <div class="card">
                                     {% if blog.image %}
-                                        <a class="blog-entry-thumb" href="{{ blog.href }}"><img class="card-img-top" src="{{ blog.image }}" alt="{{ blog.title }}"></a>
+                                        <a class="blog-entry-thumb" href="{{ blog.href }}"><img loading="lazy" class="card-img-top" src="{{ blog.image }}" alt="{{ blog.title }}"></a>
                                     {% endif %}
                                     <div class="card-body">
                                         <h2 class="h6 blog-entry-title"><a href="{{ blog.href }}">{{ blog.title }}</a></h2>
