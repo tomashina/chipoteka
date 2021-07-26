@@ -31,7 +31,7 @@
                     <div class="tab-pane fade show active" id="general" role="tabpanel">
                         <div class="row">
                             <!-- Product gallery-->
-                            <div class="col-md col-xxl-auto">
+                            <div class="col-md-5 col-xxxl-auto">
                                 <div class="product-gallery " style="display: block !important;">
                                     <div class="product-gallery-preview gallery">
                                         {% if thumb or images %}
@@ -59,7 +59,7 @@
                                 </div>
                             </div>
                             <!-- Product details-->
-                            <div class="col" style="min-width: 1px;">
+                            <div class="col-md-7" style="min-width: 1px;">
                                 <div class="product-features" id="product">
                                     <div class="badges-wrapper {% if freeshipping == false and special == '' %} mt-2 {% endif %}">
                                         {% if freeshipping %}
@@ -118,13 +118,14 @@
                                             </button>
                                         </div>
                                         <input type="hidden" name="product_id" value="{{ product_id }}" />
-                                        <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
+                                        <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100 me-3">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
+
+                                        <button class="btn btn-outline-secondary btn-wishlist-v2" onclick="wishlist.add('{{ product_id }}');" type="button"><i class="ci-heart fs-lg "></i></button>
+
                                     </div>
-                                    <div class="d-flex mb-4">
-                                        <div class="w-100 me-3">
-                                            <button class="btn btn-outline-secondary d-block " onclick="wishlist.add('{{ product_id }}');" type="button"><i class="ci-heart fs-lg "></i></button>
-                                        </div>
-                                    </div>
+
+                               
+
                                     {% if minimum > 1 %}
                                         <div class="alert alert-sm alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
                                     {% endif %}

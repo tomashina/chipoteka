@@ -198,7 +198,7 @@
         .product-quantity-button {
             display: flex;
             align-items: center;
-            flex-wrap: wrap;
+            // flex-wrap: wrap;
             margin-bottom: 1rem;
  
             // Quantity   
@@ -209,8 +209,8 @@
                 .input-quantity {
                     max-width: 81px;
                 }
-            }
-
+            } 
+ 
             // Button
             [id*="button-cart"] {
                 flex: 1;
@@ -223,6 +223,10 @@
                 }
             }
 
+            // Wishlist
+            .btn-wishlist-v2 {
+                margin-bottom: 0.5rem !important;
+            }
 
             
             @include media-breakpoint-down(sm) { // @media screen and (max-width: 441px)
