@@ -44,7 +44,7 @@ input[type="search"]::-webkit-search-results-decoration {
     transition: color .2s ease-in-out;
     color: $input-placeholder-color;
     font: {
-      family: 'cartzilla-icons';
+      // family: 'cartzilla-icons';
       style: normal;
     }
     &::before { content: '\e937'; }

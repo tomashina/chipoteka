@@ -226,21 +226,21 @@ $ci-eye-off: '\e9d6';
 $ci-thumb-up-filled: '\e9d7';
 $ci-dot-square: '\e9d8';
 
-@font-face {
-  font-family: '#{$icons-font-family}';
-  src:
-    url('#{$icons-font-path}/#{$icons-font-family}.ttf?z88dg8') format('truetype'),
-    url('#{$icons-font-path}/#{$icons-font-family}.woff?z88dg8') format('woff'),
-    url('#{$icons-font-path}/#{$icons-font-family}.svg?z88dg8##{$icons-font-family}') format('svg');
-  font-weight: normal;
-  font-style: normal;
-  font-display: block;
-}
+// @font-face {
+//   font-family: '#{$icons-font-family}';
+//   src:
+//     url('#{$icons-font-path}/#{$icons-font-family}.ttf?z88dg8') format('truetype'),
+//     url('#{$icons-font-path}/#{$icons-font-family}.woff?z88dg8') format('woff'),
+//     url('#{$icons-font-path}/#{$icons-font-family}.svg?z88dg8##{$icons-font-family}') format('svg');
+//   font-weight: normal;
+//   font-style: normal;
+//   font-display: block;
+// }
 
 [class^='ci-'], [class*=' ci-'] {
   display: inline-block;
   /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: '#{$icons-font-family}' !important;
+  // font-family: '#{$icons-font-family}' !important;
   speak: never;
   font-style: normal;
   font-weight: normal;

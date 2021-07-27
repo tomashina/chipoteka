@@ -22,7 +22,7 @@
 
   <section class="container py-3">
     {% if success %}
-      <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}</div>
+      <div class="alert alert-success"><i class="fal fa-check-circle"></i> {{ success }}</div>
     {% endif %}
 
     <div class="row pt-4">
@@ -30,7 +30,7 @@
 
       <div class="col-lg-4 col-sm-6 mb-grid-gutter">
         <div class="card border-0 shadow">
-          <div class="card-body text-center"><i class="ci-user-circle h2 mt-2 mb-4 text-primary"></i>
+          <div class="card-body text-center"><i class="fal fa-user-circle h2 mt-2 mb-4 text-primary"></i>
             <h6>{{ text_my_account }}</h6>
             <p class="fs-sm text-muted pb-2">{{ text_edit }}</p><a class="btn btn-outline-primary stretched-link mb-2" href="{{ edit }}">Uredi</a>
           </div>
@@ -39,7 +39,7 @@
 
       <div class="col-lg-4 col-sm-6 mb-grid-gutter">
         <div class="card border-0 shadow">
-          <div class="card-body text-center"><i class="ci-security-check h2 mt-2 mb-4 text-primary"></i>
+          <div class="card-body text-center"><i class="fal fa-shield-check h2 mt-2 mb-4 text-primary"></i>
             <h6>Lozinka</h6>
             <p class="fs-sm text-muted pb-2">{{ text_password }}</p><a class="btn btn-outline-primary stretched-link mb-2" href="{{ password }}">Uredi</a>
           </div>
@@ -48,7 +48,7 @@
 
       <div class="col-lg-4 col-sm-6 mb-grid-gutter">
         <div class="card border-0 shadow">
-          <div class="card-body text-center"><i class="ci-location h2 mt-2 mb-4 text-primary"></i>
+          <div class="card-body text-center"><i class="fal fa-map-marker-alt h2 mt-2 mb-4 text-primary"></i>
             <h6>Adresar</h6>
             <p class="fs-sm text-muted pb-2">Vaše adrese dostave</p><a class="btn btn-outline-primary stretched-link mb-2" href="{{ address }}">Uredi</a>
           </div>
@@ -75,14 +75,14 @@
 
       <div class="col-lg-4 col-sm-6 mb-grid-gutter">
         <div class="card border-0 shadow">
-          <div class="card-body text-center"><i class="ci-mail h2 mt-2 mb-4 text-primary"></i>
+          <div class="card-body text-center"><i class="fal fa-envelope h2 mt-2 mb-4 text-primary"></i>
             <h6>{{ text_my_newsletter }}</h6>
             <p class="fs-sm text-muted pb-2">{{ text_newsletter }}</p><a class="btn btn-outline-primary stretched-link mb-2" href="{{ newsletter }}">Uredi</a>
           </div>
         </div>
       </div>
       <div class="col-lg-12 d-flex justify-content-center mt-3 mb-5">
-      <a class="btn btn-primary btn-shadow" href="{{ logout }}"><i class="ci-sign-out mt-n1 me-2"></i>{{ text_logout }}</a>
+      <a class="btn btn-primary btn-shadow" href="{{ logout }}"><i class="fal fa-sign-out mt-n1 me-2"></i>{{ text_logout }}</a>
       </div>
 
 

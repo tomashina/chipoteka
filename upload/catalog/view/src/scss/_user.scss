@@ -77,9 +77,15 @@ body>main.offcanvas-enabled {
     font-size: 0.75rem;
     color: $gray-d1;
 
+    .breadcrumb-item::before {
+        font-family: 'Font Awesome 5 Pro';
+        font-size: 0.81rem;
+    }
+
     .breadcrumb-item+.breadcrumb-item::before {
-        margin-top: 0.01rem;
-        color: lighten($gray, 33);
+        margin-top: -0.03rem;
+        color: lighten($gray, 27);
+        content: "\f054";
     }
 
     .breadcrumb-item:last-child {

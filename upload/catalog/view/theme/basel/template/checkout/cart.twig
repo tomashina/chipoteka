@@ -23,15 +23,15 @@
                 <!-- Steps-->
                 <div class="steps steps-dark pt-2 pb-3 mb-5"><a id="stepcart" class="step-item current active" href="{{ cart }}">
                         <div class="step-progress"><span class="step-count">1</span></div>
-                        <div class="step-label"><i class="ci-cart"></i>Košarica</div></a><a id="stepcheckout" class="step-item" href="javascript:;">
+                        <div class="step-label"><i class="fal fa-shopping-basket"></i>Košarica</div></a><a id="stepcheckout" class="step-item" href="javascript:;">
                         <div class="step-progress"><span class="step-count">2</span></div>
-                        <div class="step-label"><i class="ci-user-circle"></i>Vaši podaci</div></a><a id="stepshipping"  class="step-item" href="javascript:;">
+                        <div class="step-label"><i class="fal fa-user-circle"></i>Vaši podaci</div></a><a id="stepshipping"  class="step-item" href="javascript:;">
                         <div class="step-progress"><span class="step-count">3</span></div>
-                        <div class="step-label"><i class="ci-package"></i>Dostava</div></a><a id="steppayment" class="step-item" href="javascript:;">
+                        <div class="step-label"><i class="fal fa-box"></i>Dostava</div></a><a id="steppayment" class="step-item" href="javascript:;">
                         <div class="step-progress"><span class="step-count">4</span></div>
-                        <div class="step-label"><i class="ci-card"></i>Plaćanje</div></a><a id="stepreview" class="step-item" href="javascript:;">
+                        <div class="step-label"><i class="fal fa-credit-card"></i>Plaćanje</div></a><a id="stepreview" class="step-item" href="javascript:;">
                         <div class="step-progress"><span class="step-count">5</span></div>
-                        <div class="step-label"><i class="ci-check-circle"></i>Pregledaj</div></a>
+                        <div class="step-label"><i class="fal fa-check-circle"></i>Pregledaj</div></a>
                 </div>
             </section>
             <section class="col-lg-8 {{ class }}"  >
@@ -87,14 +87,14 @@
                             <div class="pt-2 pt-sm-0 ps-sm-3 mx-auto mx-sm-0 text-center text-sm-start" style="max-width: 9rem;">
                                 <label class="form-label" for="quantity1">{{ column_quantity }}</label>
                                 <input type="number" min="1" step="1" name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" class="form-control qty-form" />
-                                <button class="btn btn-link px-0 text-danger" type="button" onclick="cart.remove('{{ product.cart_id }}');" ><i class="ci-close-circle me-2"></i><span class="fs-sm">{{ button_remove }}</span>
+                                <button class="btn btn-link px-0 text-danger" type="button" onclick="cart.remove('{{ product.cart_id }}');" ><i class="fal fa-times-circle me-2"></i><span class="fs-sm">{{ button_remove }}</span>
                                 </button>
                             </div>
                         </div>
 
                     {% endfor %}
 
-                    <button class="btn btn-outline-accent d-block w-100 mt-4" type="submit"><i class="ci-loading fs-base me-2"></i>{{ button_update }}</button>
+                    <button class="btn btn-outline-accent d-block w-100 mt-4" type="submit"><i class="fal fa-sync fs-base me-2"></i>{{ button_update }}</button>
                 </form>
                 </div>
             </section>
@@ -132,7 +132,7 @@
                             {% endif %}
 
                         </div>
-                        <a class="btn btn-primary btn-shadow d-block w-100 mt-4" href="{{ checkout }}"><i class="ci-card fs-lg me-2"></i>{{ button_checkout }}</a>
+                        <a class="btn btn-primary btn-shadow d-block w-100 mt-4" href="{{ checkout }}"><i class="fal fa-credit-card fs-lg me-2"></i>{{ button_checkout }}</a>
                     </div>
                 </div>
             </aside>

@@ -7,9 +7,12 @@
 
 .btn-social {
   display: inline-block;
-  width: $btn-social-size;
-  height: $btn-social-size;
-  padding: 0;
+  display: inline-flex;
+    // width: 1.5rem;
+    // height: 1.5rem;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
   border: $btn-social-border-width solid transparent;
   transition: $btn-social-transition;
   @include border-radius($btn-social-border-radius);
@@ -80,27 +83,27 @@
 // Brand colors
 
 .bs-facebook:hover {
-  background-color: #3b5998;
+  // background-color: #3b5998;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#3b5998, .9);
   &.bs-light { color: #3b5998; }
 }
 .bs-twitter:hover {
-  background-color: #1da1f2;
+  // background-color: #1da1f2;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#1da1f2, .9);
   &.bs-light { color: #1da1f2; }
 }
 .bs-instagram:hover {
-  background-color: #5851db;
+  // background-color: #5851db;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#5851db, .9);
   &.bs-light { color: #5851db; }
 }
 .bs-google:hover {
-  background-color: #ea4335;
+  // background-color: #ea4335;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#ea4335, .9);
   &.bs-light { color: #ea4335; }
 }
 .bs-linkedin:hover {
-  background-color: #0077b5;
+  // background-color: #0077b5;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#0077b5, .9);
   &.bs-light { color: #0077b5; }
 }
@@ -110,67 +113,67 @@
   &.bs-light { color: #bd081c; }
 }
 .bs-tumblr:hover {
-  background-color: #35465c;
+  // background-color: #35465c;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#35465c, .9);
   &.bs-light { color: #35465c; }
 }
 .bs-behance:hover {
-  background-color: #1769ff;
+  // background-color: #1769ff;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#1769ff, .9);
   &.bs-light { color: #1769ff; }
 }
 .bs-dribbble:hover {
-  background-color: #ea4c89;
+  // background-color: #ea4c89;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#ea4c89, .9);
   &.bs-light { color: #ea4c89; }
 }
 .bs-vk:hover {
-  background-color: #45668e;
+  // background-color: #45668e;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#45668e, .9);
   &.bs-light { color: #45668e; }
 }
 .bs-odnoklassniki:hover {
-  background-color: #ed812b;
+  // background-color: #ed812b;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#ed812b, .9);
   &.bs-light { color: #ed812b; }
 }
 .bs-skype:hover {
-  background-color: #00aff0;
+  // background-color: #00aff0;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#00aff0, .9);
   &.bs-light { color: #00aff0; }
 }
 .bs-hangouts:hover {
-  background-color: #0f9d58;
+  // background-color: #0f9d58;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#0f9d58, .9);
   &.bs-light { color: #0f9d58; }
 }
 .bs-messenger:hover {
-  background-color: #0084ff;
+  // background-color: #0084ff;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#0084ff, .9);
   &.bs-light { color: #0084ff; }
 }
 .bs-viber:hover {
-  background-color: #59267c;
+  // background-color: #59267c;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#59267c, .9);
   &.bs-light { color: #59267c; }
 }
 .bs-telegram:hover {
-  background-color: #0088cc;
+  // background-color: #0088cc;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#0088cc, .9);
   &.bs-light { color: #0088cc; }
 }
 .bs-youtube:hover {
-  background-color: #ff0000;
+  // background-color: #ff0000;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#ff0000, .9);
   &.bs-light { color: #ff0000; }
 }
 .bs-vimeo:hover {
-  background-color: #1ab7ea;
+  // background-color: #1ab7ea;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#1ab7ea, .9);
   &.bs-light { color: #1ab7ea; }
 }
 .bs-wechat:hover {
-  background-color: #7bb32e;
+  // background-color: #7bb32e;
   box-shadow: 0 .5rem 1.125rem -.5rem rgba(#7bb32e, .9);
   &.bs-light { color: #7bb32e; }
 }
@@ -197,21 +200,21 @@
 
   // Twitter
   &.btn-twitter {
-    background-color: rgba(#1da1f2, .08);
+    // background-color: rgba(#1da1f2, .08);
     color:#1da1f2;
     &:hover { background-color: #1da1f2; }
   }
 
   // Instagram
   &.btn-instagram {
-    background-color: rgba(#5851db, .08);
+    // background-color: rgba(#5851db, .08);
     color:#5851db;
     &:hover { background-color: #5851db; }
   }
 
   // Facebook
   &.btn-facebook {
-    background-color: rgba(#3b5998, .08);
+    // background-color: rgba(#3b5998, .08);
     color:#3b5998;
     &:hover { background-color: #3b5998; }
   }

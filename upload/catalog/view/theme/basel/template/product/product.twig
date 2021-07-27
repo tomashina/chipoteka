@@ -59,7 +59,7 @@
                                 </div>
                             </div>
                             <!-- Product details-->
-                            <div class="col-md-7" style="min-width: 1px;">
+                            <div class="col-md-7 col-xxxl-7" style="min-width: 1px;">
                                 <div class="product-features" id="product">
                                     <div class="badges-wrapper {% if freeshipping == false and special == '' %} mt-2 {% endif %}">
                                         {% if freeshipping %}
@@ -120,7 +120,7 @@
                                         <input type="hidden" name="product_id" value="{{ product_id }}" />
                                         <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100 me-3">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
 
-                                        <button class="btn btn-outline-secondary btn-wishlist-v2" onclick="wishlist.add('{{ product_id }}');" type="button"><i class="ci-heart fs-lg "></i></button>
+                                        <button class="btn btn-outline-secondary btn-wishlist-v2" onclick="wishlist.add('{{ product_id }}');" type="button"><i class="fal fa-heart fs-lg "></i></button>
 
                                     </div>
 
@@ -353,7 +353,7 @@
             {% for product in products|slice(0, 10) %}
                 <div>
                     <div class="card product-card">
-                        {# <button class="btn-wishlist btn-sm" type="button"  onclick="wishlist.add('{{ product.product_id }}');" ><i class="ci-heart"></i></button> #}
+                        {# <button class="btn-wishlist btn-sm" type="button"  onclick="wishlist.add('{{ product.product_id }}');" ><i class="fal fa-heart"></i></button> #}
                         <div class="position-relative">
                             <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
                             <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" loading="lazy" alt="{{ product.name }}"></div>
@@ -378,7 +378,7 @@
                                     </div><!-- .price -->
                                 {% endif %}
                                 {% if product.rating %}
-                                    <div class="star-rating {{ product.rating }}"><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star-filled active"></i><i class="star-rating-icon ci-star"></i>
+                                    <div class="star-rating {{ product.rating }}"><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fal fa-star"></i>
                                     </div>
                                 {% endif %}
                                {% if product.price and product.special %}

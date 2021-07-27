@@ -26,7 +26,7 @@
         <!-- Toolbar-->
         <div class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-4 pb-lg-5 mb-lg-3">
           <h6 class="fs-base text-light mb-0"> {% if products %}{{ text_whish_havesome }} {% else %}{{ text_empty }}{% endif %}</h6>
-          <a class="btn btn-primary " href="{{ logout }}"><i class="ci-sign-out me-2"></i>{{ text_logout }}</a>
+          <a class="btn btn-primary " href="{{ logout }}"><i class="fal fa-sign-out me-2"></i>{{ text_logout }}</a>
         </div>
         {% if success %}
           <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -56,7 +56,7 @@
                 </div>
                 <div class="pt-2 ps-sm-3 mx-auto mx-sm-0 text-center">
                   <a class="btn btn-primary " onclick="cart.add('{{ product.product_id }}');"><i class="fas fs-xl fa-shopping-basket"></i></a>
-                  <a class="btn btn-outline-primary" href="{{ product.remove }}"><i class="ci-trash "></i></a>
+                  <a class="btn btn-outline-primary" href="{{ product.remove }}"><i class="fal fa-trash-alt "></i></a>
                 </div>
               </div>
             {% endfor %}

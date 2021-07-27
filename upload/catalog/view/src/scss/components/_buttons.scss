@@ -239,7 +239,7 @@
     display: inline-block;
     margin-right: .375rem;
     font: {
-      family: 'cartzilla-icons';
+      // family: 'cartzilla-icons';
       size: 1.25em;
     }
     vertical-align: middle;
@@ -320,7 +320,7 @@
   vertical-align: middle;
   &::before {
     font: {
-      family: 'cartzilla-icons';
+      // family: 'cartzilla-icons';
       size: $btn-video-font-size;
       weight: 700;
     }
