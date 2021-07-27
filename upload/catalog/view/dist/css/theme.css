@@ -28699,6 +28699,11 @@ body > main.offcanvas-enabled {
   align-items: center;
 }
 
+.page-footer .accent-links > *:hover {
+  background-color: #E31318;
+  color: #F5F5F5;
+}
+
 .page-footer .accent-links > *:not(:first-child) {
   border-left: 1px solid #5C5C5C;
 }

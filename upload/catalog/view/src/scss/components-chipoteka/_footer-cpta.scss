@@ -38,6 +38,11 @@
             justify-content: center;
             align-items: center;
 
+            &:hover {
+                background-color: $primary;
+                color: $light;
+            }
+
             &:not(:first-child){
                 border-left: 1px solid $gray-d1;
             }
