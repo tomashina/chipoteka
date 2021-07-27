@@ -28190,6 +28190,15 @@ body > main.offcanvas-enabled {
   color: #171717;
 }
 
+.password-toggle-btn .password-toggle-check:checked ~ .password-toggle-indicator::before {
+  content: '\f06e';
+}
+
+.password-toggle-btn .password-toggle-indicator::before {
+  font-family: 'Font Awesome 5 Pro';
+  content: '\f070';
+}
+
 .fsc-1 {
   font-size: 2.5rem;
 }

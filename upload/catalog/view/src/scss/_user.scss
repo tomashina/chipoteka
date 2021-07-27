@@ -131,6 +131,19 @@ body>main.offcanvas-enabled {
 }
 
 
+// Misc
+.password-toggle-btn .password-toggle-check:checked ~ .password-toggle-indicator::before {
+    content: '\f06e';
+}
+
+.password-toggle-btn .password-toggle-indicator::before {
+    font-family: 'Font Awesome 5 Pro';
+    content: '\f070';
+}
+
+
+
+
 // Font Fixed Sizes - Font Size Chipoteka (fsc)
 
 .fsc-1 {
