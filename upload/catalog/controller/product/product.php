@@ -5,6 +5,14 @@ class ControllerProductProduct extends Controller {
 	public function index() {
 		$this->load->language('product/product');
 
+        $this->document->addStyle('catalog/view/dist/vendor/lightgallery.js/dist/css/lightgallery.min.css');
+
+        $this->document->addScript('catalog/view/dist/vendor/lightgallery.js/dist/js/lightgallery.min.js', 'footer');
+        $this->document->addScript('catalog/view/dist/vendor/lg-fullscreen.js/dist/lg-fullscreen.min.js', 'footer');
+        $this->document->addScript('catalog/view/dist/vendor/lg-zoom.js/dist/lg-zoom.min.js', 'footer');
+
+
+
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(

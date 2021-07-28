@@ -3,6 +3,24 @@ class ControllerCommonFooter extends Controller {
 	public function index() {
 		$this->load->language('common/footer');
 
+        $mssConfig = $this->config->get( 'msmart_search_s' );
+        $mssConfigLf = (array) $this->config->get( 'msmart_search_lf' );
+        $mssVer = ! empty( $mssConfig['minify_support'] ) ? '' : '?v' .$this->config->get( 'msmart_search_version' );
+        $mssFiles = array(
+            'js' => array( 'js_params.js', 'bloodhound.min.js', 'typeahead.jquery.min.js', 'live_search.min.js' ),
+           // 'css' => array( 'style.css', 'style-2.css' ),
+        );
+
+        foreach( $mssFiles as $mssType => $mssFiles2 ) {
+            $mssPath = $mssType == 'js' ? 'catalog/view/javascript/mss/' : 'catalog/view/theme/default/stylesheet/mss/';
+
+            foreach( $mssFiles2 as $mssFile ) {
+                $this->document->{'add'.($mssType == 'js' ? 'Script' : 'Style')}( $mssPath . $mssFile . $mssVer . ( $mssVer && $mssFile == 'js_params.js' ? '_'.time() : '' ), 'footer' );
+            }
+        }
+
+
+
 		$this->load->model('catalog/information');
 
 		$data['informations'] = array();

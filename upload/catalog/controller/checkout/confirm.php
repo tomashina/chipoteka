@@ -31,7 +31,7 @@ class ControllerCheckoutConfirm extends Controller {
 			$redirect = $this->url->link('checkout/checkout', '', true);
 		}
 
-		// Validate cart has products and has stock.
+        // Validate cart has products and has stock.
 		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
 			$redirect = $this->url->link('checkout/cart');
 		}
