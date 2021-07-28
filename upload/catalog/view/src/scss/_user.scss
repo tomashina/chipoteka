@@ -141,7 +141,10 @@ body>main.offcanvas-enabled {
     content: '\f070';
 }
 
-
+.gallery-item::after {
+    font-family: 'Font Awesome 5 Pro';
+    content: '\f055';
+}  
 
 
 // Font Fixed Sizes - Font Size Chipoteka (fsc)
