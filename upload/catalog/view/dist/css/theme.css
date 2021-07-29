@@ -25974,6 +25974,26 @@ a.nav-link:hover .media-tab-media {
   color: rgba(255, 255, 255, 0.6);
 }
 
+@media (max-width: 499.98px) {
+  .breadcrumb .breadcrumb-item > a {
+    white-space: normal !important;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .breadcrumb {
+    justify-content: flex-start !important;
+  }
+  .breadcrumb .breadcrumb-item {
+    width: 100%;
+    display: flex;
+    padding-left: 0;
+  }
+  .breadcrumb .breadcrumb-item:nth-child(1) {
+    display: none;
+  }
+}
+
 .pagination {
   margin-bottom: 0;
   -webkit-user-select: none;
@@ -29328,6 +29348,12 @@ body > main.offcanvas-enabled {
   }
 }
 
+@media screen and (max-width: 350px) {
+  .product-container .product-page-title {
+    text-align: left;
+  }
+}
+
 .product-container .nav-tabs {
   margin-bottom: 0;
 }
@@ -29336,6 +29362,13 @@ body > main.offcanvas-enabled {
   font-size: 1.25rem;
   font-weight: 300;
   padding: 1rem 1.5rem;
+}
+
+@media screen and (max-width: 370px) {
+  .product-container .nav-tabs .nav-item .nav-link {
+    padding-left: 0.9rem;
+    padding-right: 0.9rem;
+  }
 }
 
 .product-container .product-features .description-short,
@@ -29509,17 +29542,30 @@ body > main.offcanvas-enabled {
 
 @media (max-width: 499.98px) {
   .product-container .product-features .product-quantity-button {
-    flex-direction: column;
     align-items: flex-start;
+    flex-wrap: wrap;
   }
   .product-container .product-features .product-quantity-button .quantity {
     width: 100%;
   }
   .product-container .product-features .product-quantity-button .quantity .input-quantity {
     max-width: unset;
+    margin-right: 0 !important;
   }
   .product-container .product-features .product-quantity-button [id*="button-cart"] {
-    max-width: unset;
+    flex: 4;
+    z-index: 1;
+    max-width: 100%;
+  }
+  .product-container .product-features .product-quantity-button .btn-wishlist-v2 {
+    flex: 1;
+    z-index: 0;
+  }
+}
+
+@media screen and (max-width: 305px) {
+  .product-container .product-features .product-quantity-button [id*="button-cart"] {
+    margin-left: 1rem;
   }
 }
 

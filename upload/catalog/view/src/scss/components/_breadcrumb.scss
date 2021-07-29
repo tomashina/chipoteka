@@ -2,6 +2,7 @@
 // Breadcrumb
 // --------------------------------------------------
 
+
 .breadcrumb-item {
   &::before {
     margin-top: .0625rem;
@@ -41,4 +42,45 @@
     }
   }
   &.active { color: $breadcrumb-light-active-color; }
+}
+
+
+.breadcrumb {
+  @include media-breakpoint-down(sm){
+
+    .breadcrumb-item   {
+
+     > a {
+      white-space: normal !important;
+     } 
+    }
+
+  }
+
+  @media screen and (max-width: 350px){
+
+    justify-content: flex-start !important;
+
+    .breadcrumb-item   {
+      width: 100%;
+      display: flex;
+      padding-left: 0;
+      // justify-content: center;
+
+      &:nth-child(1) {
+        display: none;
+      }
+
+      // > a {
+      //   text-align: center;
+      //  }
+
+      // &::before {
+      //   content: none;
+      //   display: none;
+      // }
+    }
+
+  }
+
 }
