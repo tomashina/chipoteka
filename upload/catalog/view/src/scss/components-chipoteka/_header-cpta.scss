@@ -200,10 +200,32 @@
                 padding: 0 0.72rem;
             }
 
-        }
+        }   
 
 
         @media screen and (max-width: 321px) {
+
+
+            .navbar-brand {
+                img {
+                    width: 93px;
+                }
+            }
+
+            .navbar-tool {
+                padding: 0 0.72rem;
+            }
+
+            
+
+        }
+
+        @media screen and (max-width: 309px) {
+            .navbar-brand {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
 
             .navbar-toolbar {
                 width: 100%;
@@ -212,7 +234,7 @@
 
             .navbar-tool {
                 flex: 1;
-                justify-content: center;
+                justify-content: center; 
             }
 
         }

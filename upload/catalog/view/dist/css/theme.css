@@ -28383,6 +28383,20 @@ body > main.offcanvas-enabled {
 }
 
 @media screen and (max-width: 321px) {
+  .page-header .navbar .navbar-brand img {
+    width: 93px;
+  }
+  .page-header .navbar .navbar-tool {
+    padding: 0 0.72rem;
+  }
+}
+
+@media screen and (max-width: 309px) {
+  .page-header .navbar .navbar-brand {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
   .page-header .navbar .navbar-toolbar {
     width: 100%;
     justify-content: space-around;
