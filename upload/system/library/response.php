@@ -105,7 +105,17 @@ class Response {
 	/**
 	 * 
  	*/
-	public function output() {
+	//public function output() {
+        /*replace for minify html*/
+	  public function output() {
+        if ($this->output) {
+            $this->output = preg_replace("/(\n)+/", "\n", $this->output);
+            $this->output = preg_replace("/\r\n+/", "\n", $this->output);
+            $this->output = preg_replace("/\n(\t)+/", "\n", $this->output);
+            $this->output = preg_replace("/\n(\ )+/", "\n", $this->output);
+            $this->output = preg_replace("/\>(\n)+</", '><', $this->output);
+            $this->output = preg_replace("/\>\r\n</", '><', $this->output);
+        }
 		if ($this->output) {
 			$output = $this->level ? $this->compress($this->output, $this->level) : $this->output;
 			

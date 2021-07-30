@@ -12,6 +12,26 @@
 */
 class Template {
 	private $adaptor;
+
+    /**
+     * @param    string    $body
+     * @return    string
+     */
+    public function minify($body) {
+        $search = array(
+            '/\>[^\S ]+/s',     // strip whitespaces after tags, except space
+            '/[^\S ]+\</s',     // strip whitespaces before tags, except space
+            '/(\s)+/s',         // shorten multiple whitespace sequences
+        );
+        $replace = array(
+            '>',
+            '<',
+            '\\1',
+            ''
+        );
+        $body = preg_replace($search, $replace, $body);
+        return $body;
+    }
 	
 	/**
 	 * Constructor
@@ -48,6 +68,12 @@ class Template {
 	 * @return	string
  	*/	
 	public function render($template, $cache = false) {
-		return $this->adaptor->render($template, $cache);
+		//return $this->adaptor->render($template, $cache);
+
+        if (strpos($template, 'template/') !== false) {
+            return $this->minify($this->adaptor->render($template, $cache));
+        } else {
+            return $this->adaptor->render($template, $cache);
+        }
 	}
 }
