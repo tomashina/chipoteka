@@ -35,7 +35,7 @@
     <div class="row justify-content-center">
       <div class="col-xxl-10">
         <div class="row">
-          <div class="col-md-4 mb-3"><a class="card bg-light h-100 border-0 shadow-xs" href="{{ continue }}">
+          <div class=" col-md-4 mb-3 offset-md-2 "><a class="card bg-light h-100 border-0 shadow-xs" href="{{ continue }}">
               <div class="card-body">
                 <div class="d-flex align-items-center"> <i class="fas fa-house text-primary h2 mb-0"></i>
                   <div class="ps-3">
@@ -43,7 +43,7 @@
                   </div>
                 </div>
               </div></a></div>
-          <div class="col-md-4 mb-3"><a class="card bg-light h-100 border-0 shadow-xs" href="#">
+          <div class="col-md-4 mb-3"><a class="card bg-light h-100 border-0 shadow-xs" onclick="myFunction()" style="cursor: pointer;" >
               <div class="card-body">
                 <div class="d-flex align-items-center"><i class="fas fa-file-search text-success h2 mb-0"></i>  
                   <div class="ps-3">
@@ -51,18 +51,31 @@
                   </div>
                 </div>
               </div></a></div>
-          <div class="col-md-4 mb-3"><a class="card bg-light h-100 border-0 shadow-xs" href="help-topics.html">
+         <!-- <div class="col-md-4 mb-3"><a class="card bg-light h-100 border-0 shadow-xs" href="help-topics.html">
               <div class="card-body">
-                <div class="d-flex align-items-center"><i class="fas fa-info-square text-info h2 mb-0"></i>  
+                <div class="d-flex align-items-center"><i class="fas fa-info-square text-info h2 mb-0"></i>
                   <div class="ps-3">
                     <h5 class="fs-lg mb-0">Pomoć i podrška</h5><span class="text-muted fs-md">Često postavljana pitanja</span>
                   </div>
                 </div>
-              </div></a></div>
+              </div></a>
+          </div> -->
         </div>
       </div>
     </div>
   </div>
+
+  <script>
+
+
+    function myFunction() {
+
+
+      document.getElementsByName('search')[0].focus();
+
+
+    }
+  </script>
 
 
 {{ footer }}
