@@ -97,16 +97,19 @@
                                          <span>Web cijena:</span>
                                          <span> {% if  special %}{{ special }} {% else %}{{ price }} {% endif %}</span>
                                         </div>
-
                                     </div>
-                                    <div class="buying-choices mb-1 mt-n1 mt-md-n3">
-                                        <div class="choices-wrapper">
-                                          <i class="fas fa-badge-percent"></i> 
-                                          <span class="first"> 12 x {{ ratedvanaest }}</span>
-                                         <span class="second">24 x {{ ratedvacetiri }}</span>
+                                    {% if prikazrata %}
+                                        <div class="buying-choices mb-1 mt-n1 mt-md-n3">
+                                            <div class="choices-wrapper">
+                                              <i class="fas fa-badge-percent"></i>
+                                              <span class="first"> 12 x {{ ratedvanaest }}</span>
+                                             <span class="second">24 x {{ ratedvacetiri }}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="warranty-time mb-4"><i class="fas fa-clock"></i> <span>Jamstvo: <strong>12 mjeseci</strong></span></div>
+                                    {% endif %}
+                                    {% if jamstvo %}
+                                    <div class="warranty-time mb-4"><i class="fas fa-clock"></i> <span>Jamstvo: <strong>{{ jamstvo }}</strong></span></div>
+                                    {% endif %}
                                     <div class="product-quantity-button">
                                         <div class="input-group me-0 me-sm-3 quantity">
                                             <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}" id="input-quantity"   class="form-control input-quantity" />
@@ -118,7 +121,7 @@
                                             </button>
                                         </div>
                                         <input type="hidden" name="product_id" value="{{ product_id }}" />
-                                        <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100 me-3">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
+                                        <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100 me-3">{% if ((qty < 1) and (stock_badge_status)) %} {{ basel_text_out_of_stock }} {% else %} {{ button_cart }} {% endif %}</button>
 
                                         <button class="btn btn-outline-secondary btn-wishlist-v2" onclick="wishlist.add('{{ product_id }}');" type="button"><i class="fal fa-heart fs-lg "></i></button>
 
@@ -343,7 +346,7 @@
         </div>
     </div>
     {% if products %}
-    <!-- Product carousel (You may also like)-->
+
     <div class="container-fluid pt-lg-2 pb-5 mb-md-3 ">
         <div class="section-title section-title--discount">
             <h2 class="title"> {{ text_related }}</h2>
@@ -447,14 +450,12 @@
 
     </script>
     <script>
-       // $('#button-cart').on('click', function() {
             $("#button-cart,#button-cart2,#button-cart3").on('click', function(){
             $.ajax({
                 url: 'index.php?route=extension/basel/basel_features/add_to_cart',
                 type: 'post',
                 data: $('#product input[type=\'text\'], #product input[type=\'hidden\'], #product input[type=\'number\'], #product input[type=\'radio\']:checked, #product input[type=\'checkbox\']:checked, #product select, #product textarea'),
                 dataType: 'json',
-
                 success: function(json) {
                     $('.alert, .text-danger').remove();
                     $('.table-cell').removeClass('has-error');
@@ -472,8 +473,6 @@
                             }
                         }
 
-
-                        // Highlight any found errors
                         $('.text-danger').parent().addClass('has-error');
                     }
 
@@ -483,24 +482,18 @@
 
                     } else if (json.success) {
 
-                       // $('#note').prepend('<div class="alert alert-success alert-dismissible fade show popup-note" role="alert">'  + json.success + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
-
                         $('#myModal').modal('show');
                         $('#note').html('<div class="row"><div class="col-sm-3 col-lg-4"><img src="' + json.image + '" /></div><div class="col-sm d-flex align-items-center"><p class="align-middle">' + json.success +'</p></div></div>');
 
-
                         $('.table-cell').removeClass('has-error');
-
                         setTimeout(function() {$('.popup-note').hide();}, 4000);
-                        // Need to set timeout otherwise it wont update the total
+
                         setTimeout(function () {
                             $('.cart-total-items').html( json.total_items );
                             $('.cart-total-amount').html( json.total_amount );
                         }, 100);
 
                         $('#cart-content').load('index.php?route=common/cart/info #cart-content > *');
-
-
                     }
                 },
                 error: function(xhr, ajaxOptions, thrownError) {
