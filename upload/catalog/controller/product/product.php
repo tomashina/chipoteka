@@ -313,7 +313,7 @@ class ControllerProductProduct extends Controller {
 				$data['special'] = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				$tax_price = (float)$product_info['special'];
 				$ratedvanaest = $product_info['special'] / 12;
-                $ratedvacetiri = $product_info['special'] / 24;
+                $ratedvacetiri = ($product_info['special']* 1.07) / 24;
 				$data['ratedvanaest'] = $this->currency->format($this->tax->calculate($ratedvanaest, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
                 $data['ratedvacetiri'] = $this->currency->format($this->tax->calculate($ratedvacetiri, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
                 if($product_info['special']>= FREESHIPPING){
@@ -325,7 +325,7 @@ class ControllerProductProduct extends Controller {
 				$data['special'] = false;
 				$tax_price = (float)$product_info['price'];
                 $ratedvanaest = $product_info['price'] / 12;
-                $ratedvacetiri = $product_info['price'] / 24;
+                $ratedvacetiri = ($product_info['price'] * 1.07) / 24;
                 $data['ratedvanaest'] = $this->currency->format($this->tax->calculate($ratedvanaest, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
                 $data['ratedvacetiri'] = $this->currency->format($this->tax->calculate($ratedvacetiri, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
                 if($product_info['price']>= FREESHIPPING){
