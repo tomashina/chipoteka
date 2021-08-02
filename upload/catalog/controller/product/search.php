@@ -233,7 +233,7 @@ class ControllerProductSearch extends Controller {
 					$rating = false;
 				}
 
-                $rokisporuke = $product_info['isbn'];
+                $rokisporuke = $result['isbn'];
 
                 $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + $rokisporuke, date('Y')));
 
