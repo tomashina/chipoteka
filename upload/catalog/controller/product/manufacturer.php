@@ -213,7 +213,7 @@ class ControllerProductManufacturer extends Controller {
 
                 $rokisporuke = $result['isbn'];
 
-                $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + $rokisporuke, date('Y')));ß
+                $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + $rokisporuke, date('Y')));
 
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
