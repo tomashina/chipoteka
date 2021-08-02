@@ -37,7 +37,6 @@ html[dir="rtl"] .tf-filter .panel-heading .fa{
 	display: flex;
 	padding: 15px 15px;
 	font-size: 1.286em !important;
-	font-family: Lato, Sans-Serif;
 	-ms-flex-align: center;
 	align-items: center;
 }
@@ -58,7 +57,7 @@ html[dir="rtl"] .tf-filter-group-header .toggle-icon{
 }
 
 .tf-filter-group-content, .tf-filter-group-search {
-	padding: 8px 15px;
+	padding: 8px 0px;
 	display: block;
 }
 

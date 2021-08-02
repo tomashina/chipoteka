@@ -1,15 +1,4 @@
 @charset "UTF-8";
-/*
- * Cartzilla | Bootstrap E-Commerce Template
- * Copyright 2021 Createx Studio
- * Theme styles
- */
-/*!
- * Bootstrap v5.0.0-beta1 (https://getbootstrap.com/)
- * Copyright 2011-2020 The Bootstrap Authors
- * Copyright 2011-2020 Twitter, Inc.
- * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
- */
 @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap");
 :root {
   --bs-blue: #0d6efd;

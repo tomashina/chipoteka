@@ -1,13 +1,4 @@
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-/**
- * Cartzilla | Bootstrap E-Commerce Template
- * Copyright 2021 Createx Studio
- * Theme core scripts
- * 
- * @author Createx Studio
- * @version 2.0.0
- */
 (function () {
   'use strict';
   /**
