@@ -257,6 +257,8 @@ class ControllerProductProduct extends Controller {
 			$data['manufacturer'] = $product_info['manufacturer'];
 			$data['manufacturers'] = $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $product_info['manufacturer_id']);
 			$data['model'] = $product_info['model'];
+            $data['rokisporuke'] = $product_info['isbn'];
+            $data['jamstvo'] = $product_info['mpn'];
 			$data['reward'] = $product_info['reward'];
 			$data['points'] = $product_info['points'];
 			$data['description'] = html_entity_decode($product_info['description'], ENT_QUOTES, 'UTF-8');
@@ -321,6 +323,11 @@ class ControllerProductProduct extends Controller {
                     $data['freeshipping'] = true;
 
                 }
+                if($product_info['special']> RATEPRIKAZ){
+
+                    $data['prikazrata'] = true;
+
+                }
 			} else {
 				$data['special'] = false;
 				$tax_price = (float)$product_info['price'];
@@ -331,6 +338,11 @@ class ControllerProductProduct extends Controller {
                 if($product_info['price']>= FREESHIPPING){
 
                     $data['freeshipping'] = true;
+
+                }
+                if($product_info['price']> RATEPRIKAZ){
+
+                    $data['prikazrata'] = true;
 
                 }
 
@@ -478,7 +490,9 @@ class ControllerProductProduct extends Controller {
 					$rating = false;
 				}
 
-                $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + 5, date('Y')));
+                $rokisporuke = $result['isbn'];
+
+                $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + $rokisporuke, date('Y')));
 
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],

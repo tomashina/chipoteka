@@ -175,7 +175,9 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 						$rating = false;
 					}
 
-                    $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + 5, date('Y')));
+                    $rokisporuke = $result['isbn'];
+
+                    $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + $rokisporuke, date('Y')));
 					
 					$products[] = array(
 						'product_id' => $result['product_id'],

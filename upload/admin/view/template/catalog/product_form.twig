@@ -29,14 +29,14 @@
             <li><a href="#tab-data" data-toggle="tab">{{ tab_data }}</a></li>
             <li><a href="#tab-links" data-toggle="tab">{{ tab_links }}</a></li>
             <li><a href="#tab-attribute" data-toggle="tab">{{ tab_attribute }}</a></li>
-            <li><a href="#tab-option" data-toggle="tab">{{ tab_option }}</a></li>
-            <li><a href="#tab-recurring" data-toggle="tab">{{ tab_recurring }}</a></li>
-            <li><a href="#tab-discount" data-toggle="tab">{{ tab_discount }}</a></li>
+            <li class="hidden"><a href="#tab-option" data-toggle="tab">{{ tab_option }}</a></li>
+            <li class="hidden"><a href="#tab-recurring" data-toggle="tab">{{ tab_recurring }}</a></li>
+            <li class="hidden"><a href="#tab-discount" data-toggle="tab">{{ tab_discount }}</a></li>
             <li><a href="#tab-special" data-toggle="tab">{{ tab_special }}</a></li>
             <li><a href="#tab-image" data-toggle="tab">{{ tab_image }}</a></li>
-            <li><a href="#tab-reward" data-toggle="tab">{{ tab_reward }}</a></li>
+            <li class="hidden"><a href="#tab-reward" data-toggle="tab">{{ tab_reward }}</a></li>
             <li><a href="#tab-seo" data-toggle="tab">{{ tab_seo }}</a></li>
-            <li><a href="#tab-design" data-toggle="tab">{{ tab_design }}</a></li>
+            <li class="hidden"><a href="#tab-design" data-toggle="tab">{{ tab_design }}</a></li>
           </ul>
           <div class="tab-content">
             <div class="tab-pane active" id="tab-general">
@@ -155,19 +155,19 @@
                   <input type="text" name="upc" value="{{ upc }}" placeholder="{{ entry_upc }}" id="input-upc" class="form-control"/>
                 </div>
               </div>
-              <div class="form-group">
+              <div class="form-group hidden">
                 <label class="col-sm-2 control-label" for="input-ean"><span data-toggle="tooltip" title="{{ help_ean }}">{{ entry_ean }}</span></label>
                 <div class="col-sm-10">
                   <input type="text" name="ean" value="{{ ean }}" placeholder="{{ entry_ean }}" id="input-ean" class="form-control"/>
                 </div>
               </div>
-              <div class="form-group">
+              <div class="form-group hidden">
                 <label class="col-sm-2 control-label" for="input-jan"><span data-toggle="tooltip" title="{{ help_jan }}">{{ entry_jan }}</span></label>
                 <div class="col-sm-10">
                   <input type="text" name="jan" value="{{ jan }}" placeholder="{{ entry_jan }}" id="input-jan" class="form-control"/>
                 </div>
               </div>
-              <div class="form-group">
+              <div class="form-group ">
                 <label class="col-sm-2 control-label" for="input-isbn"><span data-toggle="tooltip" title="{{ help_isbn }}">{{ entry_isbn }}</span></label>
                 <div class="col-sm-10">
                   <input type="text" name="isbn" value="{{ isbn }}" placeholder="{{ entry_isbn }}" id="input-isbn" class="form-control"/>
@@ -179,7 +179,7 @@
                   <input type="text" name="mpn" value="{{ mpn }}" placeholder="{{ entry_mpn }}" id="input-mpn" class="form-control"/>
                 </div>
               </div>
-              <div class="form-group">
+              <div class="form-group hidden">
                 <label class="col-sm-2 control-label" for="input-location">{{ entry_location }}</label>
                 <div class="col-sm-10">
                   <input type="text" name="location" value="{{ location }}" placeholder="{{ entry_location }}" id="input-location" class="form-control"/>
@@ -314,7 +314,7 @@
                     </span></div>
                 </div>
               </div>
-              <div class="form-group">
+              <div class="form-group hidden">
                 <label class="col-sm-2 control-label" for="input-length">{{ entry_dimension }}</label>
                 <div class="col-sm-10">
                   <div class="row">
@@ -330,7 +330,7 @@
                   </div>
                 </div>
               </div>
-              <div class="form-group">
+              <div class="form-group hidden">
                 <label class="col-sm-2 control-label" for="input-length-class">{{ entry_length_class }}</label>
                 <div class="col-sm-10">
                   <select name="length_class_id" id="input-length-class" class="form-control">
