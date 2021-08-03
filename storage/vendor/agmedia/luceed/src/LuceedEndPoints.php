@@ -19,7 +19,6 @@ class LuceedEndPoints
             'manufacturer_list' => 'robnemarke_lista.json',
             'warehouse_list'    => 'skladista_lista.json',
             'product_list'      => 'artikli_lista.json',
-            'product'           => '....json',
             'product_actions'   => 'akcije.json',
             'product_image'     => 'product_image.json',
             'manufacturer_uid'  => 'partner_single.json',
@@ -28,7 +27,11 @@ class LuceedEndPoints
             'order_create'      => 'order_create.url',
             'stock_get'         => 'stock_get.url',
             'ind_stock_get'     => 'ind_stock_get.url',
-            'raspis'            => 'raspis.url'
+            'raspis'            => 'raspis.url',
+            //
+            'product_0730222201' => 'artikl_0730222201.json',
+            'product_0730161301' => 'artikl_0730161301.json',
+            'product_9001002044' => 'artikl_9001002044.json',
         ];
     }
 
@@ -42,8 +45,8 @@ class LuceedEndPoints
             'group_list'        => 'grupeartikala/lista',
             'manufacturer_list' => 'robnemarke/lista',
             'warehouse_list'    => 'skladista/lista',
-            'product_list'      => 'artikli/atribut/atribut_uid/59-2987',
-            'product'           => '...',
+            'product_list'      => 'artikli/naziv//[0,300]',
+            'product'           => 'artikli/sifra/',
             'product_actions'   => 'prodajneakcije/lista',
             'product_image'     => 'artikli/dokumenti/',
             'manufacturer_uid'  => 'partneri/uid/',

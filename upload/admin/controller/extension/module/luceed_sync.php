@@ -8,6 +8,7 @@ use Agmedia\LuceedOpencartWrapper\Models\LOC_Action;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Category;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Manufacturer;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Product;
+use Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse;
 use Agmedia\Models\Category\Category;
 use Agmedia\Models\Product\Product;
@@ -155,6 +156,41 @@ class ControllerExtensionModuleLuceedSync extends Controller
     }
 
 
+    public function importProduct()
+    {
+        if ($this->request->get['id']) {
+            $_loc = new LOC_ProductSingle(
+                LuceedProduct::getById($this->request->get['id'])
+            );
+        } else {
+            $_loc = new LOC_ProductSingle();
+        }
+
+        if ($_loc->product) {
+            $_loc->make();
+        }
+
+        if ($_loc->products) {
+            $count = 0;
+
+            foreach ($_loc->products as $product) {
+                $_loc->product = $_loc->setProduct(
+                    LuceedProduct::getById($product->sku)
+                );
+
+                if ($_loc->product) {
+                    $_loc->make();
+
+                    $count++;
+                }
+
+            }
+        }
+
+
+    }
+
+
     /**
      * @return mixed
      * @throws Exception
@@ -253,9 +289,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updatePrices()
     {
-        $_loc = new LOC_Product(LuceedProduct::all());
+        $_loc = new LOC_Action(LuceedProduct::getActions());
 
-        $updated = $_loc->sortForUpdate()->update('prices');
+        $updated = $_loc->collectWebPrices()
+                        ->update();
 
         return $this->response($updated, 'update');
     }

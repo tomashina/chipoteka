@@ -29,20 +29,7 @@ class LuceedProduct extends Facade
     {
         $luceed = new Luceed();
         
-        return $luceed->getProduct($id, 'sifra');
-    }
-    
-    
-    /**
-     * @param string $barcode
-     *
-     * @return mixed
-     */
-    public static function getByBarcode(string $barcode)
-    {
-        $luceed = new Luceed();
-        
-        return $luceed->getProduct($barcode, 'barcode');
+        return $luceed->getProduct($id);
     }
     
     

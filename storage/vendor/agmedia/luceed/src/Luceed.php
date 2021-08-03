@@ -116,13 +116,17 @@ class Luceed
 
 
     /**
-     * @param string|array $product_id
+     * @param string|array $id
      *
      * @return false|mixed
      */
-    public function getProduct($product_id)
+    public function getProduct($id)
     {
-        return $this->service->get($this->end_points['product'], $product_id);
+        if ($this->env == 'local') {
+            return $this->service->get($this->end_points['product_' . $id]);
+        }
+
+        return $this->service->get($this->end_points['product'], $id);
     }
 
 

@@ -82,7 +82,6 @@ class LOC_Category
         $list_diff      = $this->getList()
                                ->where('enabled', 'D')
                                ->where('grupa_artikla', '!=', '')
-                               //->whereIn('grupa_artikla', '!=', agconf('import.category.exluded'))
                                ->where('naziv', '!=', '')
                                ->pluck('grupa_artikla')
                                ->diff($this->existing)
@@ -93,12 +92,7 @@ class LOC_Category
                                })
                                ->flatten();
 
-        //Log::write($this->existing, 'cats_diff');
-        //Log::write($list_diff->count(), 'cats');
-
         $categories = $this->getList()->whereIn('grupa_artikla', $list_diff);
-
-        //Log::write($categories, 'cats');
 
         foreach ($categories as $category) {
             $parent = Category::where('luceed_uid', $category->nadgrupa_artikla)->first();
@@ -115,8 +109,6 @@ class LOC_Category
 
             $this->pushToAdd($category, false);
         }
-
-        //Log::write($this->categories_to_add, 'cats_to_add');
 
         return $this;
     }
@@ -156,10 +148,6 @@ class LOC_Category
     {
         $count      = 0;
         $categories = $this->sort($this->categories_to_add);
-
-        //Log::write($categories, 'cats_sorted');
-
-        //return $count;
 
         foreach ($categories as $i => $category) {
             $exist = Category::where('luceed_uid', $category->grupa_artikla)->first();
@@ -220,6 +208,8 @@ class LOC_Category
             'date_modified' => Carbon::now()
         ]);
 
+        // Provjera ima li kategorija crticu na početku naziva.
+        // Brisanje ako ima...
         if (substr($category->naziv, 0, 1) == '-') {
             $category->naziv = substr($category->naziv, 1);
         }
@@ -321,8 +311,6 @@ class LOC_Category
             }
         }
 
-        //Log::write(array_values($temp_category), 'cats_sorting1');
-
         $temp_category = array_values($temp_category);
 
         foreach ($category_list as $category) {
@@ -332,8 +320,6 @@ class LOC_Category
                 }
             }
         }
-
-        //Log::write(array_values($temp_category), 'cats_sorting21');
 
         foreach ($category_list as $category) {
             for ($i = 0; $i < count($temp_category); $i++) {
@@ -346,8 +332,6 @@ class LOC_Category
                 }
             }
         }
-
-        //Log::write($temp_category, 'cats_sorting3');
 
         return $temp_category;
     }

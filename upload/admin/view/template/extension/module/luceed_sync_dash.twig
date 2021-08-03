@@ -45,9 +45,9 @@
 
                         <div class="form-group">
                             <div class="col-sm-4 text-center">
-                                <a href="javascript:void(0)" id="check-active-min" data-toggle="tooltip" title="{{ btn_products_active }}" class="btn btn-info btn-block" style="margin-top: 9px;">{{ btn_products_active }}</a>
+                                <a href="javascript:void(0)" id="import-detail-product" data-toggle="tooltip" title="Import Detalja Novih Proizvoda" class="btn btn-info btn-block" style="margin-top: 9px;">Import Detalja Novih Proizvoda</a>
                             </div>
-                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_active }}</p>
+                            <p class="col-sm-8" style="margin-top: 9px;">OPREZ..! Import detalja svih proizvoda je veoma dugotrajan. Najbolje ga je raditi kada je promet stranice najmanji.</p>
                         </div>
 
                         <div class="form-group">
@@ -140,6 +140,7 @@
             $('#import-new-manufacturer')   .on('click', e => { callApi(e, 'importManufacturers'); });
             $('#import-new-warehouse')      .on('click', e => { callApi(e, 'importWarehouses'); });
             $('#import-new-products')       .on('click', e => { callApi(e, 'importProducts'); });
+            $('#import-detail-product')     .on('click', e => { callApi(e, 'importProduct'); });
             $('#import-new-actions')        .on('click', e => { callApi(e, 'importActions'); });
             $('#check-active-min')          .on('click', e => { callApi(e, 'checkMinQty'); });
             $('#categories-active-min')     .on('click', e => { callApi(e, 'checkMinQtyOfCategories'); });
@@ -159,7 +160,7 @@
             lockTarget(path.charAt(0), $('#' + target.id));
 
             $.ajax({
-                url: 'index.php?route=extension/module/luceed_sync/' + path + '&user_token={{ user_token }}',
+                url: 'index.php?route=extension/module/luceed_sync/' + path + '&id=9001002044&user_token={{ user_token }}',
                 dataType: 'json',
                 success: function(json) {
                     checkResult(json);

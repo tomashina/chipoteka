@@ -33,6 +33,11 @@ class LOC_Action
     /**
      * @var array
      */
+    private $prices_to_update = [];
+
+    /**
+     * @var array
+     */
     private $count;
 
     /**
@@ -73,32 +78,41 @@ class LOC_Action
 
     /**
      * @return $this
+     */
+    public function collectWebPrices()
+    {
+        $this->prices_to_update = collect();
+        $action = $this->getActions()
+                        ->where('partner', '==', null)
+                        ->where('naziv', '==', 'web_cijene')
+                        ->first();
+
+        foreach ($action->stavke as $item) {
+            if ($item->mpc) {
+                $this->prices_to_update->push($item);
+            }
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @return $this
      * @throws \Exception
      */
     public function collectActive()
     {
-        $actions = $this->getActions()->where('status', '6');
+        //$articles = collect();
+        $actions = $this->getActions()->where('partner', '==', null)
+                                      ->where('naziv', '!=', 'web_cijene');
 
         foreach ($actions as $key => $action) {
-            if (empty($action->poslovne_jedinice)) {
-                if (Carbon::createFromFormat('d.m.Y', $action->start_date) < Carbon::now() && Carbon::createFromFormat('d.m.Y', $action->end_date) > Carbon::now()->addDay()) {
+            if ( ! empty($action->stavke)) {
+                if (( ! $action->start_date || Carbon::createFromFormat('d.m.Y', $action->start_date) < Carbon::now()) &&
+                    ( ! $action->end_date || Carbon::createFromFormat('d.m.Y', $action->end_date) > Carbon::now()->addDay())
+                ) {
                     array_push($this->actions_to_add, $action);
-                }
-            }
-
-            if ( ! empty($action->poslovne_jedinice)) {
-                if (Carbon::createFromFormat('d.m.Y', $action->start_date) < Carbon::now() && Carbon::createFromFormat('d.m.Y', $action->end_date) > Carbon::now()->addDay()) {
-                    $enter = false;
-
-                    foreach ($action->poslovne_jedinice as $item) {
-                        if ($item->pj_uid == '14916-1') {
-                            $enter = true;
-                        }
-                    }
-
-                    if ($enter) {
-                        array_push($this->actions_to_add, $action);
-                    }
                 }
             }
         }
@@ -112,30 +126,37 @@ class LOC_Action
      */
     public function sort()
     {
+        $specials = collect();
         $this->insert_query = '';
         $this->count        = 0;
 
         foreach ($this->getActionsToAdd() as $action) {
             foreach ($action->stavke as $item) {
-                $product = Product::where('sku', $item->artikl_uid)->first();
+                $specials->push($item);
+            }
+        }
 
-                if ($product) {
-                    if ($item->mpc_rabat) {
-                        $price = $product->price - ($product->price * ($item->mpc_rabat / 100));
-                    } else {
-                        $price = $item->mpc;
-                    }
+        $temps = $specials->groupBy('artikl_uid')->all();
 
-                    if ($price) {
-                        $start = Carbon::createFromFormat('d.m.Y', $action->start_date)->format('Y-m-d');
-                        $end   = Carbon::createFromFormat('d.m.Y', $action->end_date)->format('Y-m-d');
+        foreach ($temps as $item) {
+            $product = Product::where('luceed_uid', $item->first()->artikl_uid)->first();
 
-                        $end = date('Y-m-d', strtotime("+1 day", strtotime($end)));
+            if ($product) {
+                if ($item->first()->mpc_rabat) {
+                    $price = $product->price - ($product->price * ($item->first()->mpc_rabat / 100));
+                } else {
+                    $price = $item->first()->mpc;
+                }
 
-                        $this->insert_query .= '(' . $product->product_id . ', 1, 0, ' . $price . ', "' . $start . '", "' . $end . '"),';
+                if ($price) {
+                    $start = Carbon::createFromFormat('d.m.Y', $action->start_date)->format('Y-m-d');
+                    $end   = Carbon::createFromFormat('d.m.Y', $action->end_date)->format('Y-m-d');
 
-                        $this->count++;
-                    }
+                    $end = date('Y-m-d', strtotime("+1 day", strtotime($end)));
+
+                    $this->insert_query .= '(' . $product->product_id . ', 1, 0, ' . $price . ', "' . $start . '", "' . $end . '"),';
+
+                    $this->count++;
                 }
             }
         }
@@ -167,6 +188,33 @@ class LOC_Action
         }
 
         return false;
+    }
+
+
+    /**
+     * @param string $type
+     *
+     * @return int
+     * @throws \Exception
+     */
+    public function update(string $type = 'prices')
+    {
+        if ($type == 'prices') {
+            if ( ! empty($this->prices_to_update) && $this->prices_to_update->count()) {
+                $temp_product = '';
+
+                foreach ($this->prices_to_update as $item) {
+                    $temp_product .= '("' . $item->artikl_uid . '", 0, ' . $item->mpc . '),';
+                }
+
+                $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($temp_product, 0, -1) . ";");
+                $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.luceed_uid = pt.uid SET p.price = pt.price");
+
+                return $this->prices_to_update->count();
+            }
+        }
+
+        return 0;
     }
 
 

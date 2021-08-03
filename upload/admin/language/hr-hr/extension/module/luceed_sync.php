@@ -25,6 +25,10 @@ $_['text_products_import_panel']     = 'Proizvodi';
 $_['text_categories_import_panel']   = 'Kategorije';
 $_['text_manufacturer_import_panel'] = 'Proizvođači';
 
+$_['text_success_product']          = 'Uspjeh..! %s novih proizvoda dodano!';
+$_['text_warning_product']          = 'Upozorenje..! Nema novih proizvoda za dodati!';
+$_['text_danger_product']           = 'Upozorenje..! Imate još novih proizvoda za dodati..!';
+
 // Btn
 $_['btn_products_import']         = 'Import Novih Proizvoda';
 $_['btn_products_active']         = 'Provjera Minimalnog Stanja';

@@ -7,6 +7,8 @@ use Agmedia\Helpers\Log;
 use Agmedia\Kaonekad\AttributeHelper;
 use Agmedia\Kaonekad\ScaleHelper;
 use Agmedia\Luceed\Facade\LuceedProduct;
+use Agmedia\Models\Attribute\Attribute;
+use Agmedia\Models\Attribute\AttributeDescription;
 use Agmedia\Models\Category\Category;
 use Agmedia\Models\Manufacturer\Manufacturer;
 use Agmedia\Models\Option\OptionValueDescription;
@@ -200,8 +202,8 @@ class LOC_Product
         $db = new Database(DB_DATABASE);
 
         $query_str = '';
-        $uids = $this->products_to_add->pluck('artikl')->flatten();
-        $products = Product::whereIn('model', $uids)->with('options')->get();
+        $uids      = $this->products_to_add->pluck('artikl')->flatten();
+        $products  = Product::whereIn('model', $uids)->with('options')->get();
 
         foreach ($products as $product) {
             $new_price = $this->products_to_add->where('artikl', $product->model)->first()->mpc;
@@ -245,7 +247,6 @@ class LOC_Product
         $manufacturer  = $this->getManufacturer();
         $stock_status  = $this->product->stanje_kol ? agconf('import.default_stock_full') : agconf('import.default_stock_empty');
 
-
         $prod = [
             'model'               => $this->product->artikl,
             'sku'                 => $this->product->artikl,
@@ -253,8 +254,8 @@ class LOC_Product
             'upc'                 => $this->product->barcode,
             'ean'                 => '',
             'jan'                 => '',
-            'isbn'                => '',
-            'mpn'                 => '',
+            'isbn'                => '5',
+            'mpn'                 => $this->product->jamstvo_naziv,
             'location'            => '',
             'price'               => $this->product->mpc,
             'tax_class_id'        => agconf('import.default_tax_class'),
@@ -281,84 +282,15 @@ class LOC_Product
             'image'               => ! empty($this->product->dokumenti) ? $this->getImagePath() : agconf('import.image_placeholder'),
             'points'              => '',
             'product_store'       => [0 => 0],
+            'product_attribute'   => $this->getAttributes(),
             'product_description' => $this->getDescriptionArray(),
-            'product_image'       => [],
+            'product_image'       => $this->getImages(),
             'product_layout'      => [0 => ''],
             'product_category'    => $this->getCategories(),
-            //'product_option'      => $this->getOptions($scale)
+            'product_seo_url'     => [0 => $this->getSeoUrl()],
         ];
 
         return $prod;
-    }
-
-
-    /**
-     * Get product options array from scales.
-     * $scale var. should be A, B, C as string.
-     *
-     * @param string $scale
-     *
-     * @return array
-     */
-    private function getOptions(string $scale): array
-    {
-        // Resolve option_id from scale. This is fixed and maped with OC_options DB.
-        $option_id = ScaleHelper::resolveOptionId($scale);
-        // Get the options with that option_id to compare it by name for option_value_id.
-        // Also fixed and mapped with OC_options DB.
-        $options = OptionValueDescription::where('option_id', $option_id)->get();
-        // $scales - Get the right scale by string name.
-        $scales = ScaleHelper::get($scale);
-
-        $response[0] = [
-            'value'     => $scale,
-            'option_id' => $option_id,
-            'type'      => 'select',
-            'required'  => 1
-        ];
-
-        // Sorting options and calculations for it's price.
-        // Depending on scale option property
-        // and it's default value.
-        foreach ($scales['items'] as $item) {
-            $price_prefix  = '+';
-            $price         = abs($this->product->mpc - ($this->product->mpc * $item['value']));
-            $weight_prefix = '+';
-            $weight        = 0;
-
-            // If it's not default packaging in scales.
-            // Calculate the price.
-            if ( ! $item['default']) {
-                if ($item['value'] < 1) {
-                    $price_prefix  = '-';
-                    $weight_prefix = '-';
-                    $weight        = 1 - $item['value'];
-                } else {
-                    $price_prefix  = '+';
-                    $weight_prefix = '+';
-                    $weight        = $item['value'] - 1;
-                }
-            }
-
-            // Find the option_value_id by it's name.
-            $option_value_id = $options->where('name', $item['label'])->first();
-
-            $options_response[] = [
-                'option_value_id' => $option_value_id->option_value_id,
-                'quantity'        => 1,
-                'subtract'        => 0,
-                'price_prefix'    => $price_prefix,
-                'price'           => $price,
-                'points_prefix'   => '',
-                'points'          => '',
-                'weight_prefix'   => $weight_prefix,
-                'weight'          => $weight,
-            ];
-        }
-
-        $response[0]['product_option_value'] = $options_response;
-
-        return $response;
     }
 
 
@@ -415,20 +347,6 @@ class LOC_Product
             }
         }
 
-        /*$zdravo = AttributeHelper::resolveZdravo($this->product->atributi);
-
-        if ($zdravo) {
-            $key = count($response);
-            $response[$key] = agconf('zdravo.category_id');
-
-            foreach (agconf('zdravo.subcategories') as $cat) {
-                Log::info($zdravo . ' --- ' . $cat['text']);
-                if ($zdravo == $cat['text']) {
-                    $response[$key + 1] = $cat['id'];
-                }
-            }
-        }*/
-
         return $response;
     }
 
@@ -446,7 +364,7 @@ class LOC_Product
         // Check if description exist.
         //If not add title for description.
         $description = str_replace("\n", '<br>', $this->product->opis);
-        $spec = str_replace("\n", '<br>', $this->product->specifikacija);
+        $spec        = str_replace("\n", '<br>', $this->product->specifikacija);
 
         if ( ! $this->product->opis) {
             $description = $this->product->naziv;
@@ -468,12 +386,126 @@ class LOC_Product
 
 
     /**
+     * @return array
+     */
+    private function getSeoUrl(): array
+    {
+        $slug = Str::slug($this->product->naziv) . '-' . $this->product->artikl;
+
+        return [
+            $this->default_language => $slug
+        ];
+    }
+
+
+    /**
+     * @return array
+     */
+    private function getAttributes(): array
+    {
+        $response   = [];
+        $attributes = collect($this->product->atributi);
+
+        foreach ($attributes as $attribute) {
+            if ($this->checkAttributeForImport($attribute)) {
+                $has = Attribute::where('luceed_uid', $attribute->atribut_uid)->first();
+
+                if ($has && $has->count()) {
+                    $id = $has->attribute_id;
+                } else {
+                    $id = $this->makeAttribute($attribute);
+                }
+
+                if ($id) {
+                    $response[] = [
+                        'attribute_id' => $id,
+                        'product_attribute_description' => [
+                            $this->default_language => [
+                                'text' => $attribute->vrijednost
+                            ]
+                        ]
+                    ];
+                }
+            }
+        }
+
+        return $response;
+    }
+
+
+    /**
+     * @param $attribute
+     *
+     * @return bool
+     */
+    private function checkAttributeForImport($attribute): bool
+    {
+        if ($attribute->aktivan == 'D' &&
+            $attribute->vidljiv == 'D' &&
+            $attribute->atribut_uid != '' &&
+            $attribute->naziv != '')
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * @param $attribute
+     *
+     * @return false|int
+     */
+    private function makeAttribute($attribute)
+    {
+        $id = Attribute::insertGetId([
+            'luceed_uid' => $attribute->atribut_uid,
+            'attribute_group_id' => agconf('import.default_attribute_group'),
+            'sort_order' => $attribute->redoslijed
+        ]);
+
+        if ($id) {
+            AttributeDescription::insert([
+                'attribute_id' => $id,
+                'language_id' => $this->default_language,
+                'name' => $attribute->naziv
+            ]);
+
+            return $id;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * @return array
+     */
+    private function getImages()
+    {
+        $response = [];
+        $default  = collect($this->product->dokumenti);
+        $docs     = $default->splice(1);
+
+        for ($i = 0; $i < $docs->count(); $i++) {
+            $response[] = [
+                'image'      => $this->getImagePath($i + 1),
+                'sort_order' => $i
+            ];
+        }
+
+        return $response;
+    }
+
+
+    /**
      * Get the image string from luceed service and
      * return the full path string.
      *
      * @return string
      */
-    private function getImagePath(): string
+    private function getImagePath(int $key = 0): string
     {
         // Check if the image path exist.
         // Create it if not.
@@ -482,14 +514,13 @@ class LOC_Product
         }
 
         // Setup and create the image with GD library.
-        $name  = Str::slug($this->product->naziv) . '.jpg';
-        $bin   = base64_decode($this->getImageString());
+        $name  = Str::slug($this->product->naziv) . '-' . strtoupper(Str::random(9)) . '.jpg';
+        $bin   = base64_decode($this->getImageString($key));
         $image = imagecreatefromstring($bin);
 
         if ( ! $image) {
             return 'not_valid_image';
         }
-
 
         // Save the image in storage.
         imagejpeg($image, DIR_IMAGE . $this->image_path . $name, 90);
@@ -505,9 +536,9 @@ class LOC_Product
      *
      * @return mixed
      */
-    private function getImageString()
+    private function getImageString(int $key)
     {
-        $result = LuceedProduct::getImage($this->product->dokumenti[0]->file_uid);
+        $result = LuceedProduct::getImage($this->product->dokumenti[$key]->file_uid);
 
         $image = json_decode($result);
 
