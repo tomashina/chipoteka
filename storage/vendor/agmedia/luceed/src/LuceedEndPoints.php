@@ -45,7 +45,7 @@ class LuceedEndPoints
             'group_list'        => 'grupeartikala/lista',
             'manufacturer_list' => 'robnemarke/lista',
             'warehouse_list'    => 'skladista/lista',
-            'product_list'      => 'artikli/naziv//[0,300]',
+            'product_list'      => 'artikli/naziv//',
             'product'           => 'artikli/sifra/',
             'product_actions'   => 'prodajneakcije/lista',
             'product_image'     => 'artikli/dokumenti/',

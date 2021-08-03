@@ -30,57 +30,6 @@
             </div>
         {% endif %}
         <div class="row">
-            <div class="col-sm-12 col-md-7">
-                <div class="panel panel-default">
-                    <div class="panel-heading darker-bg">
-                        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_products_import_panel }}</h3>
-                    </div>
-                    <div class="panel-body form-horizontal">
-                        <div class="form-group">
-                            <div class="col-sm-4 text-center">
-                                <a href="javascript:void(0)" id="import-new-products" data-toggle="tooltip" title="{{ btn_products_import }}" class="btn btn-info btn-block">{{ btn_products_import }}</a>
-                            </div>
-                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_import }}</p>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-4 text-center">
-                                <a href="javascript:void(0)" id="import-detail-product" data-toggle="tooltip" title="Import Detalja Novih Proizvoda" class="btn btn-info btn-block" style="margin-top: 9px;">Import Detalja Novih Proizvoda</a>
-                            </div>
-                            <p class="col-sm-8" style="margin-top: 9px;">OPREZ..! Import detalja svih proizvoda je veoma dugotrajan. Najbolje ga je raditi kada je promet stranice najmanji.</p>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-4 text-center">
-                                <a href="javascript:void(0)" id="import-new-actions" data-toggle="tooltip" title="{{ btn_products_actions_import }}" class="btn btn-info btn-block">{{ btn_products_actions_import }}</a>
-                            </div>
-                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_actions }}</p>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-4 text-center">
-                                <a href="javascript:void(0)" id="update-prices-quantities" data-toggle="tooltip" title="{{ btn_products_update_pq }}" class="btn btn-info btn-block">{{ btn_products_update_pq }}</a>
-                            </div>
-                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_pq }}</p>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-4 text-center">
-                                <a href="javascript:void(0)" id="update-prices" data-toggle="tooltip" title="{{ btn_products_update_p }}" class="btn btn-info btn-block">{{ btn_products_update_p }}</a>
-                            </div>
-                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_p }}</p>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-4 text-center">
-                                <a href="javascript:void(0)" id="update-quantities" data-toggle="tooltip" title="{{ btn_products_update_q }}" class="btn btn-info btn-block">{{ btn_products_update_q }}</a>
-                            </div>
-                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_q }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <div class="col-sm-12 col-md-5">
                 <div class="panel panel-default">
                     <div class="panel-heading darker-bg">
@@ -131,6 +80,59 @@
                     </div>
                 </div>
             </div>
+
+            <div class="col-sm-12 col-md-7">
+                <div class="panel panel-default">
+                    <div class="panel-heading darker-bg">
+                        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_products_import_panel }}</h3>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-4 text-center">
+                                <a href="javascript:void(0)" id="import-new-products" data-toggle="tooltip" title="{{ btn_products_import }}" class="btn btn-info btn-block">{{ btn_products_import }}</a>
+                            </div>
+                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_import }}</p>
+                        </div>
+
+                        {#<div class="form-group">
+                            <div class="col-sm-4 text-center">
+                                <a href="javascript:void(0)" id="import-detail-product" data-toggle="tooltip" title="Import Detalja Novih Proizvoda" class="btn btn-info btn-block" style="margin-top: 9px;">Import Detalja Novih Proizvoda</a>
+                            </div>
+                            <p class="col-sm-8" style="margin-top: 9px;">OPREZ..! Import detalja svih proizvoda je veoma dugotrajan. Najbolje ga je raditi kada je promet stranice najmanji.</p>
+                        </div>#}
+
+                        <div class="form-group">
+                            <div class="col-sm-4 text-center">
+                                <a href="javascript:void(0)" id="import-new-actions" data-toggle="tooltip" title="{{ btn_products_actions_import }}" class="btn btn-info btn-block">{{ btn_products_actions_import }}</a>
+                            </div>
+                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_actions }}</p>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 text-center">
+                                <a href="javascript:void(0)" id="update-prices" data-toggle="tooltip" title="{{ btn_products_update_p }}" class="btn btn-info btn-block">{{ btn_products_update_p }}</a>
+                            </div>
+                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_p }}</p>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 text-center">
+                                <a href="javascript:void(0)" id="update-quantities" data-toggle="tooltip" title="{{ btn_products_update_q }}" class="btn btn-info btn-block">{{ btn_products_update_q }}</a>
+                            </div>
+                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_q }}</p>
+                        </div>
+
+                        {#<div class="form-group">
+                            <div class="col-sm-4 text-center">
+                                <a href="javascript:void(0)" id="update-prices-quantities" data-toggle="tooltip" title="{{ btn_products_update_pq }}" class="btn btn-info btn-block">{{ btn_products_update_pq }}</a>
+                            </div>
+                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_pq }}</p>
+                        </div>#}
+
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
