@@ -365,6 +365,7 @@ class LOC_Product
         //If not add title for description.
         $description = str_replace("\n", '<br>', $this->product->opis);
         $spec        = str_replace("\n", '<br>', $this->product->specifikacija);
+        $clean       = str_replace("\n", '. ', $this->product->opis);
 
         if ( ! $this->product->opis) {
             $description = $this->product->naziv;
@@ -374,10 +375,10 @@ class LOC_Product
             'name'              => $this->product->naziv,
             'description'       => $description,
             'spec_description'  => $spec ?: '',
-            'short_description' => $description,
+            'short_description' => substr($clean, 0, 300),
             'tag'               => $this->product->naziv,
             'meta_title'        => $this->product->naziv,
-            'meta_description'  => str_replace("\n", '. ', $this->product->opis),
+            'meta_description'  => $clean,
             'meta_keyword'      => $this->product->naziv,
         ];
 
