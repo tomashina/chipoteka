@@ -255,7 +255,7 @@ class LOC_Product
             'ean'                 => '',
             'jan'                 => '',
             'isbn'                => '5',
-            'mpn'                 => $this->product->jamstvo_naziv,
+            'mpn'                 => $this->product->jamstvo_naziv ?: '',
             'location'            => '',
             'price'               => $this->product->mpc,
             'tax_class_id'        => agconf('import.default_tax_class'),
@@ -463,7 +463,7 @@ class LOC_Product
         $id = Attribute::insertGetId([
             'luceed_uid' => $attribute->atribut_uid,
             'attribute_group_id' => agconf('import.default_attribute_group'),
-            'sort_order' => $attribute->redoslijed
+            'sort_order' => $attribute->redoslijed ?: 9
         ]);
 
         if ($id) {
@@ -519,16 +519,14 @@ class LOC_Product
         $bin   = base64_decode($this->getImageString($key));
         $image = imagecreatefromstring($bin);
 
-        if ( ! $image) {
-            return 'not_valid_image';
+        if ($image !== false) {
+            imagejpeg($image, DIR_IMAGE . $this->image_path . $name, 90);
+
+            // Return only the image path.
+            return $this->image_path . $name;
         }
 
-        // Save the image in storage.
-        imagejpeg($image, DIR_IMAGE . $this->image_path . $name, 90);
-        //imagepng($image, DIR_IMAGE . $this->image_path . $name, 0);
-
-        // Return only the image path.
-        return $this->image_path . $name;
+        return 'not_valid_image';
     }
 
 

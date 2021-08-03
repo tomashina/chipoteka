@@ -592,8 +592,6 @@ class ControllerCatalogProduct extends Controller {
 			$data['product_description'] = $this->request->post['product_description'];
 		} elseif (isset($this->request->get['product_id'])) {
 			$data['product_description'] = $this->model_catalog_product->getProductDescriptions($this->request->get['product_id']);
-            \Agmedia\Helpers\Log::store('data');
-            \Agmedia\Helpers\Log::store($data['product_description']);
 		} else {
 			$data['product_description'] = array();
 		}
