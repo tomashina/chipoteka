@@ -23,7 +23,7 @@
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item"><a class="nav-link active" href="#general" data-bs-toggle="tab" role="tab">Info</a></li>
                 <li class="nav-item"><a class="nav-link" href="#description" data-bs-toggle="tab" role="tab">Opis  </a></li>
-                <li class="nav-item"><a class="nav-link" href="#specs" data-bs-toggle="tab" role="tab">Specifikacije </a></li>
+                {% if attribute_groups %}   <li class="nav-item"><a class="nav-link" href="#specs" data-bs-toggle="tab" role="tab">Specifikacije </a></li>  {% endif %}
             </ul>
             <div class="pb-3 mb-5">
                 <div class="tab-content px-3">
@@ -36,7 +36,7 @@
                                     <div class="product-gallery-preview gallery">
                                         {% if thumb or images %}
                                             {% if thumb %}
-                                                <div class="product-gallery-preview-item active" id="first"><a class="gallery-item rounded-3" href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"></a>
+                                              <div class="product-gallery-preview-item active" id="first"><a class="gallery-item rounded-3" href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"></a>
                                                 </div>
                                             {% endif %}
                                             {% for image in images %}
@@ -47,10 +47,11 @@
                                     {% if images %}
                                     <div class="d-flex">
                                         <div class="product-gallery-thumblist mx-auto justify-content-center">
+                                            {% if thumb  %}
+                                               <a class="product-gallery-thumblist-item active" style="display: inline-block !important;" href="#first"><img src="{{ thumb_sm }}" alt="{{ heading_title }}"></a>
+                                            {% endif %}
                                             {% for image in images %}
-                                                {% if thumb  %}
-                                                    <a class="product-gallery-thumblist-item active" style="display: inline-block !important;" href="#first"><img src="{{ thumb_sm }}" alt="{{ heading_title }}"></a>
-                                                {% endif %}
+
                                                 <a class="product-gallery-thumblist-item" style="display: inline-block !important;" href="#image{{ image.imageid }}"><img src="{{ image.thumb }}" alt="{{ heading_title }}"></a>
                                             {% endfor %}
                                         </div>
@@ -272,8 +273,12 @@
                             {% if manufacturer %}
                             <div class="col-lg-5 mb-3">
                                 <h5>{{ manufacturer }}</h5>
+                                {% if manufacturer_logo %}
                              <a href="{{ manufacturers }}">  <img src="{{ manufacturer_logo }}"  class="rounded  mb-2" alt="{{ manufacturer }}"/></a>
+                                {% endif %}
+                                {% if manufacturer_description %}
                                 {{ manufacturer_description }}
+                                {% endif %}
                                 <a class="btn btn-outline-primary btn-icon" href="{{ manufacturers }}">Pregled svih {{ manufacturer }} proizvoda</a>
 
                             </div>
@@ -328,14 +333,36 @@
                             <div class="col-lg-7 mb-3">
                                 {% if spec_description %}
                                     <h5>{{ text_spec_description }}</h5>
-                                    <p class="fs-md">{{ spec_description }}</p>
+                                    <!--<p class="fs-md">{{ spec_description }}</p>-->
+
+                                    {% if attribute_groups %}
+
+                                            <table class="table table-striped specification">
+                                                {% for attribute_group in attribute_groups %}
+                                                    <tbody>
+                                                    {% for attribute in attribute_group.attribute %}
+                                                        <tr>
+                                                            <td class="text-left"><b>{{ attribute.name }}</b></td>
+                                                            <td class="text-right">{{ attribute.text }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                {% endfor %}
+                                            </table>
+
+                                    {% endif %}
+
                                 {% endif %}
                             </div>
                             {% if manufacturer %}
                                 <div class="col-lg-5 mb-3">
                                     <h5>{{ manufacturer }}</h5>
-                                    <a href="{{ manufacturers }}">  <img src="{{ manufacturer_logo }}"  alt="{{ manufacturer }}"/></a>
-                                    {{ manufacturer_description }}
+                                    {% if manufacturer_logo %}
+                                        <a href="{{ manufacturers }}">  <img src="{{ manufacturer_logo }}"  class="rounded  mb-2" alt="{{ manufacturer }}"/></a>
+                                    {% endif %}
+                                    {% if manufacturer_description %}
+                                        {{ manufacturer_description }}
+                                    {% endif %}
                                     <a class="btn btn-outline-primary btn-icon" href="{{ manufacturers }}">Pregled svih {{ manufacturer }} proizvoda</a>
                                 </div>
                             {% endif %}
