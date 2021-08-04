@@ -12,7 +12,7 @@
                             <ul class="widget-list">
                                 {% for child in children %}
                                     {% if child.grandchildren %}
-                                        <li class="widget-list-item"><a class="widget-list-link" type="button" data-bs-toggle="collapse" data-bs-target="#subid{{ child.category_id }}" aria-expanded="false" aria-controls="subid{{ child.category_id }}">{{ child.name }}</a>
+                                        <li class="widget-list-item"><a class="widget-list-link"  data-bs-toggle="collapse" data-bs-target="#subid{{ child.category_id }}" aria-expanded="false" aria-controls="subid{{ child.category_id }}">{{ child.name }}</a>
                                             <ul class="widget-list collapse" id="subid{{ child.category_id }}">
                                                 {% for grandchild in child.grandchildren %}
                                                     <li class="widget-list-item"><a class="widget-list-link" href="{{ grandchild.href }}">{{ grandchild.name }}</a></li>
