@@ -31,12 +31,12 @@
                     <div class="tab-pane fade show active" id="general" role="tabpanel">
                         <div class="row">
                             <!-- Product gallery-->
-                            <div class="col-md-5" style="max-width:600px">
+                            <div class="col-md-5" style="max-width:580px">
                                 <div class="product-gallery " style="display: block !important;">
                                     <div class="product-gallery-preview gallery">
                                         {% if thumb or images %}
                                             {% if thumb %}
-                                              <div class="product-gallery-preview-item active" id="first"><a class="gallery-item rounded-3" href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"></a>
+                                                <div class="product-gallery-preview-item active" id="first"><a class="gallery-item rounded-3" href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"></a>
                                                 </div>
                                             {% endif %}
                                             {% for image in images %}
@@ -45,17 +45,17 @@
                                         {% endif %}
                                     </div>
                                     {% if images %}
-                                    <div class="d-flex">
-                                        <div class="product-gallery-thumblist mx-auto justify-content-center">
-                                            {% if thumb  %}
-                                               <a class="product-gallery-thumblist-item active" style="display: inline-block !important;" href="#first"><img src="{{ thumb_sm }}" alt="{{ heading_title }}"></a>
-                                            {% endif %}
-                                            {% for image in images %}
+                                        <div class="d-flex">
+                                            <div class="product-gallery-thumblist mx-auto justify-content-center" style="display: flex;flex-wrap: wrap;">
+                                                {% if thumb  %}
+                                                    <a class="product-gallery-thumblist-item active" style="display: inline-block !important;" href="#first"><img src="{{ thumb_sm }}" alt="{{ heading_title }}"></a>
+                                                {% endif %}
+                                                {% for image in images %}
 
-                                                <a class="product-gallery-thumblist-item" style="display: inline-block !important;" href="#image{{ image.imageid }}"><img src="{{ image.thumb }}" alt="{{ heading_title }}"></a>
-                                            {% endfor %}
+                                                    <a class="product-gallery-thumblist-item" style="display: inline-block !important;" href="#image{{ image.imageid }}"><img src="{{ image.thumb }}" alt="{{ heading_title }}"></a>
+                                                {% endfor %}
+                                            </div>
                                         </div>
-                                    </div>
                                     {% endif %}
                                 </div>
                             </div>
@@ -64,52 +64,52 @@
                                 <div class="product-features" id="product">
                                     <div class="badges-wrapper {% if freeshipping == false and special == '' %} mt-2 {% endif %}">
                                         {% if freeshipping %}
-                                        <div class="product-badge-cpta product-badge-cpta__free-shipping me-3">
-                                            <span> Besplatna dostava</span>
-                                            <i class="fas fa-shipping-fast"></i>
-                                        </div>
+                                            <div class="product-badge-cpta product-badge-cpta__free-shipping me-3">
+                                                <span> Besplatna dostava</span>
+                                                <i class="fas fa-shipping-fast"></i>
+                                            </div>
                                         {% endif %}
                                         {% if price and special and sale_badge %}
-                                        <div class="product-badge-cpta product-badge-cpta__discount">
-                                            <span> Akcija</span>
-                                            <span> Uštedi <strong>{{ sale_badge }}</strong></span>
-                                        </div>
+                                            <div class="product-badge-cpta product-badge-cpta__discount">
+                                                <span> Akcija</span>
+                                                <span> Uštedi <strong>{{ sale_badge }}</strong></span>
+                                            </div>
                                         {% endif %}
                                     </div>
 
                                     <div class="description-short  ">
-                                    {% if short_description %}
-                                        <h5 class="title">{{ text_short_description }}</h5>
-                                        {{ short_description }}
-                                    {% endif %}
+                                        {% if short_description %}
+                                            <h5 class="title">{{ text_short_description }}</h5>
+                                            {{ short_description }}
+                                        {% endif %}
                                     </div>
                                     <div class="price-wrapper">
                                         <div class="product-price">
                                             {% if not special %}
                                                 <span>{{ price }}</span>
                                             {% else %}
-                                            <span>{{ special }}</span>
-                                            <del>{{ price }}</del>
-                                            <span id="special_countdown"></span>
-                                        {% endif %}
-                                         </div>
+                                                <span>{{ special }}</span>
+                                                <del>{{ price }}</del>
+                                                <span id="special_countdown"></span>
+                                            {% endif %}
+                                        </div>
 
                                         <div class="product-price--web">
-                                         <span>Web cijena:</span>
-                                         <span> {% if  special %}{{ special }} {% else %}{{ price }} {% endif %}</span>
+                                            <span>Web cijena:</span>
+                                            <span> {% if  special %}{{ special }} {% else %}{{ price }} {% endif %}</span>
                                         </div>
                                     </div>
                                     {% if prikazrata %}
                                         <div class="buying-choices mb-1 mt-n1 mt-md-n3">
                                             <div class="choices-wrapper">
-                                              <i class="fas fa-badge-percent"></i>
-                                              <span class="first"> 12 x {{ ratedvanaest }}</span>
-                                             <span class="second">24 x {{ ratedvacetiri }}</span>
+                                                <i class="fas fa-badge-percent"></i>
+                                                <span class="first"> 12 x {{ ratedvanaest }}</span>
+                                                <span class="second">24 x {{ ratedvacetiri }}</span>
                                             </div>
                                         </div>
                                     {% endif %}
                                     {% if jamstvo %}
-                                    <div class="warranty-time mb-4"><i class="fas fa-clock"></i> <span>Jamstvo: <strong>{{ jamstvo }} </strong></span></div>
+                                        <div class="warranty-time mb-4"><i class="fas fa-clock"></i> <span>Jamstvo: <strong>{{ jamstvo }} </strong></span></div>
                                     {% endif %}
                                     <div class="product-quantity-button">
                                         <div class="input-group me-0 me-sm-3 quantity">
@@ -128,7 +128,7 @@
 
                                     </div>
 
-                               
+
 
                                     {% if minimum > 1 %}
                                         <div class="alert alert-sm alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
@@ -183,7 +183,7 @@
                                                     <h6 class="mt-3">Obročno plaćanje:</h6>
                                                     <ul class="mb-2">
                                                         <li>MasterCard ZABA do 24 rate</li>
-                                                         <li> Visa Premium do 10 rata</li>
+                                                        <li> Visa Premium do 10 rata</li>
                                                     </ul>
 
                                                 </div>
@@ -218,23 +218,23 @@
                             <div class="d-flex align-items-center flex-column flex-sm-row mt-3 mb-3 mt-lg-0 mb-lg-0">
                                 {% if thumb or images %}
                                     {% if thumb %}
-                                      <img  src="{{ thumb }}" data-zoom="{{ popup }}" loading="lazy" alt="{{ heading_title }}"  width="90" class="me-2" />
+                                        <img  src="{{ thumb }}" data-zoom="{{ popup }}" loading="lazy" alt="{{ heading_title }}"  width="90" class="me-2" />
                                     {% endif %}
                                 {% endif %}
                                 <div class="price-wrapper mb-0">
-                                 <div class="product-price">
-                                     {% if not special %}
-                                <span>{{ price }}</span>
-                                    {% else %}
-                                <span>{{ special }}</span>
-                                  <del>{{ price }}</del>
-                                    {% endif %}
-                                </div>
+                                    <div class="product-price">
+                                        {% if not special %}
+                                            <span>{{ price }}</span>
+                                        {% else %}
+                                            <span>{{ special }}</span>
+                                            <del>{{ price }}</del>
+                                        {% endif %}
+                                    </div>
 
-                                        <div class="product-price--web">
-                                            <span>Web cijena: </span>
-                                            <span> {% if  special %} {{ special }} {% else %} {{ price }} {% endif %}</span>
-                                        </div>
+                                    <div class="product-price--web">
+                                        <span>Web cijena: </span>
+                                        <span> {% if  special %} {{ special }} {% else %} {{ price }} {% endif %}</span>
+                                    </div>
 
                                 </div>
                             </div>
@@ -261,17 +261,17 @@
                                 {{ description }}
                             </div>
                             {% if manufacturer %}
-                            <div class="col-lg-5 mb-3">
-                                <h5>{{ manufacturer }}</h5>
-                                {% if manufacturer_logo %}
-                             <a href="{{ manufacturers }}">  <img src="{{ manufacturer_logo }}"  class="rounded  mb-2" alt="{{ manufacturer }}"/></a>
-                                {% endif %}
-                                {% if manufacturer_description %}
-                                {{ manufacturer_description }}
-                                {% endif %}
-                                <a class="btn btn-outline-primary btn-icon" href="{{ manufacturers }}">Pregled svih {{ manufacturer }} proizvoda</a>
+                                <div class="col-lg-5 mb-3">
+                                    <h5>{{ manufacturer }}</h5>
+                                    {% if manufacturer_logo %}
+                                        <a href="{{ manufacturers }}">  <img src="{{ manufacturer_logo }}"  class="rounded  mb-2" alt="{{ manufacturer }}"/></a>
+                                    {% endif %}
+                                    {% if manufacturer_description %}
+                                        {{ manufacturer_description }}
+                                    {% endif %}
+                                    <a class="btn btn-outline-primary btn-icon" href="{{ manufacturers }}">Pregled svih {{ manufacturer }} proizvoda</a>
 
-                            </div>
+                                </div>
                             {% endif %}
 
 
@@ -287,19 +287,19 @@
                                     {% endif %}
                                 {% endif %}
                                 <div class="price-wrapper mb-0">
-                                 <div class="product-price">
-                                     {% if not special %}
-                                        <span>{{ price }}</span>
-                                    {% else %}
-                                        <span>{{ special }} </span>
-                                        <del class=" me-3">{{ price }}</del>
-                                    {% endif %}
-                                </div>
+                                    <div class="product-price">
+                                        {% if not special %}
+                                            <span>{{ price }}</span>
+                                        {% else %}
+                                            <span>{{ special }} </span>
+                                            <del class=" me-3">{{ price }}</del>
+                                        {% endif %}
+                                    </div>
 
-                                        <div class="product-price--web">
-                                            <span>Web cijena:</span>
-                                            <span> {% if  special %} {{ special }} {% else %} {{ price }} {% endif %}</span>
-                                        </div>
+                                    <div class="product-price--web">
+                                        <span>Web cijena:</span>
+                                        <span> {% if  special %} {{ special }} {% else %} {{ price }} {% endif %}</span>
+                                    </div>
 
                                 </div>
                             </div>
@@ -321,25 +321,25 @@
                         <!-- Specs table-->
                         <div class="row pt-2">
                             <div class="col-lg-7 mb-3">
-                                    <h5>{{ text_spec_description }}</h5>
-                                    <!--<p class="fs-md">{{ spec_description }}</p>-->
+                                <h5>{{ text_spec_description }}</h5>
+                                <!--<p class="fs-md">{{ spec_description }}</p>-->
 
-                                    {% if attribute_groups %}
-                                <div class="table-responsive">
-                                            <table class="table table-striped specification">
-                                                {% for attribute_group in attribute_groups %}
-                                                    <tbody>
-                                                    {% for attribute in attribute_group.attribute %}
-                                                        <tr>
-                                                            <td class="text-left"><b>{{ attribute.name }}</b></td>
-                                                            <td class="text-right">{{ attribute.text }}</td>
-                                                        </tr>
-                                                    {% endfor %}
-                                                    </tbody>
+                                {% if attribute_groups %}
+                                    <div class="table-responsive">
+                                        <table class="table table-striped specification">
+                                            {% for attribute_group in attribute_groups %}
+                                                <tbody>
+                                                {% for attribute in attribute_group.attribute %}
+                                                    <tr>
+                                                        <td class="text-left"><b>{{ attribute.name }}</b></td>
+                                                        <td class="text-right">{{ attribute.text }}</td>
+                                                    </tr>
                                                 {% endfor %}
-                                            </table>
-                                </div>
-                                    {% endif %}
+                                                </tbody>
+                                            {% endfor %}
+                                        </table>
+                                    </div>
+                                {% endif %}
 
 
                             </div>
@@ -362,78 +362,78 @@
         </div>
     </div>
     {% if products %}
-    <div class="container-fluid pt-lg-2 pb-5 mb-md-3 ">
-        <div class="section-title section-title--discount">
-            <h2 class="title"> {{ text_related }}</h2>
-        </div>
-        <div class="tns-carousel tns-controls-static tns-controls-outside tns-nav-enabled tns-carousel-product product-holder py-3">
-            <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 2, &quot;gutter&quot;: 16, &quot;controls&quot;:false, &quot;autoHeight&quot;: true, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1}, &quot;480&quot;:{&quot;items&quot;:2}, &quot;720&quot;:{&quot;items&quot;:3}, &quot;991&quot;:{&quot;items&quot;:3}, &quot;1140&quot;:{&quot;items&quot;:3}, &quot;1300&quot;:{&quot;items&quot;:4}, &quot;1500&quot;:{&quot;items&quot;:5}}}">
-            {% for product in products|slice(0, 10) %}
-                <div>
-                    <div class="card product-card">
-                        {# <button class="btn-wishlist btn-sm" type="button"  onclick="wishlist.add('{{ product.product_id }}');" ><i class="fal fa-heart"></i></button> #}
-                        <div class="position-relative">
-                            {% if (product.quantity > 0)  %}
-                            <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
-                            {% endif %}
-                            <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" loading="lazy" alt="{{ product.name }}"></div>
-                            {% if product.freeshipping %}
-                            <div class="product-badge-cpta product-badge-cpta__free-shipping">
-                                <span> Besplatna dostava</span>
-                                <i class="fas fa-shipping-fast"></i>
-                            </div>
-                            {% endif %}
-                        </div>
-                        <a class="stretched-link" href="{{ product.href }}">
-                            <div class="card-body">
-                                <h3 class="product-title">{{ product.name }}</h3>
-                                {% if product.price %}
-                                    <div class="product-price">
-                                        {% if product.special %}
-                                            <span>{{ product.special }}</span>
-                                            <span><del>{{ product.price }}</del></span>
-                                        {% else %}
-                                            <span> {{ product.price }}</span>
-                                        {% endif %}
-                                    </div><!-- .price -->
-                                {% endif %}
-                                {% if product.rating %}
-                                    <div class="star-rating {{ product.rating }}"><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fal fa-star"></i>
-                                    </div>
-                                {% endif %}
-                               {% if product.price and product.special %}
-                                <div class="product-badge-cpta product-badge-cpta__discount">
-                                    <span> Akcija</span>
-                                    <span> Uštedi <strong>{{ product.sale_badge }}</strong></span>
-                                </div>
-                               {% endif %}
-
-                                <div class="product-price--web">
-                                    <span>Web cijena:</span>
-                                    <span> {% if  product.special %} {{ product.special }} {% else %} {{ product.price }} {% endif %}</span>
-                                </div>
-
-                            </div>
-                            <div class="product-delivery-time">
-                                <i class="fas fa-shipping-timed"></i>
-                                <div class="d-flex flex-column">
-                                    {% if (product.quantity < 1)  %}
-                                    <span>Nedostupno na web shopu</span>
-                                        <span></span>
-                                    {% else %}
-                                        <span>Proizvod kod dobavljača</span>
-                                        <span>Šaljemo do {{ product.saljemodo }}</span>
+        <div class="container-fluid pt-lg-2 pb-5 mb-md-3 ">
+            <div class="section-title section-title--discount">
+                <h2 class="title"> {{ text_related }}</h2>
+            </div>
+            <div class="tns-carousel tns-controls-static tns-controls-outside tns-nav-enabled tns-carousel-product product-holder py-3">
+                <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 2, &quot;gutter&quot;: 16, &quot;controls&quot;:false, &quot;autoHeight&quot;: true, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1}, &quot;480&quot;:{&quot;items&quot;:2}, &quot;720&quot;:{&quot;items&quot;:3}, &quot;991&quot;:{&quot;items&quot;:3}, &quot;1140&quot;:{&quot;items&quot;:3}, &quot;1300&quot;:{&quot;items&quot;:4}, &quot;1500&quot;:{&quot;items&quot;:5}}}">
+                    {% for product in products|slice(0, 10) %}
+                        <div>
+                            <div class="card product-card">
+                                {# <button class="btn-wishlist btn-sm" type="button"  onclick="wishlist.add('{{ product.product_id }}');" ><i class="fal fa-heart"></i></button> #}
+                                <div class="position-relative">
+                                    {% if (product.quantity > 0)  %}
+                                        <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
                                     {% endif %}
-
+                                    <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" loading="lazy" alt="{{ product.name }}"></div>
+                                    {% if product.freeshipping %}
+                                        <div class="product-badge-cpta product-badge-cpta__free-shipping">
+                                            <span> Besplatna dostava</span>
+                                            <i class="fas fa-shipping-fast"></i>
+                                        </div>
+                                    {% endif %}
                                 </div>
+                                <a class="stretched-link" href="{{ product.href }}">
+                                    <div class="card-body">
+                                        <h3 class="product-title">{{ product.name }}</h3>
+                                        {% if product.price %}
+                                            <div class="product-price">
+                                                {% if product.special %}
+                                                    <span>{{ product.special }}</span>
+                                                    <span><del>{{ product.price }}</del></span>
+                                                {% else %}
+                                                    <span> {{ product.price }}</span>
+                                                {% endif %}
+                                            </div><!-- .price -->
+                                        {% endif %}
+                                        {% if product.rating %}
+                                            <div class="star-rating {{ product.rating }}"><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fal fa-star"></i>
+                                            </div>
+                                        {% endif %}
+                                        {% if product.price and product.special %}
+                                            <div class="product-badge-cpta product-badge-cpta__discount">
+                                                <span> Akcija</span>
+                                                <span> Uštedi <strong>{{ product.sale_badge }}</strong></span>
+                                            </div>
+                                        {% endif %}
+
+                                        <div class="product-price--web">
+                                            <span>Web cijena:</span>
+                                            <span> {% if  product.special %} {{ product.special }} {% else %} {{ product.price }} {% endif %}</span>
+                                        </div>
+
+                                    </div>
+                                    <div class="product-delivery-time">
+                                        <i class="fas fa-shipping-timed"></i>
+                                        <div class="d-flex flex-column">
+                                            {% if (product.quantity < 1)  %}
+                                                <span>Nedostupno na web shopu</span>
+                                                <span></span>
+                                            {% else %}
+                                                <span>Proizvod kod dobavljača</span>
+                                                <span>Šaljemo do {{ product.saljemodo }}</span>
+                                            {% endif %}
+
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
-                        </a>
-                    </div>
+                        </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
         </div>
-    </div>
     {% endif %}
     <div class="modal fade" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -492,65 +492,65 @@
                 }
             }
             if (newVal <= {{ qty }} ) {
-            $('.input-quantity').val(newVal);
+                $('.input-quantity').val(newVal);
             }
         });
 
     </script>
     {% if (qty > 0)  %}
-    <script>
+        <script>
             $("#button-cart,#button-cart2,#button-cart3").on('click', function(){
-            $.ajax({
-                url: 'index.php?route=extension/basel/basel_features/add_to_cart',
-                type: 'post',
-                data: $('#product input[type=\'text\'], #product input[type=\'hidden\'], #product input[type=\'number\'], #product input[type=\'radio\']:checked, #product input[type=\'checkbox\']:checked, #product select, #product textarea'),
-                dataType: 'json',
-                success: function(json) {
-                    $('.alert, .text-danger').remove();
-                    $('.table-cell').removeClass('has-error');
+                $.ajax({
+                    url: 'index.php?route=extension/basel/basel_features/add_to_cart',
+                    type: 'post',
+                    data: $('#product input[type=\'text\'], #product input[type=\'hidden\'], #product input[type=\'number\'], #product input[type=\'radio\']:checked, #product input[type=\'checkbox\']:checked, #product select, #product textarea'),
+                    dataType: 'json',
+                    success: function(json) {
+                        $('.alert, .text-danger').remove();
+                        $('.table-cell').removeClass('has-error');
 
-                    if (json.error) {
-                        if (json.error.option) {
-                            for (i in json.error.option) {
-                                var element = $('#input-option' + i.replace('_', '-'));
+                        if (json.error) {
+                            if (json.error.option) {
+                                for (i in json.error.option) {
+                                    var element = $('#input-option' + i.replace('_', '-'));
 
-                                if (element.parent().hasClass('input-group')) {
-                                    element.parent().after('<div class="text-danger">' + json.error.option[i] + '</div>');
-                                } else {
-                                    element.after('<div class="text-danger">' + json.error.option[i] + '</div>');
+                                    if (element.parent().hasClass('input-group')) {
+                                        element.parent().after('<div class="text-danger">' + json.error.option[i] + '</div>');
+                                    } else {
+                                        element.after('<div class="text-danger">' + json.error.option[i] + '</div>');
+                                    }
                                 }
                             }
+
+                            $('.text-danger').parent().addClass('has-error');
                         }
 
-                        $('.text-danger').parent().addClass('has-error');
+                        if (json.success_redirect) {
+
+                            location = json.success_redirect;
+
+                        } else if (json.success) {
+
+                            $('#myModal').modal('show');
+                            $('#note').html('<div class="row"><div class="col-sm-3 col-lg-4"><img src="' + json.image + '" /></div><div class="col-sm d-flex align-items-center"><p class="align-middle">' + json.success +'</p></div></div>');
+
+                            $('.table-cell').removeClass('has-error');
+                            setTimeout(function() {$('.popup-note').hide();}, 4000);
+
+                            setTimeout(function () {
+                                $('.cart-total-items').html( json.total_items );
+                                $('.cart-total-amount').html( json.total_amount );
+                            }, 100);
+
+                            $('#cart-content').load('index.php?route=common/cart/info #cart-content > *');
+                        }
+                    },
+                    error: function(xhr, ajaxOptions, thrownError) {
+                        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
                     }
-
-                    if (json.success_redirect) {
-
-                        location = json.success_redirect;
-
-                    } else if (json.success) {
-
-                        $('#myModal').modal('show');
-                        $('#note').html('<div class="row"><div class="col-sm-3 col-lg-4"><img src="' + json.image + '" /></div><div class="col-sm d-flex align-items-center"><p class="align-middle">' + json.success +'</p></div></div>');
-
-                        $('.table-cell').removeClass('has-error');
-                        setTimeout(function() {$('.popup-note').hide();}, 4000);
-
-                        setTimeout(function () {
-                            $('.cart-total-items').html( json.total_items );
-                            $('.cart-total-amount').html( json.total_amount );
-                        }, 100);
-
-                        $('#cart-content').load('index.php?route=common/cart/info #cart-content > *');
-                    }
-                },
-                error: function(xhr, ajaxOptions, thrownError) {
-                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-                }
+                });
             });
-        });
-      </script>
-{% endif %}
+        </script>
+    {% endif %}
 
 {{ footer }}
