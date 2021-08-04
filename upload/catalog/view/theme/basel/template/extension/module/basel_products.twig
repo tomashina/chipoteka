@@ -14,7 +14,9 @@
                             <div class="card product-card">
                                  {# <button class="btn-wishlist btn-sm" type="button" data-bs-toggle="tooltip" data-bs-placement="left" onclick="wishlist.add('{{ product.product_id }}');" title="{{ button_wishlist }}"><i class="fal fa-heart"></i></button> #}
                                 <div class="position-relative">
+                                    {% if (product.quantity > 0)  %}
                                     <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
+                                    {% endif %}
                                     <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img loading="lazy" src="{{ product.thumb }}" alt="{{ product.name }}"></div>
                                     {% if product.freeshipping %}
                                     <div class="product-badge-cpta product-badge-cpta__free-shipping">
@@ -65,7 +67,7 @@
                                         <i class="fas fa-shipping-timed"></i>
                                         <div class="d-flex flex-column">
                                             {% if (product.quantity < 1)  %}
-                                                <span>Trenutno nedostupno</span>
+                                                <span>Nedostupno na web shopu</span>
                                                 <span></span>
                                             {% else %}
                                                 <span>Proizvod kod dobavljača</span>
