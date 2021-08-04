@@ -451,8 +451,7 @@
         $(() => {
             $.ajax({
                 type: 'get',
-                url: 'index.php?route=product/product/availability',
-                cache: false,
+                url: 'index.php?route=product/product/availability&sifra={{ model }}',
                 beforeSend: function() {
                     //$('#button-confirm').button('loading');
                     console.log('beforeSend: function()')

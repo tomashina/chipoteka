@@ -87,23 +87,45 @@ class LOC_Warehouse
     }
 
 
-    public function getAvailabilityForProduct($product)
+    /**
+     * @param $product
+     *
+     * @return Collection
+     */
+    public function getAvailabilityForProduct($product): Collection
     {
-        $units = '[';
+        $response = collect();
         $houses = $this->getAvailabilityViewWarehouses();
+        $units = $this->getUnitsQuery($houses);
+
+        $availables = collect($this->setAvailables(
+            LuceedProduct::stock($units, $product)
+        ));
 
         foreach ($houses as $house) {
-            $units .= $house['skladiste'] . ',';
+            $has = $availables->where('skladiste_uid', $house['skladiste_uid'])->first();
+
+            if ($has) {
+                $qty = $has->raspolozivo_kol;
+
+                if ($qty < 0) {
+                    $qty = 0;
+                }
+
+                $response->push([
+                    'title' => $house['naziv'],
+                    'qty'   => $qty
+                ]);
+
+            } else {
+                $response->push([
+                    'title' => $house['naziv'],
+                    'qty'   => 0
+                ]);
+            }
         }
 
-        $units = substr($units, 0, -1);
-
-        $units .= ']';
-
-        $pro = LuceedProduct::stock($units, $product);
-
-        Log::store($units);
-        Log::store($pro);
+        return $response;
     }
 
 
