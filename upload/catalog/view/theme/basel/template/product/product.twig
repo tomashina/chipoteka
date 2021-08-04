@@ -31,7 +31,7 @@
                     <div class="tab-pane fade show active" id="general" role="tabpanel">
                         <div class="row">
                             <!-- Product gallery-->
-                            <div class="col-md-5 col-xxxl-auto">
+                            <div class="col-md-5" style="max-width:600px">
                                 <div class="product-gallery " style="display: block !important;">
                                     <div class="product-gallery-preview gallery">
                                         {% if thumb or images %}
@@ -109,11 +109,11 @@
                                         </div>
                                     {% endif %}
                                     {% if jamstvo %}
-                                    <div class="warranty-time mb-4"><i class="fas fa-clock"></i> <span>Jamstvo: <strong>{{ jamstvo }}</strong></span></div>
+                                    <div class="warranty-time mb-4"><i class="fas fa-clock"></i> <span>Jamstvo: <strong>{{ jamstvo }} </strong></span></div>
                                     {% endif %}
                                     <div class="product-quantity-button">
                                         <div class="input-group me-0 me-sm-3 quantity">
-                                            <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}" id="input-quantity"   class="form-control input-quantity" />
+                                            <input type="text" step="1" min="{{ minimum }}" max="{{ qty }}" name="quantity" value="{{ minimum }}" id="input-quantity"   class="form-control input-quantity" readonly />
                                             <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
                                                 <i class="fas fa-minus"></i>
                                             </button>
@@ -170,20 +170,20 @@
                                             </div>
                                         </div>
                                         <div class="accordion-item">
-                                            <h4 class="accordion-header"><a class="accordion-button collapsed" href="#localStore" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="localStore"><i class="fal fa-tags text-muted fs-lg align-middle mt-n1 me-3"></i>Način plaćanja</a></h4>
+                                            <h4 class="accordion-header"><a class="accordion-button collapsed" href="#localStore" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="localStore"><i class="fal fa-tags text-muted fs-lg align-middle mt-n1 me-3"></i>Način plaćanja na web shopu</a></h4>
                                             <div class="accordion-collapse collapse" id="localStore" data-bs-parent="#productPanels">
                                                 <div class="accordion-body">
                                                     <h6 class="mt-2">Jednokratno plaćanje:</h6>
                                                     <ul>
                                                         <li> Internet bankarstvo (virman)</li>
                                                         <li> Pouzeće (prilikom preuzimanja)</li>
-                                                        <li>American Express, Maestro, MasterCard, Visa</li>
+                                                        <li>Maestro, MasterCard, Visa, Visa Premium</li>
                                                     </ul>
 
                                                     <h6 class="mt-3">Obročno plaćanje:</h6>
                                                     <ul class="mb-2">
-                                                        <li>MasterCard 2-12 rate</li>
-                                                         <li> Visa Premium 2-10 rata</li>
+                                                        <li>MasterCard ZABA do 24 rate</li>
+                                                         <li> Visa Premium do 10 rata</li>
                                                     </ul>
 
                                                 </div>
@@ -195,7 +195,7 @@
                                         <div class="d-flex flex-column">
                                             <span>
                                                 {% if ((qty < 1) and (stock_badge_status)) %}
-                                                    Trenutno nedostupno
+                                                    Nedostupno na web shopu
                                                 {% else %}
                                                     Proizvod kod dobavljača
                                                 {% endif %}
@@ -232,7 +232,7 @@
                                 </div>
 
                                         <div class="product-price--web">
-                                            <span>Web cijena:</span>
+                                            <span>Web cijena: </span>
                                             <span> {% if  special %} {{ special }} {% else %} {{ price }} {% endif %}</span>
                                         </div>
 
@@ -240,7 +240,7 @@
                             </div>
                             <div class="product-quantity-button mb-0">
                                 <div class="input-group me-0 me-sm-3 quantity">
-                                    <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}"  class="form-control input-quantity" />
+                                    <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}"  class="form-control input-quantity" readonly/>
                                     <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
                                         <i class="fas fa-minus"></i>
                                     </button>
@@ -305,7 +305,7 @@
                             </div>
                             <div class="product-quantity-button mb-0">
                                 <div class="input-group me-0 me-sm-3 quantity">
-                                    <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}"  class="form-control input-quantity" />
+                                    <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}"  class="form-control input-quantity" readonly/>
                                     <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
                                         <i class="fas fa-minus"></i>
                                     </button>
@@ -321,12 +321,11 @@
                         <!-- Specs table-->
                         <div class="row pt-2">
                             <div class="col-lg-7 mb-3">
-                                {% if spec_description %}
                                     <h5>{{ text_spec_description }}</h5>
                                     <!--<p class="fs-md">{{ spec_description }}</p>-->
 
                                     {% if attribute_groups %}
-
+                                <div class="table-responsive">
                                             <table class="table table-striped specification">
                                                 {% for attribute_group in attribute_groups %}
                                                     <tbody>
@@ -339,10 +338,10 @@
                                                     </tbody>
                                                 {% endfor %}
                                             </table>
-
+                                </div>
                                     {% endif %}
 
-                                {% endif %}
+
                             </div>
                             {% if manufacturer %}
                                 <div class="col-lg-5 mb-3">
@@ -374,7 +373,9 @@
                     <div class="card product-card">
                         {# <button class="btn-wishlist btn-sm" type="button"  onclick="wishlist.add('{{ product.product_id }}');" ><i class="fal fa-heart"></i></button> #}
                         <div class="position-relative">
+                            {% if (product.quantity > 0)  %}
                             <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
+                            {% endif %}
                             <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" loading="lazy" alt="{{ product.name }}"></div>
                             {% if product.freeshipping %}
                             <div class="product-badge-cpta product-badge-cpta__free-shipping">
@@ -417,7 +418,7 @@
                                 <i class="fas fa-shipping-timed"></i>
                                 <div class="d-flex flex-column">
                                     {% if (product.quantity < 1)  %}
-                                    <span>Trenutno nedostupno</span>
+                                    <span>Nedostupno na web shopu</span>
                                         <span></span>
                                     {% else %}
                                         <span>Proizvod kod dobavljača</span>
@@ -480,7 +481,7 @@
             var $button = $(this);
             var $input = $button.closest('.quantity').find("input.input-quantity");
 
-            if ($button.data('multi') == "1") {
+            if ($button.data('multi') == "1" ) {
                 var newVal = parseFloat($input.val()) + 1;
             } else {
                 // Don't allow decrementing below zero
@@ -490,10 +491,13 @@
                     newVal = 1;
                 }
             }
+            if (newVal <= {{ qty }} ) {
             $('.input-quantity').val(newVal);
+            }
         });
 
     </script>
+    {% if (qty > 0)  %}
     <script>
             $("#button-cart,#button-cart2,#button-cart3").on('click', function(){
             $.ajax({
@@ -547,6 +551,6 @@
             });
         });
       </script>
-
+{% endif %}
 
 {{ footer }}
