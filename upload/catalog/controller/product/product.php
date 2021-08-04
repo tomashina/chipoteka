@@ -747,4 +747,20 @@ class ControllerProductProduct extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+
+
+    public function availability()
+    {
+        $this->load->language('product/product');
+        $this->load->model('catalog/product');
+
+        $loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse();
+        $skladista = $loc->getAvailabilityForProduct('9150036251');
+
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput($skladista->toJson());
+
+        //return $skladista->toJson();
+	}
 }

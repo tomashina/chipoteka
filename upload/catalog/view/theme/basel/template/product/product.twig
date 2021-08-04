@@ -137,44 +137,34 @@
                                         <div class="accordion-item">
                                             <h4 class="accordion-header"><a class="accordion-button collapsed" href="#shippingOptions" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="shippingOptions"><i class="fal fa-map-marker-minus text-muted lead align-middle mt-n1 me-3"></i>Dostupnost proizvoda po poslovnicama</a></h4>
                                             <div class="accordion-collapse collapse" id="shippingOptions" data-bs-parent="#productPanels">
-                                                <div class="accordion-body">
-                                                    <div class="d-flex justify-content-between border-bottom pt-2 pb-3">
+                                                <div class="accordion-body" id="availability-view">
+                                                    {#<div class="d-flex justify-content-between border-bottom pt-2 pb-3">
                                                         <div>
-                                                            <div class="fw-semibold text-dark"><a href="#" >Zagreb
-                                                                Ulica grada Vukovara 269E</a>
+                                                            <div class="fw-semibold text-dark">
+                                                                <a href="#">Zagreb Ulica grada Vukovara 269E</a>
                                                             </div>
                                                         </div>
                                                         <div><i class="fal fa-map-marker-minus me-2"></i></div>
+                                                    </div>
 
-
+                                                    <div class="d-flex justify-content-between border-bottom py-3">
+                                                        <div>
+                                                            <div class="fw-semibold text-dark"><a href="#" >Zagreb Arena Vice Vukova 6</a></div>
+                                                        </div>
+                                                        <div><i class="fal fa-map-marker-minus me-2"></i></div>
                                                     </div>
                                                     <div class="d-flex justify-content-between border-bottom py-3">
                                                         <div>
-                                                            <div class="fw-semibold text-dark"><a href="#" >Zagreb Arena
-                                                                    Vice Vukova 6</a></div>
-
+                                                            <div class="fw-semibold text-dark"><a href="#" >Zadar Franje Tuđmana 19</a></div>
                                                         </div>
                                                         <div><i class="fal fa-map-marker-minus me-2"></i></div>
-
-                                                    </div>
-                                                    <div class="d-flex justify-content-between border-bottom py-3">
-                                                        <div>
-                                                            <div class="fw-semibold text-dark"><a href="#" >Zadar
-                                                                    Franje Tuđmana 19</a></div>
-
-                                                        </div>
-                                                        <div><i class="fal fa-map-marker-minus me-2"></i></div>
-
                                                     </div>
                                                     <div class="d-flex justify-content-between pt-3 pb-2">
                                                         <div>
-                                                            <div class="fw-semibold text-dark"><a href="#" >Šibenik
-                                                                    Bože Peričića 26</a></div>
-
+                                                            <div class="fw-semibold text-dark"><a href="#" >Šibenik Bože Peričića 26</a></div>
                                                         </div>
                                                         <div><i class="fal fa-map-marker-minus me-2"></i></div>
-
-                                                    </div>
+                                                    </div>#}
 
                                                 </div>
                                             </div>
@@ -201,20 +191,20 @@
                                         </div>
                                     </div>
                                     <div class="product-delivery-time">
-                                                        <i class="fas fa-shipping-timed"></i>
-                                              <div class="d-flex flex-column">
-                                              <span>
-                                                  {% if ((qty < 1) and (stock_badge_status)) %}
-                                               Trenutno nedostupno
-                                                  {% else %}
-                                               Proizvod kod dobavljača
-                                                  {% endif %}
+                                        <i class="fas fa-shipping-timed"></i>
+                                        <div class="d-flex flex-column">
+                                            <span>
+                                                {% if ((qty < 1) and (stock_badge_status)) %}
+                                                    Trenutno nedostupno
+                                                {% else %}
+                                                    Proizvod kod dobavljača
+                                                {% endif %}
                                              </span>
-                                                  {% if qty > 1 %}
-                                              <span>
+                                            {% if qty > 1 %}
+                                                <span>
                                               Šaljemo do {{ saljemodo }}
                                               </span>
-                                                  {% endif %}
+                                            {% endif %}
                                         </div>
                                     </div>
                                     <p class="product-id"><strong>{{ text_model }}</strong> {{ model }}</p>
@@ -373,7 +363,6 @@
         </div>
     </div>
     {% if products %}
-
     <div class="container-fluid pt-lg-2 pb-5 mb-md-3 ">
         <div class="section-title section-title--discount">
             <h2 class="title"> {{ text_related }}</h2>
@@ -457,6 +446,35 @@
             </div>
         </div>
     </div>
+    <script>
+        $(() => {
+            $.ajax({
+                type: 'get',
+                url: 'index.php?route=product/product/availability',
+                cache: false,
+                beforeSend: function() {
+                    //$('#button-confirm').button('loading');
+                    console.log('beforeSend: function()')
+                },
+                complete: function() {
+                    //$('#button-confirm').button('reset');
+                    console.log('complete: function()')
+                },
+                success: (json) => {
+                    //console.log(json);
+                    let html = '';
+
+                    for (key in json) {
+                        if (json.hasOwnProperty(key)) {
+                            html += '<div class="d-flex justify-content-between border-bottom py-3"><div><div class="fw-semibold text-dark"><a href="#">' + json[key].naziv + '</a></div></div><div><i class="fal fa-map-marker-minus me-2"></i></div></div>';
+                        }
+                    }
+
+                    $('#availability-view').html(html);
+                }
+            });
+        });
+    </script>
     <script>
         $(".ddd").on("click", function(event) {
             var $button = $(this);
