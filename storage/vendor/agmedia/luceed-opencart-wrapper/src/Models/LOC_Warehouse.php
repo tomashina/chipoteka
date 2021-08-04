@@ -4,15 +4,7 @@ namespace Agmedia\LuceedOpencartWrapper\Models;
 
 use Agmedia\Helpers\Log;
 use Agmedia\Luceed\Facade\LuceedProduct;
-use Agmedia\Models\Category\Category;
-use Agmedia\Models\Category\CategoryDescription;
-use Agmedia\Models\Category\CategoryPath;
-use Agmedia\Models\Category\CategoryToLayout;
-use Agmedia\Models\Category\CategoryToStore;
-use Agmedia\Models\SeoUrl;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 /**
  * Class LOC_Category
@@ -157,7 +149,28 @@ class LOC_Warehouse
 
         return [];
     }
-    
+
+
+    /**
+     * @param $units
+     *
+     * @return string
+     */
+    private function getUnitsQuery($units)
+    {
+        $string = '[';
+
+        foreach ($units as $unit) {
+            $string .= $unit['skladiste'] . ',';
+        }
+
+        $string = substr($string, 0, -1);
+
+        $string .= ']';
+
+        return $string;
+    }
+
 
     /**
      * @param $warehouses
@@ -169,5 +182,17 @@ class LOC_Warehouse
         $cats = json_decode($warehouses);
 
         return $cats->result[0]->skladista;
+    }
+
+    /**
+     * @param $warehouses
+     *
+     * @return array
+     */
+    private function setAvailables($items): array
+    {
+        $response = json_decode($items);
+
+        return $response->result[0]->stanje;
     }
 }
