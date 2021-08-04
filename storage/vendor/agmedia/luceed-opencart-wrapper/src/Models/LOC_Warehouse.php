@@ -3,6 +3,7 @@
 namespace Agmedia\LuceedOpencartWrapper\Models;
 
 use Agmedia\Helpers\Log;
+use Agmedia\Luceed\Facade\LuceedProduct;
 use Agmedia\Models\Category\Category;
 use Agmedia\Models\Category\CategoryDescription;
 use Agmedia\Models\Category\CategoryPath;
@@ -83,6 +84,26 @@ class LOC_Warehouse
     {
         return $this->getList()
                     ->whereIn('skladiste', agconf('import.warehouse.availability_view'));
+    }
+
+
+    public function getAvailabilityForProduct($product)
+    {
+        $units = '[';
+        $houses = $this->getAvailabilityViewWarehouses();
+
+        foreach ($houses as $house) {
+            $units .= $house['skladiste'] . ',';
+        }
+
+        $units = substr($units, 0, -1);
+
+        $units .= ']';
+
+        $pro = LuceedProduct::stock($units, $product);
+
+        Log::store($units);
+        Log::store($pro);
     }
 
 

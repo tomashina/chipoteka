@@ -156,6 +156,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
     }
 
 
+    /**
+     *
+     */
     public function importProduct()
     {
         if ($this->request->get['id']) {

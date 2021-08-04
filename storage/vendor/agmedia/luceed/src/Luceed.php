@@ -163,9 +163,11 @@ class Luceed
      *
      * @return false|mixed
      */
-    public function getStock($warehouse_uid)
+    public function getStock($warehouse_uid, $product)
     {
-        return $this->service->get($this->end_points['stock_get'], $warehouse_uid);
+        $query = $warehouse_uid . '/' . $product;
+
+        return $this->service->get($this->end_points['stock_get'], $query);
     }
 
 
