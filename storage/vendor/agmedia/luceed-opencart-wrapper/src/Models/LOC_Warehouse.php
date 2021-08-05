@@ -106,12 +106,14 @@ class LOC_Warehouse
 
                 $response->push([
                     'title' => $house['naziv'],
+                    'address' => $house['adresa'],
                     'qty'   => $qty
                 ]);
 
             } else {
                 $response->push([
                     'title' => $house['naziv'],
+                    'address' => $house['adresa'],
                     'qty'   => 0
                 ]);
             }
