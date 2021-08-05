@@ -29,7 +29,7 @@ $_['text_rating_desc']  = 'Ocjeni (visoka -&gt; niska)';
 $_['text_model_asc']    = 'Modelu (A -&gt; Z)';
 $_['text_model_desc']   = 'Modelu (Z -&gt; A)';
 $_['text_limit']        = 'Prikaži:';
-$_['text_pagination_limit']       = 'Pronađeno %d rezultata';
+$_['text_pagination_limit']       = '%d rezultata';
 
 // Entry
 $_['entry_search']      = 'Kriterij za pretragu';

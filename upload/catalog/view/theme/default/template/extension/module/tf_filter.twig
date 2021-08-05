@@ -400,7 +400,7 @@
       {% endif %}
       <i class="fa fa-caret-up toggle-icon"></i>
     </div>
-    <div id="tf-filter-panel-{{ module_class_id }}-{{ key }}" data-custom-filter="{{ filter['filter_id'] }}" class="collapse {{ not filter['collapse']?'in':'' }}" >
+    <div id="tf-filter-panel-{{ module_class_id }}-{{ key }}" data-custom-filter="{{ filter['filter_id'] }}"  >
       {% if filter['search'] %}
       <div class="tf-filter-group-search"><i class="fa fa-search"></i> <input type="search" placeholder="{{ text_search }}"/></div>
       {% endif %}
@@ -408,26 +408,26 @@
         {% for value in filter['values'] %}
         <div class="form-check tf-filter-value custom-{{ filter['input_type'] }} {{ filter['list_type'] }}">
           <label class="form-check-label">
-            {% if (value['selected']) %} 
+            {% if (value['selected']) %}
             <input type="{{ filter['input_type'] }}" name="tf_fc{{ filter['filter_id'] }}" value="{{ value['value_id'] }}" class="form-check-input" checked>
-            {% else %} 
+            {% else %}
             <input type="{{ filter['input_type'] }}" name="tf_fc{{ filter['filter_id'] }}" value="{{ value['value_id'] }}" class="form-check-input" {{ (not value['status'])?'disabled' }}>
-            {% endif %} 
-            {% if (filter['list_type'] == 'image' or filter['list_type'] == 'both') %} 
+            {% endif %}
+            {% if (filter['list_type'] == 'image' or filter['list_type'] == 'both') %}
             <img src="{{ value['image'] }}" title="{{ value['name'] }}" alt="{{ value['name'] }}" />
             {% else %}
             <span class="checkmark fa"></span>
-            {% endif %} 
-            {% if (filter['list_type'] == 'text' or filter['list_type'] == 'both') %} 
+            {% endif %}
+            {% if (filter['list_type'] == 'text' or filter['list_type'] == 'both') %}
               {{ value['name'] }}
             {% endif %}
           </label>
           {% if count_product and filter['list_type'] != 'image' %}
-            {% if (value['total']) %} 
+            {% if (value['total']) %}
             <span class="label label-info tf-product-total">{{ value['total'] }}</span>
             {% else %}
             <span class="label label-info label-danger tf-product-total">{{ value['total'] }}</span>
-            {% endif %} 
+            {% endif %}
           {% endif %}
         </div>
        {% endfor %}
