@@ -12,6 +12,7 @@ class ControllerCheckoutShippingAddress extends Controller {
 		}
 
 		$this->load->model('account/address');
+        $data['cart'] = $this->url->link('checkout/cart', '', true);
 
 		$data['addresses'] = $this->model_account_address->getAddresses();
 

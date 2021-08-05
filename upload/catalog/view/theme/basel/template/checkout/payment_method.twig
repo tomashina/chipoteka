@@ -1,13 +1,4 @@
-{% if error_warning %}
-  <div class="alert alert-primary alert-dismissible fade show mt-3" role="alert">
-    {{ error_warning }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
 
-
-
-
-{% endif %}
 {% if payment_methods %}
   <h2 class="h6 pb-3 mt-3 mb-2">{{ text_payment_method }}</h2>
 
@@ -38,8 +29,8 @@
 
             <div class="col-sm-6  required">
               <label class="form-label" for="credit_card_type">Kartica</label>
-              <select name="CreditCardName" id="CreditCardName" class="form-select mt-2">
-                <option value=""  value="NO" selected="selected">Odaberite karticu</option>
+              <select name="CreditCardName" id="CreditCardName" class="form-select mt-0">
+                <option value=""  selected="selected">Odaberite karticu</option>
                 <option value="MAESTRO" id="MAESTRO">Maestro</option>
                 <option value="VISA" id="VISA">Visa</option>
                 <option value="MASTERCARD" id="MASTERCARD">MasterCard</option>
@@ -49,7 +40,7 @@
             </div>
             <div class="col-sm-6  required">
               <label class="form-label" for="PaymentPlan">Broj rata</label>
-              <select name="PaymentPlan" id="PaymentPlan" class="form-select mt-2">
+              <select name="PaymentPlan" id="PaymentPlan" class="form-select mt-0">
               </select>
             </div>
           </div>
@@ -82,17 +73,25 @@
 
 
   <div class="col-sm-12">
-    <div class=" mb-3 ">
-      <label class="form-check-label" >
+
+    <div class="alert getred alert-secondary d-flex" role="alert">
+
+    <div class="form-check  required">
+
+      <label class="form-check-label " >
 
         {% if agree %}
-          <input type="checkbox" class="form-check-input" name="agree" value="1" checked="checked" />
+          <input type="checkbox" class="form-check-input" name="agree" value="1" checked="checked" required/>
         {% else %}
-          <input type="checkbox" class="form-check-input" name="agree" value="1" />
+          <input type="checkbox" class="form-check-input" name="agree" value="1" required/>
         {% endif %}
 
         {{ text_agree }}</label>
     </div>
+    </div>
+
+
+
   </div>
 
   <div class=" d-flex pt-4 mt-3">
