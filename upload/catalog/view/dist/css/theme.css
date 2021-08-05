@@ -29308,7 +29308,7 @@ body > main.offcanvas-enabled {
   }
 }
 
-@media only screen and (min-width: 1460px) {
+@media only screen and (min-width: 1440px) {
   .product-card-wrapper {
     width: 25%;
     min-width: 25%;
