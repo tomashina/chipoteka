@@ -71,7 +71,7 @@ $_['entry_city']                     = 'Grad';
 $_['entry_country']                  = 'Država';
 $_['entry_zone']                     = 'Županija (regija)';
 $_['entry_newsletter']               = 'Želim se pretplatiti na %s newsletter.';
-$_['entry_shipping'] 	             = 'Moja adresa za isporuku (dostavu) robe i za dostavu računa je ista.';
+$_['entry_shipping'] 	             = ' Moja adresa za isporuku (dostavu) robe i za dostavu računa je ista.';
 
 // Error
 $_['error_warning']                  = 'Nastao je problem pri pokušaju obrade Vaše narudžbe! Ukoliko se problem nastavi pojavljivati, molim odaberite drugačiji način plaćanja ili kontaktirajte vlasnika web trgovine <a href="%s">kliknuvši ovdje</a>.';

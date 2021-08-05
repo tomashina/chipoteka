@@ -822,6 +822,8 @@
 
                         if (json['error']['warning']) {
                             $('#collapse-payment-method .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show mt-3" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>');
+
+                            $('#collapse-payment-method .getred').addClass('alert-primary').removeClass('alert-secondary');
                         }
                     } else {
                         $.ajax({
