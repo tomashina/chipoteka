@@ -51,6 +51,7 @@ class Luceed
         return $this->service->get($this->end_points['group_list']);
     }
 
+
     /*******************************************************************************
      *                                Copyright : AGmedia                           *
      *                              email: filip@agmedia.hr                         *
@@ -67,12 +68,15 @@ class Luceed
 
 
     /**
-     * @return mixed
+     * @param string $manufacturer_uid
+     *
+     * @return false|mixed
      */
     public function getManufacturer(string $manufacturer_uid)
     {
         return $this->service->get($this->end_points['manufacturer_uid'] . $manufacturer_uid);
     }
+
 
     /*******************************************************************************
      *                                Copyright : AGmedia                           *
@@ -90,11 +94,39 @@ class Luceed
 
 
     /**
-     * @return mixed
+     * @param string $warehouse_uid
+     *
+     * @return false|mixed
      */
     public function getWarehouse(string $warehouse_uid)
     {
         return $this->service->get($this->end_points['warehouse'] . $warehouse_uid);
+    }
+
+
+    /*******************************************************************************
+     *                                Copyright : AGmedia                           *
+     *                              email: filip@agmedia.hr                         *
+     *******************************************************************************/
+    // MANUFACTURERS
+
+    /**
+     * @return false|mixed
+     */
+    public function getPlaces()
+    {
+        return $this->service->get($this->end_points['mjesta']);
+    }
+
+
+    /**
+     * @param string $id
+     *
+     * @return false|mixed
+     */
+    public function getPlace(string $id)
+    {
+        return $this->service->get($this->end_points['mjesta'] . $id);
     }
 
 
