@@ -265,7 +265,7 @@
                         $('#button-register').button('reset');
 
                         if (json['error']['warning']) {
-                            $('#collapse-payment-address .card-body').prepend('<div class="alert alert-danger alert-dismissible mt-3"><i class="fa fa-exclamation-circle"></i> ' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                            $('#collapse-payment-address .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show mt-3" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>');
                         }
 
                         for (i in json['error']) {
@@ -386,7 +386,7 @@
                         location = json['redirect'];
                     } else if (json['error']) {
                         if (json['error']['warning']) {
-                            $('#collapse-payment-address .card-body').prepend('<div class="alert alert-warning alert-dismissible mt-3">' + json['error']['warning'] + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                            $('#collapse-payment-address .card-body').prepend('<div class="alert alert-primary alert-dismissible fade show mt-3" role="alert">' + json['error']['warning'] + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>');
                         }
 
                         for (i in json['error']) {

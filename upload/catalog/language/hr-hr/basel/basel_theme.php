@@ -2,7 +2,7 @@
 // Product Listings
 $_['basel_text_offer_ends'] 			= 'Ponuda ističe:';
 $_['basel_text_sale'] 					= 'Akcija';
-$_['basel_text_out_of_stock'] 			= 'Rasprodano';
+$_['basel_text_out_of_stock'] 			= 'Nedostupno online';
 $_['basel_text_new'] 					= 'Novo';
 $_['basel_text_days'] 					= 'Dana';
 $_['basel_text_hours'] 					= 'Sati';

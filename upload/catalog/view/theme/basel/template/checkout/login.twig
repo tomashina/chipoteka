@@ -75,6 +75,7 @@
                 $('#hide').click(function() {
                     $('#collapseExample').show()
                     $('#collapse-payment-address').hide()
+                    $('input[type="radio"]').prop('checked', false);
 
                 });
                 $('input:radio[name="account"]').change(function(){
