@@ -87,26 +87,13 @@
     <div class="col-sm-6">
         <div class="form-group mb-3 required">
             <label class="form-label" for="input-payment-city">{{ entry_city }}<span class="text-danger">*</span></label>
-            <input type="text" name="city" value="{{ city }}" placeholder="{{ entry_city }}" id="input-payment-city" class="form-control" list="datalist-options"  />
-            <datalist id="datalist-options">
-                <option value="44320 Kutina"></option>
-                <option value="44320 Garešnica"></option>
-                <option value="44320 Kutina"></option>
-                <option value="44320 Gojilo"></option>
-                <option value="44320 Husain"></option>
-            </datalist>
+            <input type="text" name="city" value="{{ city }}" placeholder="{{ entry_city }}" id="input-payment-city" class="form-control"   />
         </div>
     </div>
     <div class="col-sm-6">
-        <div class="form-group dropdown mb-3 required">
+        <div class="form-group mb-3 required">
             <label class="form-label" for="input-payment-postcode">{{ entry_postcode }}<span class="text-danger">*</span></label>
             <input type="text" name="postcode" value="{{ postcode }}" placeholder="{{ entry_postcode }}" id="input-payment-postcode" class="form-control" />
-            <div class="dropdown-menu" style="display:block">
-                <a href="#" class="dropdown-item">44320 Kutina</a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">44320 Garešnica</a>
-
-            </div>
         </div>
     </div>
     <div class="col-sm-6">
