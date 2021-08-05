@@ -473,11 +473,14 @@
                                 qty = 'fa-map-marker-minus text-danger';
                             }
 
-                            html += '<div class="d-flex justify-content-between border-bottom py-3"><div><div class="fw-semibold text-dark"><a href="http://maps.google.com/?q=' + json[key].title + ' - ' + json[key].address + '" target="_blank">' + json[key].title + ' - ' + json[key].address + '</a></div></div><div><i class="fal ' + qty + ' me-2"></i></div></div>';
+                            html += '<div class="d-flex poslov justify-content-between border-bottom py-3"><div><div class="fw-semibold text-dark"><a href="http://maps.google.com/?q=' + json[key].title + ' - ' + json[key].address + '" target="_blank">' + json[key].title + ' - ' + json[key].address + '</a></div></div><div><i class="fal ' + qty + ' me-2"></i></div></div>';
                         }
                     }
 
+
+
                     $('#availability-view').html(html);
+                    $( ".poslov" ).last().removeClass( "border-bottom" );
                 }
             });
         });
