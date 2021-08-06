@@ -258,6 +258,7 @@ class LOC_Product
             'mpn'                 => $this->product->jamstvo_naziv ?: '',
             'location'            => '',
             'price'               => $this->product->mpc,
+            'price_2'             => $this->product->mpc,
             'tax_class_id'        => agconf('import.default_tax_class'),
             'quantity'            => $this->product->stanje_kol,
             'minimum'             => 1,
