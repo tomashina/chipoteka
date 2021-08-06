@@ -83,9 +83,9 @@ class LOC_Action
     {
         $this->prices_to_update = collect();
         $action = $this->getActions()
-                        ->where('partner', '==', null)
-                        ->where('naziv', '==', 'web_cijene')
-                        ->first();
+                       ->where('partner', '==', null)
+                       ->where('naziv', '==', 'web_cijene')
+                       ->first();
 
         foreach ($action->stavke as $item) {
             if ($item->mpc) {
@@ -105,7 +105,7 @@ class LOC_Action
     {
         //$articles = collect();
         $actions = $this->getActions()->where('partner', '==', null)
-                                      ->where('naziv', '!=', 'web_cijene');
+                        ->where('naziv', '!=', 'web_cijene');
 
         foreach ($actions as $key => $action) {
             if ( ! empty($action->stavke)) {
@@ -201,14 +201,18 @@ class LOC_Action
     {
         if ($type == 'prices') {
             if ( ! empty($this->prices_to_update) && $this->prices_to_update->count()) {
+                $this->deleteProductTempDB();
+
                 $temp_product = '';
 
                 foreach ($this->prices_to_update as $item) {
-                    $temp_product .= '("' . $item->artikl_uid . '", 0, ' . $item->mpc . '),';
+                    if ($item->artikl != '') {
+                        $temp_product .= '("' . $item->artikl . '", 0, ' . $item->mpc . '),';
+                    }
                 }
 
                 $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($temp_product, 0, -1) . ";");
-                $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.luceed_uid = pt.uid SET p.price = pt.price");
+                $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.price = pt.price");
 
                 return $this->prices_to_update->count();
             }
@@ -240,5 +244,14 @@ class LOC_Action
     private function deleteActionsDB(): void
     {
         $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_special`");
+    }
+
+
+    /**
+     * @throws \Exception
+     */
+    private function deleteProductTempDB(): void
+    {
+        $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_temp`");
     }
 }
