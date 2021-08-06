@@ -55,9 +55,11 @@ class LOC_Places
      */
     public function find(string $request = '', string $target = 'naziv')
     {
-        $this->places = $this->places->filter(function ($item) use ($request, $target) {
-            return stripos($item->{$target}, $request) !== false;
-        });
+        if ($request != '') {
+            $this->places = $this->places->filter(function ($item) use ($request, $target) {
+                return stripos($item->{$target}, $request) !== false;
+            });
+        }
 
         return $this;
     }

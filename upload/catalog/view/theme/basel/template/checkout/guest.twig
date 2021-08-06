@@ -85,15 +85,17 @@
         <input type="text" name="address_2" value="{{ address_2 }}" placeholder="{{ entry_address_2 }}" id="input-payment-address-2" class="form-control" />
     </div>
     <div class="col-sm-6">
-        <div class="form-group mb-3 required">
+        <div class="form-group dropdown mb-3 required">
             <label class="form-label" for="input-payment-city">{{ entry_city }}<span class="text-danger">*</span></label>
-            <input type="text" name="city" value="{{ city }}" placeholder="{{ entry_city }}" id="input-payment-city" class="form-control"   />
+            <input type="text" name="city" value="{{ city }}" placeholder="{{ entry_city }}" id="input-payment-city" class="form-control" autocomplete="off" />
+            <div id="payment-city-drop" class="dropdown-menu" style="display: none;"></div>
         </div>
     </div>
     <div class="col-sm-6">
-        <div class="form-group mb-3 required">
+        <div class="form-group dropdown mb-3 required">
             <label class="form-label" for="input-payment-postcode">{{ entry_postcode }}<span class="text-danger">*</span></label>
             <input type="text" name="postcode" value="{{ postcode }}" placeholder="{{ entry_postcode }}" id="input-payment-postcode" class="form-control" />
+            <div id="payment-postcode-drop" class="dropdown-menu" style="display: none;"></div>
         </div>
     </div>
     <div class="col-sm-6">
@@ -145,6 +147,7 @@
     <div class="w-50 ps-2"><button type="button" value="{{ button_continue }}" id="button-guest" onclick="window.scrollTo(0, 0)" class="btn btn-primary d-flex align-items-center justify-content-center w-100" ><span class="d-none d-sm-inline">Nastavak na dostavu</span><span class="d-inline d-sm-none">Dostava</span><i class="fal fa-chevron-right mt-sm-0 ms-1"></i></button></div>
 </div>
 
+<script src="catalog/view/theme/chipoteka/js/agmedia_common.js"></script>
 <script>
     $(() => {
         $('#input-payment-city, #input-payment-postcode').keyup((e) => {
@@ -158,21 +161,14 @@
                 callPlaces('postcode', target.value);
             }
         });
-    });
 
-    function callPlaces(target, value) {
-        $.ajax({
-            url: 'index.php?route=checkout/checkout/places&' + target + '=' + value,
-            dataType: 'json',
-            success: function(json) {
-                console.log(json);
-            },
-            error: function(xhr, ajaxOptions, thrownError) {
-                console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-                //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-            }
+        $('#input-payment-city, #input-payment-postcode').on('blur', () => {
+            setTimeout(function() {
+                document.getElementById('payment-city-drop').style['display'] = 'none';
+                document.getElementById('payment-postcode-drop').style['display'] = 'none';
+            }, 300);
         });
-    }
+    });
 </script>
 
 <script type="text/javascript"><!--
