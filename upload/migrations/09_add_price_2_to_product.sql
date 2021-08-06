@@ -1,2 +1,2 @@
 ALTER TABLE `oc_product`
-ADD COLUMN `imported` INT(5) NULL DEFAULT '0' AFTER `updated`;
+ADD COLUMN `price_2` DECIMAL(15,4) NOT NULL DEFAULT '0.0000' AFTER `price`;
