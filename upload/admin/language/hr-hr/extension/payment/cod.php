@@ -17,7 +17,7 @@ $_['entry_status']       = 'Status';
 $_['entry_sort_order']   = 'Redoslijed sortiranja';
 
 // Help
-$_['help_total']         = 'Minimalna ukupna suma koja mora biti na narudžbi prije nego što ovaj način plaćanja postane aktivan.';
+$_['help_total']         = 'Maksimalna ukupna suma do koje je ovaj način plaćanja dostupan.';
 
 // Error
 $_['error_permission']   = 'Upozorenje: Nemate ovlasti da mijenjate korisnički račun za Plaćanje pouzećem!';
