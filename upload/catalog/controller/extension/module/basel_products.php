@@ -102,6 +102,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 				}
 				
 				if (isset($results)) {
+
 				foreach ($results as $result) {
 					if ($result['image']) {
 					$image = $this->model_tool_image->resize($result['image'], $setting['image_width'], $setting['image_height']);
@@ -124,7 +125,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 
                     //price_2 agmedia
 
-                    if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+                    if (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) {
                         $price_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
                     } else {
                         $price_2 = false;
