@@ -261,10 +261,10 @@
                                 <div class="price-wrapper mb-0">
                                     <div class="product-price">
                                         {% if not special %}
-                                            <span>{{ price }}</span>
+                                            <span>{{ price_2 }}</span>
                                         {% else %}
-                                            <span>{{ special }} </span>
-                                            <del class=" me-3">{{ price }}</del>
+                                            <span>{{ price_2 }}</span>
+                                            <del>{{ price }}</del>
                                         {% endif %}
                                     </div>
 
@@ -362,11 +362,12 @@
                                         {% if product.price %}
                                             <div class="product-price">
                                                 {% if product.special %}
-                                                    <span>{{ product.special }}</span>
+                                                    <span>{{ product.price_2 }}</span>
                                                     <span><del>{{ product.price }}</del></span>
                                                 {% else %}
-                                                    <span> {{ product.price }}</span>
+                                                    <span> {{ product.price_2 }}</span>
                                                 {% endif %}
+
                                             </div><!-- .price -->
                                         {% endif %}
                                         {% if product.rating %}
