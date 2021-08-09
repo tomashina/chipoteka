@@ -121,6 +121,14 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 					} else {
 						$price = false;
 					}
+
+                    //price_2 agmedia
+
+                    if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+                        $price_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                    } else {
+                        $price_2 = false;
+                    }
 							
 					if ((float)$result['special']) {
 						$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
@@ -187,6 +195,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 						'sale_end_date' => $date_end['date_end'] ?? '',
 						'name'    	 => $result['name'],
 						'price'   	 => $price,
+                        'price_2'       => $price_2,
 						'new_label'  => $is_new,
 						'sale_badge' => $sale_badge,
                         'saljemodo'     => $saljemodo,

@@ -226,12 +226,6 @@ class ControllerProductProduct extends Controller {
 			$this->document->setDescription($product_info['meta_description']);
 			$this->document->setKeywords($product_info['meta_keyword']);
 			$this->document->addLink($this->url->link('product/product', 'product_id=' . $this->request->get['product_id']), 'canonical');
-		/*	$this->document->addScript('catalog/view/javascript/jquery/magnific/jquery.magnific-popup.min.js');
-			$this->document->addStyle('catalog/view/javascript/jquery/magnific/magnific-popup.css');
-			$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment.min.js');
-			$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js');
-			$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js');
-			$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');*/
 
 			$data['heading_title'] = $product_info['name'];
 
@@ -310,6 +304,14 @@ class ControllerProductProduct extends Controller {
 			} else {
 				$data['price'] = false;
 			}
+
+            //price_2 agmedia
+
+            if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+                $data['price_2'] = $this->currency->format($this->tax->calculate($product_info['price_2'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+            } else {
+                $data['price_2'] = false;
+            }
 
 			if (!is_null($product_info['special']) && (float)$product_info['special'] >= 0) {
 				$data['special'] = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
@@ -456,6 +458,14 @@ class ControllerProductProduct extends Controller {
 					$price = false;
 				}
 
+                //price_2 agmedia
+
+                if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+                    $price_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                } else {
+                    $price_2 = false;
+                }
+
 				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 					$tax_price = (float)$result['special'];
@@ -500,6 +510,7 @@ class ControllerProductProduct extends Controller {
 					'name'        => $result['name'],
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 					'price'       => $price,
+                    'price_2'       => $price_2,
 					'special'     => $special,
 					'freeshipping' => $freeshipping,
                     'saljemodo'     => $saljemodo,
