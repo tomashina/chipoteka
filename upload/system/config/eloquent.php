@@ -15,4 +15,5 @@ $capsule->addConnection([
     'prefix'    => 'oc_',
 ]);
 
+$capsule->setAsGlobal();
 $capsule->bootEloquent();

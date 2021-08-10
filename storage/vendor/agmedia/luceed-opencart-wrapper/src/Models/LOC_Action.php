@@ -4,9 +4,12 @@ namespace Agmedia\LuceedOpencartWrapper\Models;
 
 use Agmedia\Helpers\Database;
 use Agmedia\Helpers\Log;
+use Agmedia\Models\Category\Category;
+use Agmedia\Models\Manufacturer\Manufacturer;
 use Agmedia\Models\Product\Product;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Database\Capsule\Manager as DB;
 
 /**
  * Class LOC_Product
@@ -63,7 +66,7 @@ class LOC_Action
      */
     public function getActions(): Collection
     {
-        return collect($this->actions);
+        return collect($this->actions)->where('partner', '==', null);
     }
 
 
@@ -83,13 +86,59 @@ class LOC_Action
     {
         $this->prices_to_update = collect();
         $action = $this->getActions()
-                       ->where('partner', '==', null)
                        ->where('naziv', '==', 'web_cijene')
                        ->first();
 
+        $categories = collect();
+        $manufacturers = collect();
+
+        foreach ($action->stavke as $item) {
+            if ($item->grupa_artikla && $item->mpc_rabat) {
+
+                if ($categories->has($item->grupa_artikla)) {
+                    if ($item->grupa_artikla > $categories[$item->grupa_artikla]) {
+                        $categories->put($item->grupa_artikla, $item->mpc_rabat);
+                    }
+                } else {
+                    $categories->put($item->grupa_artikla, $item->mpc_rabat);
+                }
+            }
+
+            if ($item->robna_marka && $item->mpc_rabat) {
+                if ($manufacturers->has($item->robna_marka)) {
+                    if ($item->robna_marka > $manufacturers[$item->robna_marka]) {
+                        $manufacturers->put($item->robna_marka, $item->mpc_rabat);
+                    }
+                } else {
+                    $manufacturers->put($item->robna_marka, $item->mpc_rabat);
+                }
+            }
+        }
+
+        foreach ($categories as $sifra => $discount) {
+            $category = Category::where('luceed_uid', $sifra)->with('products')->first();
+
+            if ($category) {
+                foreach ($category->products as $product) {
+                    $this->prices_to_update->put($product->model, $this->calculateDiscountPrice($product->price_2, $discount));
+                }
+            }
+        }
+
+        foreach ($manufacturers as $sifra => $discount) {
+            $manufacturer = Manufacturer::where('luceed_uid', $sifra)->with('products')->first();
+
+            if ($manufacturer) {
+                foreach ($manufacturer->products as $product) {
+                    $this->prices_to_update->put($product->model, $this->calculateDiscountPrice($product->price_2, $discount));
+                }
+            }
+        }
+
         foreach ($action->stavke as $item) {
             if ($item->mpc) {
-                $this->prices_to_update->push($item);
+                $this->prices_to_update->put($item->artikl, $item->mpc);
+                //$this->prices_to_update->push($item);
             }
         }
 
@@ -104,7 +153,7 @@ class LOC_Action
     public function collectActive()
     {
         //$articles = collect();
-        $actions = $this->getActions()->where('partner', '==', null)
+        $actions = $this->getActions()
                         ->where('naziv', '!=', 'web_cijene');
 
         foreach ($actions as $key => $action) {
@@ -205,10 +254,8 @@ class LOC_Action
 
                 $temp_product = '';
 
-                foreach ($this->prices_to_update as $item) {
-                    if ($item->artikl != '') {
-                        $temp_product .= '("' . $item->artikl . '", 0, ' . $item->mpc . '),';
-                    }
+                foreach ($this->prices_to_update as $sifra => $price) {
+                    $temp_product .= '("' . $sifra . '", 0, ' . $price . '),';
                 }
 
                 $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($temp_product, 0, -1) . ";");
@@ -253,5 +300,17 @@ class LOC_Action
     private function deleteProductTempDB(): void
     {
         $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_temp`");
+    }
+
+
+    /**
+     * @param float $price
+     * @param int   $discount
+     *
+     * @return float|int
+     */
+    private function calculateDiscountPrice(float $price, int $discount)
+    {
+        return $price - ($price * ($discount / 100));
     }
 }
