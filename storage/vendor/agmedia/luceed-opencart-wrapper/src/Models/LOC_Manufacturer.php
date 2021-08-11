@@ -6,8 +6,10 @@ namespace Agmedia\LuceedOpencartWrapper\Models;
 
 use Agmedia\Helpers\Log;
 use Agmedia\Models\Manufacturer\Manufacturer;
+use Agmedia\Models\Manufacturer\ManufacturerDescription;
 use Agmedia\Models\Manufacturer\ManufacturerToStore;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * Class LOC_Manufacturer
@@ -99,13 +101,68 @@ class LOC_Manufacturer
     public function import()
     {
         $count = 0;
-        
+
         foreach ($this->getManufacturersToAdd() as $manufacturer) {
             $this->save($manufacturer);
             $count++;
         }
-        
+
         return $count;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function initialImport()
+    {
+        $list = $this->load();
+        $count = 0;
+
+        if ( ! empty($list)) {
+            foreach ($list['brands'] as $item) {
+                $manufacturer = Manufacturer::where('luceed_uid', $item['robna_marka'])->first();
+
+                if ($manufacturer && $item['logo'] != '') {
+                    $url = 'https://www.chipoteka.hr' . str_replace(';', '', $item['logo']);
+                    $img = 'catalog/brands/' . Str::slug($item['name'] ?: $item['robna_marka_naziv']) . '.jpg';
+
+                    file_put_contents(DIR_IMAGE . $img, file_get_contents($url));
+
+                    Manufacturer::where('manufacturer_id', $manufacturer->manufacturer_id)->update([
+                        'image' => $img
+                    ]);
+
+                    ManufacturerDescription::insert([
+                        'manufacturer_id' => $manufacturer->manufacturer_id,
+                        'language_id' => 2,
+                        'description' => $item['description'],
+                        'meta_title' => $item['meta_title'],
+                        'meta_description' => $item['meta_description'] ? Str::limit($item['meta_description'], 150) : Str::limit($item['description'], 150),
+                        'meta_keyword' => $item['name'],
+                    ]);
+
+                    $count++;
+                }
+            }
+        }
+
+        return $count;
+    }
+
+
+    /**
+     * @return array|Collection
+     */
+    public function load()
+    {
+        $file = json_decode(file_get_contents(DIR_STORAGE . 'upload/assets/brands.json'),TRUE);
+
+        if ($file) {
+            return collect($file);
+        }
+
+        return [];
     }
     
     

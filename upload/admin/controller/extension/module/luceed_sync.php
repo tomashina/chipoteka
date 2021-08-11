@@ -121,6 +121,19 @@ class ControllerExtensionModuleLuceedSync extends Controller
     /**
      * @return mixed
      */
+    public function importInitialManufacturers()
+    {
+        $_loc = new LOC_Manufacturer();
+
+        $imported = $_loc->initialImport();
+
+        return $this->response($imported, 'manufacturers');
+    }
+
+
+    /**
+     * @return mixed
+     */
     public function importWarehouses()
     {
         $_loc = new LOC_Warehouse(LuceedWarehouse::all());
@@ -203,7 +216,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $_loc = new LOC_Action(LuceedProduct::getActions());
 
         $imported = $_loc->collectActive()
-                         ->sort()
+                         ->sortActions()
                          ->import();
 
         return $this->response($imported, 'products_actions');

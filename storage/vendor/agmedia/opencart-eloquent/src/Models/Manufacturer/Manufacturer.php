@@ -20,6 +20,38 @@ class Manufacturer extends Model
      */
     protected $primaryKey = 'manufacturer_id';
 
+    /**
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
+     * @var array
+     */
+    protected $guarded = [
+        'manufacturer_id'
+    ];
+
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function descriptions()
+    {
+        return $this->hasMany(ManufacturerDescription::class, 'manufacturer_id', 'manufacturer_id');
+    }
+
+
+    /**
+     * @param $language_id
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function description($language_id)
+    {
+        return $this->hasOne(ManufacturerDescription::class, 'manufacturer_id', 'manufacturer_id')->where('language_id', $language_id);
+    }
+
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
