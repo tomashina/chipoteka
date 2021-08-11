@@ -7,6 +7,7 @@ use Agmedia\Helpers\Log;
 use Agmedia\Models\Category\Category;
 use Agmedia\Models\Manufacturer\Manufacturer;
 use Agmedia\Models\Product\Product;
+use Agmedia\Models\Product\ProductCategory;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Capsule\Manager as DB;
@@ -119,7 +120,11 @@ class LOC_Action
             $category = Category::where('luceed_uid', $sifra)->with('products')->first();
 
             if ($category) {
-                foreach ($category->products as $product) {
+                $ids = ProductCategory::where('category_id', $category->category_id)->pluck('product_id');
+
+                $products = Product::whereIn('product_id', $ids)->get();
+
+                foreach ($products as $product) {
                     $this->prices_to_update->put($product->model, $this->calculateDiscountPrice($product->price_2, $discount));
                 }
             }
@@ -173,7 +178,7 @@ class LOC_Action
     /**
      * @return $this
      */
-    public function sort()
+    public function sortActions()
     {
         $specials = collect();
         $this->insert_query = '';
