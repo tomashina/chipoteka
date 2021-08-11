@@ -193,25 +193,17 @@ class LOC_Action
         $temps = $specials->groupBy('artikl_uid')->all();
 
         foreach ($temps as $item) {
-            $product = Product::where('luceed_uid', $item->first()->artikl_uid)->first();
+            $product = Product::where('model', $item->first()->artikl)->first();
 
-            if ($product) {
-                if ($item->first()->mpc_rabat) {
-                    $price = $product->price - ($product->price * ($item->first()->mpc_rabat / 100));
-                } else {
-                    $price = $item->first()->mpc;
-                }
+            if ($product && $item->first()->mpc) {
+                $start = Carbon::createFromFormat('d.m.Y', $action->start_date)->format('Y-m-d');
+                $end   = Carbon::createFromFormat('d.m.Y', $action->end_date)->format('Y-m-d');
 
-                if ($price) {
-                    $start = Carbon::createFromFormat('d.m.Y', $action->start_date)->format('Y-m-d');
-                    $end   = Carbon::createFromFormat('d.m.Y', $action->end_date)->format('Y-m-d');
+                $end = date('Y-m-d', strtotime("+1 day", strtotime($end)));
 
-                    $end = date('Y-m-d', strtotime("+1 day", strtotime($end)));
+                $this->insert_query .= '(' . $product->product_id . ', 1, 0, ' . $item->first()->mpc . ', "' . $start . '", "' . $end . '"),';
 
-                    $this->insert_query .= '(' . $product->product_id . ', 1, 0, ' . $price . ', "' . $start . '", "' . $end . '"),';
-
-                    $this->count++;
-                }
+                $this->count++;
             }
         }
 
