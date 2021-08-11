@@ -127,6 +127,8 @@ class LOC_Manufacturer
                     $url = 'https://www.chipoteka.hr' . str_replace(';', '', $item['logo']);
                     $img = 'catalog/brands/' . Str::slug($item['name'] ?: $item['robna_marka_naziv']) . '.jpg';
 
+                    $img = imagecolorallocate($img, 255, 255, 255);
+
                     file_put_contents(DIR_IMAGE . $img, file_get_contents($url));
 
                     Manufacturer::where('manufacturer_id', $manufacturer->manufacturer_id)->update([

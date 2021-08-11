@@ -521,6 +521,9 @@ class LOC_Product
         $image = imagecreatefromstring($bin);
 
         if ($image !== false) {
+
+            $image = imagecolorallocate($image, 255, 255, 255);
+
             imagejpeg($image, DIR_IMAGE . $this->image_path . $name, 90);
 
             // Return only the image path.
