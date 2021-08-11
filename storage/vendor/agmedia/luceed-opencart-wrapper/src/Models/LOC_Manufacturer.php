@@ -125,7 +125,20 @@ class LOC_Manufacturer
 
                 if ($manufacturer && $item['logo'] != '') {
                     $url = 'https://www.chipoteka.hr' . str_replace(';', '', $item['logo']);
-                    $img = 'catalog/brands/' . Str::slug($item['name'] ?: $item['robna_marka_naziv']) . '.png';
+
+                    $newstring = substr($item['logo'], -3);
+
+                    if($newstring=='png'  ){
+                        $img = 'catalog/brands/' . Str::slug($item['name'] ?: $item['robna_marka_naziv']) . '.png';
+                    }
+                    elseif ($newstring=='PNG'){
+                        $img = 'catalog/brands/' . Str::slug($item['name'] ?: $item['robna_marka_naziv']) . '.PNG';
+                    }
+                    else{
+                        $img = 'catalog/brands/' . Str::slug($item['name'] ?: $item['robna_marka_naziv']) . '.jpg';
+                    }
+
+
 
                     file_put_contents(DIR_IMAGE . $img, file_get_contents($url));
 
