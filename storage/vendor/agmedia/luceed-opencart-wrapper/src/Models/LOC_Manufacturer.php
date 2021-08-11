@@ -125,9 +125,7 @@ class LOC_Manufacturer
 
                 if ($manufacturer && $item['logo'] != '') {
                     $url = 'https://www.chipoteka.hr' . str_replace(';', '', $item['logo']);
-                    $img = 'catalog/brands/' . Str::slug($item['name'] ?: $item['robna_marka_naziv']) . '.jpg';
-
-                    $img = imagecolorallocate($img, 255, 255, 255);
+                    $img = 'catalog/brands/' . Str::slug($item['name'] ?: $item['robna_marka_naziv']) . '.png';
 
                     file_put_contents(DIR_IMAGE . $img, file_get_contents($url));
 
