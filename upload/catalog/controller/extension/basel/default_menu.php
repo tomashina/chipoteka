@@ -12,6 +12,19 @@ class ControllerExtensionBaselDefaultMenu extends Controller {
 
 		$categories = $this->model_catalog_category->getCategories(0);
 
+        if (isset ($this->request->get['path'])) {
+            $path = $this->request->get['path'];
+            $cats = explode('_', $path);
+            $data['cats'] = $cats;
+            $data['cat_id'] = $cats[count($cats) - 1];
+
+
+
+        }
+
+
+
+
 		foreach ($categories as $category) {
 			if ($category['top']) {
 				
@@ -52,6 +65,7 @@ class ControllerExtensionBaselDefaultMenu extends Controller {
 					$total = '';
 					}
 
+
 					$children_data[] = array(
 						'name'  => $child['name'] . $total,
 						'href'  => $this->url->link('product/category', 'path=' . $category['category_id'] . '_' . $child['category_id']),
@@ -59,6 +73,7 @@ class ControllerExtensionBaselDefaultMenu extends Controller {
 						'grandchildren'	=> $grandchildren_data,
 					);
 				}
+
 
 				// Level 1
 				$data['categories'][] = array(
