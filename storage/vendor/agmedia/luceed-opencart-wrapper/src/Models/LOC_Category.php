@@ -219,55 +219,59 @@ class LOC_Category
             $naziv = substr($naziv, 1);
         }
 
-        CategoryDescription::insert([
-            'category_id'      => $id,
-            'language_id'      => 2,
-            'name'             => $naziv,
-            'description'      => $naziv,
-            'meta_title'       => $naziv,
-            'meta_description' => $naziv,
-            'meta_keyword'     => $naziv,
-        ]);
+        if ($id) {
+            CategoryDescription::insert([
+                'category_id'      => $id,
+                'language_id'      => 2,
+                'name'             => $naziv,
+                'description'      => $naziv,
+                'meta_title'       => $naziv,
+                'meta_description' => $naziv,
+                'meta_keyword'     => $naziv,
+            ]);
 
-        $level = 0;
+            $level = 0;
 
-        $paths = CategoryPath::where('category_id', $parent_id)->orderBy('level')->pluck('path_id');
+            $paths = CategoryPath::where('category_id', $parent_id)->orderBy('level')->pluck('path_id');
 
-        foreach ($paths as $path) {
+            foreach ($paths as $path) {
+                CategoryPath::insert([
+                    'category_id' => $id,
+                    'path_id'     => $path,
+                    'level'       => $level
+                ]);
+
+                $level++;
+            }
+
             CategoryPath::insert([
                 'category_id' => $id,
-                'path_id'     => $path,
+                'path_id'     => $id,
                 'level'       => $level
             ]);
 
-            $level++;
+            CategoryToLayout::insert([
+                'category_id' => $id,
+                'store_id'    => 0,
+                'layout_id'   => 0
+            ]);
+
+            CategoryToStore::insert([
+                'category_id' => $id,
+                'store_id'    => 0
+            ]);
+
+            SeoUrl::insert([
+                'store_id'    => 0,
+                'language_id' => 2,
+                'query'       => 'category_id=' . $id,
+                'keyword'     => Str::slug($naziv)
+            ]);
+
+            return $id;
         }
 
-        CategoryPath::insert([
-            'category_id' => $id,
-            'path_id'     => $id,
-            'level'       => $level
-        ]);
-
-        CategoryToLayout::insert([
-            'category_id' => $id,
-            'store_id'    => 0,
-            'layout_id'   => 0
-        ]);
-
-        CategoryToStore::insert([
-            'category_id' => $id,
-            'store_id'    => 0
-        ]);
-
-        SeoUrl::insert([
-            'store_id'    => 0,
-            'language_id' => 2,
-            'query'       => 'category_id=' . $id,
-            'keyword'     => Str::slug($naziv)
-        ]);
-
-        return $id;
+        return 0;
     }
 
 

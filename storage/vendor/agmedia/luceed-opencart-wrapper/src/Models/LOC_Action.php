@@ -5,6 +5,10 @@ namespace Agmedia\LuceedOpencartWrapper\Models;
 use Agmedia\Helpers\Database;
 use Agmedia\Helpers\Log;
 use Agmedia\Models\Category\Category;
+use Agmedia\Models\Category\CategoryDescription;
+use Agmedia\Models\Category\CategoryPath;
+use Agmedia\Models\Category\CategoryToLayout;
+use Agmedia\Models\Category\CategoryToStore;
 use Agmedia\Models\Manufacturer\Manufacturer;
 use Agmedia\Models\Product\Product;
 use Agmedia\Models\Product\ProductCategory;
@@ -191,6 +195,8 @@ class LOC_Action
         $this->count        = 0;
         $cat_action_id = agconf('import.default_action_category');
 
+        $this->deleteActionsCategoriesDB();
+
         foreach ($this->getActionsToAdd() as $key => $action) {
             $data = [
                 'naziv' => str_replace('web_', '', $action->naziv),
@@ -200,19 +206,21 @@ class LOC_Action
             $loc = new LOC_Category();
             $category = $loc->save($data, $cat_action_id, $key);
 
-            foreach ($action->stavke as $item) {
-                $item->category = $category;
-                $item->start = $action->start_date;
-                $item->end = $action->end_date;
+            if ($category) {
+                foreach ($action->stavke as $item) {
+                    $item->category = $category;
+                    $item->start = $action->start_date;
+                    $item->end = $action->end_date;
 
-                $specials->push($item);
+                    $specials->push($item);
+                }
             }
         }
 
         $temps = $specials->groupBy('artikl_uid')->all();
 
         foreach ($temps as $item) {
-            Log::store($item->first()->artikl);
+            //Log::store($item->first()->artikl);
 
             $product = Product::where('model', $item->first()->artikl)->first();
 
@@ -318,9 +326,25 @@ class LOC_Action
      */
     private function deleteActionsDB(): void
     {
-        Category::where('parent_id', agconf('import.default_action_category'))->delete();
-
         $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_special`");
+    }
+
+
+    /**
+     *
+     */
+    private function deleteActionsCategoriesDB(): void
+    {
+        $categories = Category::where('parent_id', agconf('import.default_action_category'))->get();
+
+        foreach ($categories as $category) {
+            CategoryToStore::where('category_id', $category->category_id)->delete();
+            CategoryToLayout::where('category_id', $category->category_id)->delete();
+            CategoryPath::where('category_id', $category->category_id)->delete();
+            CategoryDescription::where('category_id', $category->category_id)->delete();
+        }
+
+        Category::where('parent_id', agconf('import.default_action_category'))->delete();
     }
 
 
