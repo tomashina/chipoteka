@@ -49,6 +49,11 @@ class LOC_Action
      */
     private $insert_query;
 
+    /**
+     * @var array
+     */
+    private $insert_query_category;
+
 
     /**
      * LOC_Product constructor.
@@ -182,10 +187,24 @@ class LOC_Action
     {
         $specials = collect();
         $this->insert_query = '';
+        $this->insert_query_category = '';
         $this->count        = 0;
+        $cat_action_id = agconf('import.default_action_category');
 
-        foreach ($this->getActionsToAdd() as $action) {
+        foreach ($this->getActionsToAdd() as $key => $action) {
+            $data = [
+                'naziv' => str_replace('web_', '', $action->naziv),
+                'grupa_artikla' => $action->prodajna_akcija_uid ?: '0'
+            ];
+
+            $loc = new LOC_Category();
+            $category = $loc->save($data, $cat_action_id, $key);
+
             foreach ($action->stavke as $item) {
+                $item->category = $category;
+                $item->start = $action->start_date;
+                $item->end = $action->end_date;
+
                 $specials->push($item);
             }
         }
@@ -193,19 +212,28 @@ class LOC_Action
         $temps = $specials->groupBy('artikl_uid')->all();
 
         foreach ($temps as $item) {
+            Log::store($item->first()->artikl);
+
             $product = Product::where('model', $item->first()->artikl)->first();
 
             if ($product && $item->first()->mpc) {
-                $start = Carbon::createFromFormat('d.m.Y', $action->start_date)->format('Y-m-d');
-                $end   = Carbon::createFromFormat('d.m.Y', $action->end_date)->format('Y-m-d');
+                Log::store('entered...');
+                $start = Carbon::createFromFormat('d.m.Y', $item->first()->start)->format('Y-m-d');
+                $end   = Carbon::createFromFormat('d.m.Y', $item->first()->end)->format('Y-m-d');
 
                 $end = date('Y-m-d', strtotime("+1 day", strtotime($end)));
 
                 $this->insert_query .= '(' . $product->product_id . ', 1, 0, ' . $item->first()->mpc . ', "' . $start . '", "' . $end . '"),';
+                $this->insert_query_category .= '(' . $product->product_id . ',' . $item->first()->category . '),';
 
                 $this->count++;
+
+                Log::store('finished...');
             }
         }
+
+        Log::store($this->insert_query);
+        Log::store($this->insert_query_category);
 
         return $this;
     }
@@ -219,6 +247,7 @@ class LOC_Action
      */
     public function import()
     {
+        $inserted = 0;
         $this->deleteActionsDB();
 
         try {
@@ -230,6 +259,8 @@ class LOC_Action
 
 
         if ($inserted) {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "product_to_category (product_id, category_id) VALUES " . substr($this->insert_query_category, 0, -1) . ";");
+
             return $this->count;
         }
 
@@ -287,6 +318,8 @@ class LOC_Action
      */
     private function deleteActionsDB(): void
     {
+        Category::where('parent_id', agconf('import.default_action_category'))->delete();
+
         $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_special`");
     }
 

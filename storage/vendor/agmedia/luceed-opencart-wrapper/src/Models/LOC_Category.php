@@ -48,10 +48,12 @@ class LOC_Category
      */
     public function __construct($categories = null)
     {
-        $this->list       = $this->setCategories($categories);
-        $this->categories = $this->sort(
-            $this->setCategories($categories)
-        );
+        if ($categories) {
+            $this->list       = $this->setCategories($categories);
+            $this->categories = $this->sort(
+                $this->setCategories($categories)
+            );
+        }
     }
 
 
@@ -197,9 +199,12 @@ class LOC_Category
      */
     public function save($category, $parent_id = 0, $sort = 0)
     {
+        $uid = isset($category->grupa_artikla) ? $category->grupa_artikla : $category['grupa_artikla'];
+        $naziv = isset($category->naziv) ? $category->naziv : $category['naziv'];
+
         $id = Category::insertGetId([
             'parent_id'     => $parent_id,
-            'luceed_uid'    => $category->grupa_artikla,
+            'luceed_uid'    => $uid,
             'top'           => $parent_id ? 0 : 1,
             'column'        => 1,
             'sort_order'    => $sort,
@@ -210,18 +215,18 @@ class LOC_Category
 
         // Provjera ima li kategorija crticu na početku naziva.
         // Brisanje ako ima...
-        if (substr($category->naziv, 0, 1) == '-') {
-            $category->naziv = substr($category->naziv, 1);
+        if (substr($naziv, 0, 1) == '-') {
+            $naziv = substr($naziv, 1);
         }
 
         CategoryDescription::insert([
             'category_id'      => $id,
             'language_id'      => 2,
-            'name'             => $category->naziv,
-            'description'      => $category->naziv,
-            'meta_title'       => $category->naziv,
-            'meta_description' => $category->naziv,
-            'meta_keyword'     => $category->naziv,
+            'name'             => $naziv,
+            'description'      => $naziv,
+            'meta_title'       => $naziv,
+            'meta_description' => $naziv,
+            'meta_keyword'     => $naziv,
         ]);
 
         $level = 0;
@@ -259,7 +264,7 @@ class LOC_Category
             'store_id'    => 0,
             'language_id' => 2,
             'query'       => 'category_id=' . $id,
-            'keyword'     => Str::slug($category->naziv)
+            'keyword'     => Str::slug($naziv)
         ]);
 
         return $id;
