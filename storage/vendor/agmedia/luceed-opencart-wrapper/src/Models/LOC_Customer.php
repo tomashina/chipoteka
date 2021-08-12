@@ -9,6 +9,7 @@ use Agmedia\Models\Customer\Customer;
 use Agmedia\Models\User;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * Class LOC_Customer
@@ -51,89 +52,74 @@ class LOC_Customer
      */
     public function initialImport()
     {
-        $list = $this->loadList();
-        $data = $this->loadData();
-        $count = 0;
+        $count       = 0;
+        $store_id    = agconf('import.default_store_id');
+        $language_id = agconf('import.default_language');
 
-        //Log::store($data->where('subject_type', null)->all());
+        $customers = Customer::pluck('email');
+
+        $list = $this->loadData()
+                     ->where('subject_type', 'F')
+                     ->where('firstname', '!=', '')
+                     ->where('firstname', '!=', 0)
+                     ->where('lastname', '!=', '')
+                     ->where('email', '!=', '')
+                     ->whereNotIn('email', $customers)
+                     ->unique('email');
 
         if ( ! empty($list)) {
             foreach ($list as $item) {
-                if ( ! $item['blocked'] && $item['email'] != '') {
-                    $new_user = $data->where('email', $item['email'])->first();
-                    $customer = Customer::where('email', $item['email'])->first();
+                $customer_id = Customer::insertGetId([
+                    'luceed_uid'        => '',
+                    'customer_group_id' => 1,
+                    'store_id'          => $store_id,
+                    'language_id'       => $language_id,
+                    'firstname'         => substr($item['firstname'], 0, 32),
+                    'lastname'          => substr($item['lastname'], 0, 32),
+                    'email'             => $item['email'] ?: '0',
+                    'telephone'         => (isset($item['phone']) && $item['phone']) ? substr(str_replace(' ', '', $item['phone']), 0, 32) : '0',
+                    'fax'               => '0',
+                    'password'          => strtoupper(Str::random(40)),
+                    'salt'              => '0',
+                    'cart'              => null,
+                    'wishlist'          => null,
+                    'address_id'        => 0,
+                    'custom_field'      => '{"2":"' . $item['company'] . '","1":"' . $item['oib'] . '"}',
+                    'ip'                => '',
+                    'status'            => 1,
+                    'safe'              => '0',
+                    'token'             => '',
+                    'code'              => '',
+                    'date_added'        => Carbon::now(),
+                ]);
 
-                    if ( ! $customer && $new_user) {
-                        $user = User::where('email', $item['email'])->first();
+                if ($customer_id) {
+                    $address_id = Address::insertGetId([
+                        'customer_id'  => $customer_id,
+                        'firstname'    => substr($item['firstname'], 0, 32),
+                        'lastname'     => substr($item['lastname'], 0, 32),
+                        'company'      => $item['company'] ? substr($item['company'], 0, 40) : '0',
+                        'address_1'    => $item['address'] ?: '0',
+                        'address_2'    => '',
+                        'city'         => $item['city'] ?: '0',
+                        'postcode'     => (isset($item['zip']) && $item['zip']) ? substr($item['zip'], 0, 5) : '0',
+                        'country_id'   => 53,
+                        'zone_id'      => 0,
+                        'custom_field' => '',
+                    ]);
 
-                        if ( ! $user) {
-                            User::insertGetId([
-                                'user_group_id' => 1,
-                                'username' => $item['username'] ? substr($item['username'], 0, 20) : '0',
-                                'password' => $item['password'] ? substr($item['password'], 0, 40) : '0',
-                                'salt' => '0',
-                                'firstname' => $new_user['firstname'] ?: '0',
-                                'lastname' => $new_user['lastname'] ?: '0',
-                                'email' => $item['email'] ?: '0',
-                                'image' => 'catalog/favikon-chipoteka.png',
-                                'code' => '',
-                                'ip' => '',
-                                'status' => 1,
-                                'date_added' => Carbon::now(),
-                            ]);
-                        }
-
-                        $customer_id = Customer::insertGetId([
-                            'luceed_uid' => '',
-                            'customer_group_id' => 1,
-                            'store_id' => agconf('import.default_store_id'),
-                            'language_id' => agconf('import.default_language'),
-                            'firstname' => $new_user['firstname'] ?: '0',
-                            'lastname' => $new_user['lastname'] ?: '0',
-                            'email' => $item['email'] ?: '0',
-                            'telephone' => (isset($new_user['phone']) && $new_user['phone']) ? substr($new_user['phone'], 0, 32) : '0',
-                            'fax' => '0',
-                            'password' => $item['password'] ? substr($item['password'], 0, 40) : '0',
-                            'salt' => '0',
-                            'cart' => null,
-                            'wishlist' => null,
-                            'address_id' => 0,
-                            'custom_field' => '{"2":"' . $new_user['company'] . '","1":"' . $new_user['oib'] . '"}',
-                            'ip' => '',
-                            'status' => 1,
-                            'safe' => '0',
-                            'token' => '',
-                            'code' => '',
-                            'date_added' => Carbon::now(),
+                    if ($address_id) {
+                        Customer::where('customer_id', $customer_id)->update([
+                            'address_id' => $address_id
                         ]);
-
-                        if ($customer_id) {
-                            $address_id = Address::insertGetId([
-                                'customer_id' => $customer_id,
-                                'firstname' => $new_user['firstname'] ?: '0',
-                                'lastname' => $new_user['lastname'] ?: '0',
-                                'company' => $new_user['company'] ? substr($item['password'], 0, 40) : '0',
-                                'address_1' => $new_user['address'] ?: '0',
-                                'address_2' => '',
-                                'city' => $new_user['city'] ?: '0',
-                                'postcode' => (isset($new_user['zip']) && $new_user['zip']) ? substr($item['zip'], 0, 10) : '0',
-                                'country_id' => 53,
-                                'zone_id' => 0,
-                                'custom_field' => '',
-                            ]);
-
-                            if ($address_id) {
-                                Customer::where('customer_id', $customer_id)->update([
-                                    'address_id' => $address_id
-                                ]);
-                            }
-
-                            $count++;
-                        }
                     }
+
+                    $count++;
                 }
             }
         }
+
+        return $count;
     }
 
 
@@ -291,7 +277,7 @@ class LOC_Customer
      */
     private function loadList()
     {
-        $file = json_decode(file_get_contents(DIR_STORAGE . 'upload/assets/users.json'),TRUE);
+        $file = json_decode(file_get_contents(DIR_STORAGE . 'upload/assets/users.json'), true);
 
         if ($file) {
             $file = $file['users'];
@@ -308,7 +294,7 @@ class LOC_Customer
      */
     private function loadData()
     {
-        $file = json_decode(file_get_contents(DIR_STORAGE . 'upload/assets/user_data.json'),TRUE);
+        $file     = json_decode(file_get_contents(DIR_STORAGE . 'upload/assets/user_data.json'), true);
         $response = [];
 
         if ($file) {
