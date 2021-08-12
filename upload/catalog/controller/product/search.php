@@ -44,7 +44,7 @@ class ControllerProductSearch extends Controller {
 		if (isset($this->request->get['sort'])) {
 			$sort = $this->request->get['sort'];
 		} else {
-			$sort = 'p.sort_order';
+			$sort = 'pd.name';
 		}
 
 		if (isset($this->request->get['order'])) {
