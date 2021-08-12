@@ -21,6 +21,6 @@ $_['error_exists']                = 'Upozorenje: Navedena e-mail adresa je već 
 $_['error_firstname']             = 'Ime mora sadržavati između 1 i 32 znaka!';
 $_['error_lastname']              = 'Prezime mora sadržavati između 1 i 32 znaka!';
 $_['error_email']                 = 'Čini se da je navedena e-mail adresa neispravna!';
-$_['error_telephone']             = 'Telefon mora sadržavati između 3 i 32 znaka!';
+$_['error_telephone']             = 'Telefon mora biti u ispravnom formatu!';
 $_['error_custom_field']          = '%s je obavezan podatak!';
 // $_['error_custom_field_validate'] = '%s je neispravan podatak!'; // postojalo u verziji OC 2.2.0.0

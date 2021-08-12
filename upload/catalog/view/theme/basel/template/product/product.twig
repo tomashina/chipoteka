@@ -88,8 +88,13 @@
                                             {% if not special %}
                                                 <span>{{ price_2 }}</span>
                                             {% else %}
+                                            {% if price_2 == price %}
+                                                <span>{{ price_2 }}</span>
+                                            {% else %}
                                                 <span>{{ price_2 }}</span>
                                                 <del>{{ price }}</del>
+                                            {% endif %}
+
                                                 <span id="special_countdown"></span>
                                             {% endif %}
                                         </div>
@@ -148,7 +153,7 @@
                                                     <h6 class="mt-2">Jednokratno plaćanje:</h6>
                                                     <ul>
                                                         <li> Internet bankarstvo (virman)</li>
-                                                        <li> Pouzeće (prilikom preuzimanja)</li>
+                                                        <li> Pouzećem - plaćanje gotovinom dostavljaču kod isporuke paketa</li>
                                                         <li>Maestro, MasterCard, Visa, Visa Premium</li>
                                                     </ul>
 

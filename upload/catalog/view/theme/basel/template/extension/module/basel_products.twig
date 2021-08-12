@@ -31,8 +31,13 @@
                                         {% if product.price %}
                                             <div class="product-price">
                                                 {% if product.special %}
-                                                    <span>{{ product.price_2 }}</span>
-                                                    <span><del>{{ product.price }}</del></span>
+                                                    {% if product.price_2 == product.price %}
+                                                        <span>{{ product.price_2 }}</span>
+                                                    {% else %}
+                                                        <span>{{ product.price_2 }}</span>
+                                                        <span><del>{{ product.price }}</del></span>
+                                                    {% endif %}
+
                                                 {% else %}
                                                     <span> {{ product.price_2 }}</span>
                                                 {% endif %}

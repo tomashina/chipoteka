@@ -55,5 +55,5 @@ $_['error_address_1']           = 'Adresa 1 mora sadržavati između 3 i 128 zna
 $_['error_city']                = 'Grad mora sadržavati između 2 i 128 znakova!';
 $_['error_country']             = 'Molim odaberite državu!';
 $_['error_zone']                = 'Molim odaberite županiju (regiju)!';
-$_['error_postcode']            = 'Poštanski broj mora sadržavati između 2 i 10 znakova!';
+$_['error_postcode']       = 'Poštanski broj mora sadržavati 5 znakova!';
 $_['error_agree']               = 'Upozorenje: Morate se složiti s %s!';
