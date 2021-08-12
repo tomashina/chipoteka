@@ -515,14 +515,26 @@ class LOC_Product
             mkdir(DIR_IMAGE . $this->image_path, 0777, true);
         }
 
+        $newstring = substr($this->product->dokumenti[$key]->filename, -3);
+
+        if($newstring=='png'  ){
+            $name  = Str::slug($this->product->naziv) . '-' . strtoupper(Str::random(9)) . '.png';
+        }
+        elseif ($newstring=='PNG'){
+            $name  = Str::slug($this->product->naziv) . '-' . strtoupper(Str::random(9)) . '.PNG';
+        }
+        else{
+            $name  = Str::slug($this->product->naziv) . '-' . strtoupper(Str::random(9)) . '.jpg';
+        }
+
         // Setup and create the image with GD library.
-        $name  = Str::slug($this->product->naziv) . '-' . strtoupper(Str::random(9)) . '.jpg';
+
         $bin   = base64_decode($this->getImageString($key));
         $image = imagecreatefromstring($bin);
 
         if ($image !== false) {
 
-            $image = imagecolorallocate($image, 255, 255, 255);
+
 
             imagejpeg($image, DIR_IMAGE . $this->image_path . $name, 90);
 
