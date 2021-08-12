@@ -6,6 +6,7 @@ use Agmedia\Luceed\Facade\LuceedProduct;
 use Agmedia\Luceed\Facade\LuceedWarehouse;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Action;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Category;
+use Agmedia\LuceedOpencartWrapper\Models\LOC_Customer;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Manufacturer;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Product;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle;
@@ -128,6 +129,19 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $imported = $_loc->initialImport();
 
         return $this->response($imported, 'manufacturers');
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function importInitialCustomers()
+    {
+        $_loc = new LOC_Customer();
+
+        $imported = $_loc->initialImport();
+
+        return $this->response($imported, 'customers');
     }
 
 
