@@ -38,8 +38,11 @@
                                             </ul>
                                         </li>
                                     {% else %}
-                                        <li class="widget-list-item nochild"><a class="widget-list-link" href="{{ child.href }}">{{ child.name }}</a></li>
-
+                                        {% if cats and child.category_id in cats  %}
+                                        <li class="widget-list-item active nochild"><a class="widget-list-link" href="{{ child.href }}">{{ child.name }}</a></li>
+                                        {% else %}
+                                            <li class="widget-list-item nochild"><a class="widget-list-link" href="{{ child.href }}">{{ child.name }}</a></li>
+                                        {% endif %}
                                         <style>.sidebar #categories .accordion-item .widget-links .widget-list .widget-list-item.nochild .widget-list-link::after{content:unset}</style>
                                     {% endif %}
                                 {% endfor %}
