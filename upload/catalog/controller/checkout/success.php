@@ -253,7 +253,14 @@ class ControllerCheckoutSuccess extends Controller {
               }
               else if ($data['paymethod'] == 'bank_transfer') {
 
-                  $data['text_message'] = sprintf($this->language->get('text_bank'), $order_id, $ukupno, $order_id);
+                  $nhs_no = $order_id.date("Ym");
+
+
+                  $pozivnabroj = $this->mod11($nhs_no);
+
+
+
+                  $data['text_message'] = sprintf($this->language->get('text_bank'), $order_id, $ukupno, $pozivnabroj);
 
                   $hubstring = array (
                       'renderer' => 'image',
@@ -282,7 +289,7 @@ class ControllerCheckoutSuccess extends Controller {
                                       'place' => '10360 Sesvete ',
                                       'iban' => 'HR4424070001100582698',
                                       'model' => '05',
-                                      'reference' => '21416540',
+                                      'reference' => $pozivnabroj,
                                   ),
                               'purpose' => 'CMDT',
                               'description' => 'Web narudžba Chipoteka',
@@ -351,4 +358,37 @@ class ControllerCheckoutSuccess extends Controller {
 
 		$this->response->setOutput($this->load->view('common/success', $data));
 	}
+
+
+    public function mod11($baseVal = "", $separator = '')
+    {
+        $result = "";
+        $weight = [ 2, 3, 4, 5, 6, 7,
+            2, 3, 4, 5, 6, 7,
+            2, 3, 4, 5, 6, 7,
+            2, 3, 4, 5, 6, 7 ];
+
+        /* For convenience, reverse the string and work left to right. */
+        $reversedBseVal = strrev($baseVal);
+        for ($i=0, $sum=0; $i < strlen($reversedBseVal); $i++) {
+            /* Calculate product and accumulate. */
+            $sum += substr($reversedBseVal, $i, 1) * $weight[$i];
+        }
+
+        /* Determine check digit, and concatenate to base value. */
+        $remainder = $sum % 11;
+        switch ($remainder) {
+            case 0:
+            case 1:
+                $result = "{$baseVal}{$separator}0";
+                break;
+
+            default:
+                $checkDigit = 11 - $remainder;
+                $result = "{$baseVal}{$separator}{$checkDigit}";
+                break;
+        }
+
+        return $result;
+    }
 }
