@@ -97,8 +97,8 @@ class ControllerExtensionPaymentWSPay extends Controller {
                
                 $ApprovalCode = $posted['ApprovalCode'];
 
-                 $PaymentCard  = $posted['PaymentType'];
-                 $PaymentPlan = $posted['PaymentPlan'];
+                 $PaymentCard  = $posted['ShopPostedCreditCardName'];
+                 $PaymentPlan = $posted['ShopPostedPaymentPlan'];
 
 
                  if($PaymentCard == 'MAESTRO' && $PaymentPlan != '0000' ){
