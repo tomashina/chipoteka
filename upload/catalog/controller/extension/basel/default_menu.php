@@ -18,12 +18,7 @@ class ControllerExtensionBaselDefaultMenu extends Controller {
             $data['cats'] = $cats;
             $data['cat_id'] = $cats[count($cats) - 1];
 
-
-
         }
-
-
-
 
 		foreach ($categories as $category) {
 			if ($category['top']) {
