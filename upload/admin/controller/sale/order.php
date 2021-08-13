@@ -227,6 +227,7 @@ class ControllerSaleOrder extends Controller {
 		foreach ($results as $result) {
 			$data['orders'][] = array(
 				'order_id'      => $result['order_id'],
+                'luceed_uid'    => $result['luceed_uid'],
 				'customer'      => $result['customer'],
 				'order_status'  => $result['order_status'] ? $result['order_status'] : $this->language->get('text_missing'),
 				'total'         => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value']),
@@ -804,6 +805,12 @@ class ControllerSaleOrder extends Controller {
 			} else {
 				$data['invoice_no'] = '';
 			}
+
+            if ($order_info['luceed_uid']) {
+                $data['luceed_uid'] = $order_info['luceed_uid'];
+            } else {
+                $data['luceed_uid'] = '';
+            }
 
 			$data['date_added'] = date($this->language->get('date_format_short'), strtotime($order_info['date_added']));
 
@@ -1840,4 +1847,41 @@ class ControllerSaleOrder extends Controller {
 
 		$this->response->setOutput($this->load->view('sale/order_shipping', $data));
 	}
+
+    public function sendLuceed() {
+        $this->load->language('sale/order');
+
+        $json = array();
+
+        if (!$this->user->hasPermission('modify', 'sale/order')) {
+            $json['error'] = $this->language->get('error_permission');
+        } elseif (isset($this->request->get['order_id'])) {
+            if (isset($this->request->get['order_id'])) {
+                $order_id = $this->request->get['order_id'];
+            } else {
+                $order_id = 0;
+            }
+
+            $this->load->model('sale/order');
+            $oc_order = $this->model_sale_order->getOrder($order_id);
+            $order    = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Order($oc_order);
+            $customer = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Customer($order->getCustomerData());
+
+            if ( ! $customer->exist()) {
+                $customer->store();
+            }
+
+            $invoice_no = $order->setCustomerUid($customer->getUid())->store();
+
+            if ( ! $invoice_no) {
+                $json['error'] = $this->language->get('error_action');
+                $order->recordError();
+            } else {
+                $json['invoice_no'] = $invoice_no;
+            }
+        }
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json));
+    }
 }
