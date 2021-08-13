@@ -96,6 +96,47 @@ class ControllerExtensionPaymentWSPay extends Controller {
                 $Success = $posted['Success'];
                
                 $ApprovalCode = $posted['ApprovalCode'];
+
+                 $PaymentCard  = $posted['PaymentType'];
+                 $PaymentPlan = $posted['PaymentPlan'];
+
+
+                 if($PaymentCard == 'MAESTRO' && $PaymentPlan != '0000' ){
+                     $kartica == 'MAESTRO RATE';
+                 }
+                else if($PaymentCard == 'MAESTRO' && $PaymentPlan == '0000'){
+                    $kartica == 'MAESTRO ';
+                }
+                else if($PaymentCard == 'AMEX' && $PaymentPlan != '0000' ){
+                    $kartica == 'AMEX RATE';
+                }
+                else if($PaymentCard == 'AMEX' && $PaymentPlan == '0000'){
+                    $kartica == 'AMEX ';
+                }
+                else if($PaymentCard == 'AMEX' && $PaymentPlan != '0000' ){
+                    $kartica == 'AMEX RATE';
+                }
+                else if($PaymentCard == 'AMEX' && $PaymentPlan == '0000'){
+                    $kartica == 'AMEX';
+                }
+
+                else if($PaymentCard == 'MASTERCARD' && $PaymentPlan != '0000' ){
+                    $kartica == 'MASTERCARD RATE';
+                }
+                else if($PaymentCard == 'MASTERCARD' && $PaymentPlan == '0000'){
+                    $kartica == 'MASTERCARD';
+                }
+
+                else if($PaymentCard == 'VISA' && $PaymentPlan != '0000' ){
+                    $kartica == 'VISA RATE';
+                }
+                else if($PaymentCard == 'VISA' && $PaymentPlan == '0000'){
+                    $kartica == 'VISA';
+                }
+
+
+                  $this->db->query("UPDATE `" . DB_PREFIX . "order` SET payment_card = '" . $this->db->escape($kartica) . "' WHERE order_id = '" . (int)$ShoppingCartID . "'");
+
               
            
             
