@@ -253,12 +253,9 @@ class ControllerCheckoutSuccess extends Controller {
               }
               else if ($data['paymethod'] == 'bank_transfer') {
 
-                  $nhs_no = $order_id.date("Ym");
+                  $nhs_no = $order_id.date("ym");
 
-
-                  $pozivnabroj = $this->mod11($nhs_no);
-
-
+                  $pozivnabroj = $nhs_no.$this->mod11INI($nhs_no);
 
                   $data['text_message'] = sprintf($this->language->get('text_bank'), $order_id, $ukupno, $pozivnabroj);
 
@@ -400,7 +397,7 @@ class ControllerCheckoutSuccess extends Controller {
         $p = 2;
         $c = ' ';
 
-        for ($i = count($nb); $i >= 1 ; $i--) {
+        for ($i = strlen($nb); $i >= 1 ; $i--) {
             $c = substr($nb, $i - 1, 1);
 
             if ('0' <= $c && $c <= '9' && $v >= 0) {
