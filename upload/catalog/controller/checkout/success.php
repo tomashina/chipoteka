@@ -391,4 +391,34 @@ class ControllerCheckoutSuccess extends Controller {
 
         return $result;
     }
+
+
+    public function mod11INI(string $nb)
+    {
+        $i = 0;
+        $v = 0;
+        $p = 2;
+        $c = ' ';
+
+        for ($i = count($nb); $i >= 1 ; $i--) {
+            $c = substr($nb, $i - 1, 1);
+
+            if ('0' <= $c && $c <= '9' && $v >= 0) {
+                $v = $v + $p * $c;
+                $p = $p + 1;
+            } else {
+                $v = -1;
+            }
+        }
+
+        if ($v >= 0) {
+            $v = 11 - ($v%11);
+
+            if ($v > 9) {
+                $v = 0;
+            }
+        }
+
+        return $v;
+    }
 }
