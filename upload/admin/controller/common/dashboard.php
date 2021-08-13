@@ -5,6 +5,17 @@ class ControllerCommonDashboard extends Controller {
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
+        $data['link_home_slider'] = $this->url->link('design/banner',
+                'user_token=' . $this->session->data['user_token'], true);
+
+
+        $data['link_home_products'] = $this->url->link('extension/basel/productgroups',
+            'user_token=' . $this->session->data['user_token'], true);
+
+
+        $data['link_sync_manager'] = $this->url->link('extension/module/luceed_sync',
+            'user_token=' . $this->session->data['user_token'], true);
+
 		$data['user_token'] = $this->session->data['user_token'];
 
 		$data['breadcrumbs'] = array();
