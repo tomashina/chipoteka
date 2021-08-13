@@ -2,12 +2,16 @@
 {% for category in categories %}
     {% if category.children %}
         <div class="accordion-item border-bottom">
-            <h3 class="accordion-header">
-        <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#catid{{ category.category_id }}" aria-expanded="false" aria-controls="catid{{ category.category_id }}"><span class="d-flex align-items-center">{{ category.name }} </span></button>
-            </h3>
+
     {% if cats and category.category_id in cats  %}
+            <h3 class="accordion-header">
+                <button class="accordion-button  py-3" type="button" data-bs-toggle="collapse" data-bs-target="#catid{{ category.category_id }}" aria-expanded="true" aria-controls="catid{{ category.category_id }}"><span class="d-flex align-items-center">{{ category.name }} </span></button>
+            </h3>
             <div class="collapse show" id="catid{{ category.category_id }}" data-bs-parent="#shop-categories">
     {% else %}
+                <h3 class="accordion-header">
+                    <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#catid{{ category.category_id }}" aria-expanded="false" aria-controls="catid{{ category.category_id }}"><span class="d-flex align-items-center">{{ category.name }} </span></button>
+                </h3>
         <div class="collapse " id="catid{{ category.category_id }}" data-bs-parent="#shop-categories">
             {% endif %}
                  <div>
@@ -16,10 +20,12 @@
                             <ul class="widget-list">
                                 {% for child in children %}
                                     {% if child.grandchildren %}
-                                        <li class="widget-list-item"><a class="widget-list-link"  data-bs-toggle="collapse" data-bs-target="#subid{{ child.category_id }}" aria-expanded="false" aria-controls="subid{{ child.category_id }}">{{ child.name }} {{ child.show }}</a>
+
                                                 {% if cats and child.category_id in cats  %}
+                                <li class="widget-list-item"><a class="widget-list-link"  data-bs-toggle="collapse" data-bs-target="#subid{{ child.category_id }}" aria-expanded="true" aria-controls="subid{{ child.category_id }}">{{ child.name }} {{ child.show }}</a>
                                                         <ul class="widget-list collapse show" id="subid{{ child.category_id }}">
                                                 {% else %}
+                                                            <li class="widget-list-item"><a class="widget-list-link"  data-bs-toggle="collapse" data-bs-target="#subid{{ child.category_id }}" aria-expanded="false" aria-controls="subid{{ child.category_id }}">{{ child.name }} {{ child.show }}</a>
                                                             <ul class="widget-list collapse" id="subid{{ child.category_id }}">
                                                  {% endif %}
                                                 {% for grandchild in child.grandchildren %}
