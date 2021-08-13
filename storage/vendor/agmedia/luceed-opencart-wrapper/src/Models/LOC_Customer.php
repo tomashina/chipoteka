@@ -61,7 +61,7 @@ class LOC_Customer
         $list = $this->loadData()
                      ->where('subject_type', 'F')
                      ->where('firstname', '!=', '')
-                     ->where('firstname', '!=', 0)
+                     /*->where('firstname', '!=', 0)*/
                      ->where('lastname', '!=', '')
                      ->where('email', '!=', '')
                      ->whereNotIn('email', $customers)
