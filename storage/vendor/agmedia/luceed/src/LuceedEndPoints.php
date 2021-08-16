@@ -29,6 +29,7 @@ class LuceedEndPoints
             'ind_stock_get'     => 'ind_stock_get.url',
             'raspis'            => 'raspis.url',
             'mjesta'            => 'mjesta.json',
+            'vrste_placanja'    => 'vrste_placanja.json',
             //
             'product_0730222201' => 'artikl_0730222201.json',
             'product_0730161301' => 'artikl_0730161301.json',
@@ -58,6 +59,7 @@ class LuceedEndPoints
             'ind_stock_get'     => 'StanjeZalihe/ArtiklUID/',
             'raspis'            => 'NaloziProdaje/raspis/poslovnica/',
             'mjesta'            => 'mjesta/naziv',
+            'vrste_placanja'    => 'vrsteplacanja/list',
         ];
     }
 

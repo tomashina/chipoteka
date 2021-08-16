@@ -134,6 +134,21 @@ class Luceed
      *                                Copyright : AGmedia                           *
      *                              email: filip@agmedia.hr                         *
      *******************************************************************************/
+    // MANUFACTURERS
+
+    /**
+     * @return false|mixed
+     */
+    public function getPayments()
+    {
+        return $this->service->get($this->end_points['vrste_placanja']);
+    }
+
+
+    /*******************************************************************************
+     *                                Copyright : AGmedia                           *
+     *                              email: filip@agmedia.hr                         *
+     *******************************************************************************/
     // PRODUCTS
 
     /**

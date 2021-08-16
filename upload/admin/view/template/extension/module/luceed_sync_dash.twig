@@ -86,6 +86,21 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading darker-bg">
+                        <h3 class="panel-title"><i class="fa fa-list"></i> Načini plaćanja</h3>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-5 text-center">
+                                <a href="javascript:void(0)" id="import-new-payments" data-toggle="tooltip" title="Import načina plaćanja" class="btn btn-info btn-block">Import Načina Plaćanja</a>
+                            </div>
+                            <p class="col-sm-7">Postojeći načini plaćanja se brišu. Radi se novi import svih potrebnih načina plaćanja iz Luceed-a..</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div class="col-sm-12 col-md-7">
@@ -162,6 +177,7 @@
             $('#import-new-categories')     .on('click', e => { callApi(e, 'importCategories'); });
             $('#import-new-manufacturer')   .on('click', e => { callApi(e, 'importManufacturers'); });
             $('#import-new-warehouse')      .on('click', e => { callApi(e, 'importWarehouses'); });
+            $('#import-new-payments')       .on('click', e => { callApi(e, 'importPayments'); });
             $('#import-new-products')       .on('click', e => { callApi(e, 'importProducts'); });
             $('#import-detail-product')     .on('click', e => { callApi(e, 'importProduct'); });
             $('#import-new-actions')        .on('click', e => { callApi(e, 'importActions'); });
@@ -186,7 +202,7 @@
             lockTarget(path.charAt(0), $('#' + target.id));
 
             $.ajax({
-                url: 'index.php?route=extension/module/luceed_sync/' + path + '&id=9001002044&user_token={{ user_token }}',
+                url: 'index.php?route=extension/module/luceed_sync/' + path + '&user_token={{ user_token }}',
                 dataType: 'json',
                 success: function(json) {
                     checkResult(json);

@@ -2,12 +2,14 @@
 
 use Agmedia\Luceed\Facade\LuceedGroup;
 use Agmedia\Luceed\Facade\LuceedManufacturer;
+use Agmedia\Luceed\Facade\LuceedPayments;
 use Agmedia\Luceed\Facade\LuceedProduct;
 use Agmedia\Luceed\Facade\LuceedWarehouse;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Action;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Category;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Customer;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Manufacturer;
+use Agmedia\LuceedOpencartWrapper\Models\LOC_Payment;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Product;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse;
@@ -155,6 +157,19 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $imported = $_loc->import($_loc->getWarehouses());
 
         return $this->response($imported, 'warehouses');
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function importPayments()
+    {
+        $_loc = new LOC_Payment(LuceedPayments::all());
+
+        $imported = $_loc->import($_loc->getList());
+
+        return $this->response($imported, 'payments');
     }
 
 
