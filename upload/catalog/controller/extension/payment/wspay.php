@@ -51,12 +51,12 @@ class ControllerExtensionPaymentWSPay extends Controller {
         $data['telephone'] = $order_info['telephone'];
         $data['email'] = $order_info['email'];
 
-        $data['creditcardname'] = $this->session->data['creditcardname'];
-        $data['paymentplan'] = $this->session->data['paymentplan'];
+      $data['creditcardname'] = $this->session->data['creditcardname'];
+      $data['paymentplan'] = $this->session->data['paymentplan'];
 
         $data['return_url'] = $this->url->link('checkout/success');
-        $data['cancel_url'] = $this->url->link('extension/payment/wspay/callback');
-        $data['return_url'] = $this->url->link('extension/payment/wspay/callback');
+    $data['cancel_url'] = $this->url->link('checkout/checkout', '', true);
+    $data['return_url'] = $this->url->link('extension/payment/wspay/callback');
         
         
         $a= $data['total'];
@@ -78,9 +78,16 @@ class ControllerExtensionPaymentWSPay extends Controller {
     
     public function callback() {
 
-       $this->load->model('checkout/order');  
+       $this->load->model('checkout/order');
 
+         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+             // Lets get wspay response parameters
        $posted = $_REQUEST;
+
+    //print_r($posted);
+
+
+      // Variables for readability
 
                 $ShopID = $data['merchant'] = $this->config->get('payment_wspay_merchant');
                 $SecretKey = $data['password'] = $this->config->get('payment_wspay_password');
@@ -90,22 +97,11 @@ class ControllerExtensionPaymentWSPay extends Controller {
                
                 $ApprovalCode = $posted['ApprovalCode'];
 
-                if (isset($posted['ShopPostedCreditCardName'])){
+               //  $PaymentCard  = $posted['ShopPostedCreditCardName'];
+              //   $PaymentPlan = $posted['ShopPostedPaymentPlan'];
 
-                    $PaymentCard  = $posted['ShopPostedCreditCardName'];
-
-                }
-
-                if (isset($posted['ShopPostedPaymentPlan'])) {
-                    $PaymentPlan = $posted['ShopPostedPaymentPlan'];
-                }
-                if (isset($posted['PaymentType'])) {
-                    $PaymentCard = $posted['PaymentType'];
-                }
-
-                if (isset($posted['PaymentPlan'])) {
-                    $PaymentPlan = $posted['PaymentPlan'];
-                }
+        $PaymentCard  = $posted['PaymentType'];
+        $PaymentPlan  = $posted['PaymentPlan'];
 
 
                  if($PaymentCard == 'MAESTRO' && $PaymentPlan != '0000' ){
@@ -113,18 +109,6 @@ class ControllerExtensionPaymentWSPay extends Controller {
                  }
                 else if($PaymentCard == 'MAESTRO' && $PaymentPlan == '0000'){
                     $kartica == 'MAESTRO ';
-                }
-                else if($PaymentCard == 'AMEX' && $PaymentPlan != '0000' ){
-                    $kartica == 'AMEX RATE';
-                }
-                else if($PaymentCard == 'AMEX' && $PaymentPlan == '0000'){
-                    $kartica == 'AMEX ';
-                }
-                else if($PaymentCard == 'AMEX' && $PaymentPlan != '0000' ){
-                    $kartica == 'AMEX RATE';
-                }
-                else if($PaymentCard == 'AMEX' && $PaymentPlan == '0000'){
-                    $kartica == 'AMEX';
                 }
 
                 else if($PaymentCard == 'MASTERCARD' && $PaymentPlan != '0000' ){
@@ -150,27 +134,27 @@ class ControllerExtensionPaymentWSPay extends Controller {
             $str = $ShopID.$SecretKey.$ShoppingCartID.$SecretKey.$Success.$SecretKey.$ApprovalCode.$SecretKey;
             $hash = md5($str); 
 
-            if( ($posted['Success'] == 1) && (!empty($posted['ApprovalCode'])) && ($hash == $posted['Signature']) ) {
+        if( ($posted['Success'] == 1) && (!empty($posted['ApprovalCode'])) && ($hash == $posted['Signature']) ) {
 
-                 $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_wspay_order_status_id'), '', true);
+             $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_wspay_order_status_id'), '', true);
 
-                 $order_id =$this->session->data['order_id'];
+             $order_id =$this->session->data['order_id'];
 
 
 
-                   $this->response->redirect($this->url->link('checkout/success', '', 'SSL'));
+               $this->response->redirect($this->url->link('checkout/success', '', 'SSL'));
 
-            } else if( $posted['Success'] == 1 && $hash !== $posted['Signature'] ){
+        } else if( $posted['Success'] == 1 && $hash !== $posted['Signature'] ){
 
-                // Kill futher operations
-                die( 'Illegal access detected!' );
-                /**
-                 * Transaction Rejected
-                 */
-            } else if( ($posted['ErrorMessage']) == 'ODBIJENO' ) {
+            // Kill futher operations
+            die( 'Illegal access detected!' );
+            /**
+             * Transaction Rejected
+             */
+        } else if( ($posted['ErrorMessage']) == 'ODBIJENO' ) {
 
-                $this->response->redirect($this->url->link('checkout/checkout', '', 'SSL'));
-            }
+            $this->response->redirect($this->url->link('checkout/checkout', '', 'SSL'));
+        }
     }
 
 
