@@ -90,11 +90,22 @@ class ControllerExtensionPaymentWSPay extends Controller {
                
                 $ApprovalCode = $posted['ApprovalCode'];
 
-               //  $PaymentCard  = $posted['ShopPostedCreditCardName'];
-              //   $PaymentPlan = $posted['ShopPostedPaymentPlan'];
+                if isset($posted['ShopPostedCreditCardName']){
 
-                $PaymentCard  = $posted['PaymentType'];
-                $PaymentPlan  = $posted['PaymentPlan'];
+                    $PaymentCard  = $posted['ShopPostedCreditCardName'];
+
+                }
+
+                if isset($posted['ShopPostedPaymentPlan']) {
+                    $PaymentPlan = $posted['ShopPostedPaymentPlan'];
+                }
+                if isset($posted['PaymentType']) {
+                    $PaymentCard = $posted['PaymentType'];
+                }
+
+                if isset($posted['PaymentPlan']) {
+                    $PaymentPlan = $posted['PaymentPlan'];
+                }
 
 
                  if($PaymentCard == 'MAESTRO' && $PaymentPlan != '0000' ){
