@@ -51,12 +51,12 @@ class ControllerExtensionPaymentWSPay extends Controller {
         $data['telephone'] = $order_info['telephone'];
         $data['email'] = $order_info['email'];
 
-      $data['creditcardname'] = $this->session->data['creditcardname'];
-      $data['paymentplan'] = $this->session->data['paymentplan'];
+        $data['creditcardname'] = $this->session->data['creditcardname'];
+        $data['paymentplan'] = $this->session->data['paymentplan'];
 
-
-      $data['cancel_url'] = $this->url->link('checkout/checkout', '', true);
-      $data['return_url'] = $this->url->link('extension/payment/wspay/callback');
+        $data['return_url'] = $this->url->link('checkout/success');
+        $data['cancel_url'] = $this->url->link('extension/payment/wspay/callback');
+        $data['return_url'] = $this->url->link('extension/payment/wspay/callback');
         
         
         $a= $data['total'];
@@ -80,15 +80,8 @@ class ControllerExtensionPaymentWSPay extends Controller {
 
        $this->load->model('checkout/order');  
 
-         $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']); 
-             // Lets get wspay response parameters
-        $posted = $_REQUEST;
+       $posted = $_REQUEST;
 
-        \Agmedia\Helpers\Log::store($_REQUEST, 'request');
-
-
-      // Variables for readability
-           
                 $ShopID = $data['merchant'] = $this->config->get('payment_wspay_merchant');
                 $SecretKey = $data['password'] = $this->config->get('payment_wspay_password');
                 $ShoppingCartID = $posted['ShoppingCartID'];
@@ -97,73 +90,76 @@ class ControllerExtensionPaymentWSPay extends Controller {
                
                 $ApprovalCode = $posted['ApprovalCode'];
 
+               //  $PaymentCard  = $posted['ShopPostedCreditCardName'];
+              //   $PaymentPlan = $posted['ShopPostedPaymentPlan'];
+
                 $PaymentCard  = $posted['PaymentType'];
                 $PaymentPlan  = $posted['PaymentPlan'];
 
 
                  if($PaymentCard == 'MAESTRO' && $PaymentPlan != '0000' ){
-                     $kartica = 'MAESTRO RATE';
+                     $kartica == 'MAESTRO RATE';
                  }
                 else if($PaymentCard == 'MAESTRO' && $PaymentPlan == '0000'){
-                    $kartica = 'MAESTRO ';
+                    $kartica == 'MAESTRO ';
                 }
                 else if($PaymentCard == 'AMEX' && $PaymentPlan != '0000' ){
-                    $kartica = 'AMEX RATE';
+                    $kartica == 'AMEX RATE';
                 }
                 else if($PaymentCard == 'AMEX' && $PaymentPlan == '0000'){
-                    $kartica = 'AMEX ';
+                    $kartica == 'AMEX ';
                 }
                 else if($PaymentCard == 'AMEX' && $PaymentPlan != '0000' ){
-                    $kartica = 'AMEX RATE';
+                    $kartica == 'AMEX RATE';
                 }
                 else if($PaymentCard == 'AMEX' && $PaymentPlan == '0000'){
-                    $kartica = 'AMEX';
+                    $kartica == 'AMEX';
                 }
 
                 else if($PaymentCard == 'MASTERCARD' && $PaymentPlan != '0000' ){
-                    $kartica = 'MASTERCARD RATE';
+                    $kartica == 'MASTERCARD RATE';
                 }
                 else if($PaymentCard == 'MASTERCARD' && $PaymentPlan == '0000'){
-                    $kartica = 'MASTERCARD';
+                    $kartica == 'MASTERCARD';
                 }
 
                 else if($PaymentCard == 'VISA' && $PaymentPlan != '0000' ){
-                    $kartica = 'VISA RATE';
+                    $kartica == 'VISA RATE';
                 }
                 else if($PaymentCard == 'VISA' && $PaymentPlan == '0000'){
-                    $kartica = 'VISA';
+                    $kartica == 'VISA';
                 }
 
 
-                $this->db->query("UPDATE `" . DB_PREFIX . "order` SET payment_card = '" . $this->db->escape($kartica) . "' WHERE order_id = '" . (int)$ShoppingCartID . "'");
+                  $this->db->query("UPDATE `" . DB_PREFIX . "order` SET payment_card = '" . $this->db->escape($kartica) . "' WHERE order_id = '" . (int)$ShoppingCartID . "'");
 
               
            
             
-                $str = $ShopID.$SecretKey.$ShoppingCartID.$SecretKey.$Success.$SecretKey.$ApprovalCode.$SecretKey;
-                $hash = md5($str);
- 
-                if( ($posted['Success'] == 1) && (!empty($posted['ApprovalCode'])) && ($hash == $posted['Signature']) ) {
+            $str = $ShopID.$SecretKey.$ShoppingCartID.$SecretKey.$Success.$SecretKey.$ApprovalCode.$SecretKey;
+            $hash = md5($str); 
 
-                     $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_wspay_order_status_id'), '', true);
+            if( ($posted['Success'] == 1) && (!empty($posted['ApprovalCode'])) && ($hash == $posted['Signature']) ) {
 
-                     $order_id =$this->session->data['order_id'];
+                 $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_wspay_order_status_id'), '', true);
+
+                 $order_id =$this->session->data['order_id'];
 
 
 
-                       $this->response->redirect($this->url->link('checkout/success', '', 'SSL'));
+                   $this->response->redirect($this->url->link('checkout/success', '', 'SSL'));
 
-                } else if( $posted['Success'] == 1 && $hash !== $posted['Signature'] ){
+            } else if( $posted['Success'] == 1 && $hash !== $posted['Signature'] ){
 
-                    // Kill futher operations
-                    die( 'Illegal access detected!' );
-                    /**
-                     * Transaction Rejected
-                     */
-                } else if( ($posted['ErrorMessage']) == 'ODBIJENO' ) {
+                // Kill futher operations
+                die( 'Illegal access detected!' );
+                /**
+                 * Transaction Rejected
+                 */
+            } else if( ($posted['ErrorMessage']) == 'ODBIJENO' ) {
 
-                    $this->response->redirect($this->url->link('checkout/checkout', '', 'SSL'));
-                }
+                $this->response->redirect($this->url->link('checkout/checkout', '', 'SSL'));
+            }
     }
 
 
