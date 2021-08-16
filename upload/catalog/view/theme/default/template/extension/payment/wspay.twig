@@ -1,24 +1,24 @@
 <form name="pay" action="{{ action }}" method="post">
- <input type="hidden" name="ShopID" value="{{ merchant }}">
-<input type="hidden" name="ShoppingCartID" value="{{ order_id }}">
-<input type="hidden" name="TotalAmount" value="{{ total }}">
-<input type="hidden" name="Signature" value="{{ md5 }}">
-<input type="hidden" name="CustomerFirstname" value="{{ firstname }}">
-<input type="hidden" name="CustomerLastName" value="{{ lastname }}">
-<input type="hidden" name="CustomerAddress" value="{{ address }}">
-<input type="hidden" name="CustomerCity" value="{{ city }}">
-<input type="hidden" name="CustomerCountry" value="{{ country }}">
-<input type="hidden" name="CustomerZIP" value="{{ postcode }}">
-<input type="hidden" name="CustomerPhone" value="{{ telephone }}">
-<input type="hidden" name="CustomerEmail" value="{{ email }}">
-<input type="hidden" name="Lang" value="HR">
-<input type="hidden" name="PaymentPlan" value="{{ paymentplan }}">
-<input type="hidden" name="CreditCardName" value="{{ creditcardname }}">
-<input type="hidden" name="valuta" value="{{ currency }}">
-<input type="hidden" name="tecaj" value="{{ tecaj }}">
-<input type="hidden" name="ReturnErrorURL" value="{{ cancel_url }}">
-<input type="hidden" name="ReturnURL" value="{{ return_url }}">
-<input type="hidden" name="CancelURL" value="{{ cancel_url }}">
+    <input type="hidden" name="ShopID" value="{{ merchant }}">
+    <input type="hidden" name="ShoppingCartID" value="{{ order_id }}">
+    <input type="hidden" name="TotalAmount" value="{{ total }}">
+    <input type="hidden" name="Signature" value="{{ md5 }}">
+    <input type="hidden" name="CustomerFirstname" value="{{ firstname }}">
+    <input type="hidden" name="CustomerLastName" value="{{ lastname }}">
+    <input type="hidden" name="CustomerAddress" value="{{ address }}">
+    <input type="hidden" name="CustomerCity" value="{{ city }}">
+    <input type="hidden" name="CustomerCountry" value="{{ country }}">
+    <input type="hidden" name="CustomerZIP" value="{{ postcode }}">
+    <input type="hidden" name="CustomerPhone" value="{{ telephone }}">
+    <input type="hidden" name="CustomerEmail" value="{{ email }}">
+    <input type="hidden" name="Lang" value="HR">
+    <input type="hidden" name="PaymentPlan" value="{{ paymentplan }}">
+    <input type="hidden" name="CreditCardName" value="{{ creditcardname }}">
+    <input type="hidden" name="valuta" value="{{ currency }}">
+    <input type="hidden" name="tecaj" value="{{ tecaj }}">
+    <input type="hidden" name="ReturnErrorURL" value="{{ cancel_url }}">
+    <input type="hidden" name="ReturnURL" value="{{ return_url }}">
+    <input type="hidden" name="CancelURL" value="{{ cancel_url }}">
     <div class=" d-flex pt-4">
         <div class="w-50 pe-3"><a class="btn btn-outline-primary d-block w-100" onclick="window.scrollTo(0, 0)" id="button-shipping-method" href="javascript:;"><i class="fal fa-chevron-left mt-sm-0 me-1"></i><span class="d-none d-sm-inline">Povratak</span><span class="d-inline d-sm-none">Povratak</span></a></div>
         <div class="w-50 ps-2"><button class="btn btn-success d-block w-100" type="submit"  ><span class="d-none d-sm-inline">Naruči</span><span class="d-inline d-sm-none">Naruči</span> <i class="fal fa-chevron-right mt-sm-0 ms-1"></i></button></div>
