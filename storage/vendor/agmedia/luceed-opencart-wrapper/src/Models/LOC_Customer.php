@@ -61,7 +61,7 @@ class LOC_Customer
         $list = $this->loadData()
                      ->where('subject_type', 'F')
                      ->where('firstname', '!=', '')
-                     /*->where('firstname', '!=', 0)*/
+            /*->where('firstname', '!=', 0)*/
                      ->where('lastname', '!=', '')
                      ->where('email', '!=', '')
                      ->whereNotIn('email', $customers)
@@ -158,6 +158,11 @@ class LOC_Customer
         Log::store($exist, 'proccess_order');
 
         if ( ! empty($exist)) {
+            if ( ! $this->customer['uid']) {
+                Customer::where('customer_id', $this->customer['id'])->update([
+                    'luceed_uid' => $exist[0]->partner_uid
+                ]);
+            }
             // If customer exist set uid data.
             $this->customer['uid'] = $exist[0]->partner_uid;
 
@@ -196,6 +201,10 @@ class LOC_Customer
         Log::store($response, 'proccess_order');
 
         if (isset($response->result[0])) {
+            Customer::where('customer_id', $this->customer['id'])->update([
+                'luceed_uid' => $response->result[0]
+            ]);
+
             $this->customer['uid'] = $response->result[0];
         }
 
@@ -213,6 +222,7 @@ class LOC_Customer
         $this->should_update = $customer['should_update'];
 
         return [
+            'id'             => $customer['customer_id'],
             'uid'            => $this->setUid($customer['customer_id'], true),
             'naziv'          => $customer['fname'] . ' ' . $customer['lname'],
             'ime'            => $customer['fname'],
@@ -244,7 +254,7 @@ class LOC_Customer
                 $this->customer['uid'] = $customer->luceed_uid;
             }
         } else {
-            $this->customer['uid'] = $uid ? $uid : null;
+            $this->customer['uid'] = $uid ?: null;
         }
     }
 

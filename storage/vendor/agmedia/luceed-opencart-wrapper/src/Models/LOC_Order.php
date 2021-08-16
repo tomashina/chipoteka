@@ -100,17 +100,24 @@ class LOC_Order
         // If response ok.
         // Update order uid.
         if (isset($this->response->result[0])) {
-            if ( ! $this->items_available) {
+            /*if ( ! $this->items_available) {
                 $raspis = json_decode(
                     $this->service->orderWrit($this->response->result[0])
                 );
 
                 $this->log('Raspis response: $raspis - LOC_Order #110.', $raspis);
-            }
+            }*/
 
-            return Order::where('order_id', $this->oc_order['order_id'])->update([
+            $this->log($this->oc_order['order_id']);
+            $this->log($this->response->result[0]);
+
+            $updated = Order::where('order_id', $this->oc_order['order_id'])->update([
                 'luceed_uid' => $this->response->result[0]
             ]);
+
+            if ($updated) {
+                return $this->response->result[0];
+            }
         }
 
         return false;
@@ -124,16 +131,19 @@ class LOC_Order
     {
         $iznos = number_format($this->oc_order['total'], 2, '.', '');
 
-        $this->items_available = $this->setAvailability();
+        $this->items_available = false;//$this->setAvailability();
 
         $this->order = [
             'nalog_prodaje_b2b' => $this->oc_order['order_id'],
             'datum'             => Carbon::make($this->oc_order['date_added'])->format(agconf('luceed.date')),
-            'skladiste'         => agconf('luceed.default_warehouse_uid'),
-            'status'            => agconf('luceed.status_uid'),
+            'skladiste'         => '001',
+            'sa__skladiste'     => '001',
+            'status'            => $this->getStatus(),
             'napomena'          => $this->oc_order['comment'],
-            'raspored'          => $this->getDeliveryTime(),
-            'cijene_s_porezom'  => agconf('import.with_tax'),
+            //'raspored'          => $this->getDeliveryTime(),
+            'komercijalist__radnik_uid' => '206-1063',
+            'placa_porez' => 'D',
+            'cijene_s_porezom'  => agconf('luceed.with_tax'),
             'partner_uid'       => $this->customer_uid,
             'iznos'             => (float) $iznos,
             'placanja'          => [
@@ -152,6 +162,18 @@ class LOC_Order
         }
 
         $this->log('Order create method: $this->>order - LOC_Order #156', $this->order);
+    }
+
+
+    public function getStatus()
+    {
+        $this->log('getStatus()', 1);
+
+        if ($this->oc_order['payment_code'] == 'wspay') {
+            return '02';
+        }
+
+        return '01';
     }
 
 
@@ -196,18 +218,16 @@ class LOC_Order
      */
     private function getPaymentType()
     {
-        if ($this->oc_order['payment_code'] == 'cod') {
-            return agconf('luceed.payment.cod');
+        if (in_array($this->oc_order['payment_code'], ['cod', 'bank_transfer'])) {
+            $loc_p = (new LOC_Payment())->getList(agconf('luceed.payment.' . $this->oc_order['payment_code']))->first();
         }
 
         if ($this->oc_order['payment_code'] == 'wspay') {
-            foreach (agconf('luceed.payment.cards') as $card => $uid) {
-                if ($card == $this->oc_order['payment_card']) {
-                    return $uid;
-                }
-            }
+            $loc_p = (new LOC_Payment())->getList($this->oc_order['payment_card'])->first();
+        }
 
-            return agconf('luceed.payment.card_default');
+        if (isset($loc_p['vrsta_placanja_uid'])) {
+            return $loc_p['vrsta_placanja_uid'];
         }
 
         return 'false';
@@ -274,7 +294,7 @@ class LOC_Order
                 }
 
                 $response[] = [
-                    'artikl_uid' => $order_product->model,
+                    'artikl' => $order_product->model,
                     'kolicina'   => isset($price['quantity']) ? $price['quantity'] : (int) $order_product->quantity,
                     'cijena'     => (float) $price['cijena'],
                     'rabat'      => (int) $price['rabat'],
@@ -283,50 +303,6 @@ class LOC_Order
         }
 
         return $response;
-    }
-
-
-    /**
-     * Resolve if an order has coupon discount.
-     */
-    private function resolveCouponDiscount(): void
-    {
-        $this->discount = 0;
-        $order_total = OrderTotal::where('order_id', $this->oc_order['order_id'])->get();
-
-        $this->log('$order_total', $order_total->toArray());
-
-        foreach ($order_total as $item) {
-            if ($item->code == 'coupon') {
-                preg_match('#\((.*?)\)#', $item->title, $code);
-
-                $coupon = Coupon::where('code', $code[1])->first();
-
-                if ($coupon) {
-                    $this->log('$coupon', $coupon->toArray());
-
-                    $this->discount = $coupon->discount;
-
-                    $this->log('$this->discount', $this->discount);
-                }
-            }
-        }
-    }
-
-
-    /**
-     * Apply the coupon discount on a price.
-     * If discount is not 0.
-     *
-     * @return int
-     */
-    private function applyCouponDiscount()
-    {
-        if ($this->discount) {
-            return abs($this->discount);
-        }
-
-        return 0;
     }
 
 
@@ -352,7 +328,7 @@ class LOC_Order
         }
 
         return [
-            'artikl_uid' => agconf('luceed.shipping_article_uid'),
+            'artikl' => agconf('luceed.shipping_article_uid'),
             'kolicina'   => (int) 1,
             'cijena'     => (float) $shipping_amount,
             'rabat'      => (int) 0,
@@ -423,6 +399,50 @@ class LOC_Order
 
 
     /**
+     * Resolve if an order has coupon discount.
+     */
+    private function resolveCouponDiscount(): void
+    {
+        $this->discount = 0;
+        $order_total = OrderTotal::where('order_id', $this->oc_order['order_id'])->get();
+
+        $this->log('$order_total', $order_total->toArray());
+
+        foreach ($order_total as $item) {
+            if ($item->code == 'coupon') {
+                preg_match('#\((.*?)\)#', $item->title, $code);
+
+                $coupon = Coupon::where('code', $code[1])->first();
+
+                if ($coupon) {
+                    $this->log('$coupon', $coupon->toArray());
+
+                    $this->discount = $coupon->discount;
+
+                    $this->log('$this->discount', $this->discount);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Apply the coupon discount on a price.
+     * If discount is not 0.
+     *
+     * @return int
+     */
+    private function applyCouponDiscount()
+    {
+        if ($this->discount) {
+            return abs($this->discount);
+        }
+
+        return 0;
+    }
+
+
+    /**
      * @return bool
      */
     private function checkAddress()
@@ -484,61 +504,5 @@ class LOC_Order
             Log::store($data, 'proccess_order_' . $this->oc_order['order_id']);
         }
     }
-
-
-
-    /**
-     * @return array
-     */
-    /*private function setAvailability()
-    {
-        $response = [];
-
-        Log::store('private function setAvailability()', 'proccess_order');
-
-        // Provjeriti dostupnost u "stock_warehouse_uid"
-        $availble_list = json_decode(
-            $this->service->getStock(agconf('luceed.stock_warehouse_uid'))
-        );
-
-        Log::store('Set availability response: $available_list #332.', 'proccess_order');
-        Log::store($availble_list, 'proccess_order');
-
-        // Ako NE postoji dosupnost vratiti response sa warehouse_uid za key "skladiste"
-        $response['all'] = false;
-
-        // Ako postoji dodati polja na $this->order
-        if (isset($availble_list->result[0]) && ! empty($availble_list->result[0]->stanje)) {
-
-            Log::store('if (isset($availble_list->result[0]) && ! empty($availble_list->result[0]->stanje)) = true;', 'proccess_order');
-
-            $list = collect($availble_list->result[0]->stanje);
-            $iterator = $this->getRegularProducts();
-            $has  = true;
-
-            foreach ($iterator as $item) {
-                $check = $list->where('artikl_uid', $item['artikl_uid'])
-                              ->where('skladiste_uid', agconf('luceed.stock_warehouse_uid'))
-                              ->where('stanje_kol', '>=', $item['kolicina'])
-                              ->first();
-
-                Log::store('$check in foreach()', 'proccess_order');
-                Log::store($check, 'proccess_order');
-
-                if ( ! isset($check->article_uid)) {
-                    $has = false;
-                }
-            }
-
-            if ($has) {
-                $response['all'] = true;
-            }
-        }
-
-        Log::store('Availability sorting $response #359.', 'proccess_order');
-        Log::store($response, 'proccess_order');
-
-        return $response;
-    }*/
 
 }

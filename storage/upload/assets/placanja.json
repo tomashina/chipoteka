@@ -1,1 +1,42 @@
-{"1":{"vrsta_placanja_uid":"5-1063","naziv":"VIRMAN MP","fiskalna_oznaka":"T"},"8":{"vrsta_placanja_uid":"76-1063","naziv":"MAESTRO RATE","fiskalna_oznaka":"K"},"9":{"vrsta_placanja_uid":"77-1063","naziv":"MAESTRO","fiskalna_oznaka":"K"},"10":{"vrsta_placanja_uid":"78-1063","naziv":"MASTERCARD","fiskalna_oznaka":"K"},"11":{"vrsta_placanja_uid":"80-1063","naziv":"VISA","fiskalna_oznaka":"K"},"12":{"vrsta_placanja_uid":"81-1063","naziv":"VISA RATE","fiskalna_oznaka":"K"},"13":{"vrsta_placanja_uid":"82-1063","naziv":"MASTERCARD RATE","fiskalna_oznaka":"K"},"25":{"vrsta_placanja_uid":"108-1063","naziv":"GLS POUZE\u0106E","fiskalna_oznaka":"T"}}
+{
+    "1": {
+        "vrsta_placanja_uid": "5-1063",
+        "naziv": "VIRMAN MP",
+        "fiskalna_oznaka": "T"
+    },
+    "8": {
+        "vrsta_placanja_uid": "76-1063",
+        "naziv": "MAESTRO RATE",
+        "fiskalna_oznaka": "K"
+    },
+    "9": {
+        "vrsta_placanja_uid": "77-1063",
+        "naziv": "MAESTRO",
+        "fiskalna_oznaka": "K"
+    },
+    "10": {
+        "vrsta_placanja_uid": "78-1063",
+        "naziv": "MASTERCARD",
+        "fiskalna_oznaka": "K"
+    },
+    "11": {
+        "vrsta_placanja_uid": "80-1063",
+        "naziv": "VISA",
+        "fiskalna_oznaka": "K"
+    },
+    "12": {
+        "vrsta_placanja_uid": "81-1063",
+        "naziv": "VISA RATE",
+        "fiskalna_oznaka": "K"
+    },
+    "13": {
+        "vrsta_placanja_uid": "82-1063",
+        "naziv": "MASTERCARD RATE",
+        "fiskalna_oznaka": "K"
+    },
+    "25": {
+        "vrsta_placanja_uid": "108-1063",
+        "naziv": "GLS POUZE\u0106E",
+        "fiskalna_oznaka": "T"
+    }
+}

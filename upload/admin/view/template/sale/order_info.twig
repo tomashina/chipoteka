@@ -118,11 +118,13 @@
                         <tr>
                             <td>Luceed UID</td>
                             <td id="luceed_uid" class="text-right">{{ luceed_uid }}</td>
-                            <td style="width: 1%;" class="text-center">{% if not luceed_uid or luceed_uid|length > 11 %}
+                            <td style="width: 1%;" class="text-center">
+                                {% if not luceed_uid or luceed_uid|length > 11 %}
                                     <button id="button-luceed-send" data-loading-text="{{ text_loading }}" data-toggle="tooltip" title="{{ button_generate }}" class="btn btn-success btn-xs"><i class="fa fa-cog"></i></button>
                                 {% else %}
                                     <button disabled="disabled" class="btn btn-success btn-xs"><i class="fa fa-refresh"></i></button>
-                                {% endif %}</td>
+                                {% endif %}
+                            </td>
                         </tr>
                         </tbody>
                     </table>
