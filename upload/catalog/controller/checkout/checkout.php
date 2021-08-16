@@ -228,9 +228,7 @@ class ControllerCheckoutCheckout extends Controller {
 
     public function places()
     {
-        $loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Places(
-            \Agmedia\Luceed\Facade\LuceedPlaces::all()
-        );
+        $loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Places();
 
         $loc->getList();
 
@@ -239,7 +237,7 @@ class ControllerCheckoutCheckout extends Controller {
         }
 
         if (isset($this->request->get['postcode'])) {
-            $loc->find($this->request->get['postcode'], 'mjesto');
+            $loc->find($this->request->get['postcode'], 'zipcode');
         }
 
         $loc->limit(5);

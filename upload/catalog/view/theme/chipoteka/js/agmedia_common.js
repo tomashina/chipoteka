@@ -29,14 +29,18 @@ function drawPlaces(target, json) {
     let link = '';
     let obj = Object.keys(json);
 
+    console.log(target)
+
     for (let i = 0; i < obj.length; i++) {
+        console.log(json[obj[i]].cityname);
+
         if (target == 'city') {
-            naziv = '<strong>' + json[obj[i]].naziv + '</strong> ' + json[obj[i]].mjesto;
+            naziv = '<strong>' + json[obj[i]].cityname + '</strong> ' + json[obj[i]].zipcode;
         } else {
-            naziv = '<strong>' + json[obj[i]].mjesto + '</strong> ' + json[obj[i]].naziv;
+            naziv = '<strong>' + json[obj[i]].zipcode + '</strong> ' + json[obj[i]].cityname;
         }
 
-        link = "selectPlace('" + json[obj[i]].naziv + "', '" + json[obj[i]].mjesto + "');";
+        link = "selectPlace('" + json[obj[i]].cityname + "', '" + json[obj[i]].zipcode + "');";
 
         if (i == (obj.length - 1)) {
             html += '<button href="javascript:void(0);" onclick="' + link + '" class="dropdown-item">' + naziv + '</button>';

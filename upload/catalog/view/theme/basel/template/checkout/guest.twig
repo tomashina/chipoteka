@@ -153,13 +153,19 @@
         $('#input-payment-city, #input-payment-postcode').keyup((e) => {
             let target = e.currentTarget;
 
-            if (target.id == 'input-payment-city') {
-                callPlaces('city', target.value);
-            }
+            if (target.value.length > 1) {
+                if (target.id == 'input-payment-city') {
+                    callPlaces('city', target.value);
+                }
 
-            if (target.id == 'input-payment-postcode') {
-                callPlaces('postcode', target.value);
+                if (target.id == 'input-payment-postcode') {
+                    callPlaces('postcode', target.value);
+                }
             }
+        });
+
+        $('#input-payment-city, #input-payment-postcode').on('click', (e) => {
+            console.log(e)
         });
 
         $('#input-payment-city, #input-payment-postcode').on('blur', () => {

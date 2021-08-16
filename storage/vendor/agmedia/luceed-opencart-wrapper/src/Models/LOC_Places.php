@@ -4,6 +4,7 @@ namespace Agmedia\LuceedOpencartWrapper\Models;
 
 use Agmedia\Helpers\Log;
 use Illuminate\Support\Collection;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 /**
  * Class LOC_Category
@@ -26,11 +27,15 @@ class LOC_Places
     /**
      * LOC_Places constructor.
      *
-     * @param null $places
+     * @param null|object $places
      */
-    public function __construct($places)
+    public function __construct($places = null)
     {
-        $this->list = $this->setPlaces($places);
+        if ($places) {
+            $this->list = $this->setPlaces($places);
+        } else {
+            $this->list = $this->load();
+        }
     }
 
 
@@ -41,7 +46,7 @@ class LOC_Places
      */
     public function getList(string $state = 'HR')
     {
-        $this->places = collect($this->list)->where('drzava', '==', $state);
+        $this->places = collect($this->list)->where('ctrcode', '==', $state);
 
         return $this;
     }
@@ -49,15 +54,15 @@ class LOC_Places
 
     /**
      * @param string $request
-     * @param string $target = naziv | mjesto(zip)
+     * @param string $target = cityname | zipcode
      *
      * @return Collection
      */
-    public function find(string $request = '', string $target = 'naziv')
+    public function find(string $request = '', string $target = 'cityname')
     {
         if ($request != '') {
             $this->places = $this->places->filter(function ($item) use ($request, $target) {
-                return stripos($item->{$target}, $request) !== false;
+                return stripos($item[$target], $request) !== false;
             });
         }
 
@@ -77,6 +82,34 @@ class LOC_Places
         }
 
         return $this;
+    }
+
+
+    /**
+     * @return array|Collection
+     */
+    public function load()
+    {
+        $reader      = IOFactory::createReader("Xlsx");
+        $spreadsheet = $reader->load(DIR_STORAGE . 'upload/assets/zip.xlsx');
+        $list        = $spreadsheet->getActiveSheet()->toArray();
+        $response    = [];
+
+        if ( ! empty($list)) {
+            for ($i = 0; $i < count($list); $i++) {
+                $response[] = [
+                    $list[0][0] => $list[$i][0],
+                    $list[0][1] => $list[$i][1],
+                    $list[0][2] => $list[$i][2],
+                ];
+            }
+
+            unset($response[0]);
+
+            return collect($response);
+        }
+
+        return [];
     }
 
 
