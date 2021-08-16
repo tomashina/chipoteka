@@ -105,24 +105,24 @@ class ControllerExtensionPaymentWSPay extends Controller {
 
 
                  if($PaymentCard == 'MAESTRO' && $PaymentPlan != '0000' ){
-                     $kartica == 'MAESTRO RATE';
+                     $kartica = 'MAESTRO RATE';
                  }
                 else if($PaymentCard == 'MAESTRO' && $PaymentPlan == '0000'){
-                    $kartica == 'MAESTRO ';
+                    $kartica = 'MAESTRO ';
                 }
 
                 else if($PaymentCard == 'MASTERCARD' && $PaymentPlan != '0000' ){
-                    $kartica == 'MASTERCARD RATE';
+                    $kartica = 'MASTERCARD RATE';
                 }
                 else if($PaymentCard == 'MASTERCARD' && $PaymentPlan == '0000'){
-                    $kartica == 'MASTERCARD';
+                    $kartica = 'MASTERCARD';
                 }
 
                 else if($PaymentCard == 'VISA' && $PaymentPlan != '0000' ){
-                    $kartica == 'VISA RATE';
+                    $kartica = 'VISA RATE';
                 }
                 else if($PaymentCard == 'VISA' && $PaymentPlan == '0000'){
-                    $kartica == 'VISA';
+                    $kartica = 'VISA';
                 }
 
 
