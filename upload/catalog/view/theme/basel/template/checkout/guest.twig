@@ -156,6 +156,7 @@
             if (target.value.length > 1) {
                 if (target.id == 'input-payment-city') {
                     callPlaces('city', target.value);
+
                 }
 
                 if (target.id == 'input-payment-postcode') {
@@ -166,6 +167,7 @@
 
         $('#input-payment-city, #input-payment-postcode').on('click', (e) => {
             console.log(e)
+
         });
 
         $('#input-payment-city, #input-payment-postcode').on('blur', () => {

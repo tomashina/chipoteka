@@ -201,13 +201,13 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 			$data['title_m'] = array();
 		}
 		
-		if (isset($this->request->post['title_b'])) {
+		/*if (isset($this->request->post['title_b'])) {
 			$data['title_b'] = $this->request->post['title_b'];
 		} elseif (!empty($module_info)) {
 			$data['title_b'] = $module_info['title_b'];
 		} else {
 			$data['title_b'] = array();
-		}
+		}*/
 		
 		if (isset($this->request->post['limit'])) {
 			$data['limit'] = $this->request->post['limit'];
