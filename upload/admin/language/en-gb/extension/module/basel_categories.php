@@ -1,11 +1,11 @@
 <?php
 // Heading
-$_['heading_title']    	= 'Basel Categories';
+$_['heading_title']    	= 'Chipoteka Categories';
 
 // Text
 $_['text_module']      	= 'Modules';
-$_['text_success']     	= 'Success: You have modified module Basel Categories';
-$_['text_edit']        	= 'Edit Basel Categories';
+$_['text_success']     	= 'Success: You have modified module Chipoteka Categories';
+$_['text_edit']        	= 'Edit Chipoteka Categories';
 $_['text_grid6']     	= '6 Columns';
 $_['text_grid5']     	= '5 Columns';
 $_['text_grid4']     	= '4 Columns';
@@ -37,5 +37,5 @@ $_['text_use_margin']  	= '<span data-toggle="tooltip" title="Use it to override
 $_['text_margin']   	= '<span data-toggle="tooltip" title="Margin bottom, e.g: 60px">Margin Bottom</span>';
 
 // Error
-$_['error_permission'] 	= 'Warning: You do not have permission to modify module Basel categories';
+$_['error_permission'] 	= 'Warning: You do not have permission to modify module Chipoteka categories';
 $_['error_name']       	= 'Module Name must be between 3 and 64 characters!';

@@ -1,11 +1,11 @@
 <?php
 // Heading
-$_['heading_title']    	= 'Basel Instagram Feed';
+$_['heading_title']    	= 'Chipoteka Instagram Feed';
 
 // Text
 $_['text_module']      	= 'Modules';
-$_['text_success']     	= 'Success: You have modified module Basel Instagram Feed';
-$_['text_edit']        	= 'Edit Basel Instagram Feed';
+$_['text_success']     	= 'Success: You have modified module Chipoteka Instagram Feed';
+$_['text_edit']        	= 'Edit Chipoteka Instagram Feed';
 $_['text_grid6']     	= '6 Columns';
 $_['text_grid5']     	= '5 Columns';
 $_['text_grid4']     	= '4 Columns';
@@ -36,5 +36,5 @@ $_['text_margin']   	= '<span data-toggle="tooltip" title="Margin bottom, e.g: 6
 $_['text_padding']   	= '<span data-toggle="tooltip" title="Margin between each image, e.g 20">Image Spacing (px)</span>';
 
 // Error
-$_['error_permission'] 	= 'Warning: You do not have permission to modify module Basel Instagram Feed';
+$_['error_permission'] 	= 'Warning: You do not have permission to modify module Chipoteka Instagram Feed';
 $_['error_name']       	= 'Module Name must be between 3 and 64 characters!';

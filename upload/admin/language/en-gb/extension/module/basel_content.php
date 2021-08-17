@@ -1,10 +1,10 @@
 <?php
 // Heading
-$_['heading_title']     			= 'Basel Content Builder';
+$_['heading_title']     			= 'Chipoteka Content Builder';
 
 // Text
 $_['text_extension']   				= 'Modules';
-$_['text_success']      			= 'Success: You have modified Basel Content Builder';
+$_['text_success']      			= 'Success: You have modified Chipoteka Content Builder';
 $_['entry_name']        			= 'Module Name';
 $_['entry_status']      			= 'Status';
 $_['button_save_stay']  			= 'Save and stay';
@@ -88,5 +88,5 @@ $_['text_block']  					= 'Block area';
 $_['text_content']  				= 'Content area';
 
 // Error
-$_['error_permission']  			= 'Warning: You do not have permission to modify Basel Content Builder';
+$_['error_permission']  			= 'Warning: You do not have permission to modify Chipoteka Content Builder';
 $_['error_name']        			= 'Module Name must be between 3 and 64 characters!';

@@ -33,5 +33,5 @@ $_['text_use_margin']  	= '<span data-toggle="tooltip" title="Use it to override
 $_['text_margin']   	= '<span data-toggle="tooltip" title="Margina Dolje, e.g: 60px">Margina Dolje</span>';
 
 // Error
-$_['error_permission'] 	= 'Warning: You do not have permission to modify module Basel Carousel';
+$_['error_permission'] 	= 'Warning: You do not have permission to modify module Chipoteka Carousel';
 $_['error_name']       	= 'Ime modula mora biti između 3 i 64 znakas!';

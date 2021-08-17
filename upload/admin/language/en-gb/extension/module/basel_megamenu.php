@@ -1,7 +1,7 @@
 <?php
 // Heading
-$_['heading_title']    = 'Basel Mega Menu';
-$_['heading_title_so']    = 'Basel Mega Menu';
+$_['heading_title']    = 'Chipoteka Mega Menu';
+$_['heading_title_so']    = 'Chipoteka Mega Menu';
 // Text
 
 $_['text_creat_new_item']      			= 'Add new menu item';
@@ -40,7 +40,7 @@ $_['text_home_item']     			= 'Home item';
 $_['text_home_text']     			= 'Home Text';
 
 $_['text_module']      					= 'Modules';
-$_['text_success']     					= 'Success: You have modified basel megamenu module';
+$_['text_success']     					= 'Success: You have modified Chipoteka megamenu module';
 $_['text_success_menu_delete']    		= 'Success: You have modified menu manager';
 $_['text_error_menu_item_delete']    	= 'You can not delete an item holding one or multiple sub items';
 $_['text_success_menu_item_add']    	= 'Success: You have add menu item manager';

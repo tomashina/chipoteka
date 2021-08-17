@@ -1,14 +1,14 @@
 <?php
 // Heading
-$_['heading_title']      = 'Basel Product Groups';
+$_['heading_title']      = 'Chipoteka Product Groups';
 
 $_['text_info']    		 = '
 <h4 style="margin-bottom:10px;">Product Groups</h4>
 <p>The product groups feature can be used to display selected products in your store front. Groups are defined in the form below.</p>
-<p>Product groups configured in the form below can be used when creating a <i>Basel Products</i> module.</p>';
+<p>Product groups configured in the form below can be used when creating a <i>Chipoteka Products</i> module.</p>';
 $_['text_to_modules']     = 'Go to modules';
 // Text 
-$_['text_success']          = 'Success: You have modified the Basel Product Groups';
+$_['text_success']          = 'Success: You have modified the Chipoteka Product Groups';
 $_['text_enable']           = 'Enable';
 $_['text_disable']          = 'Disable';
 $_['text_module']           = 'Module';
@@ -48,4 +48,4 @@ $_['header_predefined_groups'] = 'Select from Opencarts default groups';
 $_['header_custom_query'] 	   = 'Select by category and manufacturer';
 
 // Error
-$_['error_permission'] = 'Warning: You do not have permission to modify the Basel Product Groups';
+$_['error_permission'] = 'Warning: You do not have permission to modify the Chipoteka Product Groups';

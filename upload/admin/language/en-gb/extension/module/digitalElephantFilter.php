@@ -1,11 +1,11 @@
 <?php
 // Heading
-$_['heading_title']    = 'Basel Ajax Filter';
+$_['heading_title']    = 'Chipoteka Ajax Filter';
 
 // Text
 $_['text_extension']   = 'Extensions';
 $_['text_success']     = 'Success';
-$_['text_edit']        = 'Edit Basel Ajax Filter';
+$_['text_edit']        = 'Edit Chipoteka Ajax Filter';
 $_['button_save_and_cancel'] = 'Save and leave';
 $_['text_setting_name'] = 'Setting';
 
@@ -22,7 +22,7 @@ $_['text_state_quantity_products'] = '<span data-toggle="tooltip" title="Paginat
 $_['text_choose_preloader'] = 'Choose preloader';
 
 $_['text_module']       = 'Modules';
-$_['text_success']      = 'Basel Ajax Filter module was saved successfully';
+$_['text_success']      = 'Chipoteka Ajax Filter module was saved successfully';
 
 $_['text_manufacturer']        = 'Brands';
 $_['text_categories']   	   = 'Categories';

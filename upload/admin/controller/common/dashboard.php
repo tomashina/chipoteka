@@ -11,7 +11,8 @@ class ControllerCommonDashboard extends Controller {
 
         $data['link_home_products'] = $this->url->link('extension/basel/productgroups',
             'user_token=' . $this->session->data['user_token'], true);
-
+        $data['link_blog'] = $this->url->link('extension/blog/blog',
+            'user_token=' . $this->session->data['user_token'], true);
 
         $data['link_sync_manager'] = $this->url->link('extension/module/luceed_sync',
             'user_token=' . $this->session->data['user_token'], true);

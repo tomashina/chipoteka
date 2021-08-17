@@ -1,6 +1,6 @@
 <?php
 // General
-$_['heading_title']       		= 'Basel Layered Slideshow';
+$_['heading_title']       		= 'Chipoteka Layered Slideshow';
 $_['button_save_stay']      	= 'Save & Stay';
 $_['text_edit']       	  		= 'Edit Slideshow';
 $_['text_module']        		= 'Modules';
@@ -89,4 +89,4 @@ $_['text_button_target']    = 'Open Link In New Window';
 $_['text_button_class']    	= 'Button Style';
 
 $_['text_success']        	= 'Success: You have modified the slideshow';
-$_['error_permission']      = 'Warning: You do not have permission to modify the module Basel Layered Slideshow';
+$_['error_permission']      = 'Warning: You do not have permission to modify the module Chipoteka Layered Slideshow';
