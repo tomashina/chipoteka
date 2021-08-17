@@ -113,29 +113,31 @@
 
 <script src="catalog/view/theme/chipoteka/js/agmedia_common.js"></script>
 <script>
-  $(() => {
-    $('#input-shipping-city, #input-shipping-postcode').keyup((e) => {
-      let target = e.currentTarget;
+    $(() => {
+        let key = 'shipping';
 
-      if (target.value.length > 1) {
-        if (target.id == 'input-shipping-city') {
-          callPlaces('city', target.value, 'shipping');
+        $('#input-' + key + '-city, #input-' + key + '-postcode').keyup((e) => {
+            let target = e.currentTarget;
 
-        }
+            if (target.value.length > 1) {
+                if (target.id == 'input-' + key + '-city') {
+                    callPlaces('city', target.value, key);
 
-        if (target.id == 'input-shipping-postcode') {
-          callPlaces('postcode', target.value, 'shipping');
-        }
-      }
+                }
+
+                if (target.id == 'input-' + key + '-postcode') {
+                    callPlaces('postcode', target.value, key);
+                }
+            }
+        });
+
+        $('#input-' + key + '-city, #input-' + key + '-postcode').on('blur', () => {
+            setTimeout(function() {
+                document.getElementById(key + '-city-drop').style['display'] = 'none';
+                document.getElementById(key + '-postcode-drop').style['display'] = 'none';
+            }, 300);
+        });
     });
-
-    $('#input-shipping-city, #input-shipping-postcode').on('blur', () => {
-      setTimeout(function() {
-        document.getElementById('shipping-city-drop').style['display'] = 'none';
-        document.getElementById('shipping-postcode-drop').style['display'] = 'none';
-      }, 300);
-    });
-  });
 </script>
 <script type="text/javascript"><!--
 // Sort the custom fields
