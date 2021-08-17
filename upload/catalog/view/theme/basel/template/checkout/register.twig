@@ -164,25 +164,27 @@
      <script src="catalog/view/theme/chipoteka/js/agmedia_common.js"></script>
      <script>
          $(() => {
-             $('#input-payment-city, #input-payment-postcode').keyup((e) => {
+             let key = 'payment';
+
+             $('#input-' + key + '-city, #input-' + key + '-postcode').keyup((e) => {
                  let target = e.currentTarget;
 
                  if (target.value.length > 1) {
-                     if (target.id == 'input-payment-city') {
-                         callPlaces('city', target.value);
+                     if (target.id == 'input-' + key + '-city') {
+                         callPlaces('city', target.value, key);
 
                      }
 
-                     if (target.id == 'input-payment-postcode') {
-                         callPlaces('postcode', target.value);
+                     if (target.id == 'input-' + key + '-postcode') {
+                         callPlaces('postcode', target.value, key);
                      }
                  }
              });
 
-             $('#input-payment-city, #input-payment-postcode').on('blur', () => {
+             $('#input-' + key + '-city, #input-' + key + '-postcode').on('blur', () => {
                  setTimeout(function() {
-                     document.getElementById('payment-city-drop').style['display'] = 'none';
-                     document.getElementById('payment-postcode-drop').style['display'] = 'none';
+                     document.getElementById(key + '-city-drop').style['display'] = 'none';
+                     document.getElementById(key + '-postcode-drop').style['display'] = 'none';
                  }, 300);
              });
          });
