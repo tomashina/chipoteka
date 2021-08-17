@@ -200,9 +200,9 @@ class ControllerCheckoutGuest extends Controller {
 			}
 
 			$loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Places();
-			$findc = $loc->getList()->find($this->request->post['city'])->count();
+			$findc = $loc->getList()->find($this->request->post['city']);
 
-			if ( ! $findc) {
+			if ( ! $findc->places->count()) {
                 $json['error']['city'] = 'Morate odabrati grad sa liste!';
             }
 
@@ -214,9 +214,9 @@ class ControllerCheckoutGuest extends Controller {
 				$json['error']['postcode'] = $this->language->get('error_postcode');
 			}
 
-            $findp = $loc->getList()->find($this->request->post['postcode'])->count();
+            $findp = $loc->getList()->find($this->request->post['postcode']);
 
-            if ( ! $findp) {
+            if ( ! $findp->places->count()) {
                 $json['error']['postcode'] = 'Morate odabrati poštanski broj sa liste!';
             }
 
