@@ -127,6 +127,13 @@ class ControllerCheckoutPaymentAddress extends Controller {
 					$json['error']['city'] = $this->language->get('error_city');
 				}
 
+                $loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Places();
+                $findc = $loc->getList()->find($this->request->post['city']);
+
+                if ( ! $findc->places->count()) {
+                    $json['error']['city'] = 'Morate odabrati grad sa liste!';
+                }
+
 				$this->load->model('localisation/country');
 
 				$country_info = $this->model_localisation_country->getCountry($this->request->post['country_id']);
@@ -134,6 +141,25 @@ class ControllerCheckoutPaymentAddress extends Controller {
 				if ($country_info && $country_info['postcode_required'] && (utf8_strlen(trim($this->request->post['postcode'])) < 5 || utf8_strlen(trim($this->request->post['postcode'])) > 5)) {
 					$json['error']['postcode'] = $this->language->get('error_postcode');
 				}
+
+                $findp = $loc->getList()->find($this->request->post['postcode'], 'zipcode');
+
+                if ( ! $findp->places->count()) {
+                    $json['error']['postcode'] = 'Morate odabrati poštanski broj sa liste!';
+                }
+
+                if ( ! $json) {
+                    $list = $loc->getList();
+                    $findall = $list->places->where('cityname', $this->request->post['city'])
+                        ->where('zipcode', $this->request->post['postcode'])
+                        ->count();
+
+                    if ( ! $findall) {
+                        $json['error']['city'] = 'Grad i poštanski broj moraju odgovarati.';
+                        $json['error']['postcode'] = 'Poštanski broj i grad moraju odgovarati.';
+                    }
+
+                }
 
 				if ($this->request->post['country_id'] == '') {
 					$json['error']['country'] = $this->language->get('error_country');
