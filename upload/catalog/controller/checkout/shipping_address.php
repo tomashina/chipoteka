@@ -170,9 +170,9 @@ class ControllerCheckoutShippingAddress extends Controller {
 					$json['error']['country'] = $this->language->get('error_country');
 				}
 
-				if (!isset($this->request->post['zone_id']) || $this->request->post['zone_id'] == '' || !is_numeric($this->request->post['zone_id'])) {
+			/*	if (!isset($this->request->post['zone_id']) || $this->request->post['zone_id'] == '' || !is_numeric($this->request->post['zone_id'])) {
 					$json['error']['zone'] = $this->language->get('error_zone');
-				}
+				}*/
 
 				// Custom field validation
 				$this->load->model('account/custom_field');
