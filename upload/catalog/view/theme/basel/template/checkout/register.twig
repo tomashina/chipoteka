@@ -89,15 +89,17 @@
                 <input type="text" name="address_2" value="" placeholder="{{ entry_address_2 }}" id="input-payment-address-2" class="form-control" />
             </div>
             <div class="col-sm-6">
-                <div class="form-group mb-3 required">
+                <div class="form-group dropdown mb-3 required">
                     <label class="form-label" for="input-payment-city">{{ entry_city }} <span class="text-danger">*</span></label>
-                    <input type="text" name="city" value="" placeholder="{{ entry_city }}" id="input-payment-city" class="form-control" />
+                    <input type="text" name="city" value="" placeholder="{{ entry_city }}" id="input-payment-city" class="form-control"  autocomplete="off"/>
+                    <div id="payment-city-drop" class="dropdown-menu" style="display: none;"></div>
               </div>
             </div>
             <div class="col-sm-6">
-                <div class="form-group mb-3 required">
+                <div class="form-group dropdown mb-3 required">
                     <label class="form-label" for="input-payment-postcode">{{ entry_postcode }} <span class="text-danger">*</span></label>
-                    <input type="text" name="postcode" value="{{ postcode }}" placeholder="{{ entry_postcode }}" id="input-payment-postcode" class="form-control" />
+                    <input type="text" name="postcode" value="{{ postcode }}" placeholder="{{ entry_postcode }}" id="input-payment-postcode" class="form-control" autocomplete="off"/>
+                    <div id="payment-postcode-drop" class="dropdown-menu" style="display: none;"></div>
                 </div>
             </div>
             <div class="col-sm-6">
@@ -159,6 +161,32 @@
          <div class="w-50 pe-3"><a class="btn btn-outline-primary d-flex align-items-center justify-content-center w-100" href="{{ cart }}"><i class="fal fa-chevron-left mt-sm-0 me-1"></i><span class="d-none d-sm-inline">Povratak na košaricu</span><span class="d-inline d-sm-none">Košarica</span></a></div>
          <div class="w-50 ps-2"><button type="button" value="{{ button_continue }}" id="button-register" class="btn btn-primary d-flex align-items-center justify-content-center w-100" ><span class="d-none d-sm-inline">Nastavak na dostavu</span><span class="d-inline d-sm-none">Dostava</span><i class="fal fa-chevron-right mt-sm-0 ms-1"></i></button></div>
      </div>
+     <script src="catalog/view/theme/chipoteka/js/agmedia_common.js"></script>
+     <script>
+         $(() => {
+             $('#input-payment-city, #input-payment-postcode').keyup((e) => {
+                 let target = e.currentTarget;
+
+                 if (target.value.length > 1) {
+                     if (target.id == 'input-payment-city') {
+                         callPlaces('city', target.value);
+
+                     }
+
+                     if (target.id == 'input-payment-postcode') {
+                         callPlaces('postcode', target.value);
+                     }
+                 }
+             });
+
+             $('#input-payment-city, #input-payment-postcode').on('blur', () => {
+                 setTimeout(function() {
+                     document.getElementById('payment-city-drop').style['display'] = 'none';
+                     document.getElementById('payment-postcode-drop').style['display'] = 'none';
+                 }, 300);
+             });
+         });
+     </script>
 <script type="text/javascript"><!--
 // Sort the custom fields
 

@@ -94,7 +94,7 @@
     <div class="col-sm-6">
         <div class="form-group dropdown mb-3 required">
             <label class="form-label" for="input-payment-postcode">{{ entry_postcode }}<span class="text-danger">*</span></label>
-            <input type="text" name="postcode" value="{{ postcode }}" placeholder="{{ entry_postcode }}" id="input-payment-postcode" class="form-control" />
+            <input type="text" name="postcode" value="{{ postcode }}" placeholder="{{ entry_postcode }}" id="input-payment-postcode" class="form-control" autocomplete="off" />
             <div id="payment-postcode-drop" class="dropdown-menu" style="display: none;"></div>
         </div>
     </div>
@@ -163,11 +163,6 @@
                     callPlaces('postcode', target.value);
                 }
             }
-        });
-
-        $('#input-payment-city, #input-payment-postcode').on('click', (e) => {
-            console.log(e)
-
         });
 
         $('#input-payment-city, #input-payment-postcode').on('blur', () => {
