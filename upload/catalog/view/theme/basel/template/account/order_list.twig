@@ -63,8 +63,7 @@
                 <td class="py-3">{{ order.total }}</td>
                 <td class="py-3">{{ order.date_added }}</td>
                 <td class="py-3">
-
-
+                  {% if reorder_status %} <a href="{{ order.reorder }}" data-toggle="tooltip" class="nav-link-style me-2" title="{{ button_repeat }}"><i class="fas fa-repeat"></i></a> {% endif %}
                   <a class="nav-link-style me-2" href="{{ order.view }}" data-bs-toggle="tooltip" title="{{ button_view }}"><i class="fas fa-eye"></i></a>
                 </td>
               </tr>

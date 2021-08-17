@@ -8,6 +8,9 @@ class ControllerAccountOrder extends Controller {
 		}
 
 		$this->load->language('account/order');
+        $this->load->language('extension/module/reorder');
+
+        $data['reorder_status'] = $this->config->get('module_reorder_status');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 		
@@ -53,6 +56,7 @@ class ControllerAccountOrder extends Controller {
 			$voucher_total = $this->model_account_order->getTotalOrderVouchersByOrderId($result['order_id']);
 
 			$data['orders'][] = array(
+                'reorder' => $this->url->link('extension/module/reorder', 'order_id=' . $result['order_id'], true),
 				'order_id'   => $result['order_id'],
 				'name'       => $result['firstname'] . ' ' . $result['lastname'],
 				'status'     => $result['status'],
@@ -87,6 +91,9 @@ class ControllerAccountOrder extends Controller {
 
 	public function info() {
 		$this->load->language('account/order');
+        $this->load->language('extension/module/reorder');
+
+        $data['reorder_status'] = $this->config->get('module_reorder_status');
 
 		if (isset($this->request->get['order_id'])) {
 			$order_id = $this->request->get['order_id'];
@@ -158,6 +165,7 @@ class ControllerAccountOrder extends Controller {
 			}
 
 			$data['order_id'] = (int)$this->request->get['order_id'];
+            $data['reorder'] = $this->url->link('extension/module/reorder', 'order_id=' . $data['order_id'], true);
 			$data['date_added'] = date($this->language->get('date_format_short'), strtotime($order_info['date_added']));
 
 			if ($order_info['payment_address_format']) {
@@ -349,6 +357,9 @@ class ControllerAccountOrder extends Controller {
 
 	public function reorder() {
 		$this->load->language('account/order');
+        $this->load->language('extension/module/reorder');
+
+        $data['reorder_status'] = $this->config->get('module_reorder_status');
 
 		if (isset($this->request->get['order_id'])) {
 			$order_id = $this->request->get['order_id'];
