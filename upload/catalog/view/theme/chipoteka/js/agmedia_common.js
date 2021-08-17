@@ -3,14 +3,14 @@
  * @param target
  * @param value
  */
-function callPlaces(target, value) {
+function callPlaces(target, value, idn = 'payment') {
     $.ajax({
         url: 'index.php?route=checkout/checkout/places&' + target + '=' + value,
         dataType: 'json',
         success: function(json) {
             console.log(json);
 
-            drawPlaces(target, json);
+            drawPlaces(target, json, idn);
         },
         error: function(xhr, ajaxOptions, thrownError) {
             console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
@@ -23,7 +23,7 @@ function callPlaces(target, value) {
  * @param target
  * @param json
  */
-function drawPlaces(target, json) {
+function drawPlaces(target, json, idn) {
     let html = '';
     let naziv = '';
     let link = '';
@@ -40,7 +40,7 @@ function drawPlaces(target, json) {
             naziv = '<strong>' + json[obj[i]].zipcode + '</strong> ' + json[obj[i]].cityname;
         }
 
-        link = "selectPlace('" + json[obj[i]].cityname + "', '" + json[obj[i]].zipcode + "');";
+        link = "selectPlace('" + json[obj[i]].cityname + "', '" + json[obj[i]].zipcode + "', '" + idn + "');";
 
         if (i == (obj.length - 1)) {
             html += '<button href="javascript:void(0);" onclick="' + link + '" class="dropdown-item">' + naziv + '</button>';
@@ -49,8 +49,8 @@ function drawPlaces(target, json) {
         }
     }
 
-    document.getElementById('payment-' + target + '-drop').style['display'] = 'block';
-    $('#payment-' + target + '-drop').html(html);
+    document.getElementById(idn + '-' + target + '-drop').style['display'] = 'block';
+    $('#' + idn + '-' + target + '-drop').html(html);
 }
 
 /**
@@ -58,9 +58,9 @@ function drawPlaces(target, json) {
  * @param naziv
  * @param zip
  */
-function selectPlace(naziv, zip) {
-    console.log(naziv, zip)
+function selectPlace(naziv, zip, idn) {
+    console.log(naziv, zip, idn)
 
-    $('#input-payment-city').val(naziv);
-    $('#input-payment-postcode').val(zip);
+    $('#input-' + idn + '-city').val(naziv);
+    $('#input-' + idn + '-postcode').val(zip);
 }
