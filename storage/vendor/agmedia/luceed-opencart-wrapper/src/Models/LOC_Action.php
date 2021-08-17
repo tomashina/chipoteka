@@ -12,6 +12,7 @@ use Agmedia\Models\Category\CategoryToStore;
 use Agmedia\Models\Manufacturer\Manufacturer;
 use Agmedia\Models\Product\Product;
 use Agmedia\Models\Product\ProductCategory;
+use Agmedia\Models\SeoUrl;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Capsule\Manager as DB;
@@ -342,6 +343,7 @@ class LOC_Action
             CategoryToLayout::where('category_id', $category->category_id)->delete();
             CategoryPath::where('category_id', $category->category_id)->delete();
             CategoryDescription::where('category_id', $category->category_id)->delete();
+            SeoUrl::where('query', 'category_id=' . $category->category_id)->delete();
         }
 
         Category::where('parent_id', agconf('import.default_action_category'))->delete();
