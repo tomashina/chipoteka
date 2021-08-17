@@ -43,9 +43,9 @@ function drawPlaces(target, json, idn) {
         link = "selectPlace('" + json[obj[i]].cityname + "', '" + json[obj[i]].zipcode + "', '" + idn + "');";
 
         if (i == (obj.length - 1)) {
-            html += '<button href="javascript:void(0);" onclick="' + link + '" class="dropdown-item">' + naziv + '</button>';
+            html += '<a href="javascript:void(0);" onclick="' + link + '" class="dropdown-item">' + naziv + '</a>';
         } else {
-            html += '<button href="javascript:void(0);" onclick="' + link + '" class="dropdown-item">' + naziv + '</button><div class="dropdown-divider"></div>';
+            html += '<a href="javascript:void(0);" onclick="' + link + '" class="dropdown-item">' + naziv + '</a><div class="dropdown-divider"></div>';
         }
     }
 
