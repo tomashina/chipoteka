@@ -220,6 +220,19 @@ class ControllerCheckoutGuest extends Controller {
                 $json['error']['postcode'] = 'Morate odabrati poštanski broj sa liste!';
             }
 
+            if ( ! $json) {
+                $list = $loc->getList();
+                $findall = $list->places->where('cityname', $this->request->post['city'])
+                                        ->where('zipcode', $this->request->post['postcode'])
+                                        ->count();
+
+                if ( ! $findall) {
+                    $json['error']['city'] = 'Grad i poštanski broj moraju odgovarati.';
+                    $json['error']['postcode'] = 'Poštanski broj i grad moraju odgovarati.';
+                }
+
+            }
+
 			if ($this->request->post['country_id'] == '') {
 				$json['error']['country'] = $this->language->get('error_country');
 			}
