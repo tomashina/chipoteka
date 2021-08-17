@@ -214,7 +214,7 @@ class ControllerCheckoutGuest extends Controller {
 				$json['error']['postcode'] = $this->language->get('error_postcode');
 			}
 
-            $findp = $loc->getList()->find($this->request->post['postcode']);
+            $findp = $loc->getList()->find($this->request->post['postcode'], 'zipcode');
 
             if ( ! $findp->places->count()) {
                 $json['error']['postcode'] = 'Morate odabrati poštanski broj sa liste!';
