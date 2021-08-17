@@ -165,12 +165,12 @@
       let target = e.currentTarget;
 
       if (target.value.length > 1) {
-        if (target.id == 'input-shipping-city') {
+        if (target.id == 'input-shipping-city', 'shipping') {
           callPlaces('city', target.value);
 
         }
 
-        if (target.id == 'input-shipping-postcode') {
+        if (target.id == 'input-shipping-postcode', 'shipping') {
           callPlaces('postcode', target.value);
         }
       }
