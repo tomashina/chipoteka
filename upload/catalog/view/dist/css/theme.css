@@ -29074,6 +29074,7 @@ body > main.offcanvas-enabled {
   margin-bottom: 0;
   border-bottom: 1px solid #E3E3E3;
   color: #5C5C5C;
+    display:block;
 }
 
 .product-card .product-price {
