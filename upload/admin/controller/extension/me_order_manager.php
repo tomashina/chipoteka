@@ -456,6 +456,7 @@ class ControllerExtensionMeordermanager extends Controller {
 				'order_id'      => $result['order_id'],
 				'invoice_no'      => $order_info['invoice_no'],
 				'invoice_prefix'      => $order_info['invoice_prefix'],
+                'luceed_uid' => $order_info['luceed_uid'],
 				'store_id'      => $order_info['store_id'],
 				'store_name'      => $order_info['store_name'],
 				'store_url'      => $order_info['store_url'],
@@ -1224,6 +1225,13 @@ class ControllerExtensionMeordermanager extends Controller {
 			} else {
 				$data['invoice_no'] = '';
 			}
+
+
+            if ($order_info['luceed_uid']) {
+                $data['luceed_uid'] = $order_info['luceed_uid'];
+            } else {
+                $data['luceed_uid'] = '';
+            }
 
 			$data['date_added'] = date($this->language->get('date_format_short'), strtotime($order_info['date_added']));
 
