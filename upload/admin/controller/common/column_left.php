@@ -255,6 +255,16 @@ class ControllerCommonColumnLeft extends Controller {
 				);
 			}
 
+            #XML Mart extensions#
+            if ($this->user->hasPermission('access', 'extension/me_order_manager')) {
+                $sale[] = array(
+                    'name'	   => 'Order Manager',
+                    'href'     => $this->url->link('extension/me_order_manager', 'user_token=' . $this->session->data['user_token'], true),
+                    'children' => array()
+                );
+            }
+            #XML Mart extensions#
+
 			if ($this->user->hasPermission('access', 'sale/recurring')) {
 				$sale[] = array(
 					'name'	   => $this->language->get('text_order_recurring'),

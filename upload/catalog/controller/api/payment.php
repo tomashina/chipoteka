@@ -60,9 +60,9 @@ class ControllerApiPayment extends Controller {
 				$json['error']['country'] = $this->language->get('error_country');
 			}
 
-			if (!isset($this->request->post['zone_id']) || $this->request->post['zone_id'] == '') {
+			/*if (!isset($this->request->post['zone_id']) || $this->request->post['zone_id'] == '') {
 				$json['error']['zone'] = $this->language->get('error_zone');
-			}
+			}*/
 
 			// Custom field validation
 			$this->load->model('account/custom_field');
@@ -124,7 +124,7 @@ class ControllerApiPayment extends Controller {
 					'iso_code_2'     => $iso_code_2,
 					'iso_code_3'     => $iso_code_3,
 					'address_format' => $address_format,
-					'custom_field'   => isset($this->request->post['custom_field']) ? $this->request->post['custom_field'] : array()
+					'custom_field'   => isset($this->request->post['custom_field']['address']) ? $this->request->post['custom_field']['address'] : array()
 				);
 
 				$json['success'] = $this->language->get('text_address');

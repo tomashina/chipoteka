@@ -350,6 +350,32 @@ class ControllerApiOrder extends Controller {
 				}
 
 				$this->model_checkout_order->addOrderHistory($json['order_id'], $order_status_id);
+
+                #XML Mart extensions#
+                $json['order_info'] = $this->model_checkout_order->getOrder($json['order_id']);
+                $json['product'] = count($this->model_checkout_order->getOrderProducts($json['order_id']));
+                $json['order_status']  = $json['order_info']['order_status'] ? $json['order_info']['order_status'] : $this->language->get('text_missing');
+                $json['date_added'] = date($this->language->get('date_format_short'), strtotime($json['order_info']['date_added']));
+                $json['date_modified'] = date($this->language->get('date_format_short'), strtotime($json['order_info']['date_modified']));
+                $json['total'] = $this->currency->format($json['order_info']['total'], $json['order_info']['currency_code'], $json['order_info']['currency_value']);
+                if(isset($this->config->get('module_me_order_manager_setting_ostatus')[$order_status_id])){
+                    $json['bgcolor'] = $this->config->get('module_me_order_manager_setting_ostatus')[$order_status_id]['bgcolor'];
+                    $json['color'] = $this->config->get('module_me_order_manager_setting_ostatus')[$order_status_id]['color'];
+                }
+                //Coupon,Voucher,reward
+                $ordertotals = $this->model_checkout_order->getOrderTotals($json['order_id']);
+
+                $couponvoucher = array();
+                foreach ($ordertotals as $ordertotal) {
+                    // If coupon, voucher or reward points
+                    $start = strpos($ordertotal['title'], '(') + 1;
+                    $end = strrpos($ordertotal['title'], ')');
+
+                    if ($start && $end) {
+                        $json[$ordertotal['code']] = substr($ordertotal['title'], $start, $end - $start);
+                    }
+                }
+                #XML Mart extensions#
 				
 				// clear cart since the order has already been successfully stored.
 				$this->cart->clear();
@@ -676,6 +702,40 @@ class ControllerApiOrder extends Controller {
 						$order_data['commission'] = 0;
 					}
 
+                    if (isset($this->request->post['order_status_id'])) {
+                        $order_status_id = $this->request->post['order_status_id'];
+                    } else {
+                        $order_status_id = $this->config->get('config_order_status_id');
+                    }
+                    $order_status_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "order_status WHERE order_status_id = '" . (int)$order_status_id . "' AND language_id = '" . (int)$order_info['language_id'] . "'");
+
+                    if ($order_status_query->num_rows) {
+                        $order_status = $order_status_query->row['name'];
+                    }else{
+                        $order_status = $this->language->get('text_missing');
+                    }
+                    $date_added = date($this->language->get('date_format_short'), strtotime($order_info['date_added']));
+
+                    $find = array(
+                        '{order_id}',
+                        '{firstname}',
+                        '{lastname}',
+                        '{order_status}',
+                        '{date_added}'
+                    );
+
+                    $replace = array(
+                        $order_id,
+                        $order_data['firstname'],
+                        $order_data['lastname'],
+                        $order_status,
+                        $date_added
+                    );
+
+                    if ($order_data['comment']) {
+                        $order_data['comment'] = str_replace($find,$replace,strip_tags($order_data['comment']));
+                    }
+
 					$this->model_checkout_order->editOrder($order_id, $order_data);
 
 					// Set the order history
@@ -686,6 +746,32 @@ class ControllerApiOrder extends Controller {
 					}
 					
 					$this->model_checkout_order->addOrderHistory($order_id, $order_status_id);
+                    #XML Mart extensions#
+                    $json['order_info'] = $this->model_checkout_order->getOrder($order_id);
+                    $json['product'] = count($this->model_checkout_order->getOrderProducts($order_id));
+                    $json['order_id'] = $order_id;
+                    $json['order_status']  = $json['order_info']['order_status'] ? $json['order_info']['order_status'] : $this->language->get('text_missing');
+                    $json['date_added'] = date($this->language->get('date_format_short'), strtotime($json['order_info']['date_added']));
+                    $json['date_modified'] = date($this->language->get('date_format_short'), strtotime($json['order_info']['date_modified']));
+                    $json['total'] = $this->currency->format($json['order_info']['total'], $json['order_info']['currency_code'], $json['order_info']['currency_value']);
+                    if(isset($this->config->get('module_me_order_manager_setting_ostatus')[$order_status_id])){
+                        $json['bgcolor'] = $this->config->get('module_me_order_manager_setting_ostatus')[$order_status_id]['bgcolor'];
+                        $json['color'] = $this->config->get('module_me_order_manager_setting_ostatus')[$order_status_id]['color'];
+                    }
+                    //Coupon,Voucher,reward
+                    $ordertotals = $this->model_checkout_order->getOrderTotals($order_id);
+
+                    $couponvoucher = array();
+                    foreach ($ordertotals as $ordertotal) {
+                        // If coupon, voucher or reward points
+                        $start = strpos($ordertotal['title'], '(') + 1;
+                        $end = strrpos($ordertotal['title'], ')');
+
+                        if ($start && $end) {
+                            $json[$ordertotal['code']] = substr($ordertotal['title'], $start, $end - $start);
+                        }
+                    }
+                    #XML Mart extensions#
 
 					// When order editing is completed, delete added order status for Void the order first.
 					if ($order_status_id) {

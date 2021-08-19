@@ -1043,9 +1043,9 @@ class ControllerCustomerCustomer extends Controller {
 					$this->error['address'][$key]['country'] = $this->language->get('error_country');
 				}
 
-				if (!isset($value['zone_id']) || $value['zone_id'] == '') {
+				/*if (!isset($value['zone_id']) || $value['zone_id'] == '') {
 					$this->error['address'][$key]['zone'] = $this->language->get('error_zone');
-				}
+				}*/
 
 				foreach ($custom_fields as $custom_field) {
 					if (($custom_field['location'] == 'address') && $custom_field['required'] && empty($value['custom_field'][$custom_field['custom_field_id']])) {
