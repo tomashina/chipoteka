@@ -64,7 +64,7 @@ class LuceedEndPoints
             'mjesta'            => 'mjesta/naziv',
             'vrste_placanja'    => 'vrsteplacanja/list',
             //
-            'stock_skladista'   => 'StanjeZalihe/Skladiste/[101,001]',
+            'stock_skladista'   => 'StanjeZalihe/Skladiste/',
             'stock_dobavljaca'  => 'StanjeZaliheDobavljaci/Lista',
         ];
     }

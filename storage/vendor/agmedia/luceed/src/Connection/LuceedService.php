@@ -52,7 +52,7 @@ class LuceedService
      */
     public function get(string $url, string $option = '')
     {
-        $this->logRequest('GET', $url);
+        $this->logRequest('GET', $url . $option);
 
         // Local or testing enviroment.
         if ($this->env == 'local') {
