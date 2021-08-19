@@ -297,7 +297,7 @@ class LOC_Order
                     'artikl' => $order_product->model,
                     'kolicina'   => isset($price['quantity']) ? $price['quantity'] : (int) $order_product->quantity,
                     'cijena'     => (float) $price['cijena'],
-                    'rabat'      => (int) $price['rabat'],
+                    'rabat'      => (float) number_format($price['rabat'], 2),
                 ];
             }
         }
@@ -371,7 +371,7 @@ class LOC_Order
 
             return [
                 'cijena' => $cijena,
-                'rabat'  => number_format($return_rabat, 2)
+                'rabat'  => abs($return_rabat)
             ];
         }
 
@@ -394,7 +394,7 @@ class LOC_Order
     {
         $value = (($regular_price - $action_price) / $regular_price) * 100;
 
-        return floor($value);
+        return $value;
     }
 
 
