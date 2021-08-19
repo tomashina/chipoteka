@@ -628,6 +628,15 @@ class ControllerCatalogProduct extends Controller {
 			$data['ean'] = '';
 		}
 
+
+        if (isset($this->request->post['luceed_uid'])) {
+            $data['luceed_uid'] = $this->request->post['luceed_uid'];
+        } elseif (!empty($product_info)) {
+            $data['luceed_uid'] = $product_info['luceed_uid'];
+        } else {
+            $data['luceed_uid'] = '';
+        }
+
 		if (isset($this->request->post['jan'])) {
 			$data['jan'] = $this->request->post['jan'];
 		} elseif (!empty($product_info)) {
