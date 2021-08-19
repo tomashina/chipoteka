@@ -485,8 +485,8 @@ class ControllerExtensionMeordermanager extends Controller {
 				'tracking_url'      => $tracking_url,
 				'order_status'  => $result['order_status'] ? $result['order_status'] : $this->language->get('text_missing'),
 				'total'         => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value']),
-				'date_added'    => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
-				'date_modified' => date($this->language->get('date_format_short'), strtotime($result['date_modified'])),
+				'date_added'    => $result['date_added'],
+				'date_modified' => $result['date_modified'],
 				'shipping_code' => $result['shipping_code'],
 				'invoice' => $this->url->link('sale/order/invoice', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . (int)$result['order_id'], true),
 				'view'          => $this->url->link('sale/order/info', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . $result['order_id'] . $url, true),
@@ -1233,7 +1233,9 @@ class ControllerExtensionMeordermanager extends Controller {
                 $data['luceed_uid'] = '';
             }
 
-			$data['date_added'] = date($this->language->get('date_format_short'), strtotime($order_info['date_added']));
+			//$data['date_added'] = date($this->language->get('date_format_short'), strtotime($order_info['date_added']));
+
+            $data['date_added'] = $order_info['date_added'];
 
 			$data['firstname'] = $order_info['firstname'];
 			$data['lastname'] = $order_info['lastname'];
