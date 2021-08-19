@@ -362,6 +362,11 @@
                     padding-left: 1.25rem;
                     padding-right: 1rem;
                     border-radius: 0;
+                    cursor: default;
+
+                    &.noneafter {
+                        cursor: pointer;
+                    }
 
                     // Icon
                     &::after {
@@ -422,6 +427,7 @@
                         padding-left: 0;
                         padding-right: 0;
                         border-bottom: 1px solid $white;
+                        cursor: default;
 
                         &:first-child {
                             border-top: 1px solid $white;
@@ -455,7 +461,7 @@
                                 line-height: 1.375rem;
                                 padding-top: .0625rem;
                                 background-image: none;
-                                cursor: pointer;
+                                // cursor: pointer;
 
                                 transform: rotate(0deg);
 

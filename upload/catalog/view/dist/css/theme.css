@@ -28514,6 +28514,13 @@ body > main.offcanvas-enabled {
   padding-left: 1.25rem;
   padding-right: 1rem;
   border-radius: 0;
+  cursor: default;
+}
+
+.sidebar #account .accordion-item .accordion-header .accordion-button.noneafter,
+.sidebar #menu .accordion-item .accordion-header .accordion-button.noneafter,
+.sidebar #categories .accordion-item .accordion-header .accordion-button.noneafter {
+  cursor: pointer;
 }
 
 .sidebar #account .accordion-item .accordion-header .accordion-button::after,
@@ -28564,6 +28571,7 @@ body > main.offcanvas-enabled {
   padding-left: 0;
   padding-right: 0;
   border-bottom: 1px solid #fff;
+  cursor: default;
 }
 
 .sidebar #account .accordion-item .widget-links .widget-list .widget-list-item:first-child,
@@ -28602,7 +28610,6 @@ body > main.offcanvas-enabled {
   line-height: 1.375rem;
   padding-top: .0625rem;
   background-image: none;
-  cursor: pointer;
   transform: rotate(0deg);
   transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
