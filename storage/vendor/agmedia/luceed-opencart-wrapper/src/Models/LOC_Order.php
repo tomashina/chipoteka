@@ -348,7 +348,8 @@ class LOC_Order
 
         if ($price < $product->price) {
             $cijena = number_format($product->price, 2, '.', '');
-            $rabat = number_format((($price / $product->price) * 100 - 100), 2);
+            $dis = (($price / $product->price) * 100) - 100;
+            $rabat = number_format($dis, 2);
             $return_rabat = number_format((($price / $product->price) * 100 - 100), 2);
 
             $B = [50, 75, 90];
