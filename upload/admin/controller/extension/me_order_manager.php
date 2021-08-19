@@ -456,6 +456,7 @@ class ControllerExtensionMeordermanager extends Controller {
 				'order_id'      => $result['order_id'],
 				'invoice_no'      => $order_info['invoice_no'],
 				'invoice_prefix'      => $order_info['invoice_prefix'],
+                'luceed_uid' => $order_info['luceed_uid'],
 				'store_id'      => $order_info['store_id'],
 				'store_name'      => $order_info['store_name'],
 				'store_url'      => $order_info['store_url'],
@@ -484,8 +485,8 @@ class ControllerExtensionMeordermanager extends Controller {
 				'tracking_url'      => $tracking_url,
 				'order_status'  => $result['order_status'] ? $result['order_status'] : $this->language->get('text_missing'),
 				'total'         => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value']),
-				'date_added'    => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
-				'date_modified' => date($this->language->get('date_format_short'), strtotime($result['date_modified'])),
+				'date_added'    => $result['date_added'],
+				'date_modified' => $result['date_modified'],
 				'shipping_code' => $result['shipping_code'],
 				'invoice' => $this->url->link('sale/order/invoice', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . (int)$result['order_id'], true),
 				'view'          => $this->url->link('sale/order/info', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . $result['order_id'] . $url, true),
@@ -1225,7 +1226,16 @@ class ControllerExtensionMeordermanager extends Controller {
 				$data['invoice_no'] = '';
 			}
 
-			$data['date_added'] = date($this->language->get('date_format_short'), strtotime($order_info['date_added']));
+
+            if ($order_info['luceed_uid']) {
+                $data['luceed_uid'] = $order_info['luceed_uid'];
+            } else {
+                $data['luceed_uid'] = '';
+            }
+
+			//$data['date_added'] = date($this->language->get('date_format_short'), strtotime($order_info['date_added']));
+
+            $data['date_added'] = $order_info['date_added'];
 
 			$data['firstname'] = $order_info['firstname'];
 			$data['lastname'] = $order_info['lastname'];

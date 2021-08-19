@@ -110,7 +110,7 @@ class LOC_Stock
     {
         if ($this->query != '') {
             $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($this->query, 0, -1) . ";");
-            $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.quantity = pt.quantity");
+            $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.luceed_uid = pt.uid SET p.quantity = pt.quantity");
 
             return 1;
         }
