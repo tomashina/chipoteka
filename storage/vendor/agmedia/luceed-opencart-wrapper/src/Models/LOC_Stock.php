@@ -77,7 +77,7 @@ class LOC_Stock
                 ]);
             }
 
-            Log::store($this->skladista_stock->toArray(), 'stock_' . microtime(true));
+            //Log::store($this->skladista_stock->toArray(), 'stock_' . microtime(true));
 
             $this->skladista_sorted = true;
         }
@@ -94,7 +94,7 @@ class LOC_Stock
                 ]);
             }
 
-            Log::store($this->dobavljaci_stock->toArray(), 'stock_' . microtime(true));
+            //Log::store($this->dobavljaci_stock->toArray(), 'stock_' . microtime(true));
 
             $this->dobavljaci_sorted = true;
         }
