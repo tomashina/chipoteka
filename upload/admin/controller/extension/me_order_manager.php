@@ -860,6 +860,9 @@ class ControllerExtensionMeordermanager extends Controller {
 		$pagination->limit = $limit;
 		$pagination->url = $this->url->link('extension/me_order_manager', 'user_token=' . $this->session->data['user_token'] . $url . '&page={page}', true);
 
+        $pagination->text_next = '&gt;'; //change the html for the next link here
+        $pagination->text_prev = '&lt;'; //change the html for the previous link here
+
 		$data['pagination'] = $pagination->render();
 
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($order_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($order_total - $limit)) ? $order_total : ((($page - 1) * $limit) + $limit), $order_total, ceil($order_total / $limit));
