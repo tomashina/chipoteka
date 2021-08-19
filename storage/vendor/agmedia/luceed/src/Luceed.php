@@ -210,25 +210,22 @@ class Luceed
      *
      * @return false|mixed
      */
-    public function getStock($warehouse_uid, $product)
+    public function getWarehouseStock(array $uids = null)
     {
-        $query = $warehouse_uid . '/' . $product;
+        $query = '[' . implode(',', $uids) . ']';
 
-        return $this->service->get($this->end_points['stock_get'], $query);
+        return $this->service->get($this->end_points['stock_skladista'], $query);
     }
 
 
     /**
-     * @param $warehouse_uid
      * @param $article_uid
      *
      * @return false|mixed
      */
-    public function getIndividualStock($article_uid, $warehouse_uid)
+    public function getSuplierStock(string $article_uid = '')
     {
-        $option = $article_uid . '/' . $warehouse_uid;
-
-        return $this->service->get($this->end_points['ind_stock_get'], $option);
+        return $this->service->get($this->end_points['stock_dobavljaca'], $article_uid);
     }
 
 

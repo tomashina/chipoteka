@@ -12,6 +12,7 @@ use Agmedia\LuceedOpencartWrapper\Models\LOC_Manufacturer;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Payment;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Product;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle;
+use Agmedia\LuceedOpencartWrapper\Models\LOC_Stock;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse;
 use Agmedia\Models\Category\Category;
 use Agmedia\Models\Product\Product;
@@ -349,10 +350,18 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateQuantities()
     {
-        $_loc = new LOC_Product(LuceedProduct::all());
+        $_loc = new LOC_Stock();
 
-        $updated = $_loc->sortForUpdate()->update('quantity');
+        $_loc->setSkladista(
+            LuceedProduct::getWarehouseStock(agconf('import.warehouse.default'))
+        )->sort();
 
+        $_loc->setDobavljaci(
+            LuceedProduct::getSuplierStock()
+        )->sort();
+
+        $updated = $_loc->createQuery()->update();
+        
         return $this->response($updated, 'update');
     }
 

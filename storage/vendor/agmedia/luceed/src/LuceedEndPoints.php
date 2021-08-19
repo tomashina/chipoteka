@@ -31,6 +31,9 @@ class LuceedEndPoints
             'mjesta'            => 'mjesta.json',
             'vrste_placanja'    => 'vrste_placanja.json',
             //
+            'stock_skladista'   => 'stock_skladista.json',
+            'stock_dobavljaca'  => 'stock_dobavljaca.json',
+            //
             'product_0730222201' => 'artikl_0730222201.json',
             'product_0730161301' => 'artikl_0730161301.json',
             'product_9001002044' => 'artikl_9001002044.json',
@@ -60,6 +63,9 @@ class LuceedEndPoints
             'raspis'            => 'NaloziProdaje/raspis/poslovnica/',
             'mjesta'            => 'mjesta/naziv',
             'vrste_placanja'    => 'vrsteplacanja/list',
+            //
+            'stock_skladista'   => 'StanjeZalihe/Skladiste/[101,001]',
+            'stock_dobavljaca'  => 'StanjeZaliheDobavljaci/Lista',
         ];
     }
 
