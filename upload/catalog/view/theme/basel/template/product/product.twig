@@ -16,6 +16,7 @@
                 </nav>
             </div>
         </div>
+
     </div>
     <div class="container-fluid">
         <div class="bg-white shadow-lg rounded-3" >
@@ -131,9 +132,11 @@
 
                                         <button class="btn btn-outline-secondary btn-wishlist-v2" onclick="wishlist.add('{{ product_id }}');" type="button"><i class="fal fa-heart fs-lg "></i></button>
 
+
+
                                     </div>
 
-
+                                    <div class="text-danger porukareach mb-3 d-none" >Dosegli ste maksimum raspoloživosti</div>
 
                                     {% if minimum > 1 %}
                                         <div class="alert alert-sm alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
@@ -229,7 +232,10 @@
 
                                 <input type="hidden" name="product_id" value="{{ product_id }}" />
                                 <button type="button" id="button-cart2" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
+
                             </div>
+
+
                         </div>
                         <!-- Specs table-->
                         <div class="row pt-2">
@@ -480,7 +486,18 @@
             }
             if (newVal <= {{ qty }} ) {
                 $('.input-quantity').val(newVal);
+                $('.porukareach').addClass('d-none');
+
             }
+           if (newVal > {{ qty }} ) {
+                $('.porukareach').removeClass('d-none');
+            }
+           else{
+               $('.porukareach').addClass('d-none');
+           }
+
+
+
         });
 
     </script>
