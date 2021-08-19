@@ -1,6 +1,6 @@
 <?php
 // Heading
-$_['heading_title']              = 'Order Manager';
+$_['heading_title']              = 'Narudžbe';
 
 // Text
 $_['text_success']               = 'Success: You have modified orders!';
