@@ -177,6 +177,8 @@
     line-height: $btn-scroll-top-size - .125rem;
   }
 
+  
+
   .btn-scroll-top-tooltip {
     position: absolute;
     top: 50%;
@@ -216,6 +218,11 @@
     &.right-15 {
       right: $spacer + .9375rem;
     }
+  }
+
+
+  @include media-breakpoint-down(xl) {
+    bottom: 4rem;
   }
 }
 
