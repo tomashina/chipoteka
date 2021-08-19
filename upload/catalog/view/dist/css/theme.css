@@ -1,4 +1,15 @@
 @charset "UTF-8";
+/*
+ * Cartzilla | Bootstrap E-Commerce Template
+ * Copyright 2021 Createx Studio
+ * Theme styles
+ */
+/*!
+ * Bootstrap v5.0.0-beta1 (https://getbootstrap.com/)
+ * Copyright 2011-2020 The Bootstrap Authors
+ * Copyright 2011-2020 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
 @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap");
 :root {
   --bs-blue: #0d6efd;
@@ -22940,7 +22951,7 @@ readers do not read off random characters that represent icons */
   font-family: 'Font Awesome 5 Pro';
   font-style: normal;
   font-weight: 900;
-  font-display: swap;
+  font-display: block;
   src: url("../../dist/fonts/fa-fonts/fa-solid-900.eot");
   src: url("../../dist/fonts/fa-fonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("../../dist/fonts/fa-fonts/fa-solid-900.woff2") format("woff2"), url("../../dist/fonts/fa-fonts/fa-solid-900.woff") format("woff"), url("../../dist/fonts/fa-fonts/fa-solid-900.ttf") format("truetype"), url("../../dist/fonts/fa-fonts/fa-solid-900.svg#fontawesome") format("svg");
 }
@@ -22959,7 +22970,7 @@ readers do not read off random characters that represent icons */
   font-family: 'Font Awesome 5 Pro';
   font-style: normal;
   font-weight: 300;
-  font-display: swap;
+  font-display: block;
   src: url("../../dist/fonts/fa-fonts/fa-light-300.eot");
   src: url("../../dist/fonts/fa-fonts/fa-light-300.eot?#iefix") format("embedded-opentype"), url("../../dist/fonts/fa-fonts/fa-light-300.woff2") format("woff2"), url("../../dist/fonts/fa-fonts/fa-light-300.woff") format("woff"), url("../../dist/fonts/fa-fonts/fa-light-300.ttf") format("truetype"), url("../../dist/fonts/fa-fonts/fa-light-300.svg#fontawesome") format("svg");
 }
@@ -29012,6 +29023,8 @@ body > main.offcanvas-enabled {
 .product-card .card-img-top {
   position: relative;
   border-radius: 0.563rem;
+  width: calc(100% - 10px);
+  margin: 5px;
 }
 
 .product-card .card-img-top img {
@@ -29074,7 +29087,6 @@ body > main.offcanvas-enabled {
   margin-bottom: 0;
   border-bottom: 1px solid #E3E3E3;
   color: #5C5C5C;
-    display:block;
 }
 
 .product-card .product-price {
@@ -29309,7 +29321,7 @@ body > main.offcanvas-enabled {
   }
 }
 
-@media only screen and (min-width: 1440px) {
+@media only screen and (min-width: 1460px) {
   .product-card-wrapper {
     width: 25%;
     min-width: 25%;

@@ -76,6 +76,8 @@
     .card-img-top {
         position: relative;
         border-radius: 0.563rem;
+        width: calc(100% - 10px);
+        margin: 5px; 
 
         img {
             width: 100%;
