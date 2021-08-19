@@ -77,8 +77,6 @@ class LOC_Stock
                 ]);
             }
 
-            //Log::store($this->skladista_stock->toArray(), 'stock_' . microtime(true));
-
             $this->skladista_sorted = true;
         }
 
@@ -93,8 +91,6 @@ class LOC_Stock
                     'stanje_kol' => $item->sum('dobavljac_stanje')
                 ]);
             }
-
-            //Log::store($this->dobavljaci_stock->toArray(), 'stock_' . microtime(true));
 
             $this->dobavljaci_sorted = true;
         }
@@ -112,12 +108,16 @@ class LOC_Stock
             foreach ($this->skladista_stock as $item) {
                 $this->skladista_query .= '("' . $item['artikl_uid'] . '", ' . $item['stanje_kol'] . ', 0),';
             }
+            
+            Log::store($this->skladista_query, 'store_skl_' . microtime(true));
         }
 
         if ($this->dobavljaci_sorted && $this->dobavljaci_stock) {
             foreach ($this->dobavljaci_stock as $item) {
                 $this->dobavljaci_query .= '("' . $item['artikl'] . '", ' . $item['stanje_kol'] . ', 0),';
             }
+
+            Log::store($this->dobavljaci_query, 'store_dob_' . microtime(true));
         }
 
         return $this;
