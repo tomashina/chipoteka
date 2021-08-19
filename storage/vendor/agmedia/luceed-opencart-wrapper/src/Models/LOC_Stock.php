@@ -33,7 +33,12 @@ class LOC_Stock
     /**
      * @var null
      */
-    public $stock = null;
+    private $skladista_stock = null;
+
+    /**
+     * @var null
+     */
+    private $dobavljaci_stock = null;
 
     /**
      * @var null
@@ -42,7 +47,9 @@ class LOC_Stock
 
     private $dobavljaci_sorted = null;
 
-    private $query = '';
+    private $skladista_query = '';
+
+    private $dobavljaci_query = '';
 
     /**
      * LOC_Product constructor.
@@ -58,28 +65,36 @@ class LOC_Stock
      */
     public function sort()
     {
-        if ( ! $this->stock) {
-            $this->stock = collect();
-        }
-
         if ($this->skladista && ! $this->skladista_sorted) {
+            if ( ! $this->skladista_stock) {
+                $this->skladista_stock = collect();
+            }
+
             foreach ($this->skladista->groupBy('artikl_uid') as $key => $item) {
-                $this->stock->push([
+                $this->skladista_stock->push([
                     'artikl_uid' => $key,
                     'stanje_kol' => $item->sum('stanje_kol')
                 ]);
             }
 
+            Log::store($this->skladista_stock->toArray(), 'stock_' . microtime(true));
+
             $this->skladista_sorted = true;
         }
 
         if ($this->dobavljaci && ! $this->dobavljaci_sorted) {
+            if ( ! $this->dobavljaci_stock) {
+                $this->dobavljaci_stock = collect();
+            }
+
             foreach ($this->dobavljaci->where('main', 'D')->groupBy('sifra_artikla') as $key => $item) {
-                $this->stock->push([
-                    'artikl_uid' => $key,
+                $this->dobavljaci_stock->push([
+                    'artikl' => $key,
                     'stanje_kol' => $item->sum('dobavljac_stanje')
                 ]);
             }
+
+            Log::store($this->dobavljaci_stock->toArray(), 'stock_' . microtime(true));
 
             $this->dobavljaci_sorted = true;
         }
@@ -93,9 +108,15 @@ class LOC_Stock
      */
     public function createQuery()
     {
-        if ($this->skladista_sorted && $this->dobavljaci_sorted && $this->stock) {
-            foreach ($this->stock as $item) {
-                $this->query .= '("' . $item['artikl_uid'] . '", ' . $item['stanje_kol'] . ', 0),';
+        if ($this->skladista_sorted && $this->skladista_stock) {
+            foreach ($this->skladista_stock as $item) {
+                $this->skladista_query .= '("' . $item['artikl_uid'] . '", ' . $item['stanje_kol'] . ', 0),';
+            }
+        }
+
+        if ($this->dobavljaci_sorted && $this->dobavljaci_stock) {
+            foreach ($this->dobavljaci_stock as $item) {
+                $this->dobavljaci_query .= '("' . $item['artikl'] . '", ' . $item['stanje_kol'] . ', 0),';
             }
         }
 
@@ -108,9 +129,16 @@ class LOC_Stock
      */
     public function update(): int
     {
-        if ($this->query != '') {
-            $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($this->query, 0, -1) . ";");
+        if ($this->skladista_query != '') {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($this->skladista_query, 0, -1) . ";");
             $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.luceed_uid = pt.uid SET p.quantity = pt.quantity");
+
+            $this->deleteProductTempDB();
+
+            if ($this->dobavljaci_query != '') {
+                $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($this->dobavljaci_query, 0, -1) . ";");
+                $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.quantity = p.quantity + pt.quantity");
+            }
 
             return 1;
         }
@@ -152,6 +180,15 @@ class LOC_Stock
         $this->skladista = collect($json->result[0]->stanje);
 
         return $this;
+    }
+
+
+    /**
+     * @throws \Exception
+     */
+    private function deleteProductTempDB(): void
+    {
+        $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_temp`");
     }
 
 }

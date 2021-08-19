@@ -361,8 +361,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
         )->sort();
 
         $updated = $_loc->createQuery()->update();
-        
-        return $this->response($updated, 'update');
+
+        return $this->response($updated, 'update_stock');
     }
 
 
