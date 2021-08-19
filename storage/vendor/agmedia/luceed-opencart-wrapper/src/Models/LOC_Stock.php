@@ -65,12 +65,13 @@ class LOC_Stock
      */
     public function sort()
     {
+        // SKLADIŠTA
         if ($this->skladista && ! $this->skladista_sorted) {
             if ( ! $this->skladista_stock) {
                 $this->skladista_stock = collect();
             }
 
-            foreach ($this->skladista->groupBy('artikl_uid') as $key => $item) {
+            foreach ($this->skladista->groupBy('artikl_uid')->all() as $key => $item) {
                 $this->skladista_stock->push([
                     'artikl_uid' => $key,
                     'stanje_kol' => $item->sum('stanje_kol')
@@ -80,12 +81,13 @@ class LOC_Stock
             $this->skladista_sorted = true;
         }
 
+        // DOBAVLJAČI
         if ($this->dobavljaci && ! $this->dobavljaci_sorted) {
             if ( ! $this->dobavljaci_stock) {
                 $this->dobavljaci_stock = collect();
             }
 
-            foreach ($this->dobavljaci->where('main', 'D')->groupBy('sifra_artikla') as $key => $item) {
+            foreach ($this->dobavljaci->where('main', 'D')->groupBy('sifra_artikla')->all() as $key => $item) {
                 $this->dobavljaci_stock->push([
                     'artikl' => $key,
                     'stanje_kol' => $item->sum('dobavljac_stanje')
@@ -108,16 +110,12 @@ class LOC_Stock
             foreach ($this->skladista_stock as $item) {
                 $this->skladista_query .= '("' . $item['artikl_uid'] . '", ' . $item['stanje_kol'] . ', 0),';
             }
-            
-            Log::store($this->skladista_query, 'store_skl_' . microtime(true));
         }
 
         if ($this->dobavljaci_sorted && $this->dobavljaci_stock) {
             foreach ($this->dobavljaci_stock as $item) {
                 $this->dobavljaci_query .= '("' . $item['artikl'] . '", ' . $item['stanje_kol'] . ', 0),';
             }
-
-            Log::store($this->dobavljaci_query, 'store_dob_' . microtime(true));
         }
 
         return $this;
