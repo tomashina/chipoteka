@@ -38,6 +38,19 @@
               {% endfor %}
             </div>
           </div>
+          <div class="form-group required">
+            <label class="col-sm-2 control-label">{{ entry_luceed_status_id }}</label>
+            <div class="col-sm-10">
+              {% for language in languages %}
+                <div class="input-group"><span class="input-group-addon"><img src="language/{{ language.code }}/{{ language.code }}.png" title="{{ language.luceed_status_id }}" /></span>
+                  <input type="text" name="order_status[{{ language.language_id }}][luceed_status_id]" value="{{ order_status[language.language_id] ? order_status[language.language_id].luceed_status_id }}" placeholder="{{ entry_luceed_status_id }}" class="form-control" />
+                </div>
+                {% if error_luceed_status_id[language.language_id] %}
+                  <div class="text-danger">{{ error_luceed_status_id[language.language_id] }}</div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
         </form>
       </div>
     </div>
