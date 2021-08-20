@@ -68,8 +68,21 @@ class LuceedProduct extends Facade
         
         return $luceed->getProductsActions();
     }
-    
-    
+
+
+    /**
+     * @param null|string|array $units
+     *
+     * @return mixed
+     */
+    public static function stock($units, $product)
+    {
+        $luceed = new Luceed();
+
+        return $luceed->getStock($units, $product);
+    }
+
+
     /**
      * @param null|string|array $units
      *
@@ -78,7 +91,7 @@ class LuceedProduct extends Facade
     public static function getWarehouseStock(array $units = null)
     {
         $luceed = new Luceed();
-        
+
         return $luceed->getWarehouseStock($units);
     }
     
