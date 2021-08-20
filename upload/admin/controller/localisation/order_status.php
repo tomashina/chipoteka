@@ -174,6 +174,7 @@ class ControllerLocalisationOrderStatus extends Controller {
 		foreach ($results as $result) {
 			$data['order_statuses'][] = array(
 				'order_status_id' => $result['order_status_id'],
+                'luceed_status_id' => $result['luceed_status_id'],
 				'name'            => $result['name'] . (($result['order_status_id'] == $this->config->get('config_order_status_id')) ? $this->language->get('text_default') : null),
 				'edit'            => $this->url->link('localisation/order_status/edit', 'user_token=' . $this->session->data['user_token'] . '&order_status_id=' . $result['order_status_id'] . $url, true)
 			);
@@ -258,6 +259,17 @@ class ControllerLocalisationOrderStatus extends Controller {
 			$data['error_name'] = array();
 		}
 
+
+
+        if (isset($this->error['luceed_status_id'])) {
+            $data['error_luceed_status_id'] = $this->error['luceed_status_id'];
+        } else {
+            $data['error_luceed_status_id'] = array();
+        }
+
+
+
+
 		$url = '';
 
 		if (isset($this->request->get['sort'])) {
@@ -321,6 +333,13 @@ class ControllerLocalisationOrderStatus extends Controller {
 				$this->error['name'][$language_id] = $this->language->get('error_name');
 			}
 		}
+
+
+        foreach ($this->request->post['order_status'] as $language_id => $value) {
+            if ((utf8_strlen($value['luceed_status_id']) < 1) || (utf8_strlen($value['luceed_status_id']) > 5)) {
+                $this->error['luceed_status_id'][$language_id] = $this->language->get('error_luceed_status_id');
+            }
+        }
 
 		return !$this->error;
 	}
