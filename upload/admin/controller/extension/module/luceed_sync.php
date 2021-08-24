@@ -398,17 +398,15 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function checkOrderStatusDuration()
     {
-        /*$loc = new LOC_Order();
+        $loc = new LOC_Order();
 
         $updated = $loc->checkStatusDuration();
 
         foreach ($loc->collection as $order) {
             $this->sendMail($order);
-        }*/
+        }
 
-        $this->sendMail(['order_id' => 185, 'mail' => 7]);
-
-        return $this->response(1, 'orders');
+        return $this->response($updated, 'orders');
     }
 
 
