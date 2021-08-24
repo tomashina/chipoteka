@@ -374,7 +374,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateOrderStatuses()
     {
-        $loc = new LOC_Order();
+        /*$loc = new LOC_Order();
 
         $loc->setOrders(
             LuceedOrder::get(
@@ -387,9 +387,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
         foreach ($loc->collection as $order) {
             $this->sendMail($order);
-        }
+        }*/
 
-        return $this->response($updated, 'orders');
+        return $this->response(0, 'orders');
     }
 
 
@@ -398,15 +398,15 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function checkOrderStatusDuration()
     {
-        $loc = new LOC_Order();
+        /*$loc = new LOC_Order();
 
         $updated = $loc->checkStatusDuration();
 
         foreach ($loc->collection as $order) {
             $this->sendMail($order);
-        }
+        }*/
 
-        return $this->response($updated, 'orders');
+        return $this->response(0, 'orders');
     }
 
 
