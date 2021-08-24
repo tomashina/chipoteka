@@ -2,6 +2,7 @@
 
 use Agmedia\Luceed\Facade\LuceedGroup;
 use Agmedia\Luceed\Facade\LuceedManufacturer;
+use Agmedia\Luceed\Facade\LuceedOrder;
 use Agmedia\Luceed\Facade\LuceedPayments;
 use Agmedia\Luceed\Facade\LuceedProduct;
 use Agmedia\Luceed\Facade\LuceedWarehouse;
@@ -9,6 +10,7 @@ use Agmedia\LuceedOpencartWrapper\Models\LOC_Action;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Category;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Customer;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Manufacturer;
+use Agmedia\LuceedOpencartWrapper\Models\LOC_Order;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Payment;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Product;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle;
@@ -367,6 +369,47 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
 
     /**
+     * @return mixed
+     */
+    public function updateOrderStatuses()
+    {
+        $loc = new LOC_Order();
+
+        $loc->setOrders(
+            LuceedOrder::get(
+                $loc->collectStatuses(),
+                agconf('import.orders.from_date')
+            )
+        );
+
+        $updated = $loc->sort()->updateStatuses();
+
+        foreach ($loc->collection as $order) {
+            $this->sendMail($order);
+        }
+
+        return $this->response($updated, 'orders');
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function checkOrderStatusDuration()
+    {
+        $loc = new LOC_Order();
+
+        $updated = $loc->checkStatusDuration();
+
+        foreach ($loc->collection as $order) {
+            $this->sendMail($order);
+        }
+
+        return $this->response($updated, 'orders');
+    }
+
+
+    /**
      * @return bool
      */
     protected function validateRole()
@@ -376,6 +419,32 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         return ! $this->error;
+    }
+
+
+    /**
+     * @param array $order
+     *
+     * @throws Exception
+     */
+    private function sendMail(array $order)
+    {
+        // Treba učitati odgovarajući tekst maila prema $order['mail'] broju.
+
+        $mail = new Mail($this->config->get('config_mail_engine'));
+        $mail->parameter = $this->config->get('config_mail_parameter');
+        $mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
+        $mail->smtp_username = $this->config->get('config_mail_smtp_username');
+        $mail->smtp_password = html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8');
+        $mail->smtp_port = $this->config->get('config_mail_smtp_port');
+        $mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
+
+        $mail->setTo($order['email']);
+        $mail->setFrom($this->config->get('config_email'));
+        $mail->setSender(html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'));
+        $mail->setSubject('Promjena statusa..');
+        $mail->setText('');
+        $mail->send();
     }
 
 

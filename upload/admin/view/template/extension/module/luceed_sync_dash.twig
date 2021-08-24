@@ -160,13 +160,28 @@
                     </div>
                     <div class="panel-body form-horizontal">
                         <div class="form-group">
-                            <div class="col-sm-5 text-center">
+                            <div class="col-sm-4 text-center">
                                 <a href="javascript:void(0)" id="import-initial-customers" data-toggle="tooltip" title="Import Kupaca" class="btn btn-info btn-block">Import Kupaca</a>
                             </div>
-                            <p class="col-sm-7">Import se radi prema predefiniranoj JSON listi kupaca..</p>
+                            <p class="col-sm-8">Import se radi prema predefiniranoj JSON listi kupaca..</p>
                         </div>
                     </div>
                 </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading darker-bg">
+                        <h3 class="panel-title"><i class="fa fa-list"></i> Narudžbe</h3>
+                    </div>
+                    <div class="panel-body form-horizontal">
+                        <div class="form-group">
+                            <div class="col-sm-4 text-center">
+                                <a href="javascript:void(0)" id="update-order-statuses" data-toggle="tooltip" title="Update Statusa Narudžbi" class="btn btn-info btn-block">Update Statusa Narudžbi</a>
+                            </div>
+                            <p class="col-sm-8">Update statusa se vrši za sve narudžbe u web sustavu...</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
         </div>
@@ -186,6 +201,8 @@
             $('#update-prices-quantities')  .on('click', e => { callApi(e, 'updatePricesAndQuantities'); });
             $('#update-prices')             .on('click', e => { callApi(e, 'updatePrices'); });
             $('#update-quantities')         .on('click', e => { callApi(e, 'updateQuantities'); });
+
+            $('#update-order-statuses')     .on('click', e => { callApi(e, 'updateOrderStatuses'); });
 
             $('#import-initial-manufacturer').on('click', e => { callApi(e, 'importInitialManufacturers'); });
             $('#import-initial-customers')   .on('click', e => { callApi(e, 'importInitialCustomers'); });

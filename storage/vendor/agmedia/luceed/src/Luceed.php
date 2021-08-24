@@ -308,4 +308,15 @@ class Luceed
         return $this->service->get($this->end_points['raspis'], $uid);
     }
 
+
+    /**
+     * @param string $query
+     *
+     * @return false|mixed
+     */
+    public function getOrders(string $query)
+    {
+        return $this->service->get($this->end_points['orders_get'], $query);
+    }
+
 }

@@ -2,12 +2,14 @@
 
 namespace Agmedia\LuceedOpencartWrapper\Models;
 
+use Agmedia\Helpers\Database;
 use Agmedia\Helpers\Log;
 use Agmedia\Kaonekad\Models\ShippingCollector;
 use Agmedia\Luceed\Luceed;
 use Agmedia\Models\Coupon;
 use Agmedia\Models\Order\Order;
 use Agmedia\Models\Order\OrderProduct;
+use Agmedia\Models\Order\OrderStatus;
 use Agmedia\Models\Order\OrderTotal;
 use Agmedia\Models\Product\Product;
 use Illuminate\Support\Carbon;
@@ -20,9 +22,24 @@ class LOC_Order
 {
 
     /**
+     * @var array
+     */
+    public $collection = [];
+
+    /**
+     * @var Database
+     */
+    private $db;
+
+    /**
      * @var Luceed
      */
     private $service;
+
+    /**
+     * @var
+     */
+    private $orders;
 
     /**
      * @var array|null
@@ -54,6 +71,11 @@ class LOC_Order
      */
     private $discount;
 
+    /**
+     * @var string
+     */
+    private $query_update_status = '';
+
 
     /**
      * LOC_Order constructor.
@@ -66,6 +88,15 @@ class LOC_Order
         $this->service = new Luceed();
 
         $this->resolveCouponDiscount();
+    }
+
+
+    /**
+     * @param $orders
+     */
+    public function setOrders($orders)
+    {
+        $this->orders = collect($this->setLuceedOrders($orders));
     }
 
 
@@ -165,6 +196,9 @@ class LOC_Order
     }
 
 
+    /**
+     * @return string
+     */
     public function getStatus()
     {
         $this->log('getStatus()', 1);
@@ -212,6 +246,169 @@ class LOC_Order
 
 
     /**
+     * @param array|null $statuses
+     *
+     * @return string
+     */
+    public function collectStatuses(array $statuses = null): string
+    {
+        $string = '[';
+
+        if ( ! $statuses) {
+            $statuses = OrderStatus::whereNotNull('luceed_status_id')->get();
+        }
+
+        foreach ($statuses as $status) {
+            $string .= $status->luceed_status_id . ',';
+        }
+
+        return substr($string, 0, -1) . ']';
+    }
+
+
+    /**
+     * @return $this
+     */
+    public function sort()
+    {
+        $statuses = OrderStatus::where('luceed_status_id', '!=', '')->get();
+        $orders = Order::select('order_id', 'luceed_uid', 'email', 'payment_code', 'order_status_id', 'order_status_changed')
+                       ->where('order_status_id', '!=', 0)
+                       ->get();
+
+        // Check if status have changed.
+        foreach ($orders as $order) {
+            $l_order = $this->orders->where('nalog_prodaje_uid', $order->luceed_uid)->first();
+
+            if ($l_order) {
+                $old_status = $statuses->where('order_status_id', $order->order_status_id)->first();
+                $new_status = $statuses->where('luceed_status_id', $l_order->status)->first();
+
+                if ($l_order->status != $old_status->luceed_status_id) {
+                    $this->collection[] = [
+                        'order_id' => $order->order_id,
+                        'status_from' => $old_status->luceed_status_id,
+                        'status_to' => $l_order->status,
+                        'oc_status_to' => $new_status->order_status_id,
+                        'payment' => $order->payment_code,
+                        'email' => $order->email
+                    ];
+                }
+            }
+        }
+
+        // Get the apropriate mail.
+        for ($i = 0; $i < count($this->collection); $i++) {
+            foreach (agconf('mail.' . $this->collection[$i]['payment']) as $key => $item) {
+                if ($key) {
+                    if ($this->collection[$i]['status_from'] == $item['from'] && $this->collection[$i]['status_to'] == $item['to']) {
+                        $this->collection[$i]['mail'] = $key;
+                    }
+                }
+            }
+        }
+
+        // Collect update status query.
+        foreach ($this->collection as $item) {
+            $this->query_update_status .= '(' . $item['order_id'] . ', ' . $item['oc_status_to'] . ', 0),';
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * @return int
+     * @throws \Exception
+     */
+    public function updateStatuses(): int
+    {
+        $this->db = new Database(DB_DATABASE);
+
+        $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($this->query_update_status, 0, -1) . ";");
+        $this->db->query("UPDATE " . DB_PREFIX . "order o INNER JOIN " . DB_PREFIX . "product_temp pt ON o.order_id = pt.uid SET o.order_status_id = pt.quantity, o.order_status_changed = NOW();");
+
+        $this->deleteProductTempDB();
+
+        return count($this->collection);
+    }
+
+
+    /**
+     * @return int
+     */
+    public function checkStatusDuration()
+    {
+        $this->collection = [];
+
+        $statuses = OrderStatus::where('luceed_status_id', '!=', '')->get();
+        $orders = Order::select('order_id', 'email', 'payment_code', 'order_status_id', 'order_status_changed')
+                       ->where('order_status_id', '!=', 0)
+                       ->get();
+
+        foreach ($orders as $order) {
+            $status = $statuses->where('order_status_id', $order->order_status_id)->first();
+
+            if ($order->order_status_changed < Carbon::now()->subHour(168) && $status->luceed_status_id == '11') {
+                $this->collection[] = [
+                    'order_id' => $order->order_id,
+                    'longer_then' => 168,
+                    'status' => $status->luceed_status_id,
+                    'payment' => $order->payment_code,
+                    'email' => $order->email
+                ];
+            }
+
+            if ($order->order_status_changed < Carbon::now()->subHour(72) && in_array($status->luceed_status_id, ['02', '05'])) {
+                $this->collection[] = [
+                    'order_id' => $order->order_id,
+                    'longer_then' => 72,
+                    'status' => $status->luceed_status_id,
+                    'payment' => $order->payment_code,
+                    'email' => $order->email
+                ];
+            }
+
+            if ($order->order_status_changed < Carbon::now()->subHour(48) && in_array($status->luceed_status_id, ['12'])) {
+                $this->collection[] = [
+                    'order_id' => $order->order_id,
+                    'longer_then' => 48,
+                    'status' => $status->luceed_status_id,
+                    'payment' => $order->payment_code,
+                    'email' => $order->email
+                ];
+            }
+
+            if ($order->order_status_changed < Carbon::now()->subHour(24) && in_array($status->luceed_status_id, ['02', '05', '12'])) {
+                $this->collection[] = [
+                    'order_id' => $order->order_id,
+                    'longer_then' => 24,
+                    'status' => $status->luceed_status_id,
+                    'payment' => $order->payment_code,
+                    'email' => $order->email
+                ];
+            }
+
+        }
+
+        // Get the apropriate mail.
+        for ($i = 0; $i < count($this->collection); $i++) {
+            foreach (agconf('mail.' . $this->collection[$i]['payment'])[0] as $key => $items) {
+                if ($this->collection[$i]['status'] == $key) {
+                    foreach ($items as $hour => $mail) {
+                        if ($this->collection[$i]['longer_then'] == $hour) {
+                            $this->collection[$i]['mail'] = $mail;
+                        }
+                    }
+                }
+            }
+        }
+
+        return count($this->collection);
+    }
+
+
+    /**
      * Get order payment type UID.
      *
      * @return mixed|string
@@ -231,30 +428,6 @@ class LOC_Order
         }
 
         return 'false';
-    }
-
-
-    /**
-     * @return string
-     */
-    private function getDeliveryTime(): string
-    {
-        $time = '01.01.2021 00:00:00';
-
-        if ($this->oc_order['shipping_code'] == 'collector.collector') {
-            $collector = ShippingCollector::find($this->oc_order['shipping_collector_id']);
-
-            if ($collector) {
-                foreach (agconf('shipping_collector_defaults') as $item) {
-                    if ($item['time'] == $collector->collect_time) {
-                        $time_str = substr($collector->collect_date, 0, 11) . substr($collector->collect_time, 0, 2) . ':00:00';
-                        $time     = Carbon::make($time_str)->format(agconf('luceed.datetime'));
-                    }
-                }
-            }
-        }
-
-        return $time;
     }
 
 
@@ -314,10 +487,6 @@ class LOC_Order
     private function getShippingProduct()
     {
         $shipping_amount = agconf('default_shipping_price');
-
-        /*if ($this->oc_order['total'] > agconf('free_shipping_amount')) {
-            $shipping_amount = 0;
-        }*/
 
         $order_total = OrderTotal::where('order_id', $this->oc_order['order_id'])->get();
 
@@ -403,23 +572,25 @@ class LOC_Order
      */
     private function resolveCouponDiscount(): void
     {
-        $this->discount = 0;
-        $order_total = OrderTotal::where('order_id', $this->oc_order['order_id'])->get();
+        if ($this->oc_order) {
+            $this->discount = 0;
+            $order_total = OrderTotal::where('order_id', $this->oc_order['order_id'])->get();
 
-        $this->log('$order_total', $order_total->toArray());
+            $this->log('$order_total', $order_total->toArray());
 
-        foreach ($order_total as $item) {
-            if ($item->code == 'coupon') {
-                preg_match('#\((.*?)\)#', $item->title, $code);
+            foreach ($order_total as $item) {
+                if ($item->code == 'coupon') {
+                    preg_match('#\((.*?)\)#', $item->title, $code);
 
-                $coupon = Coupon::where('code', $code[1])->first();
+                    $coupon = Coupon::where('code', $code[1])->first();
 
-                if ($coupon) {
-                    $this->log('$coupon', $coupon->toArray());
+                    if ($coupon) {
+                        $this->log('$coupon', $coupon->toArray());
 
-                    $this->discount = $coupon->discount;
+                        $this->discount = $coupon->discount;
 
-                    $this->log('$this->discount', $this->discount);
+                        $this->log('$this->discount', $this->discount);
+                    }
                 }
             }
         }
@@ -487,6 +658,31 @@ class LOC_Order
 
         return $has;
 
+    }
+
+
+    /**
+     * Return the corrected response from luceed service.
+     * Without unnecessary tags.
+     *
+     * @param $products
+     *
+     * @return array
+     */
+    private function setLuceedOrders($orders): array
+    {
+        $json = json_decode($orders);
+
+        return $json->result[0]->nalozi_prodaje;
+    }
+
+
+    /**
+     * @throws \Exception
+     */
+    private function deleteProductTempDB(): void
+    {
+        $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_temp`");
     }
 
 
