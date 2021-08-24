@@ -17,6 +17,7 @@ use Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Stock;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse;
 use Agmedia\Models\Category\Category;
+use Agmedia\Models\Order\Order;
 use Agmedia\Models\Product\Product;
 use Agmedia\Models\Product\ProductCategory;
 
@@ -429,6 +430,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     private function sendMail(array $order)
     {
+        $data = Order::where('order_id', $order['order_id'])->first()->toArray();
+        $emails = $this->loadEmails();
         // Treba učitati odgovarajući tekst maila prema $order['mail'] broju.
 
         $mail = new Mail($this->config->get('config_mail_engine'));
@@ -445,6 +448,25 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $mail->setSubject('Promjena statusa..');
         $mail->setText('');
         $mail->send();
+    }
+
+
+    /**
+     * @return array|Collection
+     */
+    private function loadEmails(string $key = null)
+    {
+        $file = json_decode(file_get_contents(DIR_STORAGE . 'upload/assets/emails.json'),TRUE);
+
+        if ($file) {
+            $file = collect($file);
+
+            if ($key) {
+                return $file->keyBy($key)->first();
+            }
+        }
+
+        return [];
     }
 
 
