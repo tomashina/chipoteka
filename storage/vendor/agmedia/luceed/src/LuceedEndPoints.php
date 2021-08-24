@@ -52,7 +52,7 @@ class LuceedEndPoints
             'warehouse_list'    => 'skladista/lista',
             'product_list'      => 'artikli/naziv//',
             'product'           => 'artikli/sifra/',
-            'product_actions'   => 'prodajneakcije/lista',
+            'product_actions'   => 'akcije/lista',
             'product_image'     => 'artikli/dokumenti/',
             'manufacturer_uid'  => 'partneri/uid/',
             'customer_email'    => 'partneri/email/',

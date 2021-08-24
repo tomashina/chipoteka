@@ -201,7 +201,7 @@ class LOC_Action
         foreach ($this->getActionsToAdd() as $key => $action) {
             $data = [
                 'naziv' => str_replace('web_', '', $action->naziv),
-                'grupa_artikla' => $action->prodajna_akcija_uid ?: '0'
+                'grupa_artikla' => $action->akcija_uid ?: '0'
             ];
 
             $loc = new LOC_Category();
@@ -318,7 +318,7 @@ class LOC_Action
     {
         $prods = json_decode($actions);
 
-        return $prods->result[0]->prodajneakcije;
+        return $prods->result[0]->akcije;
     }
 
 
