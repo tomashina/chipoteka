@@ -179,6 +179,12 @@
                             </div>
                             <p class="col-sm-8">Update statusa se vrši za sve narudžbe u web sustavu...</p>
                         </div>
+                        <div class="form-group">
+                            <div class="col-sm-4 text-center">
+                                <a href="javascript:void(0)" id="duration-order-statuses" data-toggle="tooltip" title="Provjera Trajanja Statusa" class="btn btn-info btn-block">Provjera Trajanja Statusa</a>
+                            </div>
+                            <p class="col-sm-8">Vrši se provjera trajanja pojedinih statusa narudžbi i šalje se mail ako je potrabno.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -203,6 +209,7 @@
             $('#update-quantities')         .on('click', e => { callApi(e, 'updateQuantities'); });
 
             $('#update-order-statuses')     .on('click', e => { callApi(e, 'updateOrderStatuses'); });
+            $('#duration-order-statuses')   .on('click', e => { callApi(e, 'checkOrderStatusDuration'); });
 
             $('#import-initial-manufacturer').on('click', e => { callApi(e, 'importInitialManufacturers'); });
             $('#import-initial-customers')   .on('click', e => { callApi(e, 'importInitialCustomers'); });

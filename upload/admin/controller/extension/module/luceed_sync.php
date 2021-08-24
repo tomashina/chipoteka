@@ -398,15 +398,17 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function checkOrderStatusDuration()
     {
-        $loc = new LOC_Order();
+        /*$loc = new LOC_Order();
 
         $updated = $loc->checkStatusDuration();
 
         foreach ($loc->collection as $order) {
             $this->sendMail($order);
-        }
+        }*/
 
-        return $this->response($updated, 'orders');
+        $this->sendMail(['order_id' => 185, 'mail' => 7]);
+
+        return $this->response(1, 'orders');
     }
 
 
@@ -428,42 +430,52 @@ class ControllerExtensionModuleLuceedSync extends Controller
      *
      * @throws Exception
      */
-    private function sendMail(array $order)
+    private function sendMail(array $order = null)
     {
-        $data = Order::where('order_id', $order['order_id'])->first()->toArray();
-        $emails = $this->loadEmails();
-        // Treba učitati odgovarajući tekst maila prema $order['mail'] broju.
+        if ($order) {
+            $email = $this->loadEmails($order['mail']);
+            $data = Order::where('order_id', $order['order_id'])->with('products', 'totals')->first()->toArray();
+            $data['mail_text'] = sprintf($email['text'], $order['order_id']);
 
-        $mail = new Mail($this->config->get('config_mail_engine'));
-        $mail->parameter = $this->config->get('config_mail_parameter');
-        $mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
-        $mail->smtp_username = $this->config->get('config_mail_smtp_username');
-        $mail->smtp_password = html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8');
-        $mail->smtp_port = $this->config->get('config_mail_smtp_port');
-        $mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
+            if ($email['data']) {
+                $html = ''; // Učitati template s $data
+            } else {
+                $html = ''; // Učitati template bez $data
+            }
 
-        $mail->setTo($order['email']);
-        $mail->setFrom($this->config->get('config_email'));
-        $mail->setSender(html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'));
-        $mail->setSubject('Promjena statusa..');
-        $mail->setText('');
-        $mail->send();
+            $mail = new Mail($this->config->get('config_mail_engine'));
+            $mail->parameter = $this->config->get('config_mail_parameter');
+            $mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
+            $mail->smtp_username = $this->config->get('config_mail_smtp_username');
+            $mail->smtp_password = html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8');
+            $mail->smtp_port = $this->config->get('config_mail_smtp_port');
+            $mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
+
+            $mail->setTo($order['email']);
+            $mail->setFrom($this->config->get('config_email'));
+            $mail->setSender(html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'));
+            $mail->setSubject($email['subject']);
+            $mail->setHtml($html);
+            $mail->send();
+        }
     }
 
 
     /**
-     * @return array|Collection
+     * @param null $key
+     *
+     * @return array|\Illuminate\Support\Collection|mixed
      */
-    private function loadEmails(string $key = null)
+    private function loadEmails($key = null)
     {
         $file = json_decode(file_get_contents(DIR_STORAGE . 'upload/assets/emails.json'),TRUE);
 
         if ($file) {
-            $file = collect($file);
-
             if ($key) {
-                return $file->keyBy($key)->first();
+                return collect($file[$key]);
             }
+
+            return collect($file);
         }
 
         return [];
