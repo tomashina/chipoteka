@@ -443,16 +443,12 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     private function sendMail(array $order = null)
     {
-        if ($order) {
+        if ($order && isset($order['order_id']) && isset($order['mail'])) {
             $email = $this->loadEmails($order['mail']);
             $data = Order::where('order_id', $order['order_id'])->with('products', 'totals')->first()->toArray();
             $data['mail_text'] = sprintf($email['text'], $order['order_id']);
 
-            if ($email['data']) {
-                $html = ''; // Učitati template s $data
-            } else {
-                $html = ''; // Učitati template bez $data
-            }
+            $html = $this->load->view('mail/mail', $data);
 
             $mail = new Mail($this->config->get('config_mail_engine'));
             $mail->parameter = $this->config->get('config_mail_parameter');

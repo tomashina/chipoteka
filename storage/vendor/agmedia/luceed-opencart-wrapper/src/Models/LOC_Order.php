@@ -337,7 +337,7 @@ class LOC_Order
 
         // Collect update status query.
         foreach ($this->collection as $item) {
-            $this->query_update_status .= '(' . $item['order_id'] . ', ' . $item['oc_status_to'] . ', 0),';
+            $this->query_update_status .= '(' . $item['order_id'] . ', ' . $item['oc_status_to'] . ', NULL, NULL),';
         }
 
         return $this;
@@ -352,10 +352,10 @@ class LOC_Order
     {
         $this->db = new Database(DB_DATABASE);
 
-        $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($this->query_update_status, 0, -1) . ";");
-        $this->db->query("UPDATE " . DB_PREFIX . "order o INNER JOIN " . DB_PREFIX . "product_temp pt ON o.order_id = pt.uid SET o.order_status_id = pt.quantity, o.order_status_changed = NOW();");
+        $this->db->query("INSERT INTO " . DB_PREFIX . "order_temp (id, status, data_1, data_2) VALUES " . substr($this->query_update_status, 0, -1) . ";");
+        $this->db->query("UPDATE " . DB_PREFIX . "order o INNER JOIN " . DB_PREFIX . "order_temp ot ON o.order_id = ot.id SET o.order_status_id = ot.status, o.order_status_changed = NOW();");
 
-        $this->deleteProductTempDB();
+        $this->deleteOrderTempDB();
 
         return count($this->collection);
     }
@@ -707,9 +707,9 @@ class LOC_Order
     /**
      * @throws \Exception
      */
-    private function deleteProductTempDB(): void
+    private function deleteOrderTempDB(): void
     {
-        $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_temp`");
+        $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "order_temp`");
     }
 
 
