@@ -453,6 +453,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
             }
             $data['mail_logo'] = DIR_IMAGE.'chipoteka-hd.png';
             $data['mail_title'] = sprintf($email['subject'], $order['order_id']);
+
+            \Agmedia\Helpers\Log::store($data);
+
+
             $html = $this->load->view('mail/mail', $data);
 
             $mail = new Mail($this->config->get('config_mail_engine'));
