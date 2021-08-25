@@ -2,6 +2,7 @@
 
 namespace Agmedia\LuceedOpencartWrapper\Models;
 
+use Agmedia\Helpers\Database;
 use Agmedia\Helpers\Log;
 use Agmedia\Models\Category\Category;
 use Agmedia\Models\Category\CategoryDescription;
@@ -19,6 +20,11 @@ use Illuminate\Support\Str;
  */
 class LOC_Category
 {
+
+    /**
+     * @var Database
+     */
+    private $db;
 
     /**
      * @var array
@@ -39,6 +45,11 @@ class LOC_Category
      * @var array
      */
     private $categories_to_add = [];
+
+    /**
+     * @var string
+     */
+    private $query_update = '';
 
 
     /**
@@ -113,6 +124,48 @@ class LOC_Category
         }
 
         return $this;
+    }
+
+
+    /**
+     * @return $this
+     */
+    public function joinByUid()
+    {
+        $categories = Category::select('category_id', 'luceed_uid')->get();
+        $new = $this->getList()
+                    ->where('enabled', 'D')
+                    ->where('grupa_artikla', '!=', '')
+                    ->where('naziv', '!=', '')
+                    ->all();
+
+        foreach ($new as $item) {
+            $old = $categories->where('luceed_uid', $item->grupa_artikla)->first();
+
+            if ($old) {
+                $this->query_update .= '("' . $old->category_id . '", "' . $this->resolveNaziv($item->naziv) . '", 0),';
+            }
+        }
+
+        $this->query_update = substr($this->query_update, 0, -1);
+
+        return $this;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function update()
+    {
+        $this->db = new Database(DB_DATABASE);
+
+        $this->deleteProductTempDB();
+
+        $this->db->query("INSERT INTO " . DB_PREFIX . "category_temp (id, naziv, opis) VALUES " . $this->query_update . ";");
+        $this->db->query("UPDATE " . DB_PREFIX . "category_description cd INNER JOIN " . DB_PREFIX . "category_temp ct ON cd.category_id = ct.id SET cd.name = ct.naziv");
+
+        return Category::count();
     }
 
 
@@ -215,9 +268,7 @@ class LOC_Category
 
         // Provjera ima li kategorija crticu na početku naziva.
         // Brisanje ako ima...
-        if (substr($naziv, 0, 1) == '-') {
-            $naziv = substr($naziv, 1);
-        }
+        $naziv = $this->resolveNaziv($naziv);
 
         if ($id) {
             CategoryDescription::insert([
@@ -356,5 +407,29 @@ class LOC_Category
         $cats = json_decode($categories);
 
         return $cats->result[0]->grupe_artikala;
+    }
+
+
+    /**
+     * @param string $naziv
+     *
+     * @return string
+     */
+    private function resolveNaziv(string $naziv): string
+    {
+        if (substr($naziv, 0, 1) == '-') {
+            return substr($naziv, 1);
+        }
+
+        return $naziv;
+    }
+
+
+    /**
+     * @throws \Exception
+     */
+    private function deleteProductTempDB(): void
+    {
+        $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_temp`");
     }
 }

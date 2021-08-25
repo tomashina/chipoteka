@@ -113,6 +113,19 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
 
     /**
+     * @return object
+     */
+    public function updateCategories()
+    {
+        $_loc = new LOC_Category(LuceedGroup::all());
+
+        $updated = $_loc->joinByUid()->update();
+
+        return $this->response($updated, 'categories');
+    }
+
+
+    /**
      * @return mixed
      */
     public function importManufacturers()

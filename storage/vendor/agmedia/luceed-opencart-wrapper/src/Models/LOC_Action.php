@@ -169,13 +169,13 @@ class LOC_Action
     {
         //$articles = collect();
         $actions = $this->getActions()
-            ->where('status', '!=', '1')
-            ->where('naziv', '!=', 'web_cijene');
+                        ->where('status', '!=', '1')
+                        ->where('naziv', '!=', 'web_cijene');
 
         foreach ($actions as $key => $action) {
             if ( ! empty($action->stavke)) {
-                if (( ! $action->start_date || Carbon::createFromFormat('d.m.Y', $action->start_date) < Carbon::now()) &&
-                    ( ! $action->end_date || Carbon::createFromFormat('d.m.Y', $action->end_date) > Carbon::now()->addDay())
+                if (( ! $action->start_date || (Carbon::createFromFormat('d.m.Y', $action->start_date) < Carbon::now())) &&
+                    ( ! $action->end_date || (Carbon::createFromFormat('d.m.Y', $action->end_date) > Carbon::now()->addDay()))
                 ) {
                     array_push($this->actions_to_add, $action);
                 }
@@ -222,28 +222,25 @@ class LOC_Action
         $temps = $specials->groupBy('artikl_uid')->all();
 
         foreach ($temps as $item) {
-            //Log::store($item->first()->artikl);
-
+            $mpc = $item->first()->mpc;
             $product = Product::where('model', $item->first()->artikl)->first();
 
-            if ($product && $item->first()->mpc) {
-                Log::store('entered...');
+            if ( ! $mpc && $item->first()->mpc_rabat) {
+                $mpc = $this->calculateDiscountPrice($product->price, $item->first()->mpc_rabat);
+            }
+
+            if ($product && $mpc) {
                 $start = Carbon::createFromFormat('d.m.Y', $item->first()->start)->format('Y-m-d');
                 $end   = Carbon::createFromFormat('d.m.Y', $item->first()->end)->format('Y-m-d');
 
                 $end = date('Y-m-d', strtotime("+1 day", strtotime($end)));
 
-                $this->insert_query .= '(' . $product->product_id . ', 1, 0, ' . $item->first()->mpc . ', "' . $start . '", "' . $end . '"),';
+                $this->insert_query .= '(' . $product->product_id . ', 1, 0, ' . $mpc . ', "' . $start . '", "' . $end . '"),';
                 $this->insert_query_category .= '(' . $product->product_id . ',' . $item->first()->category . '),';
 
                 $this->count++;
-
-                Log::store('finished...');
             }
         }
-
-        Log::store($this->insert_query);
-        Log::store($this->insert_query_category);
 
         return $this;
     }

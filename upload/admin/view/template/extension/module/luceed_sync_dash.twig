@@ -43,12 +43,12 @@
                             <p class="col-sm-7">{{ help_categories_import }}</p>
                         </div>
 
-                        {#<div class="form-group">
+                        <div class="form-group">
                             <div class="col-sm-5 text-center">
-                                <a href="javascript:void(0)" id="categories-active-min" data-toggle="tooltip" title="{{ btn_categories_active }}" class="btn btn-info btn-block">{{ btn_categories_active }}</a>
+                                <a href="javascript:void(0)" id="update-categories" data-toggle="tooltip" title="Update Kategorija" class="btn btn-info btn-block">Update Kategorija</a>
                             </div>
-                            <p class="col-sm-7">{{ help_categories_active }}</p>
-                        </div>#}
+                            <p class="col-sm-7">Vrši se update svih naziva kategorija.</p>
+                        </div>
                     </div>
                 </div>
 
@@ -196,6 +196,7 @@
     <script type="text/javascript">
         $(() => {
             $('#import-new-categories')     .on('click', e => { callApi(e, 'importCategories'); });
+            $('#update-categories')         .on('click', e => { callApi(e, 'updateCategories'); });
             $('#import-new-manufacturer')   .on('click', e => { callApi(e, 'importManufacturers'); });
             $('#import-new-warehouse')      .on('click', e => { callApi(e, 'importWarehouses'); });
             $('#import-new-payments')       .on('click', e => { callApi(e, 'importPayments'); });
