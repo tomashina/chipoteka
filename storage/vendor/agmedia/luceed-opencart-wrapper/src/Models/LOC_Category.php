@@ -143,7 +143,7 @@ class LOC_Category
             $old = $categories->where('luceed_uid', $item->grupa_artikla)->first();
 
             if ($old) {
-                $this->query_update .= '("' . $old->category_id . '", "' . $this->resolveNaziv($item->naziv) . '", 0),';
+                $this->query_update .= '("' . $old->category_id . '", "' . $this->resolveNaziv($item->naziv) . '", 0, "' . Str::slug($item->naziv) . '", "category_id=' . $old->category_id . '", 0),';
             }
         }
 
@@ -160,10 +160,11 @@ class LOC_Category
     {
         $this->db = new Database(DB_DATABASE);
 
-        $this->deleteProductTempDB();
+        $this->deleteCategoryTempDB();
 
-        $this->db->query("INSERT INTO " . DB_PREFIX . "category_temp (id, naziv, opis) VALUES " . $this->query_update . ";");
+        $this->db->query("INSERT INTO " . DB_PREFIX . "category_temp (id, naziv, opis, seo, data_1, data_2) VALUES " . $this->query_update . ";");
         $this->db->query("UPDATE " . DB_PREFIX . "category_description cd INNER JOIN " . DB_PREFIX . "category_temp ct ON cd.category_id = ct.id SET cd.name = ct.naziv");
+        $this->db->query("UPDATE " . DB_PREFIX . "seo_url su INNER JOIN " . DB_PREFIX . "category_temp ct ON su.query = ct.data_1 SET su.keyword = ct.seo");
 
         return Category::count();
     }
@@ -428,8 +429,8 @@ class LOC_Category
     /**
      * @throws \Exception
      */
-    private function deleteProductTempDB(): void
+    private function deleteCategoryTempDB(): void
     {
-        $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_temp`");
+        $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "category_temp`");
     }
 }
