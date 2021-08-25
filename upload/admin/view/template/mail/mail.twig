@@ -1045,7 +1045,7 @@
                                     <tbody>
                                     <tr>
                                         <td class="column_cell px text_dark text_center" style="vertical-align: top;color: #333333;text-align: center;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                            <p class="img_full" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 0 !important;line-height: 100%;clear: both;"><a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #333333;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img class="brounded" src="images/smartphone-realme.jpg" width="124" height="124" alt="" style="max-width: 124px;border-radius: 4px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;display: block;width: 100%;margin: 0px auto;"></a></p>
+                                            <p class="img_full" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 0 !important;line-height: 100%;clear: both;"><a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #333333;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img class="brounded" src="{{ product.image }}" width="124" height="124" alt="" style="max-width: 124px;border-radius: 4px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;display: block;width: 100%;margin: 0px auto;"></a></p>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -1060,9 +1060,9 @@
                                     <tbody>
                                     <tr>
                                         <td class="column_cell px pt text_dark text_left mobile_center" style="vertical-align: top;color: #333333;text-align: left;padding-left: 16px;padding-right: 16px;padding-top: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                            <h5 class="mt_xs mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 21px;font-weight: bold;">Smartphone Realme 7 8/128GB, Blue</h5>
-                                            <p class="text_xs mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 14px;line-height: 22px;">Šifra: 9504000653</p>
-                                            <p class="text_xs text_secondary" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 14px;line-height: 22px;">Količina: 1</p>
+                                            <h5 class="mt_xs mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 21px;font-weight: bold;">{{ product.name }}</h5>
+                                            <p class="text_xs mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 14px;line-height: 22px;">Šifra: {{ product.model }}</p>
+                                            <p class="text_xs text_secondary" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 14px;line-height: 22px;">Količina: {{ product.quantity }}</p>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -1077,7 +1077,7 @@
                                     <tbody>
                                     <tr>
                                         <td class="column_cell px py text_right mobile_center" style="vertical-align: top;text-align: right;padding-top: 16px;padding-bottom: 16px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                            <p class="text_primary mt_xs mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">1599.00 kn</p>
+                                            <p class="text_primary mt_xs mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">{{ product.price }} kn</p>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -1155,9 +1155,13 @@
                                 <tbody>
                                 <tr>
                                     <td class="column_cell px text_dark text_right mobile_center" style="vertical-align: top;color: #333333;text-align: right;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                        <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">Međusuma: <strong style="font-weight: bold;">3198.00 kn</strong></p>
-                                        <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">GLS dostava: <strong style="font-weight: bold;">0.00 kn</strong></p>
-                                        <h4 class="mt_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 0px;word-break: break-word;font-size: 18px;line-height: 24px;font-weight: bold;">Ukupno: <span class="text_primary" style="color: #E31318;">3198.00 kn</span></h4>
+                                        {% for total in totals %}
+                                            {% if total.text !='Ukupno' %}
+                                                 <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">{{ {{ total.text }} }}: <strong style="font-weight: bold;">{{ total.text }}</strong></p>
+                                            {% else %}
+                                              <h4 class="mt_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 0px;word-break: break-word;font-size: 18px;line-height: 24px;font-weight: bold;">{{ total.title }}: <span class="text_primary" style="color: #E31318;">{{ total.text }}</span></h4>
+                                             {% endif %}
+                                        {% endfor %}
                                     </td>
                                 </tr>
                                 </tbody>
