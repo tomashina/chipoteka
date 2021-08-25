@@ -239,7 +239,7 @@ class ControllerExtensionBlogBlog extends Controller {
 				}
 				if ( (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
 					if ($this->config->get('salebadge_status') == '2') {
-						$sale_badge = '-' . number_format(((($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
+						$sale_badge = '-' . number_format(((($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
 					} else {
 						$sale_badge = $this->language->get('basel_text_sale');
 					}		
