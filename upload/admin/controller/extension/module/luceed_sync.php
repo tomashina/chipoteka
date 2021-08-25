@@ -449,7 +449,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $data['mail_text'] = sprintf($email['text'], $order['order_id']);
 
           for ($i = 0; $i < count($data['products']); $i++) {
-                $data['products'][$i]['image'] = Product::where('product_id', $data['products'][$i]['product_id'])->pluck('image');
+                $data['products'][$i]['image'] = Product::where('product_id', $data['products'][$i]['product_id'])->pluck('image')->first();
             }
             $data['mail_logo'] = DIR_IMAGE.'chipoteka-hd.png';
             $data['mail_title'] = sprintf($email['subject'], $order['order_id']);
