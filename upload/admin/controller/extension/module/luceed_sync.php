@@ -447,7 +447,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $email = $this->loadEmails($order['mail']);
             $data = Order::where('order_id', $order['order_id'])->with('products', 'totals')->first()->toArray();
             $data['mail_text'] = sprintf($email['text'], $order['order_id']);
-
+            $data['mail_logo'] = DIR_IMAGE.'chipoteka-hd.png';
+            $data['mail_title'] = sprintf($email['subject'], $order['order_id']);
             $html = $this->load->view('mail/mail', $data);
 
             $mail = new Mail($this->config->get('config_mail_engine'));

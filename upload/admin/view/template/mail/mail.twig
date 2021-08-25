@@ -9,7 +9,7 @@
     <meta name="format-detection" content="email=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="x-apple-disable-message-reformatting">
-    <title>Order Confirmation</title>
+    <title>{{ mail_title }}</title>
     <style type="text/css">/* Reset */
         .email_body,
         .email_section table,
@@ -770,7 +770,7 @@
                                 <tbody>
                                 <tr>
                                     <td class="column_cell px py_xs text_primary text_center" style="vertical-align: top;color: #E31318;text-align: center;padding-top: 28px;padding-bottom: 8px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                        <p class="img_inline" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 100%;clear: both;"><a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img src="images/chipoteka-hd.png" alt="Chipoteka Logo" style="max-width: 210px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;" width="210" height=""></a></p>
+                                        <p class="img_inline" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 100%;clear: both;"><a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img src="{{ mail_logo }}" alt="Chipoteka Logo" style="max-width: 210px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;" width="210" height=""></a></p>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -822,7 +822,7 @@
                                 <tbody>
                                 <tr>
                                     <td class="column_cell px py text_dark text_center" style="vertical-align: top;color: #333333;text-align: center;padding-top: 16px;padding-bottom: 16px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                        <h2 class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 18px;word-break: break-word;font-size: 24px;line-height: 38px;font-weight: bold;">Chipoteka.hr - Ponuda broj 128</h2>
+                                        <h2 class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 18px;word-break: break-word;font-size: 24px;line-height: 38px;font-weight: bold;">{{ mail_title }}</h2>
                                         <p style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 26px;">Po&scaron;tovani/a, </p>
                                         <p style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;">zahvaljujemo Vam na Vašoj narudžbi, molimo vas da izvršite uplatu po sljedećim uputama za plaćanje. Rok za uplatu je maksimalno 48h tijekom koga robu koju ste naručili držimo rezerviranu za vas. Ukoliko u tom roku ne zaprimimo uplatu, nažalost moramo poništiti ovu narudžbu.</p>
 
