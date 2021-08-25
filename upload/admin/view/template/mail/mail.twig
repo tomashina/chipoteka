@@ -1156,10 +1156,10 @@
                                 <tr>
                                     <td class="column_cell px text_dark text_right mobile_center" style="vertical-align: top;color: #333333;text-align: right;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                         {% for total in totals %}
-                                            {% if total.text !='Ukupno' %}
-                                                 <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">{{ {{ total.text }} }}: <strong style="font-weight: bold;">{{ total.text }}</strong></p>
+                                            {% if total.title !='Ukupno' %}
+                                                 <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">{{ {{ total.title }} }}: <strong style="font-weight: bold;">{{ total.value }}</strong></p>
                                             {% else %}
-                                              <h4 class="mt_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 0px;word-break: break-word;font-size: 18px;line-height: 24px;font-weight: bold;">{{ total.title }}: <span class="text_primary" style="color: #E31318;">{{ total.text }}</span></h4>
+                                              <h4 class="mt_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 0px;word-break: break-word;font-size: 18px;line-height: 24px;font-weight: bold;">{{ total.title }}: <span class="text_primary" style="color: #E31318;">{{ total.value }}</span></h4>
                                              {% endif %}
                                         {% endfor %}
                                     </td>
