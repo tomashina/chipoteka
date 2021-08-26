@@ -454,6 +454,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $data['mail_logo'] = HTTP_CATALOG.'image/chipoteka-hd.png';
             $data['mail_title'] = sprintf($email['subject'], $order['order_id']);
 
+            $data['mail_data'] = $email['data'];
+
             \Agmedia\Helpers\Log::store($data);
 
 
