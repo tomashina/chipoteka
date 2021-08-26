@@ -29114,7 +29114,7 @@ body > main.offcanvas-enabled {
 
 .product-card .product-price del {
   color: #828282;
-  font-weight: 300;
+  font-weight: 700;
 }
 
 .product-card .product-price span:first-child,
@@ -29491,7 +29491,7 @@ body > main.offcanvas-enabled {
 .product-container .product-features .product-price del {
   color: #828282;
   font-size: 1.125rem;
-  font-weight: 300;
+  font-weight: 700;
 }
 
 .product-container .product-features .product-price span:first-child,
