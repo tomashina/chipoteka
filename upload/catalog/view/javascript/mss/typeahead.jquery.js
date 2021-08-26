@@ -1487,7 +1487,7 @@
         }
         function buildHintFromInput($input, www) {
             return $input.clone().addClass(www.classes.hint).removeData().css(www.css.hint).css(getBackgroundStyles($input)).prop("readonly", true).removeAttr("id name placeholder required").attr({
-                autocomplete: "off",
+                autocomplete: "new-password",
                 spellcheck: "false",
                 tabindex: -1
             });
@@ -1500,7 +1500,7 @@
                 style: $input.attr("style")
             });
             $input.addClass(www.classes.input).attr({
-                autocomplete: "off",
+                autocomplete: "new-password",
                 spellcheck: false
             });
             try {
