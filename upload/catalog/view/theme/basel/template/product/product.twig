@@ -97,9 +97,10 @@
                                         </div>
 
                                         <div class="product-price--web">
-                                            <span>{% if  special %}Akcija:{% else %}Web cijena: {% endif %}</span>
-                                            <span> {% if  special %}{{ special }} {% else %}{{ price }} {% endif %}</span>
+                                            <span>{% if  special %} Akcija:{% else %}   {% if price_2 != price %} Web cijena:  {% endif %}{% endif %}</span>
+                                            <span> {% if  special %}{{ special }} {% else %} {% if price_2 != price %} {{ price }} {% endif %} {% endif %}</span>
                                         </div>
+
                                     </div>
                                     {% if prikazrata %}
                                         <div class="buying-choices mb-1 mt-n1 mt-md-n3">
@@ -208,8 +209,8 @@
                                     </div>
 
                                     <div class="product-price--web">
-                                        <span>{% if  special %}Akcija:{% else %} Web cijena:{% endif %}</span>
-                                        <span> {% if  special %} {{ special }} {% else %} {{ price }} {% endif %}</span>
+                                        <span>{% if  special %}Akcija:{% else %} {% if price_2 != price %} Web cijena:{% endif %} {% endif %}</span>
+                                        <span> {% if  special %} {{ special }} {% else %}  {% if price_2 != price %} {{ price }} {% endif %} {% endif %}</span>
                                     </div>
 
                                 </div>
@@ -276,8 +277,8 @@
                                     </div>
 
                                     <div class="product-price--web">
-                                        <span>{% if  special %}Akcija:{% else %} Web cijena:{% endif %}</span>
-                                        <span> {% if  special %} {{ special }} {% else %} {{ price }} {% endif %}</span>
+                                        <span>{% if  special %}Akcija:{% else %}  {% if price_2 != price %} Web cijena:{% endif %} {% endif %}</span>
+                                        <span> {% if  special %} {{ special }} {% else %} {% if price_2 != price %} {{ price }} {% endif %} {% endif %}</span>
                                     </div>
 
                                 </div>
@@ -389,8 +390,8 @@
                                         {% endif %}
 
                                         <div class="product-price--web">
-                                            <span>{% if  product.special %} Akcija: {% else %} Web cijena:{% endif %}</span>
-                                            <span> {% if  product.special %} {{ product.special }} {% else %} {{ product.price }} {% endif %}</span>
+                                            <span>{% if  product.special %} Akcija: {% else %} {% if product.price_2 != product.price %} Web cijena: {% endif %} {% endif %}</span>
+                                            <span> {% if  product.special %} {{ product.special }} {% else %} {% if product.price_2 != product.price %} {{ product.price }} {% endif %} {% endif %}</span>
                                         </div>
 
                                     </div>
