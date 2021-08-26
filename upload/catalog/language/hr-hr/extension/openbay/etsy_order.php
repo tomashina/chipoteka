@@ -4,5 +4,5 @@
 $_['text_total_shipping']		= 'Dostava';
 $_['text_total_discount']		= 'Popust';
 $_['text_total_tax']			= 'Porez';
-$_['text_total_sub']			= 'Među suma';
+$_['text_total_sub']			= 'Vrijednost narudžbe';
 $_['text_total']				= 'Ukupno';

@@ -825,7 +825,7 @@
                                         <h2 class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 18px;word-break: break-word;font-size: 24px;line-height: 38px;font-weight: bold;">{{ mail_title }}</h2>
                                         {{ mail_text }}
 
-                                        {% if payment_code == 'bank_transfer' %}
+                                        {% if payment_code == 'bank_transfer' and mail_data == '1' %}
 
                                         <p style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 26px;">MOLIMO IZVRŠITE UPLATU U IZNOSU OD {{ total|number_format(2, '.', '') }}kn <br>
                                             IBAN RAČUN: HR4424070001100582698<br>
@@ -1228,7 +1228,8 @@
                                 <tr>
                                     <td class="column_cell px py text_dark text_center" style="vertical-align: top;color: #333333;text-align: center;padding-top: 16px;padding-bottom: 16px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                         <h2 class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 28px;line-height: 38px;font-weight: bold;">Isporuka pošiljki</h2>
-                                        <p class="text_lead text_secondary mb_md" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 19px;line-height: 31px;">Robu šaljemo radnim danom od ponedjeljka do petka, za narudžbe kreirane preko vikenda ili neradnog dana šaljemo prvi radni ponedjeljak ili prvi sljedeći radni dan.<br>
+                                        <p class="text_lead text_secondary mb_md" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 19px;line-height: 31px;">Robu šaljemo radnim danom od ponedjeljka do petka.
+                                            <br>
                                             Za sva dodatna pitanja možete nas kontaktirati na <a style="color:#E31318;text-decoration:none;" href="mailto:webnarudzba@chipoteka.hr">webnarudzba@chipoteka.hr</a</p>
                                         <table class="column" role="presentation" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
                                             <tbody>

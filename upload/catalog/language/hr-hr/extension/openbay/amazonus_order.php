@@ -6,6 +6,6 @@ $_['text_total_shipping'] 		= 'Dostava';
 $_['text_total_shipping_tax'] 	= 'Porez na dostavu';
 $_['text_total_giftwrap'] 		= 'Umotavanje poklona';
 $_['text_total_giftwrap_tax'] 	= 'Porez na umotavanje poklona';
-$_['text_total_sub'] 			= 'Među suma';
+$_['text_total_sub'] 			= 'Vrijednost narudžbe';
 $_['text_tax'] 					= 'Porez';
 $_['text_total'] 				= 'Ukupno';
