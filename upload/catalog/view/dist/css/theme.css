@@ -29113,7 +29113,7 @@ body > main.offcanvas-enabled {
 }
 
 .product-card .product-price del {
-  color: #5C5C5C;
+  color: #828282;
   font-weight: 700;
 }
 
@@ -29489,7 +29489,7 @@ body > main.offcanvas-enabled {
 }
 
 .product-container .product-features .product-price del {
-  color: #5C5C5C;
+  color: #828282;
   font-size: 1.125rem;
   font-weight: 700;
 }
