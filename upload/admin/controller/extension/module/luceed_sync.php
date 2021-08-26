@@ -456,6 +456,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
             $data['mail_data'] = $email['data'];
 
+            $nhs_no = $order['order_id'].date("ym");
+
+            $data['mail_poziv_na_broj'] = $nhs_no.$this->mod11INI($nhs_no);
+
             \Agmedia\Helpers\Log::store($data);
 
 
@@ -531,6 +535,35 @@ class ControllerExtensionModuleLuceedSync extends Controller
     {
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(collect($data)->toJson());
+    }
+
+    public function mod11INI(string $nb)
+    {
+        $i = 0;
+        $v = 0;
+        $p = 2;
+        $c = ' ';
+
+        for ($i = strlen($nb); $i >= 1 ; $i--) {
+            $c = substr($nb, $i - 1, 1);
+
+            if ('0' <= $c && $c <= '9' && $v >= 0) {
+                $v = $v + $p * $c;
+                $p = $p + 1;
+            } else {
+                $v = -1;
+            }
+        }
+
+        if ($v >= 0) {
+            $v = 11 - ($v%11);
+
+            if ($v > 9) {
+                $v = 0;
+            }
+        }
+
+        return $v;
     }
 
 }
