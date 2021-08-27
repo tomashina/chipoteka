@@ -482,7 +482,9 @@
                     $('#availability-subtitle').html(subtitle);
                     $('#availability-icon').addClass('text-' + icon);
 
-                    $('#button-cart', '#button-cart2', '#button-cart3').innerHTML = title;
+                    if (title != 'DOSTUPNO ODMAH') {
+                        $('#button-cart,#button-cart2,#button-cart3').html(title);
+                    }
                 }
             });
         });
