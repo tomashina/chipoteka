@@ -4,6 +4,7 @@ namespace Agmedia\LuceedOpencartWrapper\Models;
 
 use Agmedia\Helpers\Log;
 use Agmedia\Luceed\Facade\LuceedProduct;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 /**
@@ -84,16 +85,33 @@ class LOC_Warehouse
      *
      * @return Collection
      */
-    public function getAvailabilityForProduct($product): Collection
+    public function getAvailabilityForProduct(string $product): Collection
     {
         $response = collect();
         $houses = $this->getAvailabilityViewWarehouses();
         $units = $this->getUnitsQuery($houses);
+        $houses_default = $this->getDefaultWarehouses();
+        $units_default = $this->getUnitsQuery($houses_default);
+        $houses_stores = $this->getList()->whereIn('skladiste', agconf('import.warehouse.stores'));
+        $units_stores = $this->getUnitsQuery($houses_stores);
 
         $availables = collect($this->setAvailables(
             LuceedProduct::stock($units, $product)
         ));
 
+        $defaults = collect($this->setAvailables(
+            LuceedProduct::stock($units_default, $product)
+        ));
+
+        $stores = collect($this->setAvailables(
+            LuceedProduct::stock($units_stores, $product)
+        ));
+
+        $suplier = collect($this->setSuplierStock(
+            LuceedProduct::getSuplierStock($product)
+        ))->where('main', 'D')->first();
+
+        // AVAILABILITY VIEW
         foreach ($houses as $house) {
             $has = $availables->where('skladiste_uid', $house['skladiste_uid'])->first();
 
@@ -118,6 +136,73 @@ class LOC_Warehouse
                 ]);
             }
         }
+
+        $qty_default = 0;
+        // DEFAULT WAREHOUSE COUNT
+        foreach ($houses_default as $house) {
+            $has = $defaults->where('skladiste_uid', $house['skladiste_uid'])->first();
+
+            if ($has) {
+                $qty_default += $has->raspolozivo_kol;
+            }
+        }
+
+        $qty_stores = 0;
+        // STORES WAREHOUSE COUNT
+        foreach ($houses_stores as $house) {
+            $has = $defaults->where('skladiste_uid', $house['skladiste_uid'])->first();
+
+            if ($has) {
+                $qty_stores += $has->raspolozivo_kol;
+            }
+        }
+
+        $title = '';
+        $btn = '';
+        $date = '';
+
+        if ($qty_default) {
+            $title = 'success';
+            $btn = 'DOSTUPNO ODMAH - ŠALJEMO SUTRA';
+            $date = Carbon::now()->addWeekdays(1)->format('d.m.Y');
+        }
+
+        if ( ! $qty_default && ! $suplier->dobavljac_stanje && $qty_stores) {
+            $title = 'secondary';
+            $btn = 'NEDOSTUPNO NA WEBU';
+            $date = 0;
+        }
+
+        if ( ! $qty_default && $suplier->dobavljac_stanje) {
+            $title = 'warning';
+            $btn = 'DOSTUPNO ODMAH - ŠALJEMO [+5]';
+            $date = Carbon::now()->addWeekdays(5)->format('d.m.Y');
+        }
+
+        if ( ! $qty_default && ! $suplier->dobavljac_stanje && $qty_stores) {
+            $title = 'secondary';
+            $btn = 'PROIZVOD NEDOSTUPAN';
+            $date = 0;
+        }
+
+        $response->push([
+            'title' => 'Web',
+            'address' => '',
+            'qty'   => $qty
+        ]);
+
+        $response->push([
+            'title' => 'Dobavljač',
+            'address' => '',
+            'qty'   => $suplier->dobavljac_stanje
+        ]);
+
+        $response->push([
+            'title' => 'Btn',
+            'btn' => $title,
+            'address' => $btn,
+            'qty'   => $date
+        ]);
 
         return $response;
     }
@@ -181,9 +266,9 @@ class LOC_Warehouse
      */
     private function setWarehouses($warehouses): array
     {
-        $cats = json_decode($warehouses);
+        $json = json_decode($warehouses);
 
-        return $cats->result[0]->skladista;
+        return $json->result[0]->skladista;
     }
 
     /**
@@ -193,8 +278,21 @@ class LOC_Warehouse
      */
     private function setAvailables($items): array
     {
-        $response = json_decode($items);
+        $json = json_decode($items);
 
-        return $response->result[0]->stanje;
+        return $json->result[0]->stanje;
+    }
+
+
+    /**
+     * @param $stock
+     *
+     * @return mixed
+     */
+    private function setSuplierStock($stock)
+    {
+        $json = json_decode($stock);
+
+        return $json->result[0]->artikli_dobavljaci;
     }
 }

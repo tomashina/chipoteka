@@ -168,9 +168,11 @@
                                         </div>
                                     </div>
                                     <div class="product-delivery-time">
-                                        <i class="fas fa-shipping-timed"></i>
+                                        <i class="fas fa-shipping-timed" id="availability-icon"></i>
                                         <div class="d-flex flex-column">
-                                            <span>
+                                            <span id="availability-title"></span>
+                                            <span id="availability-subtitle"></span>
+                                            {#<span>
                                                 {% if ((qty < 1) and (stock_badge_status)) %}
                                                     Nedostupno na web shopu
                                                 {% else %}
@@ -181,7 +183,7 @@
                                                 <span>
                                               Stiže Vam do {{ saljemodo }}
                                               </span>
-                                            {% endif %}
+                                            {% endif %}#}
                                         </div>
                                     </div>
                                     <p class="product-id"><strong>{{ text_model }}</strong> {{ model }}</p>
@@ -446,22 +448,37 @@
                     let html = '';
                     let qty = '';
 
+                    let title = '';
+                    let subtitle = '';
+                    let icon = '';
+
                     for (key in json) {
                         if (json.hasOwnProperty(key)) {
-                            if (json[key].qty) {
-                                qty = 'fa-check text-success';
-                            } else {
-                                qty = 'fa-times text-danger';
+                            if (!['Web', 'Dobavljač', 'Btn'].includes(json[key].title)) {
+                                if (json[key].qty) {
+                                    qty = 'fa-map-marker-plus text-success';
+                                } else {
+                                    qty = 'fa-map-marker-minus text-danger';
+                                }
+
+                                html += '<div class="d-flex poslov justify-content-between border-bottom py-3"><div><div class="fw-semibold text-dark"><a href="http://maps.google.com/?q=' + json[key].title + ' - ' + json[key].address + '" target="_blank">' + json[key].title + ' - ' + json[key].address + '</a></div></div><div><i class="fal ' + qty + ' me-2"></i></div></div>';
+
                             }
 
-                            html += '<div class="d-flex poslov justify-content-between border-bottom py-3"><div><div class="fw-semibold text-dark"><a href="http://maps.google.com/?q=' + json[key].title + ' - ' + json[key].address + '" target="_blank">' + json[key].title + ' - ' + json[key].address + '</a></div></div><div><i class="fas ' + qty + ' me-2"></i></div></div>';
+                            if (['Btn'].includes(json[key].title)) {
+                                title = json[key].address;
+                                subtitle = 'Šaljemo do ' + json[key].qty;
+                                icon = json[key].btn;
+                            }
                         }
                     }
 
-
-
                     $('#availability-view').html(html);
-                    $( ".poslov" ).last().removeClass( "border-bottom" );
+                    $(".poslov").last().removeClass("border-bottom");
+
+                    $('#availability-title').html(title);
+                    $('#availability-subtitle').html(subtitle);
+                    $('#availability-icon').addClass('text-' + icon);
                 }
             });
         });

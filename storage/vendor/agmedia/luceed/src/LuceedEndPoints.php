@@ -26,7 +26,7 @@ class LuceedEndPoints
             'customer_create'   => 'customer_create.url',
             'order_create'      => 'order_create.url',
             'orders_get'        => 'orders_get.json',
-            'stock_get'         => 'stock_get.url',
+            'stock_get'         => 'stock_skladista.json',
             'ind_stock_get'     => 'ind_stock_get.url',
             'raspis'            => 'raspis.url',
             'mjesta'            => 'mjesta.json',
@@ -34,6 +34,7 @@ class LuceedEndPoints
             //
             'stock_skladista'   => 'stock_skladista.json',
             'stock_dobavljaca'  => 'stock_dobavljaca.json',
+            'stock_dobavljac'   => 'stock_dobavljac.json',
             //
             'product_0730222201' => 'artikl_0730222201.json',
             'product_0730161301' => 'artikl_0730161301.json',
@@ -68,6 +69,7 @@ class LuceedEndPoints
             //
             'stock_skladista'   => 'StanjeZalihe/Skladiste/',
             'stock_dobavljaca'  => 'StanjeZaliheDobavljaci/Lista',
+            'stock_dobavljac'   => 'StanjeZaliheDobavljaci/Artikl',
         ];
     }
 

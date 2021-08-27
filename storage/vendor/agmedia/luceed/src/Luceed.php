@@ -238,7 +238,9 @@ class Luceed
      */
     public function getSuplierStock(string $article_uid = '')
     {
-        return $this->service->get($this->end_points['stock_dobavljaca'], $article_uid);
+        $end_point = $article_uid == '' ? $this->end_points['stock_dobavljaca'] : $this->end_points['stock_dobavljac'];
+
+        return $this->service->get($end_point, $article_uid);
     }
 
 
