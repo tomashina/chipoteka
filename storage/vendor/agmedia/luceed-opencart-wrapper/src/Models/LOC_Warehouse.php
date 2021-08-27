@@ -154,7 +154,7 @@ class LOC_Warehouse
         $qty_stores = 0;
         // STORES WAREHOUSE COUNT
         foreach ($houses_stores as $house) {
-            $has = $defaults->where('skladiste_uid', $house['skladiste_uid'])->first();
+            $has = $stores->where('skladiste_uid', $house['skladiste_uid'])->first();
 
             if ($has) {
                 $qty_stores += $has->raspolozivo_kol;
