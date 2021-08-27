@@ -147,6 +147,10 @@ class LOC_Warehouse
             }
         }
 
+        if ($qty_default < 0) {
+            $qty_default = 0;
+        }
+
         $qty_stores = 0;
         // STORES WAREHOUSE COUNT
         foreach ($houses_stores as $house) {
@@ -155,6 +159,10 @@ class LOC_Warehouse
             if ($has) {
                 $qty_stores += $has->raspolozivo_kol;
             }
+        }
+
+        if ($qty_stores < 0) {
+            $qty_stores = 0;
         }
 
         $title = '';
