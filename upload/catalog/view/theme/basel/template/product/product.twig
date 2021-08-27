@@ -467,7 +467,9 @@
 
                             if (['Btn'].includes(json[key].title)) {
                                 title = json[key].address;
-                                subtitle = 'Šaljemo do ' + json[key].qty;
+                                if (json[key].qty) {
+                                    subtitle = 'Šaljemo do ' + json[key].qty;
+                                }
                                 icon = json[key].btn;
                             }
                         }
