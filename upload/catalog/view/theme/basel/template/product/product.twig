@@ -451,6 +451,7 @@
                     let title = '';
                     let subtitle = '';
                     let icon = '';
+                    let btn_title = '';
 
                     for (key in json) {
                         if (json.hasOwnProperty(key)) {
@@ -471,6 +472,7 @@
                                     subtitle = json[key].qty;
                                 }
                                 icon = json[key].btn;
+                                btn_title = json[key].button;
                             }
                         }
                     }
@@ -483,7 +485,7 @@
                     $('#availability-icon').addClass('text-' + icon);
 
                     if (title != 'DOSTUPNO ODMAH') {
-                        $('#button-cart,#button-cart2,#button-cart3').html(title);
+                        $('#button-cart,#button-cart2,#button-cart3').html(btn_title);
                     }
                 }
             });

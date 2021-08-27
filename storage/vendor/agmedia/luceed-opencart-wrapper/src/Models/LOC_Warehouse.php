@@ -167,6 +167,7 @@ class LOC_Warehouse
 
         $title = '';
         $btn = '';
+        $button = '';
         $date = '';
 
         if ($qty_default) {
@@ -179,6 +180,7 @@ class LOC_Warehouse
         if ( ! $qty_default && ! $suplier->dobavljac_stanje && $qty_stores) {
             $title = 'secondary';
             $btn = 'NEDOSTUPNO NA WEBU';
+            $button = 'Nedostupno online';
             $date = 0;
         }
 
@@ -191,6 +193,7 @@ class LOC_Warehouse
         if ( ! $qty_default && ! $suplier->dobavljac_stanje && ! $qty_stores) {
             $title = 'secondary';
             $btn = 'PROIZVOD NEDOSTUPAN';
+            $button = 'Nedostupno';
             $date = 0;
         }
 
@@ -209,6 +212,7 @@ class LOC_Warehouse
         $response->push([
             'title' => 'Btn',
             'btn' => $title,
+            'button' => $button,
             'address' => $btn,
             'qty'   => $date
         ]);
