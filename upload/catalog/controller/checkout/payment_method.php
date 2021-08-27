@@ -3,8 +3,21 @@ class ControllerCheckoutPaymentMethod extends Controller {
 	public function index() {
 		$this->load->language('checkout/checkout');
 
-        unset($this->session->data['creditcardname']);
-        unset($this->session->data['paymentplan']);
+
+        if (isset($this->session->data['creditcardname'])) {
+            $data['creditcardname'] = $this->session->data['creditcardname'];
+
+        }
+        else {
+            $data['creditcardname'] ='';
+        }
+
+        if (isset($this->session->data['paymentplan'])) {
+            $data['paymentplan'] = $this->session->data['paymentplan'];
+        }
+        else {
+            $data['paymentplan'] ='';
+        }
 
 		if (isset($this->session->data['payment_address'])) {
 			// Totals
@@ -124,7 +137,35 @@ class ControllerCheckoutPaymentMethod extends Controller {
 			$data['agree'] = '';
 		}
 
-		$this->response->setOutput($this->load->view('checkout/payment_method', $data));
+
+        if ($this->cart->getSubTotal() && (isset($this->session->data['creditcardname'] ) && $this->session->data['creditcardname']!='' )  && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0000' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0200' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0300' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0400' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0500' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0600' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0700' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0800' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0900' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='1000' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='1100' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='1200' )) {
+
+
+
+            $pricecalculate = $this->config->get('total_low_order_fee_fee') /100  * $this->cart->getSubTotal();
+
+            $data['totalno'] = $this->cart->getSubTotal();
+
+            $data['totalno'] += $pricecalculate;
+
+            $data['total_amount'] = $this->currency->format($data['totalno'], $this->session->data['currency']);
+
+
+
+        }
+
+        else{
+
+            $data['totalno'] = $this->cart->getSubTotal();
+            $data['total_amount'] = $this->currency->format($data['totalno'], $this->session->data['currency']);
+
+        }
+
+
+        unset($this->session->data['creditcardname']);
+        unset($this->session->data['paymentplan']);
+
+        $this->response->setOutput($this->load->view('checkout/payment_method', $data));
 	}
 
 	public function save() {
@@ -201,6 +242,7 @@ class ControllerCheckoutPaymentMethod extends Controller {
 
                 $this->session->data['paymentplan'] = $this->request->post['PaymentPlan'];
 
+
             }
 		}
 
@@ -210,4 +252,5 @@ class ControllerCheckoutPaymentMethod extends Controller {
         $this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+
 }

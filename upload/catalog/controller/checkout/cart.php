@@ -1,11 +1,6 @@
 <?php
 class ControllerCheckoutCart extends Controller {
 	public function index() {
-
-        unset($this->session->data['creditcardname']);
-        unset($this->session->data['paymentplan']);
-
-
 		$this->load->language('checkout/cart');
 
 		$this->document->setTitle($this->language->get('heading_title'));
