@@ -171,8 +171,8 @@ class LOC_Warehouse
 
         if ($qty_default) {
             $title = 'success';
-            $btn = 'DOSTUPNO ODMAH - ŠALJEMO SUTRA';
-            $date = Carbon::now()->addWeekdays(1)->format('d.m.Y');
+            $date = Carbon::now()->addWeekdays(1);
+            $btn = 'DOSTUPNO ODMAH - ŠALJEMO ' . ($date->diff(Carbon::now())->days < 1) ? 'SUTRA' : $date->format('d.m.Y');
         }
 
         if ( ! $qty_default && ! $suplier->dobavljac_stanje && $qty_stores) {
@@ -187,7 +187,7 @@ class LOC_Warehouse
             $date = Carbon::now()->addWeekdays(5)->format('d.m.Y');
         }
 
-        if ( ! $qty_default && ! $suplier->dobavljac_stanje && $qty_stores) {
+        if ( ! $qty_default && ! $suplier->dobavljac_stanje && ! $qty_stores) {
             $title = 'secondary';
             $btn = 'PROIZVOD NEDOSTUPAN';
             $date = 0;
