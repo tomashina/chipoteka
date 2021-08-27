@@ -188,7 +188,7 @@ class LOC_Warehouse
         $response->push([
             'title' => 'Web',
             'address' => '',
-            'qty'   => $qty
+            'qty'   => $qty_default
         ]);
 
         $response->push([
