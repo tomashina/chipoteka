@@ -397,19 +397,7 @@
                                         </div>
 
                                     </div>
-                                    <div class="product-delivery-time">
-                                        <i class="fas fa-shipping-timed"></i>
-                                        <div class="d-flex flex-column">
-                                            {% if (product.quantity < 1)  %}
-                                                <span>Nedostupno na web shopu</span>
-                                                <span></span>
-                                            {% else %}
-                                                <span>Proizvod kod dobavljača</span>
-                                                <span>Šaljemo do {{ product.saljemodo }}</span>
-                                            {% endif %}
 
-                                        </div>
-                                    </div>
                                 </a>
                             </div>
                         </div>
@@ -462,7 +450,7 @@
                                     qty = 'fa-times text-danger';
                                 }
 
-                                html += '<div class="d-flex poslov justify-content-between border-bottom py-3"><div><div class="fw-semibold text-dark"><a href="http://maps.google.com/?q=' + json[key].title + ' - ' + json[key].address + '" target="_blank">' + json[key].title + ' - ' + json[key].address + '</a></div></div><div><i class="fal ' + qty + ' me-2"></i></div></div>';
+                                html += '<div class="d-flex poslov justify-content-between border-bottom py-3"><div><div class="fw-semibold text-dark"><a href="http://maps.google.com/?q=' + json[key].title + ' - ' + json[key].address + '" target="_blank">' + json[key].title + ' - ' + json[key].address + '</a></div></div><div><i class="fas ' + qty + ' me-2"></i></div></div>';
 
                             }
 
