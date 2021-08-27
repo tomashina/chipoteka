@@ -69,7 +69,7 @@ class LuceedEndPoints
             //
             'stock_skladista'   => 'StanjeZalihe/Skladiste/',
             'stock_dobavljaca'  => 'StanjeZaliheDobavljaci/Lista',
-            'stock_dobavljac'   => 'StanjeZaliheDobavljaci/Artikl',
+            'stock_dobavljac'   => 'StanjeZaliheDobavljaci/Artikl/',
         ];
     }
 
