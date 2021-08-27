@@ -1,8 +1,6 @@
 <?php
 class ControllerCheckoutPaymentAddress extends Controller {
 	public function index() {
-        unset($this->session->data['creditcardname']);
-        unset($this->session->data['paymentplan']);
 		$this->load->language('checkout/checkout');
 
 		if (isset($this->session->data['payment_address']['address_id'])) {
@@ -107,7 +105,7 @@ class ControllerCheckoutPaymentAddress extends Controller {
 				if (!$json) {
 					$this->session->data['payment_address'] = $this->model_account_address->getAddress($this->request->post['address_id']);
 
-					unset($this->session->data['payment_method']);
+					//unset($this->session->data['payment_method']);
 					unset($this->session->data['payment_methods']);
 				}
 			} else {

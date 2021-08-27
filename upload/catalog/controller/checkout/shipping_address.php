@@ -1,8 +1,6 @@
 <?php
 class ControllerCheckoutShippingAddress extends Controller {
 	public function index() {
-        unset($this->session->data['creditcardname']);
-        unset($this->session->data['paymentplan']);
 		$this->load->language('checkout/checkout');
 
 		if (isset($this->session->data['shipping_address']['address_id'])) {

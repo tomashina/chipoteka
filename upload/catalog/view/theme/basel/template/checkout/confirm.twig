@@ -2,7 +2,7 @@
 
 
   <h2 class="h6 pt-1 pb-3 mb-3 mt-3 border-bottom">{{ text_review }}</h2>
-
+    {{ notif }}
 
   {% for product in products %}
   <!-- Item-->
@@ -69,8 +69,16 @@
     </div>
 
 {{ payment }}
+
+    <script>
+        $('#cart-content').load('index.php?route=common/cart/info #cart-content > *');
+        $('.cart-total-amount').html( '{{ total_amount }}' );
+
+    </script>
 {% else %}
 <script><!--
 location = '{{ redirect }}';
 //--></script>
 {% endif %}
+
+
