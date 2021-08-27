@@ -296,7 +296,7 @@
                                     </button>
                                 </div>
                                 <input type="hidden" name="product_id" value="{{ product_id }}" />
-                                <button type="button" id="button-cart2" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
+                                <button type="button" id="button-cart3" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
                             </div>
                         </div>
                         <!-- Reviews-->
@@ -481,6 +481,8 @@
                     $('#availability-title').html(title);
                     $('#availability-subtitle').html(subtitle);
                     $('#availability-icon').addClass('text-' + icon);
+
+                    $('#button-cart', '#button-cart2', '#button-cart3').innerHTML = title;
                 }
             });
         });
