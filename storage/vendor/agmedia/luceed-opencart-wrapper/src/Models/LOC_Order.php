@@ -177,7 +177,7 @@ class LOC_Order
             'cijene_s_porezom'          => agconf('luceed.with_tax'),
             'partner_uid'               => $this->customer_uid,
             'iznos'                     => (float) $iznos,
-            'vrsta_isporuke'            => '10 - GLS dostava',
+            'vrsta_isporuke'            => '10',
             'rezervacija_do_datuma'     => $this->getReservation(),
             'placanja'                  => [
                 [
