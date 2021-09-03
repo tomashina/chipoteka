@@ -8,7 +8,7 @@ import boto3
 import base64
 from botocore.exceptions import ClientError
 import json
-
+import sys
 def get_secret():
 
     secret_name = "chipoteka-prod"
@@ -85,7 +85,8 @@ def replace_in_file(filename,search_replace):
 
 
 data=json.loads(get_secret())
-
+project_root=sys.argv[1]
 for key,value in data.items():
-    replace_in_file(key,value)
+    path=project_root+"/"+key
+    replace_in_file(path,value)
 

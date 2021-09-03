@@ -2,10 +2,12 @@ version: 0.1
 phases:
   install:
     on-failure: CONTINUE
+    commands:
+      - touch log.txt
 reports:
   chipoteka-prod-report-group:
     files:
-      - "**/*"
+      - "log.txt"
 artifacts:
   files:
     - '**/*'
