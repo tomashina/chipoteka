@@ -19,7 +19,6 @@ define('DIR_LOGS', 'dir_logs');
 define('DIR_MODIFICATION', 'dir_modification');
 define('DIR_SESSION', 'dir_session');
 define('DIR_UPLOAD', 'dir_upload');
-
 // DB
 define('DB_DRIVER', 'db_driver');
 define('DB_HOSTNAME', 'db_host');
