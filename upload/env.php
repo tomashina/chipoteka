@@ -30,7 +30,7 @@ define('OC_ENV', [
             'included'          => [warehouse_included],
             'default'           => [warehouse_default],
             'availability_view' => [warehouse_availability_view],
-            'json'              => dir_storage . 'warehouse_json'
+            'json'              => 'warehouse_json'
         ],
 
     ],
