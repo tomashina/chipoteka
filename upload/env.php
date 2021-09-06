@@ -50,7 +50,7 @@ define('OC_ENV', [
         ],
         'shipping_article_uid'  => 'shipping_article_uid',
         'date'                  => 'date',
-        'datetime'              => 'datetime',
+        'datetime'              => '%datetime%',
     ],
 
 ]);
