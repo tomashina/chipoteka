@@ -3,9 +3,9 @@
 define('OC_ENV', [
     'env'                         => 'env',
     //
-    'free_shipping_amount'        => free_shipping_amount,
-    'default_shipping_price'      => default_shipping_price,
-    'shipping_collector_price'    => shipping_collector_price,
+    'free_shipping_amount'        => '%free_shipping_amount%',
+    'default_shipping_price'      => '%default_shipping_price%',
+    'shipping_collector_price'    => '%shipping_collector_price%',
     'service'                     => [
         // test_url http://luceedapi-test.tomsoft.hr:3676/datasnap/rest/
         // live_url http://luceedapi.tomsoft.hr:3675/datasnap/rest/
@@ -48,8 +48,8 @@ define('OC_ENV', [
                 'MAESTRO'    => 'luceed_payment_cards_maestro'
             ]
         ],
-        'shipping_article_uid'  => 'shipping_article_uid',
-        'date'                  => 'date',
+        'shipping_article_uid'  => '%shipping_article_uid%',
+        'date'                  => '%date%',
         'datetime'              => '%datetime%',
     ],
 
