@@ -14,7 +14,7 @@ define('DIR_IMAGE', 'dir_image');
 define('DIR_STORAGE', 'dir_storage');
 define('DIR_CATALOG', 'dir_catalog');
 define('DIR_LANGUAGE', 'dir_language');
-define('DIR_TEMPLATE', 'view/template/');
+define('DIR_TEMPLATE', 'dir_template');
 define('DIR_CONFIG', 'dir_config');
 define('DIR_CACHE', 'dir_cache');
 define('DIR_DOWNLOAD', 'dir_download');
