@@ -23,6 +23,12 @@ RewriteEngine On
 
 RewriteBase /
 
+RewriteCond %{HTTP_HOST} ^www\.
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
 RewriteRule ^.?artikl/[\w-]+/(.+)-\d+/?$ /$1 [R=301,L]
 
 RewriteCond %{QUERY_STRING} ^route=common/home$
