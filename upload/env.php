@@ -6,8 +6,6 @@ define('OC_ENV', [
         'free_shipping_amount'   => %free_shipping_amount%,
     'default_shipping_price' => %default_shipping_price%,
     'service'                => [
-    // test_url http://luceedapi-test.tomsoft.hr:3676/datasnap/rest/
-    // live_url http://luceedapi.tomsoft.hr:3675/datasnap/rest/
     'base_url' => 'service_base_url',
     'username' => 'service_base_username',
     'password' => 'service_base_password',
