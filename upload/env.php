@@ -3,22 +3,22 @@
 define('OC_ENV', [
         'env'                    => 'env',
         //
-        'free_shipping_amount'   => %free_shipping_amount%,
-    'default_shipping_price' => %default_shipping_price%,
+        'free_shipping_amount'   => '%free_shipping_amount%',
+    'default_shipping_price' => '%default_shipping_price%',
     'service'                => [
     'base_url' => 'service_base_url',
     'username' => 'service_base_username',
     'password' => 'service_base_password',
 ],
     'import'                 => [
-    'default_category'        => import_default_category,
-    'default_action_category' => import_default_action_category,
-    'default_language'        => import_default_language, // HR
-    'default_tax_class'       => import_default_tax_class, // PDV
-    'default_stock_empty'     => import_default_stock_empty,
-    'default_stock_full'      => import_default_stock_full,
-    'default_attribute_group' => import_default_attribute_group,
-    'default_store_id'        => import_default_store_id,
+    'default_category'        => 'import_default_category',
+    'default_action_category' => 'import_default_action_category',
+    'default_language'        => 'import_default_language',
+    'default_tax_class'       => 'import_default_tax_class',
+    'default_stock_empty'     => 'import_default_stock_empty',
+    'default_stock_full'      => 'import_default_stock_full',
+    'default_attribute_group' => 'import_default_attribute_group',
+    'default_store_id'        => 'import_default_store_id',
     'image_path'              => 'import_image_path',
     'image_placeholder'       => 'import_image_placeholder',
     'category'                => [
