@@ -56,15 +56,15 @@ define('OC_ENV', [
     ],
     'shipping_article_uid'  => 'luceed_shipping_article_uid',
     'date'                  => 'luceed_date',
-    'datetime'              => '%luceed_datetime%'
+    'datetime'              => 'luceed_datetime',
 ],
     //
     'mail' => [
     'cod' => [
         0 => [
             '02' => [
-                24 => 10,
-                72 => 11
+                mail_cod_0_02_1,
+                mail_cod_0_02_2
             ],
             '05' => [
                 24 => 10,
