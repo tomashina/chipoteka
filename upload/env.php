@@ -44,7 +44,7 @@ define('OC_ENV', [
         'from_date' => 'orders_from_date'
     ]
 ],
-    'luceed'                => [
+    'luceed'               => [
     'with_tax'              => 'luceed_with_tax',
     'default_warehouse_uid' => 'luceed_default_warehouse_uid', // Šifra skladišta iz Luceed-a.
     'stock_warehouse_uid'   => 'luceed_stock_warehouse_uid', // Primarna šifra skladišta za provjeru količina.
@@ -56,7 +56,7 @@ define('OC_ENV', [
     ],
     'shipping_article_uid'  => 'luceed_shipping_article_uid',
     'date'                  => 'luceed_date',
-    'datetime'              => 'luceed_datetime'
+    'datetime'              => '%luceed_datetime%'
 ],
     //
     'mail' => [
