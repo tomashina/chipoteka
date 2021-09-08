@@ -32,7 +32,7 @@ define('DB_DATABASE', 'db_database');
 define('DB_PORT', 'db_port');
 define('DB_PREFIX', 'db_prefix');
 
-define('CACHE_HOSTNAME', 'redis.chipoteka.awslocal');
+define('CACHE_HOSTNAME', 'cache_host_name');
 define('CACHE_PORT', 'cache_host_port');
 define('CACHE_PREFIX', 'cache_host_prefix');
 define('CACHE_PASSWORD', 'cache_host_password');
