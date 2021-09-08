@@ -44,7 +44,8 @@ class ModelToolImage extends Model {
 			//return $this->config->get('config_ssl') . 'image/' . $image_new;
             return 'https://cdn.chipoteka.hr/' . $image_new . '" width="' . $width . '" height="' . $height;
 		} else {
-			return $this->config->get('config_url') . 'image/' . $image_new;
+			//return $this->config->get('config_url') . 'image/' . $image_new;
+            return 'https://cdn.chipoteka.hr/' . $image_new . '" width="' . $width . '" height="' . $height;
 		}
 	}
 }
