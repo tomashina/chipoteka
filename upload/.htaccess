@@ -112,6 +112,3 @@ BrowserMatch ^Mozilla/4 gzip-only-text/html
 BrowserMatch ^Mozilla/4\.0[678] no-gzip
 BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
 Header append Vary User-Agent
-
-Header add Link "</catalog/view/dist/fonts/fa-fonts/fa-solid-900.woff2>; rel=preload; as=font; crossorigin"
-Header add Link "</catalog/view/dist/fonts/fa-fonts/fa-light-300.woff2>; rel=preload; as=font; crossorigin"
