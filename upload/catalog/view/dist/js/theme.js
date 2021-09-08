@@ -798,7 +798,9 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     var _loop8 = function _loop8(i) {
       var filterInput = filterListWidget[i].querySelector('.widget-filter-search'),
           filterList = filterListWidget[i].querySelector('.widget-filter-list'),
-          filterItems = filterList.querySelectorAll('.widget-filter-item');
+          //filterItems = filterList.querySelectorAll('.widget-filter-item');
+
+          filterItems = '';
 
       if (!filterInput) {
         return "continue";
