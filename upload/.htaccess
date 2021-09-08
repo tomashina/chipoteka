@@ -23,7 +23,7 @@ RewriteEngine On
 
 RewriteBase /
 
-RewriteRule ^.?artikl/[\w-]+/(.+)-\d+/?$ /$1 [R=301,L]
+RewriteRule ^.?artikl/[\w-]+/(.+)-(\d+)/?$ /$1-$2 [R=301,L]
 
 RewriteCond %{QUERY_STRING} ^route=common/home$
 RewriteCond %{REQUEST_METHOD} !^POST$

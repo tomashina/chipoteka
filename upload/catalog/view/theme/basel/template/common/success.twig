@@ -20,7 +20,7 @@
          {% if uplatnica =='error' %}
         <p> Došlo je do greške prilikom generiranje 2D koda.</p>
          {% else %}
-           <img src="data:image/png;base64,{{ uplatnica }}" class="img-responsive"/>
+           <img src="data:image/png;base64,{{ uplatnica }}" class="img-responsive" style="max-width:400px"/>
          {% endif %}
          {% endif %}
        </div>
