@@ -1,12 +1,5 @@
 {{ header }}
-
 <main class="offcanvas-enabled">
-
-
-
-
-
-
 <div class="container-fluid pb-5 mb-sm-4">
   <div class="pt-5">
     <div class="card py-3 mt-sm-3">
@@ -20,7 +13,7 @@
          {% if uplatnica =='error' %}
         <p> Došlo je do greške prilikom generiranje 2D koda.</p>
          {% else %}
-           <img src="data:image/png;base64,{{ uplatnica }}" class="img-responsive" style="max-width:400px"/>
+           <img src="data:image/png;base64,{{ uplatnica }}" class="img-responsive" style="max-width:500px"/>
          {% endif %}
          {% endif %}
        </div>
