@@ -477,7 +477,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $mail->setFrom($this->config->get('config_email'));
             $mail->setSender(html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'));
             $mail->setSubject(sprintf($email['subject'], $order['order_id']));
-            $html = rtrim(chunk_split(base64_encode($html)));
             $mail->setHtml($html);
             $mail->send();
         }
