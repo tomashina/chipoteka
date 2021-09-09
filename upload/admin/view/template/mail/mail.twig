@@ -9,7 +9,7 @@
     <meta name="format-detection" content="email=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="x-apple-disable-message-reformatting">
-    <title>Order Confirmation</title>
+    <title>{{ mail_title }}</title>
     <style type="text/css">/* Reset */
         .email_body,
         .email_section table,
@@ -770,7 +770,7 @@
                                 <tbody>
                                 <tr>
                                     <td class="column_cell px py_xs text_primary text_center" style="vertical-align: top;color: #E31318;text-align: center;padding-top: 28px;padding-bottom: 8px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                        <p class="img_inline" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 100%;clear: both;"><a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img src="images/chipoteka-hd.png" alt="Chipoteka Logo" style="max-width: 210px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;" width="210" height=""></a></p>
+                                        <p class="img_inline" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 100%;clear: both;"><a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img src="{{ mail_logo }}" alt="Chipoteka Logo" style="max-width: 210px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;" width="210" height=""></a></p>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -822,11 +822,18 @@
                                 <tbody>
                                 <tr>
                                     <td class="column_cell px py text_dark text_center" style="vertical-align: top;color: #333333;text-align: center;padding-top: 16px;padding-bottom: 16px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                        <h2 class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 18px;word-break: break-word;font-size: 24px;line-height: 38px;font-weight: bold;">Chipoteka.hr - Narudžba broj 128 zaprimljena</h2>
-                                        <p style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 26px;">Po&scaron;tovani/a, </p>
-                                        <p style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 26px;">zahvaljujemo Vam na Va&scaron;oj narudžbi. Uplatu kao i narudžbu smo uredno zaprimili i na&scaron; tim u webshopu će je obraditi u najbržem mogućem roku.</p>
+                                        <h2 class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 18px;word-break: break-word;font-size: 24px;line-height: 38px;font-weight: bold;">{{ mail_title }}</h2>
+                                        {{ mail_text }}
 
+                                        {% if payment_code == 'bank_transfer' and mail_data == '1' %}
 
+                                        <p style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 26px;">MOLIMO IZVRŠITE UPLATU U IZNOSU OD {{ total|number_format(2, '.', '') }}kn <br>
+                                            IBAN RAČUN: HR4424070001100582698<br>
+                                            MODEL: 05 POZIV NA BROJ: {{ mail_poziv_na_broj }}</p><p>ILI JEDNOSTAVNO POSKENIRAJTE 2D BARKOD</p>
+
+                                        <img src="{{ store_url }}image/tmp/{{ order_id }}.png" style="max-width: 800px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;display: block;width: 100%;margin: 0px auto;"  />
+
+                                        {% endif %}
 
                                     </td>
                                 </tr>
@@ -854,6 +861,8 @@
     </tbody>
 </table>
 
+
+{% if mail_data == '1' %}
 
 <!-- address_secondary_2columns -->
 <table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
@@ -890,16 +899,16 @@
                                         <td class="column_cell bg_secondary brounded px_md pt_md text_dark text_center" style="vertical-align: top;background-color: #e5e9ee;color: #333333;border-radius: 4px;text-align: center;padding-left: 32px;padding-right: 32px;padding-top: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                             <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Podaci o kupcu</h6>
                                             <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
-                                                Tomislav Jureša<br>
-                                                Martićeva 67<br>
-                                                10000 Zagreb<br>
-                                                Croatia<br>
-                                                0992153975<br>
-                                                tomislav@agmedia.hr
+                                                {{ payment_firstname }} {{ payment_lastname }}<br>
+                                                {{ payment_address_1 }}<br>
+                                                {{ payment_postcode }} {{ payment_city }}<br>
+                                                {{ payment_country }}<br>
+                                                {{ telephone }}<br>
+                                                {{ email }}
                                             </p>
                                             <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Način plaćanja</h6>
                                             <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
-                                                Plaćanje pouzećem
+                                                {{ payment_method }}
                                             </p>
                                         </td>
                                         <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
@@ -924,16 +933,16 @@
                                         <td class="column_cell bg_secondary brounded px_md pt_md text_dark text_center" style="vertical-align: top;background-color: #e5e9ee;color: #333333;border-radius: 4px;text-align: center;padding-left: 32px;padding-right: 32px;padding-top: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                             <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Podaci za dostavu</h6>
                                             <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
-                                                Tomislav Jureša<br>
-                                                Martićeva 67<br>
-                                                10000 Zagreb<br>
-                                                Croatia<br>
-                                                0992153975<br>
-                                                tomislav@agmedia.hr
+                                                {{ shipping_firstname }} {{ shipping_lastname }}<br>
+                                                {{ shipping_address_1 }}<br>
+                                                {{ shipping_postcode }} {{ shipping_city }}<br>
+                                                {{ shipping_country }}<br>
+                                                {{ telephone }}<br>
+                                                {{ email }}
                                             </p>
                                             <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Način dostave</h6>
                                             <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
-                                                GLS dostava
+                                              {{ shipping_method }}
                                             </p>
                                         </td>
                                         <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
@@ -962,6 +971,7 @@
     </tr>
     </tbody>
 </table>
+
 <!-- order_summary -->
 <table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
     <tbody>
@@ -1017,220 +1027,118 @@
     </tr>
     </tbody>
 </table>
-<!-- order_row -->
-<table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
-    <tbody>
-    <tr>
-        <td class="email_bg bg_light px" style="font-size: 0;text-align: center;line-height: 100%;background-color: #F5F5F5;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-            <!--[if (mso)|(IE)]>
-            <table role="presentation" width="800" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
-                <tbody>
-                <tr>
-                    <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-            <![endif]-->
-            <table class="content_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 800px;margin: 0 auto;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                <tbody>
-                <tr>
-                    <td class="content_cell bg_white px pb" style="font-size: 0;text-align: center;background-color: #ffffff;padding-left: 16px;padding-right: 16px;padding-bottom: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                        <div class="column_row" style="font-size: 0;text-align: center;max-width: 624px;margin: 0 auto;">
-                            <!--[if (mso)|(IE)]>
-                            <table role="presentation" width="624" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
-                                <tbody>
-                                <tr>
-                                    <td width="156" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-                            <![endif]-->
-                            <div class="col_order" style="vertical-align: top;display: inline-block;width: 100%;max-width: 156px;">
-                                <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+
+{% for product in products %}
+    <!-- order_row -->
+    <table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td class="email_bg bg_light px" style="font-size: 0;text-align: center;line-height: 100%;background-color: #F5F5F5;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                <!--[if (mso)|(IE)]>
+                <table role="presentation" width="800" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
+                    <tbody>
+                    <tr>
+                        <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
+                <![endif]-->
+                <table class="content_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 800px;margin: 0 auto;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                    <tbody>
+                    <tr>
+                        <td class="content_cell bg_white px pb" style="font-size: 0;text-align: center;background-color: #ffffff;padding-left: 16px;padding-right: 16px;padding-bottom: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                            <div class="column_row" style="font-size: 0;text-align: center;max-width: 624px;margin: 0 auto;">
+                                <!--[if (mso)|(IE)]>
+                                <table role="presentation" width="624" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
                                     <tbody>
                                     <tr>
-                                        <td class="column_cell px text_dark text_center" style="vertical-align: top;color: #333333;text-align: center;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                            <p class="img_full" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 0 !important;line-height: 100%;clear: both;"><a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #333333;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img class="brounded" src="images/smartphone-realme.jpg" width="124" height="124" alt="" style="max-width: 124px;border-radius: 4px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;display: block;width: 100%;margin: 0px auto;"></a></p>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!--[if (mso)|(IE)]>
-                            </td>
-                            <td width="312" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-                            <![endif]-->
-                            <div class="col_2" style="vertical-align: top;display: inline-block;width: 100%;max-width: 312px;">
-                                <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                    <tbody>
-                                    <tr>
-                                        <td class="column_cell px pt text_dark text_left mobile_center" style="vertical-align: top;color: #333333;text-align: left;padding-left: 16px;padding-right: 16px;padding-top: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                            <h5 class="mt_xs mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 21px;font-weight: bold;">Smartphone Realme 7 8/128GB, Blue</h5>
-                                            <p class="text_xs mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 14px;line-height: 22px;">Šifra: 9504000653</p>
-                                            <p class="text_xs text_secondary" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 14px;line-height: 22px;">Količina: 1</p>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!--[if (mso)|(IE)]>
-                            </td>
-                            <td width="156" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-                            <![endif]-->
-                            <div class="col_order" style="vertical-align: top;display: inline-block;width: 100%;max-width: 156px;">
-                                <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                    <tbody>
-                                    <tr>
-                                        <td class="column_cell px py text_right mobile_center" style="vertical-align: top;text-align: right;padding-top: 16px;padding-bottom: 16px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                            <p class="text_primary mt_xs mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">1599.00 kn</p>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!--[if (mso)|(IE)]>
-                            </td>
-                            </tr>
-                            </tbody>
-                            </table>
-                            <![endif]-->
-                        </div>
-                        <div class="column_row" style="font-size: 0;text-align: center;max-width: 624px;margin: 0 auto;">
-                            <!--[if (mso)|(IE)]>
-                            <table role="presentation" width="416" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
-                                <tbody>
-                                <tr>
-                                    <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-                            <![endif]-->
-                            <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                <tbody>
-                                <tr>
-                                    <td class="column_cell bb_light" height="16" style="vertical-align: top;border-bottom: 1px solid #dee0e1;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp;</td>
+                                        <td width="156" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
+                                <![endif]-->
+                                <div class="col_order" style="vertical-align: top;display: inline-block;width: 100%;max-width: 156px;">
+                                    <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                        <tbody>
+                                        <tr>
+                                            <td class="column_cell px text_dark text_center" style="vertical-align: top;color: #333333;text-align: center;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                                <p class="img_full" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 0 !important;line-height: 100%;clear: both;"><a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #333333;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img class="brounded" src="{{ product.image }}" width="124" height="124" alt="" style="max-width: 124px;border-radius: 4px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;display: block;width: 100%;margin: 0px auto;"></a></p>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!--[if (mso)|(IE)]>
+                                </td>
+                                <td width="312" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
+                                <![endif]-->
+                                <div class="col_2" style="vertical-align: top;display: inline-block;width: 100%;max-width: 312px;">
+                                    <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                        <tbody>
+                                        <tr>
+                                            <td class="column_cell px pt text_dark text_left mobile_center" style="vertical-align: top;color: #333333;text-align: left;padding-left: 16px;padding-right: 16px;padding-top: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                                <h5 class="mt_xs mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 21px;font-weight: bold;">{{ product.name }}</h5>
+                                                <p class="text_xs mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 14px;line-height: 22px;">Šifra: {{ product.model }}</p>
+                                                <p class="text_xs text_secondary" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 14px;line-height: 22px;">Količina: {{ product.quantity }}</p>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!--[if (mso)|(IE)]>
+                                </td>
+                                <td width="156" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
+                                <![endif]-->
+                                <div class="col_order" style="vertical-align: top;display: inline-block;width: 100%;max-width: 156px;">
+                                    <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                        <tbody>
+                                        <tr>
+                                            <td class="column_cell px py text_right mobile_center" style="vertical-align: top;text-align: right;padding-top: 16px;padding-bottom: 16px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                                <p class="text_primary mt_xs mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">{{ product.price|number_format(2, '.', '') }} kn</p>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!--[if (mso)|(IE)]>
+                                </td>
                                 </tr>
                                 </tbody>
-                            </table>
-                            <!--[if (mso)|(IE)]>
-                            </td>
-                            </tr>
-                            </tbody>
-                            </table>
-                            <![endif]-->
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <!--[if (mso)|(IE)]>
-            </td>
-            </tr>
-            </tbody>
-            </table>
-            <![endif]-->
-        </td>
-    </tr>
-    </tbody>
-</table>
-<!-- order_row -->
-<table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
-    <tbody>
-    <tr>
-        <td class="email_bg bg_light px" style="font-size: 0;text-align: center;line-height: 100%;background-color: #F5F5F5;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-            <!--[if (mso)|(IE)]>
-            <table role="presentation" width="800" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
-                <tbody>
-                <tr>
-                    <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-            <![endif]-->
-            <table class="content_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 800px;margin: 0 auto;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                <tbody>
-                <tr>
-                    <td class="content_cell bg_white px pb" style="font-size: 0;text-align: center;background-color: #ffffff;padding-left: 16px;padding-right: 16px;padding-bottom: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                        <div class="column_row" style="font-size: 0;text-align: center;max-width: 624px;margin: 0 auto;">
-                            <!--[if (mso)|(IE)]>
-                            <table role="presentation" width="624" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
-                                <tbody>
-                                <tr>
-                                    <td width="156" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-                            <![endif]-->
-                            <div class="col_order" style="vertical-align: top;display: inline-block;width: 100%;max-width: 156px;">
+                                </table>
+                                <![endif]-->
+                            </div>
+                            <div class="column_row" style="font-size: 0;text-align: center;max-width: 624px;margin: 0 auto;">
+                                <!--[if (mso)|(IE)]>
+                                <table role="presentation" width="416" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
+                                    <tbody>
+                                    <tr>
+                                        <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
+                                <![endif]-->
                                 <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                     <tbody>
                                     <tr>
-                                        <td class="column_cell px text_dark text_center" style="vertical-align: top;color: #333333;text-align: center;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                            <p class="img_full" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 0 !important;line-height: 100%;clear: both;"><a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #333333;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img class="brounded" src="images/smartphone-realme.jpg" width="124" height="124" alt="" style="max-width: 124px;border-radius: 4px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;display: block;width: 100%;margin: 0px auto;"></a></p>
-                                        </td>
+                                        <td class="column_cell bb_light" height="16" style="vertical-align: top;border-bottom: 1px solid #dee0e1;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp;</td>
                                     </tr>
                                     </tbody>
                                 </table>
-                            </div>
-                            <!--[if (mso)|(IE)]>
-                            </td>
-                            <td width="312" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-                            <![endif]-->
-                            <div class="col_2" style="vertical-align: top;display: inline-block;width: 100%;max-width: 312px;">
-                                <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                    <tbody>
-                                    <tr>
-                                        <td class="column_cell px pt text_dark text_left mobile_center" style="vertical-align: top;color: #333333;text-align: left;padding-left: 16px;padding-right: 16px;padding-top: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                            <h5 class="mt_xs mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 21px;font-weight: bold;">Smartphone Realme 7 8/128GB, Blue</h5>
-                                            <p class="text_xs mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 14px;line-height: 22px;">Šifra: 9504000653</p>
-                                            <p class="text_xs text_secondary" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 14px;line-height: 22px;">Količina: 1</p>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!--[if (mso)|(IE)]>
-                            </td>
-                            <td width="156" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-                            <![endif]-->
-                            <div class="col_order" style="vertical-align: top;display: inline-block;width: 100%;max-width: 156px;">
-                                <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                    <tbody>
-                                    <tr>
-                                        <td class="column_cell px py text_right mobile_center" style="vertical-align: top;text-align: right;padding-top: 16px;padding-bottom: 16px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                            <p class="text_primary mt_xs mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">1599.00 kn</p>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!--[if (mso)|(IE)]>
-                            </td>
-                            </tr>
-                            </tbody>
-                            </table>
-                            <![endif]-->
-                        </div>
-                        <div class="column_row" style="font-size: 0;text-align: center;max-width: 624px;margin: 0 auto;">
-                            <!--[if (mso)|(IE)]>
-                            <table role="presentation" width="416" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
-                                <tbody>
-                                <tr>
-                                    <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-                            <![endif]-->
-                            <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                <tbody>
-                                <tr>
-                                    <td class="column_cell bb_light" height="16" style="vertical-align: top;border-bottom: 1px solid #dee0e1;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp;</td>
+                                <!--[if (mso)|(IE)]>
+                                </td>
                                 </tr>
                                 </tbody>
-                            </table>
-                            <!--[if (mso)|(IE)]>
-                            </td>
-                            </tr>
-                            </tbody>
-                            </table>
-                            <![endif]-->
-                        </div>
-                    </td>
+                                </table>
+                                <![endif]-->
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!--[if (mso)|(IE)]>
+                </td>
                 </tr>
                 </tbody>
-            </table>
-            <!--[if (mso)|(IE)]>
+                </table>
+                <![endif]-->
             </td>
-            </tr>
-            </tbody>
-            </table>
-            <![endif]-->
-        </td>
-    </tr>
-    </tbody>
-</table>
+        </tr>
+        </tbody>
+    </table>
+
+{% endfor %}
+
 <!-- order_total -->
 <table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
     <tbody>
@@ -1257,9 +1165,13 @@
                                 <tbody>
                                 <tr>
                                     <td class="column_cell px text_dark text_right mobile_center" style="vertical-align: top;color: #333333;text-align: right;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                        <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">Međusuma: <strong style="font-weight: bold;">3198.00 kn</strong></p>
-                                        <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">GLS dostava: <strong style="font-weight: bold;">0.00 kn</strong></p>
-                                        <h4 class="mt_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 0px;word-break: break-word;font-size: 18px;line-height: 24px;font-weight: bold;">Ukupno: <span class="text_primary" style="color: #E31318;">3198.00 kn</span></h4>
+                                        {% for total in totals %}
+                                            {% if total.title != 'Ukupno' %}
+                                                <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">{{ total.title }}: <strong style="font-weight: bold;">{{ total.value|number_format(2, '.', '') }} kn</strong></p>
+                                            {% else %}
+                                                <h4 class="mt_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 0px;word-break: break-word;font-size: 18px;line-height: 24px;font-weight: bold;">{{ total.title }}: <span class="text_primary" style="color: #E31318;">{{ total.value|number_format(2, '.', '') }} kn</span></h4>
+                                            {% endif %}
+                                        {% endfor %}
                                     </td>
                                 </tr>
                                 </tbody>
@@ -1285,8 +1197,11 @@
     </tr>
     </tbody>
 </table>
-<!-- isporuka -->
 
+{% endif %}
+
+
+<!-- isporuka -->
 <table class="email_section" role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
     <tbody>
     <tr>
@@ -1313,7 +1228,8 @@
                                 <tr>
                                     <td class="column_cell px py text_dark text_center" style="vertical-align: top;color: #333333;text-align: center;padding-top: 16px;padding-bottom: 16px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                         <h2 class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 28px;line-height: 38px;font-weight: bold;">Isporuka pošiljki</h2>
-                                        <p class="text_lead text_secondary mb_md" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 19px;line-height: 31px;">Robu šaljemo radnim danom od ponedjeljka do petka, za narudžbe kreirane preko vikenda ili neradnog dana šaljemo prvi radni ponedjeljak ili prvi sljedeći radni dan.<br>
+                                        <p class="text_lead text_secondary mb_md" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 19px;line-height: 31px;">Robu šaljemo radnim danom od ponedjeljka do petka.
+                                            <br>
                                             Za sva dodatna pitanja možete nas kontaktirati na <a style="color:#E31318;text-decoration:none;" href="mailto:webnarudzba@chipoteka.hr">webnarudzba@chipoteka.hr</a></p>
                                         <table class="column" role="presentation" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
                                             <tbody>
@@ -1462,16 +1378,12 @@
                                 <tr>
                                     <td class="column_cell px py_md text_secondary text_center" style="vertical-align: top;color: #959ba0;text-align: center;padding-top: 32px;padding-bottom: 32px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                         <p class="img_inline mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 16px;line-height: 100%;clear: both;">
-                                            <a href="https://www.facebook.com/Chipoteka" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img src="images/facebook_white.png" width="24" height="24" alt="Facebook" style="max-width: 24px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;"></a> &nbsp;&nbsp;
-                                            <!--   <a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img src="images/twitter_white.png" width="24" height="24" alt="Twitter" style="max-width: 24px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;"></a> &nbsp;&nbsp;
-                                               <a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img src="images/instagram_white.png" width="24" height="24" alt="Instagram" style="max-width: 24px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;"></a> &nbsp;&nbsp;
-                                               <a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img src="images/pinterest_white.png" width="24" height="24" alt="Pinterest" style="max-width: 24px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;"></a> -->
+                                            <a href="https://www.facebook.com/Chipoteka" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img src="https://cdn.chipoteka.hr/image/facebook_white.png" width="24" height="24" alt="Facebook" style="max-width: 24px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;"></a> &nbsp;&nbsp;
+
                                         </p>
                                         <p class="mb" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 16px;word-break: break-word;font-size: 16px;line-height: 26px;">
                                             &copy;2021 Chipoteka<br>
-                                            <a class="text_adr" href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><span style="color: #959ba0;text-decoration: none;">Industrijska cesta 28
-10360 Sesvete, Hrvatska
-OIB: 11374156664</span></a>
+                                            <a class="text_adr" href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><span style="color: #959ba0;text-decoration: none;">Industrijska cesta 2810360 Sesvete, Hrvatska OIB: 11374156664</span></a>
                                         </p>
                                         <p class="text_link text_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 14px;line-height: 22px;">Web shop: <a style="color:#fff" href="https://www.chipoteka.hr">www.chipoteka.hr</a> <br> Podrška: <a style="color:#fff" href="mailto:webnarudzba@chipoteka.hr">webnarudzba@chipoteka.hr</a></p>
                                     </td>

@@ -20,6 +20,7 @@ class Mail {
 	protected $html;
 	protected $attachments = array();
 	public $parameter;
+    protected $bccs = array();
 
 	/**
 	 * Constructor
@@ -114,6 +115,11 @@ class Mail {
      * 
      *
      */
+
+    public function addBCC($mail) {
+        $this->bccs[] = $mail;
+    }
+
 	public function send() {
 		if (!$this->to) {
 			throw new \Exception('Error: E-Mail to required!');

@@ -1101,6 +1101,15 @@
                       {% else %}
                       
                       <option value="smtp">{{ text_smtp }}</option>
+                      {% endif %}
+
+                      {% if config_mail_engine == 'phpmailer' %}
+
+                        <option value='phpmailer' selected='selected'>PHPMailer</option>
+
+                      {% else %}
+
+                        <option value='phpmailer'>PHPMailer</option>
                       
                       {% endif %}
                     

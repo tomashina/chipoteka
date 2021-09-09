@@ -463,7 +463,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
             \Agmedia\Helpers\Log::store($data);
 
 
-            $html = $this->load->view('mail/mail', $data);
+           // $html = $this->load->view('mail/mail', $data);
 
             $mail = new Mail($this->config->get('config_mail_engine'));
             $mail->parameter = $this->config->get('config_mail_parameter');
@@ -472,12 +472,11 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $mail->smtp_password = html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8');
             $mail->smtp_port = $this->config->get('config_mail_smtp_port');
             $mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
-
             $mail->setTo($order['email']);
             $mail->setFrom($this->config->get('config_email'));
             $mail->setSender(html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'));
             $mail->setSubject(sprintf($email['subject'], $order['order_id']));
-            $mail->setHtml($html);
+            $mail->setHtml($this->load->view('mail/mail', $data));
             $mail->send();
         }
     }
