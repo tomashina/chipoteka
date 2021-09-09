@@ -451,7 +451,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
           for ($i = 0; $i < count($data['products']); $i++) {
                 $data['products'][$i]['image'] = HTTPS_CATALOG.'image/'.Product::where('product_id', $data['products'][$i]['product_id'])->pluck('image')->first();
             }
-            $data['mail_logo'] = HTTPS_CATALOG.'image/chipotekahd.png';
+            $data['mail_logo'] = HTTPS_CATALOG.'image/chipoteka-hd.png';
             $data['mail_title'] = sprintf($email['subject'], $order['order_id']);
 
             $data['mail_data'] = $email['data'];
