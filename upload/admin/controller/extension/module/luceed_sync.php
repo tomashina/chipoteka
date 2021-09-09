@@ -398,9 +398,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
         $updated = $loc->sort()->updateStatuses();
 
-        /*foreach ($loc->collection as $order) {
+        foreach ($loc->collection as $order) {
             $this->sendMail($order);
-        }*/
+        }
 
         return $this->response($updated, 'orders');
     }
@@ -415,9 +415,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
         $updated = $loc->checkStatusDuration();
 
-        /*foreach ($loc->collection as $order) {
+        foreach ($loc->collection as $order) {
             $this->sendMail($order);
-        }*/
+        }
 
         return $this->response($updated, 'orders');
     }
