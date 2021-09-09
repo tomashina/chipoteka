@@ -70,6 +70,5 @@ define('OC_ENV', [
         'wspay' => [
             mail_wspay
         ],
-    ],
 ],
 ]);
