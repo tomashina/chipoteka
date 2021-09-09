@@ -340,6 +340,9 @@ class LOC_Order
             $this->query_update_status .= '(' . $item['order_id'] . ', ' . $item['oc_status_to'] . ', NULL, NULL),';
         }
 
+        Log::store($this->collection, 'collection');
+        Log::store($this->query_update_status, 'collection');
+
         return $this;
     }
 
