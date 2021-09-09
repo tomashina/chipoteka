@@ -385,7 +385,8 @@ class ControllerCommonColumnLeft extends Controller {
 
 
 			if ($this->user->hasPermission('access', 'marketing/marketing')) {
-				$ketingmar[] = array(
+                $marketing[] = array(
+                    'name'[] = array(
 					'name'	   => $this->language->get('text_marketing'),
 					'href'     => $this->url->link('marketing/marketing', 'user_token=' . $this->session->data['user_token'], true),
 					'children' => array()
