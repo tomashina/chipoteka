@@ -116,7 +116,7 @@ class ControllerExtensionDashboardSale extends Controller {
 			$data['total'] = round($sale_total);
 		}
 
-		$data['sale'] = $this->url->link('sale/order', 'user_token=' . $this->session->data['user_token'], true);
+		$data['sale'] = $this->url->link('extension/me_order_manager', 'user_token=' . $this->session->data['user_token'], true);
 
 		return $this->load->view('extension/dashboard/sale_info', $data);
 	}
