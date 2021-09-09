@@ -324,24 +324,23 @@ class LOC_Order
             }
         }
 
-        // Get the apropriate mail.
-        for ($i = 0; $i < count($this->collection); $i++) {
-            foreach (agconf('mail.' . $this->collection[$i]['payment']) as $key => $item) {
-                if ($key) {
-                    if ($this->collection[$i]['status_from'] == $item['from'] && $this->collection[$i]['status_to'] == $item['to']) {
-                        $this->collection[$i]['mail'] = $key;
+        if ( ! empty($this->collection)) {
+            // Get the apropriate mail.
+            for ($i = 0; $i < count($this->collection); $i++) {
+                foreach (agconf('mail.' . $this->collection[$i]['payment']) as $key => $item) {
+                    if ($key) {
+                        if ($this->collection[$i]['status_from'] == $item['from'] && $this->collection[$i]['status_to'] == $item['to']) {
+                            $this->collection[$i]['mail'] = $key;
+                        }
                     }
                 }
             }
-        }
 
-        // Collect update status query.
-        foreach ($this->collection as $item) {
-            $this->query_update_status .= '(' . $item['order_id'] . ', ' . $item['oc_status_to'] . ', NULL, NULL),';
+            // Collect update status query.
+            foreach ($this->collection as $item) {
+                $this->query_update_status .= '(' . $item['order_id'] . ', ' . $item['oc_status_to'] . ', NULL, NULL),';
+            }
         }
-
-        Log::store($this->collection, 'collection');
-        Log::store($this->query_update_status, 'collection');
 
         return $this;
     }
@@ -353,12 +352,14 @@ class LOC_Order
      */
     public function updateStatuses(): int
     {
-        $this->db = new Database(DB_DATABASE);
+        if ($this->query_update_status != '') {
+            $this->db = new Database(DB_DATABASE);
 
-        $this->db->query("INSERT INTO " . DB_PREFIX . "order_temp (id, status, data_1, data_2) VALUES " . substr($this->query_update_status, 0, -1) . ";");
-        $this->db->query("UPDATE " . DB_PREFIX . "order o INNER JOIN " . DB_PREFIX . "order_temp ot ON o.order_id = ot.id SET o.order_status_id = ot.status, o.order_status_changed = NOW();");
+            $this->db->query("INSERT INTO " . DB_PREFIX . "order_temp (id, status, data_1, data_2) VALUES " . substr($this->query_update_status, 0, -1) . ";");
+            $this->db->query("UPDATE " . DB_PREFIX . "order o INNER JOIN " . DB_PREFIX . "order_temp ot ON o.order_id = ot.id SET o.order_status_id = ot.status, o.order_status_changed = NOW();");
 
-        $this->deleteOrderTempDB();
+            $this->deleteOrderTempDB();
+        }
 
         return count($this->collection);
     }
