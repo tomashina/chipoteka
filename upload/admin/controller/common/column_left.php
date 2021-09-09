@@ -139,6 +139,14 @@ class ControllerCommonColumnLeft extends Controller {
 				);
 			}
 
+            if ($this->user->hasPermission('access', 'extension/blog/blog')) {
+                $marketplace[] = array(
+                    'name'	   => 'Blog Posts',
+                    'href'     => $this->url->link('extension/blog/blog', 'user_token=' . $this->session->data['user_token'], true),
+                    'children' => array()
+                );
+            }
+
 			if ($this->user->hasPermission('access', 'marketplace/installer')) {
 				$marketplace[] = array(
 					'name'	   => $this->language->get('text_installer'),
@@ -247,13 +255,13 @@ class ControllerCommonColumnLeft extends Controller {
 			// Sales
 			$sale = array();
 
-			if ($this->user->hasPermission('access', 'sale/order')) {
+		/*	if ($this->user->hasPermission('access', 'sale/order')) {
 				$sale[] = array(
 					'name'	   => $this->language->get('text_order'),
 					'href'     => $this->url->link('sale/order', 'user_token=' . $this->session->data['user_token'], true),
 					'children' => array()
 				);
-			}
+			}*/
 
             #XML Mart extensions#
             if ($this->user->hasPermission('access', 'extension/me_order_manager')) {
@@ -366,8 +374,18 @@ class ControllerCommonColumnLeft extends Controller {
 			// Marketing
 			$marketing = array();
 
+            if ($this->user->hasPermission('access', 'design/banner')) {
+                $marketing[] = array(
+                    'name'	   => $this->language->get('text_banner'),
+                    'href'     => $this->url->link('design/banner', 'user_token=' . $this->session->data['user_token'], true),
+                    'children' => array()
+                );
+            }
+
+
+
 			if ($this->user->hasPermission('access', 'marketing/marketing')) {
-				$marketing[] = array(
+				$ketingmar[] = array(
 					'name'	   => $this->language->get('text_marketing'),
 					'href'     => $this->url->link('marketing/marketing', 'user_token=' . $this->session->data['user_token'], true),
 					'children' => array()
