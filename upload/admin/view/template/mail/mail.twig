@@ -770,7 +770,11 @@
                                 <tbody>
                                 <tr>
                                     <td class="column_cell px py_xs text_primary text_center" style="vertical-align: top;color: #E31318;text-align: center;padding-top: 28px;padding-bottom: 8px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                        <p class="img_inline" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 100%;clear: both;"><a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img src="{{ mail_logo }}" alt="Chipoteka Logo" style="max-width: 210px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;" width="210" height=""></a></p>
+                                        <p class="img_inline" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 100%;clear: both;">
+                                            <a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;">
+                                                <img src="{{ mail_logo }}" alt="Chipoteka Logo" style="max-width: 210px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;" width="210" height="">
+                                            </a>
+                                        </p>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -826,13 +830,12 @@
                                         {{ mail_text }}
 
                                         {% if payment_code == 'bank_transfer' and mail_data == '1' %}
-
-                                            <p style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 26px;">MOLIMO IZVRŠITE UPLATU U IZNOSU OD {{ total|number_format(2, '.', '') }}kn <br>
-                                                IBAN RAČUN: HR4424070001100582698<br>
-                                                MODEL: 05 POZIV NA BROJ: {{ mail_poziv_na_broj }}</p><p>ILI JEDNOSTAVNO POSKENIRAJTE 2D BARKOD</p>
+                                            <p style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 26px;">MOLIMO IZVRŠITE UPLATU U IZNOSU OD {{ total|number_format(2, '.', '') }}kn
+                                                IBAN RAČUN: HR4424070001100582698
+                                                MODEL: 05 POZIV NA BROJ: {{ mail_poziv_na_broj }}</p>
+                                            <p>ILI JEDNOSTAVNO POSKENIRAJTE 2D BARKOD</p>
 
                                             <img src="{{ store_url }}image/tmp/{{ order_id }}.png" style="max-width: 800px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;display: block;width: 100%;margin: 0px auto;"  />
-
                                         {% endif %}
 
                                     </td>
@@ -897,13 +900,14 @@
                                         <tr>
                                             <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
                                             <td class="column_cell bg_secondary brounded px_md pt_md text_dark text_center" style="vertical-align: top;background-color: #e5e9ee;color: #333333;border-radius: 4px;text-align: center;padding-left: 32px;padding-right: 32px;padding-top: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                                <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Podaci o kupcu</h6>
+                                                <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">
+                                                    Podaci o kupcu</h6>
                                                 <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
-                                                    {{ payment_firstname }} {{ payment_lastname }}<br>
-                                                    {{ payment_address_1 }}<br>
-                                                    {{ payment_postcode }} {{ payment_city }}<br>
-                                                    {{ payment_country }}<br>
-                                                    {{ telephone }}<br>
+                                                    {{ payment_firstname }} {{ payment_lastname }}
+                                                    {{ payment_address_1 }}
+                                                    {{ payment_postcode }} {{ payment_city }}
+                                                    {{ payment_country }}
+                                                    {{ telephone }}
                                                     {{ email }}
                                                 </p>
                                                 <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Način plaćanja</h6>
@@ -933,11 +937,11 @@
                                             <td class="column_cell bg_secondary brounded px_md pt_md text_dark text_center" style="vertical-align: top;background-color: #e5e9ee;color: #333333;border-radius: 4px;text-align: center;padding-left: 32px;padding-right: 32px;padding-top: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                                 <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Podaci za dostavu</h6>
                                                 <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
-                                                    {{ shipping_firstname }} {{ shipping_lastname }}<br>
-                                                    {{ shipping_address_1 }}<br>
-                                                    {{ shipping_postcode }} {{ shipping_city }}<br>
-                                                    {{ shipping_country }}<br>
-                                                    {{ telephone }}<br>
+                                                    {{ shipping_firstname }} {{ shipping_lastname }}
+                                                    {{ shipping_address_1 }}
+                                                    {{ shipping_postcode }} {{ shipping_city }}
+                                                    {{ shipping_country }}
+                                                    {{ telephone }}
                                                     {{ email }}
                                                 </p>
                                                 <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Način dostave</h6>
@@ -1167,9 +1171,13 @@
                                         <td class="column_cell px text_dark text_right mobile_center" style="vertical-align: top;color: #333333;text-align: right;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                             {% for total in totals %}
                                                 {% if total.title != 'Ukupno' %}
-                                                    <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">{{ total.title }}: <strong style="font-weight: bold;">{{ total.value|number_format(2, '.', '') }} kn</strong></p>
+                                                    <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">{{ total.title }}:
+                                                        <strong style="font-weight: bold;">{{ total.value|number_format(2, '.', '') }} kn</strong>
+                                                    </p>
                                                 {% else %}
-                                                    <h4 class="mt_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 0px;word-break: break-word;font-size: 18px;line-height: 24px;font-weight: bold;">{{ total.title }}: <span class="text_primary" style="color: #E31318;">{{ total.value|number_format(2, '.', '') }} kn</span></h4>
+                                                    <h4 class="mt_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 0px;word-break: break-word;font-size: 18px;line-height: 24px;font-weight: bold;">{{ total.title }}:
+                                                        <span class="text_primary" style="color: #E31318;">{{ total.value|number_format(2, '.', '') }} kn</span>
+                                                    </h4>
                                                 {% endif %}
                                             {% endfor %}
                                         </td>
@@ -1229,8 +1237,10 @@
                                     <td class="column_cell px py text_dark text_center" style="vertical-align: top;color: #333333;text-align: center;padding-top: 16px;padding-bottom: 16px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                         <h2 class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 28px;line-height: 38px;font-weight: bold;">Isporuka pošiljki</h2>
                                         <p class="text_lead text_secondary mb_md" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 19px;line-height: 31px;">Robu šaljemo radnim danom od ponedjeljka do petka.
-                                            <br>
-                                            Za sva dodatna pitanja možete nas kontaktirati na <a style="color:#E31318;text-decoration:none;" href="mailto:webnarudzba@chipoteka.hr">webnarudzba@chipoteka.hr</a></p>
+
+                                            Za sva dodatna pitanja možete nas kontaktirati na
+                                            <a style="color:#E31318;text-decoration:none;" href="mailto:webnarudzba@chipoteka.hr">webnarudzba@chipoteka.hr</a>
+                                        </p>
                                         <table class="column" role="presentation" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
                                             <tbody>
                                             <tr>
@@ -1378,14 +1388,19 @@
                                 <tr>
                                     <td class="column_cell px py_md text_secondary text_center" style="vertical-align: top;color: #959ba0;text-align: center;padding-top: 32px;padding-bottom: 32px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                         <p class="img_inline mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 16px;line-height: 100%;clear: both;">
-                                            <a href="https://www.facebook.com/Chipoteka" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img src="https://cdn.chipoteka.hr/image/facebook_white.png" width="24" height="24" alt="Facebook" style="max-width: 24px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;"></a> &nbsp;&nbsp;
+                                            <a href="https://www.facebook.com/Chipoteka" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;">
+                                                <img src="https://cdn.chipoteka.hr/image/facebook_white.png" width="24" height="24" alt="Facebook" style="max-width: 24px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;"></a>
 
                                         </p>
                                         <p class="mb" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 16px;word-break: break-word;font-size: 16px;line-height: 26px;">
-                                            &copy;2021 Chipoteka<br>
-                                            <a class="text_adr" href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><span style="color: #959ba0;text-decoration: none;">Industrijska cesta 2810360 Sesvete, Hrvatska OIB: 11374156664</span></a>
+                                            &copy;2021 Chipoteka
+                                            <a class="text_adr" href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;">
+                                                <span style="color: #959ba0;text-decoration: none;">Industrijska cesta 2810360 Sesvete, Hrvatska OIB: 11374156664</span></a>
                                         </p>
-                                        <p class="text_link text_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 14px;line-height: 22px;">Web shop: <a style="color:#fff" href="https://www.chipoteka.hr">www.chipoteka.hr</a> <br> Podrška: <a style="color:#fff" href="mailto:webnarudzba@chipoteka.hr">webnarudzba@chipoteka.hr</a></p>
+                                        <p class="text_link text_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 14px;line-height: 22px;">Web shop:
+                                            <a style="color:#fff" href="https://www.chipoteka.hr">www.chipoteka.hr</a>  Podrška:
+                                            <a style="color:#fff" href="mailto:webnarudzba@chipoteka.hr">webnarudzba@chipoteka.hr</a>
+                                        </p>
                                     </td>
                                 </tr>
                                 </tbody>

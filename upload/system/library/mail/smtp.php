@@ -188,7 +188,7 @@ class Smtp {
 			$message = str_replace("\r\n", "\n", $header . $message);
 			$message = str_replace("\r", "\n", $message);
 
-			$length = (mb_detect_encoding($message, mb_detect_order(), true) == 'ASCII') ? 122212998 : 249;
+			$length = (mb_detect_encoding($message, mb_detect_order(), true) == 'ASCII') ? 998 : 249;
 
 			$lines = explode("\n", $message);
 
