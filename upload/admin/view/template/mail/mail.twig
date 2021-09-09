@@ -827,11 +827,11 @@
 
                                         {% if payment_code == 'bank_transfer' and mail_data == '1' %}
 
-                                        <p style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 26px;">MOLIMO IZVRŠITE UPLATU U IZNOSU OD {{ total|number_format(2, '.', '') }}kn <br>
-                                            IBAN RAČUN: HR4424070001100582698<br>
-                                            MODEL: 05 POZIV NA BROJ: {{ mail_poziv_na_broj }}</p><p>ILI JEDNOSTAVNO POSKENIRAJTE 2D BARKOD</p>
+                                            <p style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 16px;line-height: 26px;">MOLIMO IZVRŠITE UPLATU U IZNOSU OD {{ total|number_format(2, '.', '') }}kn <br>
+                                                IBAN RAČUN: HR4424070001100582698<br>
+                                                MODEL: 05 POZIV NA BROJ: {{ mail_poziv_na_broj }}</p><p>ILI JEDNOSTAVNO POSKENIRAJTE 2D BARKOD</p>
 
-                                        <img src="{{ store_url }}image/tmp/{{ order_id }}.png" style="max-width: 800px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;display: block;width: 100%;margin: 0px auto;"  />
+                                            <img src="{{ store_url }}image/tmp/{{ order_id }}.png" style="max-width: 800px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;display: block;width: 100%;margin: 0px auto;"  />
 
                                         {% endif %}
 
@@ -864,172 +864,7 @@
 
 {% if mail_data == '1' %}
 
-<!-- address_secondary_2columns -->
-<table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
-    <tbody>
-    <tr>
-        <td class="email_bg bg_light px" style="font-size: 0;text-align: center;line-height: 100%;background-color: #F5F5F5;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-            <!--[if (mso)|(IE)]>
-            <table role="presentation" width="800" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
-                <tbody>
-                <tr>
-                    <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-            <![endif]-->
-            <table class="content_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 800px;margin: 0 auto;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                <tbody>
-                <tr>
-                    <td class="content_cell bg_white px pb_md" style="font-size: 0;text-align: center;background-color: #ffffff;padding-left: 16px;padding-right: 16px;padding-bottom: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                        <div class="column_row" style="font-size: 0;text-align: center;max-width: 624px;margin: 0 auto;">
-                            <!--[if (mso)|(IE)]>
-                            <table role="presentation" width="624" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
-                                <tbody>
-                                <tr>
-                                    <td width="312" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-                            <![endif]-->
-                            <div class="col_2" style="vertical-align: top;display: inline-block;width: 100%;max-width: 312px;">
-                                <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                    <tbody>
-                                    <tr>
-                                        <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
-                                        <td class="column_cell" height="32" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
-                                        <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
-                                        <td class="column_cell bg_secondary brounded px_md pt_md text_dark text_center" style="vertical-align: top;background-color: #e5e9ee;color: #333333;border-radius: 4px;text-align: center;padding-left: 32px;padding-right: 32px;padding-top: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                            <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Podaci o kupcu</h6>
-                                            <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
-                                                {{ payment_firstname }} {{ payment_lastname }}<br>
-                                                {{ payment_address_1 }}<br>
-                                                {{ payment_postcode }} {{ payment_city }}<br>
-                                                {{ payment_country }}<br>
-                                                {{ telephone }}<br>
-                                                {{ email }}
-                                            </p>
-                                            <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Način plaćanja</h6>
-                                            <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
-                                                {{ payment_method }}
-                                            </p>
-                                        </td>
-                                        <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!--[if (mso)|(IE)]>
-                            </td>
-                            <td width="312" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-                            <![endif]-->
-                            <div class="col_2" style="vertical-align: top;display: inline-block;width: 100%;max-width: 312px;">
-                                <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                    <tbody>
-                                    <tr>
-                                        <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
-                                        <td class="column_cell" height="32" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
-                                        <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
-                                        <td class="column_cell bg_secondary brounded px_md pt_md text_dark text_center" style="vertical-align: top;background-color: #e5e9ee;color: #333333;border-radius: 4px;text-align: center;padding-left: 32px;padding-right: 32px;padding-top: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                            <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Podaci za dostavu</h6>
-                                            <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
-                                                {{ shipping_firstname }} {{ shipping_lastname }}<br>
-                                                {{ shipping_address_1 }}<br>
-                                                {{ shipping_postcode }} {{ shipping_city }}<br>
-                                                {{ shipping_country }}<br>
-                                                {{ telephone }}<br>
-                                                {{ email }}
-                                            </p>
-                                            <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Način dostave</h6>
-                                            <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
-                                              {{ shipping_method }}
-                                            </p>
-                                        </td>
-                                        <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <!--[if (mso)|(IE)]>
-                            </td>
-                            </tr>
-                            </tbody>
-                            </table>
-                            <![endif]-->
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <!--[if (mso)|(IE)]>
-            </td>
-            </tr>
-            </tbody>
-            </table>
-            <![endif]-->
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-<!-- order_summary -->
-<table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
-    <tbody>
-    <tr>
-        <td class="email_bg bg_light px" style="font-size: 0;text-align: center;line-height: 100%;background-color: #F5F5F5;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-            <!--[if (mso)|(IE)]>
-            <table role="presentation" width="800" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
-                <tbody>
-                <tr>
-                    <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-            <![endif]-->
-            <table class="content_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 800px;margin: 0 auto;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                <tbody>
-                <tr>
-                    <td class="content_cell bg_white px pt_md pb" style="font-size: 0;text-align: center;background-color: #ffffff;padding-left: 16px;padding-right: 16px;padding-top: 32px;padding-bottom: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                        <div class="column_row" style="font-size: 0;text-align: center;max-width: 624px;margin: 0 auto;">
-                            <!--[if (mso)|(IE)]>
-                            <table role="presentation" width="624" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
-                                <tbody>
-                                <tr>
-                                    <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-                            <![endif]-->
-                            <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                <tbody>
-                                <tr>
-                                    <td class="column_cell px text_secondary text_center" style="vertical-align: top;color: #959ba0;text-align: center;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                        <h2 class="mb_xs" style="color: #333;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 18px;word-break: break-word;font-size: 24px;line-height: 38px;font-weight: bold;">Naručeni proizvodi</h2>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="column_cell bb_light" height="16" style="vertical-align: top;border-bottom: 1px solid #dee0e1;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp;</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <!--[if (mso)|(IE)]>
-                            </td>
-                            </tr>
-                            </tbody>
-                            </table>
-                            <![endif]-->
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <!--[if (mso)|(IE)]>
-            </td>
-            </tr>
-            </tbody>
-            </table>
-            <![endif]-->
-        </td>
-    </tr>
-    </tbody>
-</table>
-
-{% for product in products %}
-    <!-- order_row -->
+    <!-- address_secondary_2columns -->
     <table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
         <tbody>
         <tr>
@@ -1043,21 +878,40 @@
                 <table class="content_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 800px;margin: 0 auto;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                     <tbody>
                     <tr>
-                        <td class="content_cell bg_white px pb" style="font-size: 0;text-align: center;background-color: #ffffff;padding-left: 16px;padding-right: 16px;padding-bottom: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                        <td class="content_cell bg_white px pb_md" style="font-size: 0;text-align: center;background-color: #ffffff;padding-left: 16px;padding-right: 16px;padding-bottom: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                             <div class="column_row" style="font-size: 0;text-align: center;max-width: 624px;margin: 0 auto;">
                                 <!--[if (mso)|(IE)]>
                                 <table role="presentation" width="624" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
                                     <tbody>
                                     <tr>
-                                        <td width="156" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
+                                        <td width="312" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
                                 <![endif]-->
-                                <div class="col_order" style="vertical-align: top;display: inline-block;width: 100%;max-width: 156px;">
+                                <div class="col_2" style="vertical-align: top;display: inline-block;width: 100%;max-width: 312px;">
                                     <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                         <tbody>
                                         <tr>
-                                            <td class="column_cell px text_dark text_center" style="vertical-align: top;color: #333333;text-align: center;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                                <p class="img_full" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 0 !important;line-height: 100%;clear: both;"><a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #333333;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img class="brounded" src="{{ product.image }}" width="124" height="124" alt="" style="max-width: 124px;border-radius: 4px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;display: block;width: 100%;margin: 0px auto;"></a></p>
+                                            <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
+                                            <td class="column_cell" height="32" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
+                                            <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
+                                            <td class="column_cell bg_secondary brounded px_md pt_md text_dark text_center" style="vertical-align: top;background-color: #e5e9ee;color: #333333;border-radius: 4px;text-align: center;padding-left: 32px;padding-right: 32px;padding-top: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                                <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Podaci o kupcu</h6>
+                                                <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
+                                                    {{ payment_firstname }} {{ payment_lastname }}<br>
+                                                    {{ payment_address_1 }}<br>
+                                                    {{ payment_postcode }} {{ payment_city }}<br>
+                                                    {{ payment_country }}<br>
+                                                    {{ telephone }}<br>
+                                                    {{ email }}
+                                                </p>
+                                                <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Način plaćanja</h6>
+                                                <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
+                                                    {{ payment_method }}
+                                                </p>
                                             </td>
+                                            <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -1070,26 +924,28 @@
                                     <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                         <tbody>
                                         <tr>
-                                            <td class="column_cell px pt text_dark text_left mobile_center" style="vertical-align: top;color: #333333;text-align: left;padding-left: 16px;padding-right: 16px;padding-top: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                                <h5 class="mt_xs mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 21px;font-weight: bold;">{{ product.name }}</h5>
-                                                <p class="text_xs mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 14px;line-height: 22px;">Šifra: {{ product.model }}</p>
-                                                <p class="text_xs text_secondary" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 14px;line-height: 22px;">Količina: {{ product.quantity }}</p>
-                                            </td>
+                                            <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
+                                            <td class="column_cell" height="32" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
+                                            <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
                                         </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <!--[if (mso)|(IE)]>
-                                </td>
-                                <td width="156" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-                                <![endif]-->
-                                <div class="col_order" style="vertical-align: top;display: inline-block;width: 100%;max-width: 156px;">
-                                    <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                        <tbody>
                                         <tr>
-                                            <td class="column_cell px py text_right mobile_center" style="vertical-align: top;text-align: right;padding-top: 16px;padding-bottom: 16px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                                <p class="text_primary mt_xs mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">{{ product.price|number_format(2, '.', '') }} kn</p>
+                                            <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
+                                            <td class="column_cell bg_secondary brounded px_md pt_md text_dark text_center" style="vertical-align: top;background-color: #e5e9ee;color: #333333;border-radius: 4px;text-align: center;padding-left: 32px;padding-right: 32px;padding-top: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                                <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Podaci za dostavu</h6>
+                                                <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
+                                                    {{ shipping_firstname }} {{ shipping_lastname }}<br>
+                                                    {{ shipping_address_1 }}<br>
+                                                    {{ shipping_postcode }} {{ shipping_city }}<br>
+                                                    {{ shipping_country }}<br>
+                                                    {{ telephone }}<br>
+                                                    {{ email }}
+                                                </p>
+                                                <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Način dostave</h6>
+                                                <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
+                                                    {{ shipping_method }}
+                                                </p>
                                             </td>
+                                            <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -1101,15 +957,50 @@
                                 </table>
                                 <![endif]-->
                             </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!--[if (mso)|(IE)]>
+                </td>
+                </tr>
+                </tbody>
+                </table>
+                <![endif]-->
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- order_summary -->
+    <table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td class="email_bg bg_light px" style="font-size: 0;text-align: center;line-height: 100%;background-color: #F5F5F5;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                <!--[if (mso)|(IE)]>
+                <table role="presentation" width="800" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
+                    <tbody>
+                    <tr>
+                        <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
+                <![endif]-->
+                <table class="content_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 800px;margin: 0 auto;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                    <tbody>
+                    <tr>
+                        <td class="content_cell bg_white px pt_md pb" style="font-size: 0;text-align: center;background-color: #ffffff;padding-left: 16px;padding-right: 16px;padding-top: 32px;padding-bottom: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                             <div class="column_row" style="font-size: 0;text-align: center;max-width: 624px;margin: 0 auto;">
                                 <!--[if (mso)|(IE)]>
-                                <table role="presentation" width="416" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
+                                <table role="presentation" width="624" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
                                     <tbody>
                                     <tr>
                                         <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
                                 <![endif]-->
                                 <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                     <tbody>
+                                    <tr>
+                                        <td class="column_cell px text_secondary text_center" style="vertical-align: top;color: #959ba0;text-align: center;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                            <h2 class="mb_xs" style="color: #333;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 18px;word-break: break-word;font-size: 24px;line-height: 38px;font-weight: bold;">Naručeni proizvodi</h2>
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td class="column_cell bb_light" height="16" style="vertical-align: top;border-bottom: 1px solid #dee0e1;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp;</td>
                                     </tr>
@@ -1137,66 +1028,175 @@
         </tbody>
     </table>
 
-{% endfor %}
-
-<!-- order_total -->
-<table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
-    <tbody>
-    <tr>
-        <td class="email_bg bg_light px" style="font-size: 0;text-align: center;line-height: 100%;background-color: #F5F5F5;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-            <!--[if (mso)|(IE)]>
-            <table role="presentation" width="800" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
-                <tbody>
-                <tr>
-                    <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-            <![endif]-->
-            <table class="content_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 800px;margin: 0 auto;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                <tbody>
-                <tr>
-                    <td class="content_cell bg_white px pt pb_md" style="font-size: 0;text-align: center;background-color: #ffffff;padding-left: 16px;padding-right: 16px;padding-top: 16px;padding-bottom: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                        <div class="column_row" style="font-size: 0;text-align: center;max-width: 624px;margin: 0 auto;">
-                            <!--[if (mso)|(IE)]>
-                            <table role="presentation" width="624" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
-                                <tbody>
-                                <tr>
-                                    <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
-                            <![endif]-->
-                            <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                <tbody>
-                                <tr>
-                                    <td class="column_cell px text_dark text_right mobile_center" style="vertical-align: top;color: #333333;text-align: right;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                        {% for total in totals %}
-                                            {% if total.title != 'Ukupno' %}
-                                                <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">{{ total.title }}: <strong style="font-weight: bold;">{{ total.value|number_format(2, '.', '') }} kn</strong></p>
-                                            {% else %}
-                                                <h4 class="mt_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 0px;word-break: break-word;font-size: 18px;line-height: 24px;font-weight: bold;">{{ total.title }}: <span class="text_primary" style="color: #E31318;">{{ total.value|number_format(2, '.', '') }} kn</span></h4>
-                                            {% endif %}
-                                        {% endfor %}
+    {% for product in products %}
+        <!-- order_row -->
+        <table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tbody>
+            <tr>
+                <td class="email_bg bg_light px" style="font-size: 0;text-align: center;line-height: 100%;background-color: #F5F5F5;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                    <!--[if (mso)|(IE)]>
+                    <table role="presentation" width="800" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
+                        <tbody>
+                        <tr>
+                            <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
+                    <![endif]-->
+                    <table class="content_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 800px;margin: 0 auto;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                        <tbody>
+                        <tr>
+                            <td class="content_cell bg_white px pb" style="font-size: 0;text-align: center;background-color: #ffffff;padding-left: 16px;padding-right: 16px;padding-bottom: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                <div class="column_row" style="font-size: 0;text-align: center;max-width: 624px;margin: 0 auto;">
+                                    <!--[if (mso)|(IE)]>
+                                    <table role="presentation" width="624" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
+                                        <tbody>
+                                        <tr>
+                                            <td width="156" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
+                                    <![endif]-->
+                                    <div class="col_order" style="vertical-align: top;display: inline-block;width: 100%;max-width: 156px;">
+                                        <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                            <tbody>
+                                            <tr>
+                                                <td class="column_cell px text_dark text_center" style="vertical-align: top;color: #333333;text-align: center;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                                    <p class="img_full" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 0 !important;line-height: 100%;clear: both;"><a href="#" style="-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-decoration: none;color: #333333;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;"><img class="brounded" src="{{ product.image }}" width="124" height="124" alt="" style="max-width: 124px;border-radius: 4px;-ms-interpolation-mode: bicubic;border: 0;height: auto;line-height: 100%;outline: none;text-decoration: none;display: block;width: 100%;margin: 0px auto;"></a></p>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!--[if (mso)|(IE)]>
                                     </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <!--[if (mso)|(IE)]>
+                                    <td width="312" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
+                                    <![endif]-->
+                                    <div class="col_2" style="vertical-align: top;display: inline-block;width: 100%;max-width: 312px;">
+                                        <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                            <tbody>
+                                            <tr>
+                                                <td class="column_cell px pt text_dark text_left mobile_center" style="vertical-align: top;color: #333333;text-align: left;padding-left: 16px;padding-right: 16px;padding-top: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                                    <h5 class="mt_xs mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 21px;font-weight: bold;">{{ product.name }}</h5>
+                                                    <p class="text_xs mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 14px;line-height: 22px;">Šifra: {{ product.model }}</p>
+                                                    <p class="text_xs text_secondary" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 0px;word-break: break-word;font-size: 14px;line-height: 22px;">Količina: {{ product.quantity }}</p>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!--[if (mso)|(IE)]>
+                                    </td>
+                                    <td width="156" align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
+                                    <![endif]-->
+                                    <div class="col_order" style="vertical-align: top;display: inline-block;width: 100%;max-width: 156px;">
+                                        <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                            <tbody>
+                                            <tr>
+                                                <td class="column_cell px py text_right mobile_center" style="vertical-align: top;text-align: right;padding-top: 16px;padding-bottom: 16px;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                                    <p class="text_primary mt_xs mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">{{ product.price|number_format(2, '.', '') }} kn</p>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!--[if (mso)|(IE)]>
+                                    </td>
+                                    </tr>
+                                    </tbody>
+                                    </table>
+                                    <![endif]-->
+                                </div>
+                                <div class="column_row" style="font-size: 0;text-align: center;max-width: 624px;margin: 0 auto;">
+                                    <!--[if (mso)|(IE)]>
+                                    <table role="presentation" width="416" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
+                                        <tbody>
+                                        <tr>
+                                            <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
+                                    <![endif]-->
+                                    <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                        <tbody>
+                                        <tr>
+                                            <td class="column_cell bb_light" height="16" style="vertical-align: top;border-bottom: 1px solid #dee0e1;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp;</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <!--[if (mso)|(IE)]>
+                                    </td>
+                                    </tr>
+                                    </tbody>
+                                    </table>
+                                    <![endif]-->
+                                </div>
                             </td>
-                            </tr>
-                            </tbody>
-                            </table>
-                            <![endif]-->
-                        </div>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!--[if (mso)|(IE)]>
                     </td>
-                </tr>
-                </tbody>
-            </table>
-            <!--[if (mso)|(IE)]>
-            </td>
+                    </tr>
+                    </tbody>
+                    </table>
+                    <![endif]-->
+                </td>
             </tr>
             </tbody>
-            </table>
-            <![endif]-->
-        </td>
-    </tr>
-    </tbody>
-</table>
+        </table>
+
+    {% endfor %}
+
+    <!-- order_total -->
+    <table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td class="email_bg bg_light px" style="font-size: 0;text-align: center;line-height: 100%;background-color: #F5F5F5;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                <!--[if (mso)|(IE)]>
+                <table role="presentation" width="800" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
+                    <tbody>
+                    <tr>
+                        <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
+                <![endif]-->
+                <table class="content_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width: 800px;margin: 0 auto;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                    <tbody>
+                    <tr>
+                        <td class="content_cell bg_white px pt pb_md" style="font-size: 0;text-align: center;background-color: #ffffff;padding-left: 16px;padding-right: 16px;padding-top: 16px;padding-bottom: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                            <div class="column_row" style="font-size: 0;text-align: center;max-width: 624px;margin: 0 auto;">
+                                <!--[if (mso)|(IE)]>
+                                <table role="presentation" width="624" border="0" cellspacing="0" cellpadding="0" align="center" style="vertical-align:top;Margin:0 auto;">
+                                    <tbody>
+                                    <tr>
+                                        <td align="center" style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;vertical-align:top;">
+                                <![endif]-->
+                                <table class="column" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                    <tbody>
+                                    <tr>
+                                        <td class="column_cell px text_dark text_right mobile_center" style="vertical-align: top;color: #333333;text-align: right;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
+                                            {% for total in totals %}
+                                                {% if total.title != 'Ukupno' %}
+                                                    <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">{{ total.title }}: <strong style="font-weight: bold;">{{ total.value|number_format(2, '.', '') }} kn</strong></p>
+                                                {% else %}
+                                                    <h4 class="mt_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 0px;word-break: break-word;font-size: 18px;line-height: 24px;font-weight: bold;">{{ total.title }}: <span class="text_primary" style="color: #E31318;">{{ total.value|number_format(2, '.', '') }} kn</span></h4>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <!--[if (mso)|(IE)]>
+                                </td>
+                                </tr>
+                                </tbody>
+                                </table>
+                                <![endif]-->
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!--[if (mso)|(IE)]>
+                </td>
+                </tr>
+                </tbody>
+                </table>
+                <![endif]-->
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
 {% endif %}
 
