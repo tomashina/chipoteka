@@ -134,16 +134,17 @@ class LOC_Category
     {
         $categories = Category::select('category_id', 'luceed_uid')->get();
         $new = $this->getList()
-                    ->where('enabled', 'D')
+                    /*->where('enabled', 'D')*/
                     ->where('grupa_artikla', '!=', '')
                     ->where('naziv', '!=', '')
                     ->all();
 
         foreach ($new as $item) {
             $old = $categories->where('luceed_uid', $item->grupa_artikla)->first();
+            $status = ($item->enabled == 'D') ? 1 : 0;
 
             if ($old) {
-                $this->query_update .= '("' . $old->category_id . '", "' . $this->resolveNaziv($item->naziv) . '", 0, "' . Str::slug($item->naziv) . '", "category_id=' . $old->category_id . '", 0),';
+                $this->query_update .= '("' . $old->category_id . '", "' . $this->resolveNaziv($item->naziv) . '", 0, "' . Str::slug($item->naziv) . '", "category_id=' . $old->category_id . '", ' . $status . '),';
             }
         }
 
@@ -163,6 +164,7 @@ class LOC_Category
         $this->deleteCategoryTempDB();
 
         $this->db->query("INSERT INTO " . DB_PREFIX . "category_temp (id, naziv, opis, seo, data_1, data_2) VALUES " . $this->query_update . ";");
+        $this->db->query("UPDATE " . DB_PREFIX . "category c INNER JOIN " . DB_PREFIX . "category_temp ct ON c.category_id = ct.id SET c.status = ct.data_2");
         $this->db->query("UPDATE " . DB_PREFIX . "category_description cd INNER JOIN " . DB_PREFIX . "category_temp ct ON cd.category_id = ct.id SET cd.name = ct.naziv");
         $this->db->query("UPDATE " . DB_PREFIX . "seo_url su INNER JOIN " . DB_PREFIX . "category_temp ct ON su.query = ct.data_1 SET su.keyword = ct.seo");
 
