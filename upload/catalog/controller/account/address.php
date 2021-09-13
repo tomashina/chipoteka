@@ -435,7 +435,11 @@ class ControllerAccountAddress extends Controller {
 		}
 
 
-        if ((utf8_strlen(trim($this->request->post['address_1'])) < 3) || (utf8_strlen(trim($this->request->post['address_1'])) > 128) && (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $this->request->post['address_1']))) {
+       /* if ((utf8_strlen(trim($this->request->post['address_1'])) < 3) || (utf8_strlen(trim($this->request->post['address_1'])) > 128) && (!preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $this->request->post['address_1']))) {
+            $json['error']['address_1'] = $this->language->get('error_address_1');
+        }*/
+
+        if (preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $this->request->post['address_1'])){
             $json['error']['address_1'] = $this->language->get('error_address_1');
         }
 
