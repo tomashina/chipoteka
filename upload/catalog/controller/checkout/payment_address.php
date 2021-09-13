@@ -121,8 +121,9 @@ class ControllerCheckoutPaymentAddress extends Controller {
                     $json['error']['address_1'] = $this->language->get('error_address_1');
                 }*/
 
-                if (preg_match('/[A-Za-z].*[0-9]|[0-9].*[A-Za-z]/', $this->request->post['address_1'])){
-                    $json['error']['address_1'] = $this->language->get('error_address_1');
+                if(!preg_match('([a-zA-Z].*[0-9]|[0-9].*[a-zA-Z])', $this->request->post['address_1']) ){
+                    $json['error']['address_1'] = 'Adresa treba sadržavati i broj.';
+
                 }
 
 
