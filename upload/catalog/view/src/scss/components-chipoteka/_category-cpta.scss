@@ -90,9 +90,24 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: linear-gradient($light, $light);
-            mix-blend-mode: multiply;
         }
+
+        // Light Mode
+        @media (prefers-color-scheme: light) {
+            &::after {
+                mix-blend-mode: multiply; 
+                background-image: linear-gradient($light, $light); 
+            }
+        }
+
+        // Dark Mode
+        @media (prefers-color-scheme: dark) {
+            &::after {
+                mix-blend-mode: darken;
+                background-image: none; 
+            }
+        }
+ 
 
     }
 

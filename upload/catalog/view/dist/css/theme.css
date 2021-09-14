@@ -29051,8 +29051,20 @@ body > main.offcanvas-enabled {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(#F5F5F5, #F5F5F5);
-  mix-blend-mode: multiply;
+}
+
+@media (prefers-color-scheme: light) {
+  .product-card .card-img-top::after {
+    mix-blend-mode: multiply;
+    background-image: linear-gradient(#F5F5F5, #F5F5F5);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .product-card .card-img-top::after {
+    mix-blend-mode: darken;
+    background-image: none;
+  }
 }
 
 .product-card .btn-basket {
