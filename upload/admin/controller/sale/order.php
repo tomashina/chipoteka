@@ -1859,6 +1859,7 @@ class ControllerSaleOrder extends Controller {
             $order    = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Order($oc_order);
             \Agmedia\Helpers\Log::store($oc_order);
             $customer = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Customer($order->getCustomerData());
+            \Agmedia\Helpers\Log::store('$customer');
             \Agmedia\Helpers\Log::store($customer);
 
             if ( ! $customer->exist()) {

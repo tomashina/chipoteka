@@ -51,8 +51,6 @@ class LOC_Customer
      */
     public function __construct(array $customer = null)
     {
-        Log::store($customer);
-
         if ($customer) {
             $this->customer = $this->create($customer);
             $this->order_customer = $customer;
@@ -157,6 +155,8 @@ class LOC_Customer
      */
     public function exist(): bool
     {
+        Log::store('$exist_before');
+
         $this->service = new Luceed();
 
         Log::store('$exist_before');
@@ -172,7 +172,7 @@ class LOC_Customer
         if ( ! empty($exist)) {
             foreach ($exist as $l_customer) {
                 // Kupac
-                if ( ! $this->diffAddress() && $this->order_customer['shipping_address_1'] == $l_customer->adresa && ! $l_customer->grupacija) {
+                if ( ! $this->diffAddress() && $this->order_customer['shipping_address'] == $l_customer->adresa && ! $l_customer->grupacija) {
                     Customer::where('customer_id', $this->customer['id'])->update([
                         'luceed_uid' => $l_customer->partner_uid
                     ]);
@@ -181,7 +181,7 @@ class LOC_Customer
                 }
 
                 // Korisnik
-                if ($this->diffAddress() && $l_customer->adresa == $this->order_customer['shipping_address_1']) {
+                if ($this->diffAddress() && $l_customer->adresa == $this->order_customer['shipping_address']) {
                     $l_customer->grupacija = $this->customer['uid'];
 
                     $this->alter_customer = $this->populateCustomerForLuceed(collect($l_customer), true);
@@ -211,7 +211,7 @@ class LOC_Customer
                     'prezime'             => $this->order_customer['shipping_lastname'],
                     'enabled'             => 'D',
                     'tip_komitenta'       => 'F',
-                    'adresa'              => $this->order_customer['shipping_address_1'],
+                    'adresa'              => $this->order_customer['shipping_address'],
                     'telefon'             => $this->customer['telefon'],
                     'e_mail'              => $this->customer['e_mail'],
                     'postanski_broj'      => $this->order_customer['shipping_postcode']
@@ -275,6 +275,7 @@ class LOC_Customer
 
     /**
      * @param Collection $collection
+     * @param false      $luceed_data
      *
      * @return array
      */
@@ -287,8 +288,6 @@ class LOC_Customer
         if ( ! isset($collection->grupacija)) {
             $collection->put('grupacija', null);
         }
-
-        Log::store($collection);
 
         if ($luceed_data) {
             return [
@@ -307,20 +306,28 @@ class LOC_Customer
             ];
         }
 
-        return [
-            'id'                  => $collection->customer_id,
-            'uid'                 => $collection->uid ?: $this->setUid($collection->customer_id, true),
-            'parent__partner_uid' => $collection->grupacija,
-            'naziv'               => $collection->fname . ' ' . $collection->lname,
-            'ime'                 => $collection->fname,
-            'prezime'             => $collection->lname,
+        Log::store('$data_before');
+        Log::store($collection['customer_id']);
+
+        $data = [
+            'id'                  => $collection['customer_id'],
+            'uid'                 => $this->setUid($collection['customer_id'], true),
+            'parent__partner_uid' => $collection['grupacija'],
+            'naziv'               => $collection['fname'] . ' ' . $collection['lname'],
+            'ime'                 => $collection['fname'],
+            'prezime'             => $collection['lname'],
             'enabled'             => 'D',
             'tip_komitenta'       => 'F',
-            'adresa'              => $collection->address,
-            'telefon'             => ($collection->phone != '') ? $collection->phone : '000',
-            'e_mail'              => $collection->email,
-            'postanski_broj'      => $collection->zip
+            'adresa'              => $collection['address'],
+            'telefon'             => ($collection['phone'] != '') ? $collection['phone'] : '000',
+            'e_mail'              => $collection['email'],
+            'postanski_broj'      => $collection['zip']
         ];
+
+        Log::store('$data');
+        Log::store($data);
+
+        return $data;
     }
 
 
@@ -332,13 +339,15 @@ class LOC_Customer
      * @param       $uid
      * @param false $from_ocdb
      */
-    public function setUid($uid, $from_ocdb = false): void
+    private function setUid($uid, $from_ocdb = false): void
     {
         if ($uid && $from_ocdb) {
             $customer = Customer::where('customer_id', $uid)->first();
 
-            if ($customer) {
+            if ($customer && ! empty($customer->luceed_uid)) {
                 $this->customer['uid'] = $customer->luceed_uid;
+            } else {
+                $this->customer['uid'] = null;
             }
         } else {
             $this->customer['uid'] = $uid ?: null;
@@ -351,7 +360,7 @@ class LOC_Customer
      */
     private function diffAddress(): bool
     {
-        if ($this->order_customer['payment_address_1'] == $this->order_customer['shipping_address_1']) {
+        if ($this->order_customer['address'] == $this->order_customer['shipping_address']) {
             return false;
         }
 
