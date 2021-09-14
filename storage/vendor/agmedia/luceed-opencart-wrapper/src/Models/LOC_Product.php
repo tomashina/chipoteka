@@ -234,6 +234,38 @@ class LOC_Product
 
 
     /**
+     * @return int
+     * @throws \Exception
+     */
+    public function populateLuceedData()
+    {
+        $count = 0;
+        $db = new Database(DB_DATABASE);
+
+        $luceed_products = $this->getProducts()
+                                ->where('artikl', '!=', '')
+                                ->where('naziv', '!=', '')
+                                ->where('webshop', '!=', 'N')
+                                ->all();
+
+        $query_str = '';
+
+        foreach ($luceed_products as $product) {
+            $data = collect($product)->toJson();
+
+            $query_str .= '("' . $product->artikl_uid . '", "' . $product->artikl . '", "' . htmlspecialchars($data) . '", "' . sha1($data) . '"),';
+
+            $count++;
+        }
+
+        $db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_luceed`");
+        $db->query("INSERT INTO " . DB_PREFIX . "product_luceed (uid, sifra, `data`, `hash`) VALUES " . substr($query_str, 0, -1) . ";");
+
+        return $count;
+    }
+
+
+    /**
      * Collect, make and sort the data
      * for 1 products to make.
      *
@@ -492,6 +524,7 @@ class LOC_Product
 
         for ($i = 0; $i < $docs->count(); $i++) {
             $response[] = [
+                'uid'        => $this->product->dokumenti[$i + 1]->file_uid,
                 'image'      => $this->getImagePath($i + 1),
                 'sort_order' => $i
             ];

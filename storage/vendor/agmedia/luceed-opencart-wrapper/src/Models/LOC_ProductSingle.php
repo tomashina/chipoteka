@@ -7,6 +7,7 @@ use Agmedia\Helpers\Log;
 use Agmedia\Kaonekad\AttributeHelper;
 use Agmedia\Kaonekad\ScaleHelper;
 use Agmedia\Luceed\Facade\LuceedProduct;
+use Agmedia\LuceedOpencartWrapper\Helpers\ProductHelper;
 use Agmedia\Models\Category\Category;
 use Agmedia\Models\Manufacturer\Manufacturer;
 use Agmedia\Models\Option\OptionValueDescription;
@@ -33,21 +34,6 @@ class LOC_ProductSingle
     public $product;
 
     /**
-     * @var array
-     */
-    private $existing;
-
-    /**
-     * @var array
-     */
-    private $products_to_add = null;
-
-    /**
-     * @var int
-     */
-    private $default_category;
-
-    /**
      * @var int
      */
     private $default_language;
@@ -59,23 +45,36 @@ class LOC_ProductSingle
 
 
     /**
-     * LOC_Product constructor.
-     *
-     * @param $products
+     * LOC_ProductSingle constructor.
      */
-    public function __construct($product)
+    public function __construct()
     {
-        $this->product = $product;
-
-        if ($product) {
-            $this->product = $this->setProduct($product);
-        }
-
-        $this->default_category = agconf('import.default_category');
         $this->default_language = agconf('import.default_language');
         $this->image_path       = agconf('import.image_path');
+    }
 
-        $this->resolveData();
+
+    public function select()
+    {
+        $product_to_update = Product::where('updated', 0)->first();
+
+        if ($product_to_update) {
+            $this->product = \Agmedia\Luceed\Models\LuceedProduct::where('uid', $product_to_update->luceed_uid)->first();
+
+            if ($this->product) {
+                $data = collect(
+                    json_decode(htmlspecialchars_decode($this->product->data), true)
+                );
+
+                //Log::store($data->toArray());
+
+                return 1;
+            }
+
+            return 1;
+        }
+
+        return 0;
     }
 
 
@@ -151,7 +150,7 @@ class LOC_ProductSingle
             'product_description' => $this->getDescriptionArray(),
             'product_image'       => $this->getImages(),
             'product_layout'      => [0 => ''],
-            'product_category'    => $this->getCategories(),
+            'product_category'    => ProductHelper::getCategories($this->getProduct()),
             //'product_option'      => $this->getOptions($scale)
         ];
 
@@ -194,43 +193,6 @@ class LOC_ProductSingle
                 'image'      => $this->getImagePath($i + 1),
                 'sort_order' => $i
             ];
-        }
-
-        return $response;
-    }
-
-
-    /**
-     * Traverse through opencart categories tree
-     * and sort the response array.
-     * If "grupa_artikla" luceed tag is not found in opencart DB,
-     * default category is returned.
-     *
-     * @return array
-     */
-    private function getCategories()
-    {
-        $response = [0 => $this->default_category];
-        $actual   = Category::where('luceed_uid', $this->product->grupa_artikla)->first();
-
-        if ($actual && $actual->count()) {
-            $response[0] = $actual->category_id;
-
-            if ($actual->parent_id) {
-                $parent = Category::where('category_id', $actual->parent_id)->first();
-
-                if ($parent->count()) {
-                    $response[1] = $parent->category_id;
-
-                    if ($parent->parent_id) {
-                        $main = Category::where('category_id', $parent->parent_id)->first();
-
-                        if ($main->count()) {
-                            $response[2] = $main->category_id;
-                        }
-                    }
-                }
-            }
         }
 
         return $response;

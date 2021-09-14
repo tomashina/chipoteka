@@ -215,6 +215,20 @@ class ControllerExtensionModuleLuceedSync extends Controller
     }
 
 
+    public function importLuceedProducts()
+    {
+        $_loc = new LOC_Product(LuceedProduct::all());
+
+        return $this->response($_loc->populateLuceedData(), 'products');
+    }
+
+
+    public function updateProduct()
+    {
+        $_loc = new LOC_ProductSingle();
+
+        return $this->output(['status' => 200, 'message' => $_loc->select()]);
+    }
     /**
      *
      */

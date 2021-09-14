@@ -199,6 +199,8 @@ class LOC_Action
 
         $this->deleteActionsCategoriesDB();
 
+        Log::store($this->getActionsToAdd(), 'actions_test');
+
         foreach ($this->getActionsToAdd() as $key => $action) {
             $data = [
                 'naziv' => str_replace('web_', '', $action->naziv),

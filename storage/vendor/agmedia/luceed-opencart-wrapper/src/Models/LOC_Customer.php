@@ -51,6 +51,8 @@ class LOC_Customer
      */
     public function __construct(array $customer = null)
     {
+        Log::store($customer);
+
         if ($customer) {
             $this->customer = $this->create($customer);
             $this->order_customer = $customer;
@@ -157,15 +159,15 @@ class LOC_Customer
     {
         $this->service = new Luceed();
 
-        Log::store('$exist_before', 'customer_process');
+        Log::store('$exist_before');
 
         // Set the response from Luceed service.
         $exist = $this->setResponseData(
             $this->service->getCustomerByEmail($this->customer['e_mail'])
         );
 
-        Log::store('$exist_after', 'customer_process');
-        Log::store($exist, 'customer_process');
+        Log::store('$exist_after');
+        Log::store($exist);
 
         if ( ! empty($exist)) {
             foreach ($exist as $l_customer) {
@@ -193,9 +195,9 @@ class LOC_Customer
                 }
             }
 
-            Log::store('First ::::: customer i alter...', 'customer_process');
-            Log::store($this->customer, 'customer_process');
-            Log::store($this->alter_customer, 'customer_process');
+            Log::store('First ::::: customer i alter...');
+            Log::store($this->customer);
+            Log::store($this->alter_customer);
 
             // Ima kupca, ali nema korisnika
             if ( ! empty($this->customer['uid']) && ! $this->alter_customer) {
@@ -225,9 +227,9 @@ class LOC_Customer
                 }
             }
 
-            Log::store('Second ::::: customer i alter...', 'customer_process');
-            Log::store($this->customer, 'customer_process');
-            Log::store($this->alter_customer, 'customer_process');
+            Log::store('Second ::::: customer i alter...');
+            Log::store($this->customer);
+            Log::store($this->alter_customer);
 
             return true;
         }
@@ -279,11 +281,11 @@ class LOC_Customer
     private function populateCustomerForLuceed(Collection $collection, $luceed_data = false): array
     {
         if ( ! isset($collection->uid)) {
-            $collection->uid = null;
+            $collection->put('uid', null);
         }
 
         if ( ! isset($collection->grupacija)) {
-            $collection->grupacija = null;
+            $collection->put('grupacija', null);
         }
 
         Log::store($collection);
@@ -373,7 +375,7 @@ class LOC_Customer
             return $data->result[0]->partner;
         }
 
-        return false;
+        return [];
     }
 
 

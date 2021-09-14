@@ -29,6 +29,27 @@
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
         {% endif %}
+{#        <div class="row">#}
+{#            <div class="col-sm-12">#}
+{#                <div class="panel panel-default">#}
+{#                    <div class="panel-heading darker-bg">#}
+{#                        <h3 class="panel-title"><i class="fa fa-list"></i> Update Proizvoda</h3>#}
+{#                    </div>#}
+{#                    <div class="panel-body">#}
+{#                        <div class="row">#}
+{#                            <div class="col-sm-2 text-center">#}
+{#                                <a href="javascript:void(0)" id="import-luceed-products" data-toggle="tooltip" title="Import Kupaca" class="btn btn-info btn-block">Pokreni</a>#}
+{#                            </div>#}
+{#                            <div class="col-sm-10">#}
+{#                                <div id="luceed-products-imported" class="h5 lighten" style="display: none;">Luceed proizvodi učitani u bazu!</div>#}
+{#                                <div class="p small lighten">Učitavanje: <span id="luceed-products-importing">0</span>/7200</div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+
         <div class="row">
             <div class="col-sm-12 col-md-5">
                 <div class="panel panel-default">
@@ -195,6 +216,10 @@
 
     <script type="text/javascript">
         $(() => {
+            $('#import-luceed-products').on('click', e => { callApi(e, 'importLuceedProducts'); });
+
+
+            //
             $('#import-new-categories')     .on('click', e => { callApi(e, 'importCategories'); });
             $('#update-categories')         .on('click', e => { callApi(e, 'updateCategories'); });
             $('#import-new-manufacturer')   .on('click', e => { callApi(e, 'importManufacturers'); });
@@ -226,12 +251,49 @@
 
             lockTarget(path.charAt(0), $('#' + target.id));
 
+            if (target.id == 'import-luceed-products') {
+                $.ajax({
+                    url: 'index.php?route=extension/module/luceed_sync/' + path + '&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        if (json.status == 200) {
+                            document.getElementById('luceed-products-imported').style.display = 'block';
+                            updateProducts();
+                        }
+                    }
+                });
+            } else {
+                $.ajax({
+                    url: 'index.php?route=extension/module/luceed_sync/' + path + '&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        checkResult(json);
+                        releseTarget(text, $('#' + target.id));
+                    }
+                });
+            }
+        }
+
+
+        function updateProducts() {
+            let count = localStorage.getItem('imported');
+
             $.ajax({
-                url: 'index.php?route=extension/module/luceed_sync/' + path + '&user_token={{ user_token }}',
+                url: 'index.php?route=extension/module/luceed_sync/updateProduct&user_token={{ user_token }}',
                 dataType: 'json',
                 success: function(json) {
-                    checkResult(json);
-                    releseTarget(text, $('#' + target.id));
+                    if (json.status == 200) {
+                        if (count) {
+                            count = Number(count) + 1;
+                        } else {
+                            count = 1;
+                        }
+
+                        localStorage.setItem('imported', count);
+                        document.getElementById('luceed-products-importing').innerHTML = count;
+
+                        //updateProducts();
+                    }
                 }
             });
         }
