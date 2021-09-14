@@ -155,11 +155,7 @@ class LOC_Customer
      */
     public function exist(): bool
     {
-        Log::store('$exist_before');
-
         $this->service = new Luceed();
-
-        Log::store('$exist_before');
 
         // Set the response from Luceed service.
         $exist = $this->setResponseData(
@@ -168,13 +164,14 @@ class LOC_Customer
 
         Log::store('$exist_after');
         Log::store($exist);
+        Log::store($this->order_customer);
 
         if ( ! empty($exist)) {
             foreach ($exist as $l_customer) {
                 // Kupac
-                Log::store($l_customer->adresa);
-
                 if ( ! $this->diffAddress() && ! $l_customer->grupacija) {
+                    Log::store($l_customer->adresa);
+
                     Customer::where('customer_id', $this->customer['id'])->update([
                         'luceed_uid' => $l_customer->partner_uid
                     ]);
