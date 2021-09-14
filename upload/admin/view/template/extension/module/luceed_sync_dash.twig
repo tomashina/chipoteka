@@ -1,8 +1,3 @@
-<style>
-    .darker-bg {
-        background-color: #e9e9e9 !important;
-    }
-</style>
 {{ header }}{{ column_left }}
 <div id="content">
     <div class="page-header">
@@ -50,161 +45,227 @@
 {#            </div>#}
 {#        </div>#}
 
-        <div class="row">
-            <div class="col-sm-12 col-md-5">
-                <div class="panel panel-default">
-                    <div class="panel-heading darker-bg">
-                        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_categories_import_panel }}</h3>
-                    </div>
-                    <div class="panel-body form-horizontal">
-                        <div class="form-group">
-                            <div class="col-sm-5 text-center">
-                                <a href="javascript:void(0)" id="import-new-categories" data-toggle="tooltip" title="{{ btn_categories_import }}" class="btn btn-info btn-block">{{ btn_categories_import }}</a>
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Sync Manager</a></li>
+            <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Product Import Info</a></li>
+
+        </ul>
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="home">
+                <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                        <div class="panel panel-default">
+                            <div class="panel-heading darker-bg">
+                                <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_categories_import_panel }}</h3>
                             </div>
-                            <p class="col-sm-7">{{ help_categories_import }}</p>
+                            <div class="panel-body form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-5 text-center">
+                                        <a href="javascript:void(0)" id="import-new-categories" data-toggle="tooltip" title="{{ btn_categories_import }}" class="btn btn-info btn-block">{{ btn_categories_import }}</a>
+                                    </div>
+                                    <p class="col-sm-7">{{ help_categories_import }}</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-5 text-center">
+                                        <a href="javascript:void(0)" id="update-categories" data-toggle="tooltip" title="Update Kategorija" class="btn btn-info btn-block">Update Kategorija</a>
+                                    </div>
+                                    <p class="col-sm-7">Vrši se update svih naziva kategorija.</p>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <div class="col-sm-5 text-center">
-                                <a href="javascript:void(0)" id="update-categories" data-toggle="tooltip" title="Update Kategorija" class="btn btn-info btn-block">Update Kategorija</a>
+                        <div class="panel panel-default">
+                            <div class="panel-heading darker-bg">
+                                <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_manufacturer_import_panel }}</h3>
                             </div>
-                            <p class="col-sm-7">Vrši se update svih naziva kategorija.</p>
-                        </div>
-                    </div>
-                </div>
+                            <div class="panel-body form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-5 text-center">
+                                        <a href="javascript:void(0)" id="import-new-manufacturer" data-toggle="tooltip" title="{{ btn_manufacturer_import }}" class="btn btn-info btn-block">{{ btn_manufacturer_import }}</a>
+                                    </div>
+                                    <p class="col-sm-7">{{ help_manufacturer_import }}</p>
+                                </div>
 
-                <div class="panel panel-default">
-                    <div class="panel-heading darker-bg">
-                        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_manufacturer_import_panel }}</h3>
-                    </div>
-                    <div class="panel-body form-horizontal">
-                        <div class="form-group">
-                            <div class="col-sm-5 text-center">
-                                <a href="javascript:void(0)" id="import-new-manufacturer" data-toggle="tooltip" title="{{ btn_manufacturer_import }}" class="btn btn-info btn-block">{{ btn_manufacturer_import }}</a>
+                                <div class="form-group">
+                                    <div class="col-sm-5 text-center">
+                                        <a href="javascript:void(0)" id="import-initial-manufacturer" data-toggle="tooltip" title="Inicijalni Import Proizvođača" class="btn btn-info btn-block">Inicijalni Import Proizvođača</a>
+                                    </div>
+                                    <p class="col-sm-7">Import se radi prema predefiniranoj JSON listi proizvođača.</p>
+                                </div>
                             </div>
-                            <p class="col-sm-7">{{ help_manufacturer_import }}</p>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-sm-5 text-center">
-                                <a href="javascript:void(0)" id="import-initial-manufacturer" data-toggle="tooltip" title="Inicijalni Import Proizvođača" class="btn btn-info btn-block">Inicijalni Import Proizvođača</a>
-                            </div>
-                            <p class="col-sm-7">Import se radi prema predefiniranoj JSON listi proizvođača.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel panel-default">
-                    <div class="panel-heading darker-bg">
-                        <h3 class="panel-title"><i class="fa fa-list"></i> Skladišta</h3>
-                    </div>
-                    <div class="panel-body form-horizontal">
-                        <div class="form-group">
-                            <div class="col-sm-5 text-center">
-                                <a href="javascript:void(0)" id="import-new-warehouse" data-toggle="tooltip" title="Import Skladišta" class="btn btn-info btn-block">Import Skladišta</a>
-                            </div>
-                            <p class="col-sm-7">Import se radi prema predefiniranoj listi šifri skladišta.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel panel-default">
-                    <div class="panel-heading darker-bg">
-                        <h3 class="panel-title"><i class="fa fa-list"></i> Načini plaćanja</h3>
-                    </div>
-                    <div class="panel-body form-horizontal">
-                        <div class="form-group">
-                            <div class="col-sm-5 text-center">
-                                <a href="javascript:void(0)" id="import-new-payments" data-toggle="tooltip" title="Import načina plaćanja" class="btn btn-info btn-block">Import Načina Plaćanja</a>
-                            </div>
-                            <p class="col-sm-7">Postojeći načini plaćanja se brišu. Radi se novi import svih potrebnih načina plaćanja iz Luceed-a..</p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="col-sm-12 col-md-7">
-                <div class="panel panel-default">
-                    <div class="panel-heading darker-bg">
-                        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_products_import_panel }}</h3>
-                    </div>
-                    <div class="panel-body form-horizontal">
-                        <div class="form-group">
-                            <div class="col-sm-4 text-center">
-                                <a href="javascript:void(0)" id="import-new-products" data-toggle="tooltip" title="{{ btn_products_import }}" class="btn btn-info btn-block">{{ btn_products_import }}</a>
-                            </div>
-                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_import }}</p>
                         </div>
 
-                        {#<div class="form-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading darker-bg">
+                                <h3 class="panel-title"><i class="fa fa-list"></i> Skladišta</h3>
+                            </div>
+                            <div class="panel-body form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-5 text-center">
+                                        <a href="javascript:void(0)" id="import-new-warehouse" data-toggle="tooltip" title="Import Skladišta" class="btn btn-info btn-block">Import Skladišta</a>
+                                    </div>
+                                    <p class="col-sm-7">Import se radi prema predefiniranoj listi šifri skladišta.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading darker-bg">
+                                <h3 class="panel-title"><i class="fa fa-list"></i> Načini plaćanja</h3>
+                            </div>
+                            <div class="panel-body form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-5 text-center">
+                                        <a href="javascript:void(0)" id="import-new-payments" data-toggle="tooltip" title="Import načina plaćanja" class="btn btn-info btn-block">Import Načina Plaćanja</a>
+                                    </div>
+                                    <p class="col-sm-7">Postojeći načini plaćanja se brišu. Radi se novi import svih potrebnih načina plaćanja iz Luceed-a..</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-sm-12 col-md-7">
+                        <div class="panel panel-default">
+                            <div class="panel-heading darker-bg">
+                                <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_products_import_panel }}</h3>
+                            </div>
+                            <div class="panel-body form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-4 text-center">
+                                        <a href="javascript:void(0)" id="import-new-products" data-toggle="tooltip" title="{{ btn_products_import }}" class="btn btn-info btn-block">{{ btn_products_import }}</a>
+                                    </div>
+                                    <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_import }}</p>
+                                </div>
+
+                                {#<div class="form-group">
                             <div class="col-sm-4 text-center">
                                 <a href="javascript:void(0)" id="import-detail-product" data-toggle="tooltip" title="Import Detalja Novih Proizvoda" class="btn btn-info btn-block" style="margin-top: 9px;">Import Detalja Novih Proizvoda</a>
                             </div>
                             <p class="col-sm-8" style="margin-top: 9px;">OPREZ..! Import detalja svih proizvoda je veoma dugotrajan. Najbolje ga je raditi kada je promet stranice najmanji.</p>
                         </div>#}
 
-                        <div class="form-group">
-                            <div class="col-sm-4 text-center">
-                                <a href="javascript:void(0)" id="import-new-actions" data-toggle="tooltip" title="{{ btn_products_actions_import }}" class="btn btn-info btn-block">{{ btn_products_actions_import }}</a>
-                            </div>
-                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_actions }}</p>
-                        </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 text-center">
+                                        <a href="javascript:void(0)" id="import-new-actions" data-toggle="tooltip" title="{{ btn_products_actions_import }}" class="btn btn-info btn-block">{{ btn_products_actions_import }}</a>
+                                    </div>
+                                    <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_actions }}</p>
+                                </div>
 
-                        <div class="form-group">
-                            <div class="col-sm-4 text-center">
-                                <a href="javascript:void(0)" id="update-prices" data-toggle="tooltip" title="{{ btn_products_update_p }}" class="btn btn-info btn-block">{{ btn_products_update_p }}</a>
-                            </div>
-                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_p }}</p>
-                        </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 text-center">
+                                        <a href="javascript:void(0)" id="update-prices" data-toggle="tooltip" title="{{ btn_products_update_p }}" class="btn btn-info btn-block">{{ btn_products_update_p }}</a>
+                                    </div>
+                                    <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_p }}</p>
+                                </div>
 
-                        <div class="form-group">
-                            <div class="col-sm-4 text-center">
-                                <a href="javascript:void(0)" id="update-quantities" data-toggle="tooltip" title="{{ btn_products_update_q }}" class="btn btn-info btn-block">{{ btn_products_update_q }}</a>
-                            </div>
-                            <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_q }}</p>
-                        </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 text-center">
+                                        <a href="javascript:void(0)" id="update-quantities" data-toggle="tooltip" title="{{ btn_products_update_q }}" class="btn btn-info btn-block">{{ btn_products_update_q }}</a>
+                                    </div>
+                                    <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_q }}</p>
+                                </div>
 
-                        {#<div class="form-group">
+                                {#<div class="form-group">
                             <div class="col-sm-4 text-center">
                                 <a href="javascript:void(0)" id="update-prices-quantities" data-toggle="tooltip" title="{{ btn_products_update_pq }}" class="btn btn-info btn-block">{{ btn_products_update_pq }}</a>
                             </div>
                             <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_pq }}</p>
                         </div>#}
 
-                    </div>
-                </div>
-
-                <div class="panel panel-default">
-                    <div class="panel-heading darker-bg">
-                        <h3 class="panel-title"><i class="fa fa-list"></i> Kupci</h3>
-                    </div>
-                    <div class="panel-body form-horizontal">
-                        <div class="form-group">
-                            <div class="col-sm-4 text-center">
-                                <a href="javascript:void(0)" id="import-initial-customers" data-toggle="tooltip" title="Import Kupaca" class="btn btn-info btn-block">Import Kupaca</a>
                             </div>
-                            <p class="col-sm-8">Import se radi prema predefiniranoj JSON listi kupaca..</p>
                         </div>
-                    </div>
-                </div>
 
-                <div class="panel panel-default">
-                    <div class="panel-heading darker-bg">
-                        <h3 class="panel-title"><i class="fa fa-list"></i> Narudžbe</h3>
-                    </div>
-                    <div class="panel-body form-horizontal">
-                        <div class="form-group">
-                            <div class="col-sm-4 text-center">
-                                <a href="javascript:void(0)" id="update-order-statuses" data-toggle="tooltip" title="Update Statusa Narudžbi" class="btn btn-info btn-block">Update Statusa Narudžbi</a>
+                        <div class="panel panel-default">
+                            <div class="panel-heading darker-bg">
+                                <h3 class="panel-title"><i class="fa fa-list"></i> Kupci</h3>
                             </div>
-                            <p class="col-sm-8">Update statusa se vrši za sve narudžbe u web sustavu...</p>
+                            <div class="panel-body form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-4 text-center">
+                                        <a href="javascript:void(0)" id="import-initial-customers" data-toggle="tooltip" title="Import Kupaca" class="btn btn-info btn-block">Import Kupaca</a>
+                                    </div>
+                                    <p class="col-sm-8">Import se radi prema predefiniranoj JSON listi kupaca..</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <div class="col-sm-4 text-center">
-                                <a href="javascript:void(0)" id="duration-order-statuses" data-toggle="tooltip" title="Provjera Trajanja Statusa" class="btn btn-info btn-block">Provjera Trajanja Statusa</a>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading darker-bg">
+                                <h3 class="panel-title"><i class="fa fa-list"></i> Narudžbe</h3>
                             </div>
-                            <p class="col-sm-8">Vrši se provjera trajanja pojedinih statusa narudžbi i šalje se mail ako je potrabno.</p>
+                            <div class="panel-body form-horizontal">
+                                <div class="form-group">
+                                    <div class="col-sm-4 text-center">
+                                        <a href="javascript:void(0)" id="update-order-statuses" data-toggle="tooltip" title="Update Statusa Narudžbi" class="btn btn-info btn-block">Update Statusa Narudžbi</a>
+                                    </div>
+                                    <p class="col-sm-8">Update statusa se vrši za sve narudžbe u web sustavu...</p>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 text-center">
+                                        <a href="javascript:void(0)" id="duration-order-statuses" data-toggle="tooltip" title="Provjera Trajanja Statusa" class="btn btn-info btn-block">Provjera Trajanja Statusa</a>
+                                    </div>
+                                    <p class="col-sm-8">Vrši se provjera trajanja pojedinih statusa narudžbi i šalje se mail ako je potrabno.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="profile">
+
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading darker-bg">
+                                <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_categories_import_panel }}</h3>
+                            </div>
+                            <div class="panel-body form-horizontal">
+
+                                    <table class="table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Product ID</th>
+                                            <th scope="col">Naziv</th>
+                                            <th scope="col">Luceed-UID</th>
+                                            <th scope="col">Ima sliku</th>
+                                            <th scope="col">Ima opis</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <th scope="row">1</th>
+                                            <td>5858</td>
+                                            <td>Ime artikla</td>
+                                            <td>6544565466</td>
+                                            <td>NE</td>
+                                            <td>Da</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">1</th>
+                                            <td>5858</td>
+                                            <td>Ime artikla</td>
+                                            <td>6544565466</td>
+                                            <td>NE</td>
+                                            <td>Da</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">1</th>
+                                            <td>5858</td>
+                                            <td>Ime artikla</td>
+                                            <td>6544565466</td>
+                                            <td>NE</td>
+                                            <td>Da</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -212,6 +273,11 @@
             </div>
 
         </div>
+
+
+
+
+
     </div>
 
     <script type="text/javascript">
