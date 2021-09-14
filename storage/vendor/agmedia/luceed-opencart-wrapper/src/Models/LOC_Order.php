@@ -57,9 +57,9 @@ class LOC_Order
     private $response;
 
     /**
-     * @var string|null
+     * @var array|null
      */
-    private $customer_uid = null;
+    private $customer = null;
 
     /**
      * @var array
@@ -101,13 +101,13 @@ class LOC_Order
 
 
     /**
-     * @param string $customer_uid
+     * @param array $customer_data
      *
      * @return $this
      */
-    public function setCustomerUid(string $customer_uid)
+    public function setCustomerUid(array $customer_data)
     {
-        $this->customer_uid = $customer_uid;
+        $this->customer = $customer_data;
 
         return $this;
     }
@@ -175,7 +175,8 @@ class LOC_Order
             'komercijalist__radnik_uid' => '206-1063',
             'placa_porez'               => 'D',
             'cijene_s_porezom'          => agconf('luceed.with_tax'),
-            'partner_uid'               => $this->customer_uid,
+            'partner_uid'               => $this->customer['main'],
+            'korisnik__partner_uid'     => $this->customer['alter'] ?: $this->customer['main'],
             'iznos'                     => (float) $iznos,
             'vrsta_isporuke'            => '10',
             'rezervacija_do_datuma'     => $this->getReservation(),
@@ -246,17 +247,24 @@ class LOC_Order
         $update = $this->checkAddress();
 
         return [
-            'customer_id'   => $this->oc_order['customer_id'],
-            'fname'         => $update ? $this->oc_order['shipping_firstname'] : $this->oc_order['payment_firstname'],
-            'lname'         => $update ? $this->oc_order['shipping_lastname'] : $this->oc_order['payment_lastname'],
-            'email'         => $this->oc_order['email'],
-            'phone'         => $this->oc_order['telephone'],
-            'company'       => $update ? $this->oc_order['shipping_company'] : $this->oc_order['payment_company'],
-            'address'       => $update ? $this->oc_order['shipping_address_1'] : $this->oc_order['payment_address_1'],
-            'zip'           => $update ? $this->oc_order['shipping_postcode'] : $this->oc_order['payment_postcode'],
-            'city'          => $update ? $this->oc_order['shipping_city'] : $this->oc_order['payment_city'],
-            'country'       => $update ? $this->oc_order['shipping_country'] : $this->oc_order['payment_country'],
-            'should_update' => $update
+            'customer_id'      => $this->oc_order['customer_id'],
+            'email'            => $this->oc_order['email'],
+            'phone'            => $this->oc_order['telephone'],
+            'fname'            => $this->oc_order['payment_firstname'],
+            'lname'            => $this->oc_order['payment_lastname'],
+            'company'          => $this->oc_order['payment_company'],
+            'address'          => $this->oc_order['payment_address_1'],
+            'zip'              => $this->oc_order['payment_postcode'],
+            'city'             => $this->oc_order['payment_city'],
+            'country'          => $this->oc_order['payment_country'],
+            'shipping_fname'   => $this->oc_order['shipping_firstname'],
+            'shipping_lname'   => $this->oc_order['shipping_lastname'],
+            'shipping_company' => $this->oc_order['shipping_company'],
+            'shipping_address' => $this->oc_order['shipping_address_1'],
+            'shipping_zip'     => $this->oc_order['shipping_postcode'],
+            'shipping_city'    => $this->oc_order['shipping_city'],
+            'shipping_country' => $this->oc_order['shipping_country'],
+            'should_update'    => $update
         ];
     }
 
