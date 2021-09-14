@@ -167,10 +167,13 @@ class LOC_Customer
         );
 
         Log::store('$exist_after');
-        Log::store($exist);
+        Log::store($this->order_customer);
 
         if ( ! empty($exist)) {
             foreach ($exist as $l_customer) {
+                Log::store($this->order_customer['shipping_address']);
+                Log::store($l_customer->adresa);
+                Log::store($l_customer->grupacija);
                 // Kupac
                 if ( ! $this->diffAddress() && $this->order_customer['shipping_address'] == $l_customer->adresa && ! $l_customer->grupacija) {
                     Customer::where('customer_id', $this->customer['id'])->update([
@@ -193,6 +196,11 @@ class LOC_Customer
                         );
                     }
                 }
+
+                // Neregani kupac
+                if ( ! $this->customer['uid']) {
+                    $this->customer['uid'] = $l_customer->partner_uid;
+                }
             }
 
             Log::store('First ::::: customer i alter...');
@@ -206,9 +214,9 @@ class LOC_Customer
                     'id'                  => 0,
                     'uid'                 => null,
                     'parent__partner_uid' => $this->customer['uid'],
-                    'naziv'               => $this->order_customer['shipping_firstname'] . ' ' . $this->order_customer['shipping_lastname'],
-                    'ime'                 => $this->order_customer['shipping_firstname'],
-                    'prezime'             => $this->order_customer['shipping_lastname'],
+                    'naziv'               => $this->order_customer['shipping_fname'] . ' ' . $this->order_customer['shipping_lname'],
+                    'ime'                 => $this->order_customer['shipping_fname'],
+                    'prezime'             => $this->order_customer['shipping_lname'],
                     'enabled'             => 'D',
                     'tip_komitenta'       => 'F',
                     'adresa'              => $this->order_customer['shipping_address'],
@@ -306,10 +314,7 @@ class LOC_Customer
             ];
         }
 
-        Log::store('$data_before');
-        Log::store($collection['customer_id']);
-
-        $data = [
+        return [
             'id'                  => $collection['customer_id'],
             'uid'                 => $this->setUid($collection['customer_id'], true),
             'parent__partner_uid' => $collection['grupacija'],
@@ -323,11 +328,6 @@ class LOC_Customer
             'e_mail'              => $collection['email'],
             'postanski_broj'      => $collection['zip']
         ];
-
-        Log::store('$data');
-        Log::store($data);
-
-        return $data;
     }
 
 
