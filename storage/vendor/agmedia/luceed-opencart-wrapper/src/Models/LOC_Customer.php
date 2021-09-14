@@ -157,12 +157,14 @@ class LOC_Customer
     {
         $this->service = new Luceed();
 
+        Log::store('$exist_before', 'customer_process');
+
         // Set the response from Luceed service.
         $exist = $this->setResponseData(
             $this->service->getCustomerByEmail($this->customer['e_mail'])
         );
 
-        Log::store('$exist', 'customer_process');
+        Log::store('$exist_after', 'customer_process');
         Log::store($exist, 'customer_process');
 
         if ( ! empty($exist)) {
@@ -283,6 +285,8 @@ class LOC_Customer
         if ( ! isset($collection->grupacija)) {
             $collection->grupacija = null;
         }
+
+        Log::store($collection);
 
         if ($luceed_data) {
             return [
