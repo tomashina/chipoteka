@@ -1,7 +1,6 @@
 <?php
 // HTTP
 define('HTTP_SERVER', 'http_server');
-
 // HTTPS
 define('HTTPS_SERVER', 'https_server');
 
