@@ -172,7 +172,9 @@ class LOC_Customer
         if ( ! empty($exist)) {
             foreach ($exist as $l_customer) {
                 // Kupac
-                if ( ! $this->diffAddress() && $this->order_customer['shipping_address'] == $l_customer->adresa && ! $l_customer->grupacija) {
+                Log::store($l_customer->adresa);
+
+                if ( ! $this->diffAddress() && ! $l_customer->grupacija) {
                     Customer::where('customer_id', $this->customer['id'])->update([
                         'luceed_uid' => $l_customer->partner_uid
                     ]);
@@ -306,10 +308,7 @@ class LOC_Customer
             ];
         }
 
-        Log::store('$data_before');
-        Log::store($collection['customer_id']);
-
-        $data = [
+        return [
             'id'                  => $collection['customer_id'],
             'uid'                 => $this->setUid($collection['customer_id'], true),
             'parent__partner_uid' => $collection['grupacija'],
@@ -323,11 +322,6 @@ class LOC_Customer
             'e_mail'              => $collection['email'],
             'postanski_broj'      => $collection['zip']
         ];
-
-        Log::store('$data');
-        Log::store($data);
-
-        return $data;
     }
 
 
