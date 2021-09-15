@@ -1,4 +1,7 @@
 <?php
+use Agmedia\Helpers\Log;
+use Agmedia\Models\Order\Order;
+use Agmedia\Models\Product\Product;
 class ControllerMailOrder extends Controller {
 	public function index(&$route, &$args) {
 		if (isset($args[0])) {
