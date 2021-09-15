@@ -24,36 +24,42 @@
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
             </div>
         {% endif %}
-{#        <div class="row">#}
-{#            <div class="col-sm-12">#}
-{#                <div class="panel panel-default">#}
-{#                    <div class="panel-heading darker-bg">#}
-{#                        <h3 class="panel-title"><i class="fa fa-list"></i> Update Proizvoda</h3>#}
-{#                    </div>#}
-{#                    <div class="panel-body">#}
-{#                        <div class="row">#}
-{#                            <div class="col-sm-2 text-center">#}
-{#                                <a href="javascript:void(0)" id="import-luceed-products" data-toggle="tooltip" title="Import Kupaca" class="btn btn-info btn-block">Pokreni</a>#}
-{#                            </div>#}
-{#                            <div class="col-sm-10">#}
-{#                                <div id="luceed-products-imported" class="h5 lighten" style="display: none;">Luceed proizvodi učitani u bazu!</div>#}
-{#                                <div class="p small lighten">Učitavanje: <span id="luceed-products-importing">0</span>/7200</div>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-
 
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Sync Manager</a></li>
             <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Product Import Info</a></li>
-
         </ul>
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="home">
+{#                <div class="row">#}
+{#                    <div class="col-sm-12">#}
+{#                        <div class="panel panel-default">#}
+{#                            <div class="panel-heading darker-bg">#}
+{#                                <h3 class="panel-title"><i class="fa fa-list"></i> Update Proizvoda</h3>#}
+{#                            </div>#}
+{#                            <div class="panel-body">#}
+{#                                <div class="row">#}
+{#                                    <div class="col-sm-2 text-center pt-3">#}
+{#                                        <a href="javascript:void(0)" id="import-luceed-products" data-toggle="tooltip" title="Import Kupaca" class="btn btn-info btn-block">Pokreni</a>#}
+{#                                    </div>#}
+{#                                    <div class="col-sm-10">#}
+{#                                        <div id="luceed-products-imported" class="h5 lighten" style="display: none;">Luceed proizvodi učitani u bazu!</div>#}
+{#                                        <div class="p small lighten">Učitavanje: <span id="luceed-products-importing">0</span>/7200</div>#}
+{#                                    </div>#}
+
+{#                                    <div class="col-sm-10">#}
+{#                                        <div id="luceed-all-imported" class="lead lighten">Luceed proizvodi su učitani u lokalnu bazu..!</div>#}
+{#                                        <div class="p lighten">Učitavanje: <span id="luceed-importing">0</span>/7200</div>#}
+{#                                        <div class="p lighten">Update: <span id="luceed-updated">0</span></div>#}
+{#                                        <div class="p lighten">Import: <span id="luceed-inserted">0</span></div>#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+
                 <div class="row">
                     <div class="col-sm-12 col-md-5">
                         <div class="panel panel-default">
@@ -271,12 +277,7 @@
                 </div>
 
             </div>
-
         </div>
-
-
-
-
 
     </div>
 
@@ -323,7 +324,7 @@
                     dataType: 'json',
                     success: function(json) {
                         if (json.status == 200) {
-                            document.getElementById('luceed-products-imported').style.display = 'block';
+                            document.getElementById('luceed-all-imported').style.display = 'block';
                             updateProducts();
                         }
                     }
@@ -342,23 +343,39 @@
 
 
         function updateProducts() {
-            let count = localStorage.getItem('imported');
+            let updated = localStorage.getItem('sync_updated') ? localStorage.getItem('sync_updated') : 1;
+            let inserted = localStorage.getItem('sync_inserted') ? localStorage.getItem('sync_inserted') : 1;
+            let total = localStorage.getItem('sync_total') ? localStorage.getItem('sync_total') : 1;
 
             $.ajax({
                 url: 'index.php?route=extension/module/luceed_sync/updateProduct&user_token={{ user_token }}',
                 dataType: 'json',
                 success: function(json) {
                     if (json.status == 200) {
-                        if (count) {
-                            count = Number(count) + 1;
-                        } else {
-                            count = 1;
+                        total++;
+
+                        if (json.message = 'updated') {
+                            updated++;
+
+                            localStorage.setItem('sync_updated', updated);
+                            document.getElementById('luceed-updated').innerHTML = updated;
                         }
 
-                        localStorage.setItem('imported', count);
-                        document.getElementById('luceed-products-importing').innerHTML = count;
+                        if (json.message = 'inserted') {
+                            inserted++;
 
-                        //updateProducts();
+                            localStorage.setItem('sync_inserted', inserted);
+                            document.getElementById('luceed-inserted').innerHTML = inserted;
+                        }
+
+                        if (json.message = 'finish') {
+                            document.getElementById('luceed-all-imported').innerHTML = 'Sinkroniziranje završeno..!';
+                        }
+
+                        localStorage.setItem('sync_total', total);
+                        document.getElementById('luceed-importing').innerHTML = total;
+
+                        updateProducts();
                     }
                 }
             });

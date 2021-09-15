@@ -53,6 +53,18 @@ class LOC_Places
 
 
     /**
+     * @param string $zip
+     * @param string $city
+     *
+     * @return string
+     */
+    public function resolveUID(string $zip, string $city): string
+    {
+        return collect($this->list)->where('naziv', $city)->where('postanski_broj', $zip)->pluck('mjesto_uid')->first();
+    }
+
+
+    /**
      * @param string $request
      * @param string $target = cityname | zipcode
      *

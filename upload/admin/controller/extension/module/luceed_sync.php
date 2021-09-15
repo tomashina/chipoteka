@@ -225,45 +225,32 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
     public function updateProduct()
     {
+        $this->load->model('catalog/product');
         $_loc = new LOC_ProductSingle();
 
-        return $this->output(['status' => 200, 'message' => $_loc->select()]);
-    }
-    /**
-     *
-     */
-    public function importProduct()
-    {
-        if ($this->request->get['id']) {
-            $_loc = new LOC_ProductSingle(
-                LuceedProduct::getById($this->request->get['id'])
+        // Check products for UPDATE
+        if ($_loc->hasForUpdate()) {
+            $product = $this->resolveOldProductData($_loc->product_to_update);
+
+            $this->model_catalog_product->editProduct(
+                $_loc->product_to_update->product_id,
+                $_loc->makeForUpdate($product)
             );
+
+            return $this->output($_loc->finishUpdate());
+
         } else {
-            $_loc = new LOC_ProductSingle();
-        }
-
-        if ($_loc->product) {
-            $_loc->make();
-        }
-
-        if ($_loc->products) {
-            $count = 0;
-
-            foreach ($_loc->products as $product) {
-                $_loc->product = $_loc->setProduct(
-                    LuceedProduct::getById($product->sku)
+            // Check products for INSERT
+            if ($_loc->hasForInsert()) {
+                $this->model_catalog_product->addProduct(
+                    $_loc->makeForInsert()
                 );
 
-                if ($_loc->product) {
-                    $_loc->make();
-
-                    $count++;
-                }
-
+                return $this->output($_loc->finishInsert());
             }
         }
 
-
+        return $this->output($_loc);
     }
 
 
@@ -518,6 +505,27 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
 
     /**
+     * @param $product
+     *
+     * @return array
+     */
+    private function resolveOldProductData($product): array
+    {
+        $this->load->model('catalog/product');
+        
+        $data = [];
+        $data['product_discount'] = $this->model_catalog_product->getProductDiscounts($product['id']);
+        $data['product_special'] = $this->model_catalog_product->getProductSpecials($product['id']);
+        $data['product_download'] = $this->model_catalog_product->getProductDownloads($product['id']);
+        $data['product_filter'] = $this->model_catalog_product->getProductFilters($product['id']);
+        $data['product_related'] = $this->model_catalog_product->getProductRelated($product['id']);
+        $data['product_reward'] = $this->model_catalog_product->getProductRewards($product['id']);
+
+        return $data;
+    }
+
+
+    /**
      * @param int|string $condition
      * @param string     $text
      *
@@ -550,6 +558,12 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $this->response->setOutput(collect($data)->toJson());
     }
 
+
+    /**
+     * @param string $nb
+     *
+     * @return float|int|mixed
+     */
     public function mod11INI(string $nb)
     {
         $i = 0;

@@ -3,6 +3,7 @@
 namespace Agmedia\LuceedOpencartWrapper\Models;
 
 use Agmedia\Helpers\Log;
+use Agmedia\Luceed\Facade\LuceedPlaces;
 use Agmedia\Luceed\Luceed;
 use Agmedia\Models\Address;
 use Agmedia\Models\Customer\Customer;
@@ -181,6 +182,8 @@ class LOC_Customer
                     ]);
 
                     $this->customer['uid'] = $l_customer->partner_uid;
+                    $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
+                    $this->alter_customer = $l_customer;
                 }
 
                 // Korisnik
@@ -198,8 +201,9 @@ class LOC_Customer
                 }
 
                 // Neregani kupac
-                if ( ! $this->customer['uid']) {
+                if ( ! $this->customer['uid'] && ! empty($l_customer->adresa)) {
                     $this->customer['uid'] = $l_customer->partner_uid;
+                    $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
                 }
             }
 
@@ -222,7 +226,8 @@ class LOC_Customer
                     'adresa'              => $this->order_customer['shipping_address'],
                     'telefon'             => $this->customer['telefon'],
                     'e_mail'              => $this->customer['e_mail'],
-                    'postanski_broj'      => $this->order_customer['shipping_postcode']
+                    'postanski_broj'      => $this->order_customer['shipping_zip'],
+                    'mjesto_uid'          => $this->setCityUid($this->order_customer['shipping_zip'], $this->order_customer['shipping_city']),
                 ];
 
                 $response = json_decode(
@@ -310,7 +315,8 @@ class LOC_Customer
                 'adresa'              => $collection->adresa,
                 'telefon'             => $collection->telefon,
                 'e_mail'              => $this->customer['e_mail'],
-                'postanski_broj'      => $collection->postanski_broj
+                'postanski_broj'      => $collection->postanski_broj,
+                'mjesto_uid'          => $collection->mjesto_uid,
             ];
         }
 
@@ -326,7 +332,8 @@ class LOC_Customer
             'adresa'              => $collection['address'],
             'telefon'             => ($collection['phone'] != '') ? $collection['phone'] : '000',
             'e_mail'              => $collection['email'],
-            'postanski_broj'      => $collection['zip']
+            'postanski_broj'      => $collection['zip'],
+            'mjesto_uid'          => $this->setCityUid($collection['zip'], $collection['city']),
         ];
     }
 
@@ -352,6 +359,20 @@ class LOC_Customer
         } else {
             $this->customer['uid'] = $uid ?: null;
         }
+    }
+
+
+    /**
+     * @param string $zip
+     * @param string $city
+     *
+     * @return string
+     */
+    private function setCityUid(string $zip, string $city): string
+    {
+        $places = new LOC_Places(LuceedPlaces::getByName($city));
+
+        return $places->resolveUID($zip, $city);
     }
 
 

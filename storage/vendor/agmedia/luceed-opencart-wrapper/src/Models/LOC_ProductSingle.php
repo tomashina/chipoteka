@@ -6,15 +6,13 @@ use Agmedia\Helpers\Database;
 use Agmedia\Helpers\Log;
 use Agmedia\Kaonekad\AttributeHelper;
 use Agmedia\Kaonekad\ScaleHelper;
-use Agmedia\Luceed\Facade\LuceedProduct;
+use Agmedia\Luceed\Models\LuceedProduct;
+use Agmedia\Luceed\Models\LuceedProductForRevision;
 use Agmedia\LuceedOpencartWrapper\Helpers\ProductHelper;
-use Agmedia\Models\Category\Category;
-use Agmedia\Models\Manufacturer\Manufacturer;
-use Agmedia\Models\Option\OptionValueDescription;
 use Agmedia\Models\Product\Product;
+use Agmedia\Models\Product\ProductDescription;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 /**
  * Class LOC_Product
@@ -26,22 +24,27 @@ class LOC_ProductSingle
     /**
      * @var array
      */
-    public $products;
-
-    /**
-     * @var array
-     */
     public $product;
 
     /**
-     * @var int
+     * @var Collection
      */
-    private $default_language;
+    public $product_to_update;
 
     /**
-     * @var string
+     * @var Collection
      */
-    private $image_path;
+    public $product_to_insert;
+
+    /**
+     * @var Collection
+     */
+    private $luceed_product;
+
+    /**
+     * @var Collection
+     */
+    private $products_for_revision;
 
 
     /**
@@ -49,59 +52,167 @@ class LOC_ProductSingle
      */
     public function __construct()
     {
-        $this->default_language = agconf('import.default_language');
-        $this->image_path       = agconf('import.image_path');
-    }
-
-
-    public function select()
-    {
-        $product_to_update = Product::where('updated', 0)->first();
-
-        if ($product_to_update) {
-            $this->product = \Agmedia\Luceed\Models\LuceedProduct::where('uid', $product_to_update->luceed_uid)->first();
-
-            if ($this->product) {
-                $data = collect(
-                    json_decode(htmlspecialchars_decode($this->product->data), true)
-                );
-
-                //Log::store($data->toArray());
-
-                return 1;
-            }
-
-            return 1;
-        }
-
-        return 0;
-    }
-
-
-    /**
-     *
-     */
-    public function resolveData()
-    {
-        if ( ! $this->product) {
-            $this->products = Product::where('updated', 0)->limit(100)->get();
-        }
+        $this->products_for_revision = collect();
     }
 
 
     /**
      * @return Collection
      */
-    public function getProduct(): Collection
+    public function resolveLuceedProductData(): Collection
     {
-        return collect($this->product);
+        return collect(json_decode(
+            htmlspecialchars_decode($this->luceed_product->data),
+            true
+        ));
     }
 
 
+    /**
+     * @return bool
+     */
+    public function hasForUpdate(): bool
+    {
+        $this->product_to_update = Product::where('updated', 0)->first();
+
+        if ($this->product_to_update) {
+            $this->luceed_product = LuceedProduct::where('uid', $this->product_to_update->luceed_uid)
+                                                 ->where('hash', '!=', $this->product_to_update->imported)
+                                                 ->first();
+
+            if ($this->luceed_product) {
+                $this->product = $this->resolveLuceedProductData();
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     /**
-     * Collect, make and sort the data
-     * for 1 products to make.
+     * @return bool
+     */
+    public function hasForInsert(): bool
+    {
+        $existing = Product::pluck('luceed_uid');
+        $diff     = LuceedProduct::whereNotIn('uid', $existing)->first();
+
+        if ($diff) {
+            $this->luceed_product = $diff;
+
+            if ($this->luceed_product) {
+                $this->product = $this->resolveLuceedProductData();
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function finishInsert(): array
+    {
+        return [
+            'status'  => 200,
+            'message' => 'inserted'
+        ];
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function finishUpdate(): array
+    {
+        if ($this->product_to_update && $this->luceed_product) {
+            Product::where('product_id', $this->product_to_update->product_id)->update([
+                'updated'  => 1,
+                'hash' => $this->luceed_product->hash
+            ]);
+
+            return [
+                'status'  => 200,
+                'message' => 'updated'
+            ];
+        }
+    }
+
+
+    /**
+     * @return array
+     */
+    public function finish(): array
+    {
+        if ($this->products_for_revision->count()) {
+            $db = new Database(DB_DATABASE);
+            $existing = LuceedProductForRevision::pluck('uid');
+            $diff = $this->products_for_revision->whereNotIn('artikl_uid', $existing)->all();
+
+            $count = 0;
+            $query_str = '';
+
+            foreach ($diff as $product) {
+                $data = collect($product)->toJson();
+
+                $query_str .= '("' . $product->artikl_uid . '", "' . $product->artikl . '", "' . $product->naziv . '", ' . $product->has_image?1:0 . ', ' . $product->has_description?1:0 . ', 0, "", ' . Carbon::now() . ', ' . Carbon::now() . '),';
+
+                $count++;
+            }
+
+            $db->query("INSERT INTO " . DB_PREFIX . "product_luceed_revision (uid, sifra, `hash`, has_image, has_description, resolved, `data`, date_added, date_modified) VALUES " . substr($query_str, 0, -1) . ";");
+        }
+
+        return [
+            'status'  => 200,
+            'message' => 'finish'
+        ];
+    }
+
+
+    /**
+     * @param array $old_product
+     *
+     * @return array
+     */
+    public function makeForUpdate(array $old_product): array
+    {
+        if ( ! $this->product) {
+            return false;
+        }
+
+        $product                     = $this->make();
+        $product['product_discount'] = $old_product['product_discount'];
+        $product['product_special']  = $old_product['product_special'];
+        $product['product_download'] = $old_product['product_download'];
+        $product['product_filter']   = $old_product['product_filter'];
+        $product['product_related']  = $old_product['product_related'];
+        $product['product_reward']   = $old_product['product_reward'];
+
+        return $product;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function makeForInsert(): array
+    {
+        if ( ! $this->product) {
+            return [];
+        }
+
+        return $this->make();
+    }
+
+
+    /**
+     * Collect, make, sort the data for 1 product.
      *
      * @param $product
      *
@@ -109,34 +220,55 @@ class LOC_ProductSingle
      */
     public function make(): array
     {
-        $manufacturer  = $this->getManufacturer();
-        $stock_status  = $this->product->stanje_kol ? agconf('import.default_stock_full') : agconf('import.default_stock_empty');
+        $manufacturer = ProductHelper::getManufacturer($this->product);
+        $stock_status = $this->product['stanje_kol'] ? agconf('import.default_stock_full') : agconf('import.default_stock_empty');
+        $status       = 1;
 
+        $description = ProductHelper::getDescription($this->product);
+
+        if ($this->product_to_update) {
+            $old_description = ProductDescription::where('product_id', $this->product_to_update->product_id)
+                                                 ->where('language_id', agconf('import.default_language'))
+                                                 ->first();
+
+            $description = ProductHelper::getDescription($this->product, $old_description);
+        }
+
+        if (empty($this->product['opis']) && empty($this->product['dokumenti'])) {
+            $status = 0;
+            $this->pushToRevision();
+        }
+
+        if ($this->product['enabled'] == 'N') {
+            $status = 0;
+        }
 
         $prod = [
-            'model'               => $this->product->artikl,
-            'sku'                 => $this->product->artikl,
-            'luceed_uid'          => $this->product->artikl_uid,
-            'upc'                 => $this->product->barcode,
+            'model'               => $this->product['artikl'],
+            'sku'                 => $this->product['artikl'],
+            'luceed_uid'          => $this->product['artikl_uid'],
+            'upc'                 => $this->product['barcode'],
             'ean'                 => '',
             'jan'                 => '',
-            'isbn'                => '',
-            'mpn'                 => '',
+            'isbn'                => '5',
+            'mpn'                 => $this->product['jamstvo_naziv'] ?: '',
             'location'            => '',
-            'price'               => $this->product->mpc,
+            'price'               => $this->product['mpc'],
+            'price_2'             => $this->product['mpc'],
             'tax_class_id'        => agconf('import.default_tax_class'),
-            'quantity'            => $this->product->stanje_kol,
+            'quantity'            => $this->product['stanje_kol'],
             'minimum'             => 1,
             'subtract'            => 1,
             'stock_status_id'     => $stock_status,
             'shipping'            => 1,
+            'date_available'      => Carbon::now()->subDay()->format('Y-m-d'),
             'length'              => '',
             'width'               => '',
             'height'              => '',
             'length_class_id'     => 1,
             'weight'              => '',
             'weight_class_id'     => 1,
-            'status'              => $this->product->stanje_kol ? 1 : 1,
+            'status'              => $status,
             'sort_order'          => 0,
             'manufacturer'        => $manufacturer['name'],
             'manufacturer_id'     => $manufacturer['id'],
@@ -144,158 +276,41 @@ class LOC_ProductSingle
             'filter'              => '',
             'download'            => '',
             'related'             => '',
-            'image'               => ! empty($this->product->dokumenti) ? $this->getImagePath() : agconf('import.image_placeholder'),
+            'image'               => ! empty($this->product['dokumenti']) ? ProductHelper::getImagePath($this->product) : agconf('import.image_placeholder'),
             'points'              => '',
             'product_store'       => [0 => 0],
-            'product_description' => $this->getDescriptionArray(),
-            'product_image'       => $this->getImages(),
+            'product_attribute'   => ProductHelper::getAttributes($this->product),
+            'product_description' => $description,
+            'product_image'       => ProductHelper::getImages($this->product),
             'product_layout'      => [0 => ''],
-            'product_category'    => ProductHelper::getCategories($this->getProduct()),
-            //'product_option'      => $this->getOptions($scale)
+            'product_category'    => ProductHelper::getCategories($this->product),
+            'product_seo_url'     => [0 => ProductHelper::getSeoUrl($this->product)],
         ];
 
         return $prod;
     }
 
 
-
     /**
-     * @return array
+     *
      */
-    private function getManufacturer(): array
+    private function pushToRevision(): void
     {
-        if (isset($this->product->robna_marka)) {
-            $manufacturer = Manufacturer::where('luceed_uid', $this->product->robna_marka)->first();
-
-            if ($manufacturer) {
-                return [
-                    'id'   => $manufacturer->manufacturer_id,
-                    'name' => $manufacturer->name
-                ];
-            }
+        if ($this->product_to_update) {
+            $this->product['product_id'] = $this->product_to_update->product_id;
         }
 
-        return ['id' => 0, 'name' => ''];
-    }
+        $this->product['has_image'] = true;
+        $this->product['has_description'] = true;
 
-
-    /**
-     * @return array
-     */
-    private function getImages()
-    {
-        $response = [];
-        $default  = collect($this->product->dokumenti);
-        $docs     = $default->splice(1);
-
-        for ($i = 0; $i < $docs->count(); $i++) {
-            $response[] = [
-                'image'      => $this->getImagePath($i + 1),
-                'sort_order' => $i
-            ];
+        if (empty($this->product['opis'])) {
+            $this->product['has_description'] = false;
         }
 
-        return $response;
-    }
-
-
-    /**
-     * Return description with default language.
-     * Language_id as response array key.
-     *
-     * @Implement Loop for more languages from config file.
-     *
-     * @return array
-     */
-    private function getDescriptionArray(): array
-    {
-        // Check if description exist.
-        //If not add title for description.
-        $description = str_replace("\n", '<br>', $this->product->opis);
-        $spec = str_replace("\n", '<br>', $this->product->specifikacija);
-
-        if ( ! $this->product->opis) {
-            $description = $this->product->naziv;
+        if (empty($this->product['dokumenti'])) {
+            $this->product['has_image'] = false;
         }
 
-        $response[$this->default_language] = [
-            'name'              => $this->product->naziv,
-            'description'       => $description,
-            'spec_description'  => $spec ?: '',
-            'short_description' => $description,
-            'tag'               => $this->product->naziv,
-            'meta_title'        => $this->product->naziv,
-            'meta_description'  => str_replace("\n", '. ', $this->product->opis),
-            'meta_keyword'      => $this->product->naziv,
-        ];
-
-        return $response;
-    }
-
-
-    /**
-     * Get the image string from luceed service and
-     * return the full path string.
-     *
-     * @return string
-     */
-    private function getImagePath(int $key = 0): string
-    {
-        // Check if the image path exist.
-        // Create it if not.
-        if ( ! is_dir(DIR_IMAGE . $this->image_path)) {
-            mkdir(DIR_IMAGE . $this->image_path, 0777, true);
-        }
-
-        // Setup and create the image with GD library.
-        $name  = Str::slug($this->product->naziv) . '-'. strtoupper(Str::random(9)) . '.jpg';
-        $bin   = base64_decode($this->getImageString($key));
-        $image = imagecreatefromstring($bin);
-
-        if ( ! $image) {
-            return 'not_valid_image';
-        }
-
-        // Save the image in storage.
-        imagejpeg($image, DIR_IMAGE . $this->image_path . $name, 90);
-        //imagepng($image, DIR_IMAGE . $this->image_path . $name, 0);
-
-        // Return only the image path.
-        return $this->image_path . $name;
-    }
-
-
-    /**
-     * Get the image string from luceed service
-     *
-     * @return mixed
-     */
-    private function getImageString(int $key)
-    {
-        $result = LuceedProduct::getImage($this->product->dokumenti[$key]->file_uid);
-
-        $image = json_decode($result);
-
-        return $image->result[0]->files[0]->content;
-    }
-
-
-    /**
-     * Return the corrected response from luceed service.
-     * Without unnecessary tags.
-     *
-     * @param $products
-     *
-     * @return array|null
-     */
-    public function setProduct($product)
-    {
-        $prod = json_decode($product);
-
-        if (isset($prod->result[0]->artikli[0])) {
-            return $prod->result[0]->artikli[0];
-        }
-
-        return null;
+        $this->products_for_revision->push($this->product);
     }
 }

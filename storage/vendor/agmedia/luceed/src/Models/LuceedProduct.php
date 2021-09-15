@@ -19,6 +19,11 @@ class LuceedProduct extends Model
      * @var string
      */
     protected $primaryKey = 'uid';
+
+    /**
+     * @var bool
+     */
+    public $timestamps = false;
     
     
     /**

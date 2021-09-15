@@ -1,14 +1,12 @@
 <?php
 
-
 namespace Agmedia\Luceed\Facade;
-
 
 use Agmedia\Luceed\Luceed;
 
 class LuceedPlaces
 {
-    
+
     /**
      * @return mixed
      */
@@ -25,10 +23,10 @@ class LuceedPlaces
      *
      * @return mixed
      */
-    public static function getById(string $id)
+    public static function getByName(string $name)
     {
         $luceed = new Luceed();
-    
-        return $luceed->getPlace($id);
+
+        return $luceed->getPlaceByName($name);
     }
 }

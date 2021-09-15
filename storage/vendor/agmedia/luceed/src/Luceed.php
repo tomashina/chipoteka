@@ -124,9 +124,9 @@ class Luceed
      *
      * @return false|mixed
      */
-    public function getPlace(string $id)
+    public function getPlaceByName(string $name)
     {
-        return $this->service->get($this->end_points['mjesta'] . $id);
+        return $this->service->get($this->end_points['mjesta'] . $name);
     }
 
 
