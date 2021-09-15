@@ -282,6 +282,8 @@ class LOC_Customer
      */
     private function create(array $customer = null): array
     {
+        Log::store('create');
+
         return $this->populateCustomerForLuceed(collect($customer));
     }
 
@@ -302,6 +304,9 @@ class LOC_Customer
             $collection->put('grupacija', null);
         }
 
+        Log::store('$collection');
+        Log::store($collection);
+
         if ($luceed_data) {
             return [
                 'id'                  => 0,
@@ -320,7 +325,14 @@ class LOC_Customer
             ];
         }
 
-        return [
+        Log::store('$this->setUid');
+        Log::store($this->setUid($collection['customer_id'], true));
+
+        $mjesto_uid = $this->setCityUid($collection['zip'], $collection['city']);
+        Log::store('$this->setCityUid()->mjesto_uid');
+        Log::store($mjesto_uid);
+
+        $data = [
             'id'                  => $collection['customer_id'],
             'uid'                 => $this->setUid($collection['customer_id'], true),
             'parent__partner_uid' => $collection['grupacija'],
@@ -335,6 +347,10 @@ class LOC_Customer
             'postanski_broj'      => $collection['zip'],
             'mjesto_uid'          => $this->setCityUid($collection['zip'], $collection['city']),
         ];
+
+        Log::store($data);
+
+        return $data;
     }
 
 
@@ -346,7 +362,7 @@ class LOC_Customer
      * @param       $uid
      * @param false $from_ocdb
      */
-    private function setUid($uid, $from_ocdb = false): void
+    private function setUid($uid, $from_ocdb = false)
     {
         if ($uid && $from_ocdb) {
             $customer = Customer::where('customer_id', $uid)->first();
@@ -372,7 +388,7 @@ class LOC_Customer
     {
         $places = new LOC_Places(LuceedPlaces::getByName($city));
 
-        return $places->resolveUID($zip, $city);
+        return $places->resolveUID($zip, $city)->mjesto_uid;
     }
 
 
