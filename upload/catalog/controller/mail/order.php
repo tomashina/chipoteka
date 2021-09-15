@@ -27,6 +27,8 @@ class ControllerMailOrder extends Controller {
 						
 		// We need to grab the old order status ID
 		$order_info = $this->model_checkout_order->getOrder($order_id);
+
+
 		
 		if ($order_info) {
 			// If order status is 0 then becomes greater than 0 send main html email
@@ -311,6 +313,26 @@ class ControllerMailOrder extends Controller {
 		$mail->setSubject(html_entity_decode(sprintf($language->get('text_subject'), $order_info['store_name'], $order_info['order_id']), ENT_QUOTES, 'UTF-8'));
 		$mail->setHtml($this->load->view('mail/order_add', $data));
 		//$mail->send();
+
+        if ($order_info['payment_code'] == 'cod') {
+
+            $order_info['mail'] = '2';
+
+        }
+
+        else if ($order_info['payment_code'] == 'bank_transfer') {
+
+            $order_info['mail'] = '12';
+
+        }
+
+        else if ($order_info['payment_code'] == 'wspay') {
+
+            $order_info['mail'] = '2';
+
+        }
+
+        $this->sendMail($order_info);
 	}
 	
 	public function edit($order_info, $order_status_id, $comment) {
@@ -509,4 +531,103 @@ class ControllerMailOrder extends Controller {
 			}
 		}
 	}
+
+
+    /**
+     * @param array $order
+     *
+     * @throws Exception
+     */
+    public function sendMail(array $order = null)
+    {
+        if ($order && isset($order['order_id']) && isset($order['mail'])) {
+            $email = $this->loadEmails($order['mail']);
+            $data = Order::where('order_id', $order['order_id'])->with('products', 'totals')->first()->toArray();
+            $data['mail_text'] = sprintf($email['text'], $order['order_id']);
+
+            for ($i = 0; $i < count($data['products']); $i++) {
+                $data['products'][$i]['image'] = HTTPS_CATALOG.'image/'.Product::where('product_id', $data['products'][$i]['product_id'])->pluck('image')->first();
+            }
+            $data['mail_logo'] = HTTPS_CATALOG.'image/chipoteka-hd.png';
+            $data['mail_title'] = sprintf($email['subject'], $order['order_id']);
+
+            $data['mail_data'] = $email['data'];
+
+            $nhs_no = $order['order_id'].date("ym");
+
+            $data['mail_poziv_na_broj'] = $nhs_no.$this->mod11INI($nhs_no);
+
+           // \Agmedia\Helpers\Log::store($data);
+
+
+            // $html = $this->load->view('mail/mail', $data);
+
+            $mail = new Mail($this->config->get('config_mail_engine'));
+            $mail->parameter = $this->config->get('config_mail_parameter');
+            $mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
+            $mail->smtp_username = $this->config->get('config_mail_smtp_username');
+            $mail->smtp_password = html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8');
+            $mail->smtp_port = $this->config->get('config_mail_smtp_port');
+            $mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
+            $mail->setTo($order['email']);
+            $mail->setFrom($this->config->get('config_email'));
+            $mail->setSender(html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'));
+            $mail->setSubject(sprintf($email['subject'], $order['order_id']));
+            $mail->setHtml($this->load->view('mail/mail', $data));
+            $mail->send();
+        }
+    }
+
+
+    /**
+     * @param null $key
+     *
+     * @return array|\Illuminate\Support\Collection|mixed
+     */
+    public function loadEmails($key = null)
+    {
+        $file = json_decode(file_get_contents(DIR_STORAGE . 'upload/assets/emails.json'),TRUE);
+
+        if ($file) {
+            if ($key) {
+                return collect($file[$key]);
+            }
+
+            return collect($file);
+        }
+
+        return [];
+    }
+
+
+
+    public function mod11INI(string $nb)
+    {
+        $i = 0;
+        $v = 0;
+        $p = 2;
+        $c = ' ';
+
+        for ($i = strlen($nb); $i >= 1 ; $i--) {
+            $c = substr($nb, $i - 1, 1);
+
+            if ('0' <= $c && $c <= '9' && $v >= 0) {
+                $v = $v + $p * $c;
+                $p = $p + 1;
+            } else {
+                $v = -1;
+            }
+        }
+
+        if ($v >= 0) {
+            $v = 11 - ($v%11);
+
+            if ($v > 9) {
+                $v = 0;
+            }
+        }
+
+        return $v;
+    }
+
 }
