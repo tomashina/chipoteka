@@ -56,11 +56,17 @@ class LOC_Places
      * @param string $zip
      * @param string $city
      *
-     * @return string
+     * @return \stdClass|false
      */
-    public function resolveUID(string $zip, string $city): string
+    public function resolveUID(string $zip, string $city)
     {
-        return collect($this->list)->where('naziv', $city)->where('postanski_broj', $zip)->pluck('mjesto_uid')->first();
+        foreach (collect($this->list)->all() as $item) {
+            if (strcasecmp($item->naziv, $city) == 0 && strcasecmp($item->postanski_broj, $zip) == 0) {
+                return $item;
+            }
+        }
+
+        return false;
     }
 
 
