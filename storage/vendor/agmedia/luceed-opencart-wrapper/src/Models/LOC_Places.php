@@ -134,6 +134,10 @@ class LOC_Places
     {
         $cats = json_decode($places);
 
-        return $cats->result[0]->mjesta;
+        if (isset($cats->result[0]->mjesta)) {
+            return $cats->result[0]->mjesta;
+        }
+
+        return [];
     }
 }

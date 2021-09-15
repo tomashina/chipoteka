@@ -64,7 +64,7 @@ class LuceedEndPoints
             'stock_get'         => 'StanjeZalihe/Skladiste/',
             'ind_stock_get'     => 'StanjeZalihe/ArtiklUID/',
             'raspis'            => 'NaloziProdaje/raspis/poslovnica/',
-            'mjesta'            => 'mjesta/naziv',
+            'mjesta'            => 'mjesta/naziv/',
             'vrste_placanja'    => 'vrsteplacanja/list',
             //
             'stock_skladista'   => 'StanjeZalihe/Skladiste/',
