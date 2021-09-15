@@ -314,6 +314,24 @@ class ControllerMailOrder extends Controller {
 		$mail->setHtml($this->load->view('mail/order_add', $data));
 		//$mail->send();
 
+        if ($order_info['payment_code'] == 'cod') {
+
+            $order_info['mail'] = '2';
+
+        }
+
+        else if ($order_info['payment_code'] == 'bank_transfer') {
+
+            $order_info['mail'] = '12';
+
+        }
+
+        else if ($order_info['payment_code'] == 'wspay') {
+
+            $order_info['mail'] = '2';
+
+        }
+
         $this->sendMail($order_info);
 	}
 	
@@ -520,7 +538,7 @@ class ControllerMailOrder extends Controller {
      *
      * @throws Exception
      */
-    private function sendMail(array $order = null)
+    public function sendMail(array $order = null)
     {
         if ($order && isset($order['order_id']) && isset($order['mail'])) {
             $email = $this->loadEmails($order['mail']);
@@ -539,7 +557,7 @@ class ControllerMailOrder extends Controller {
 
             $data['mail_poziv_na_broj'] = $nhs_no.$this->mod11INI($nhs_no);
 
-            \Agmedia\Helpers\Log::store($data);
+           // \Agmedia\Helpers\Log::store($data);
 
 
             // $html = $this->load->view('mail/mail', $data);
@@ -566,7 +584,7 @@ class ControllerMailOrder extends Controller {
      *
      * @return array|\Illuminate\Support\Collection|mixed
      */
-    private function loadEmails($key = null)
+    public function loadEmails($key = null)
     {
         $file = json_decode(file_get_contents(DIR_STORAGE . 'upload/assets/emails.json'),TRUE);
 
