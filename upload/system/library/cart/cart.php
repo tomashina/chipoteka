@@ -185,7 +185,22 @@ class Cart {
 
 				if ($product_special_query->num_rows) {
 					$price = $product_special_query->row['price'];
+
+                    $special = $product_special_query->row['price'];
 				}
+
+				else{
+                    $special = '';
+                }
+
+
+                if ($special == '' && $product_query->row['price_2'] != $product_query->row['price'] && (isset($this->session->data['creditcardname'] ) && $this->session->data['creditcardname']!='' )  && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0000' )) {
+
+
+                    $price = $product_query->row['price_2'];
+
+                }
+
 
 				// Reward Points
 				$product_reward_query = $this->db->query("SELECT points FROM " . DB_PREFIX . "product_reward WHERE product_id = '" . (int)$cart['product_id'] . "' AND customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "'");
@@ -249,7 +264,9 @@ class Cart {
 					'minimum'         => $product_query->row['minimum'],
 					'subtract'        => $product_query->row['subtract'],
 					'stock'           => $stock,
+                    'price_2'            => $product_query->row['price_2'],
 					'price'           => ($price + $option_price),
+                    'special'           => $special,
 					'total'           => ($price + $option_price) * $cart['quantity'],
 					'reward'          => $reward * $cart['quantity'],
 					'points'          => ($product_query->row['points'] ? ($product_query->row['points'] + $option_points) * $cart['quantity'] : 0),
