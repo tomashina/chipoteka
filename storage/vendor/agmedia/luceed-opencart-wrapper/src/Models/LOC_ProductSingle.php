@@ -168,29 +168,6 @@ class LOC_ProductSingle
      */
     public function finish(): array
     {
-        /*Log::store('finish():: $this->products_for_revision', 'revision');
-        Log::store($this->products_for_revision, 'revision');
-
-        if ( ! empty($this->products_for_revision)) {
-            $db = new Database(DB_DATABASE);
-            $existing = LuceedProductForRevision::pluck('uid');
-            $this->products_for_revision = collect($this->products_for_revision);
-            $diff = $this->products_for_revision->whereNotIn('artikl_uid', $existing)->all();
-
-            Log::store($diff, 'revision');
-
-            $count = 0;
-            $query_str = '';
-
-            foreach ($diff as $product) {
-                $query_str .= '("' . $product['artikl_uid'] . '", "' . $product['artikl'] . '", "' . $product['naziv'] . '", ' . ($product['has_image']?1:0) . ', ' . ($product['has_description']?1:0) . ', 0, "' . $product['data'] . '", ' . Carbon::now() . ', ' . Carbon::now() . '),';
-
-                $count++;
-            }
-
-            $db->query("INSERT INTO " . DB_PREFIX . "product_luceed_revision (uid, sku, `name`, has_image, has_description, resolved, `data`, date_added, date_modified) VALUES " . substr($query_str, 0, -1) . ";");
-        }*/
-
         return [
             'status'  => 200,
             'message' => 'finish'
