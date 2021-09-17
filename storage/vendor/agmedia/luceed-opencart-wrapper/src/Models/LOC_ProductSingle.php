@@ -42,9 +42,9 @@ class LOC_ProductSingle
     private $luceed_product;
 
     /**
-     * @var Collection
+     * @var array
      */
-    private $products_for_revision;
+    private $products_for_revision = [];
 
 
     /**
@@ -52,7 +52,6 @@ class LOC_ProductSingle
      */
     public function __construct()
     {
-        $this->products_for_revision = collect();
     }
 
 
@@ -73,11 +72,12 @@ class LOC_ProductSingle
      */
     public function hasForUpdate(): bool
     {
-        $this->product_to_update = Product::where('updated', 0)->first();
+        $uids_list = LuceedProduct::pluck('uid');
+        $this->product_to_update = Product::whereIn('luceed_uid', $uids_list)->where('updated', 0)->first();
 
         if ($this->product_to_update) {
             $this->luceed_product = LuceedProduct::where('uid', $this->product_to_update->luceed_uid)
-                                                 ->where('hash', '!=', $this->product_to_update->imported)
+                                                 ->where('hash', '!=', $this->product_to_update->hash)
                                                  ->first();
 
             if ($this->luceed_product) {
@@ -145,28 +145,51 @@ class LOC_ProductSingle
 
 
     /**
+     * @return mixed
+     */
+    public function finishUpdateError(): array
+    {
+        Product::where('product_id', $this->product_to_update->product_id)->update([
+            'updated'  => 1,
+            'hash' => $this->luceed_product->hash
+        ]);
+
+        $this->pushToRevision();
+
+        return [
+            'status'  => 200,
+            'message' => 'error'
+        ];
+    }
+
+
+    /**
      * @return array
      */
     public function finish(): array
     {
-        if ($this->products_for_revision->count()) {
+        /*Log::store('finish():: $this->products_for_revision', 'revision');
+        Log::store($this->products_for_revision, 'revision');
+
+        if ( ! empty($this->products_for_revision)) {
             $db = new Database(DB_DATABASE);
             $existing = LuceedProductForRevision::pluck('uid');
+            $this->products_for_revision = collect($this->products_for_revision);
             $diff = $this->products_for_revision->whereNotIn('artikl_uid', $existing)->all();
+
+            Log::store($diff, 'revision');
 
             $count = 0;
             $query_str = '';
 
             foreach ($diff as $product) {
-                $data = collect($product)->toJson();
-
-                $query_str .= '("' . $product->artikl_uid . '", "' . $product->artikl . '", "' . $product->naziv . '", ' . $product->has_image?1:0 . ', ' . $product->has_description?1:0 . ', 0, "", ' . Carbon::now() . ', ' . Carbon::now() . '),';
+                $query_str .= '("' . $product['artikl_uid'] . '", "' . $product['artikl'] . '", "' . $product['naziv'] . '", ' . ($product['has_image']?1:0) . ', ' . ($product['has_description']?1:0) . ', 0, "' . $product['data'] . '", ' . Carbon::now() . ', ' . Carbon::now() . '),';
 
                 $count++;
             }
 
-            $db->query("INSERT INTO " . DB_PREFIX . "product_luceed_revision (uid, sifra, `hash`, has_image, has_description, resolved, `data`, date_added, date_modified) VALUES " . substr($query_str, 0, -1) . ";");
-        }
+            $db->query("INSERT INTO " . DB_PREFIX . "product_luceed_revision (uid, sku, `name`, has_image, has_description, resolved, `data`, date_added, date_modified) VALUES " . substr($query_str, 0, -1) . ";");
+        }*/
 
         return [
             'status'  => 200,
@@ -296,21 +319,44 @@ class LOC_ProductSingle
      */
     private function pushToRevision(): void
     {
+        $this->product['data'] = '';
+
         if ($this->product_to_update) {
             $this->product['product_id'] = $this->product_to_update->product_id;
+
+            if ( ! isset($this->product['naziv'])) {
+                $this->product['naziv'] = ProductDescription::where('product_id', $this->product_to_update->product_id)->pluck('name')->first();
+                $this->product['artikl_uid'] = $this->product_to_update->luceed_uid;
+                $this->product['artikl'] = $this->product_to_update->sku;
+                $this->product['data'] = 'Error importing Luceed data..!';
+            }
         }
 
-        $this->product['has_image'] = true;
-        $this->product['has_description'] = true;
+        $this->product['has_image'] = false;
+        $this->product['has_description'] = false;
 
-        if (empty($this->product['opis'])) {
-            $this->product['has_description'] = false;
+        if ( ! empty($this->product['opis'])) {
+            $this->product['has_description'] = true;
         }
 
-        if (empty($this->product['dokumenti'])) {
-            $this->product['has_image'] = false;
+        if ( ! empty($this->product['dokumenti'])) {
+            $this->product['has_image'] = true;
         }
 
-        $this->products_for_revision->push($this->product);
+        $has = LuceedProductForRevision::where('uid', $this->product['artikl_uid'])->first();
+
+        if ( ! $has) {
+            LuceedProductForRevision::insert([
+                'uid' => $this->product['artikl_uid'],
+                'sku' => $this->product['artikl'],
+                'name' => $this->product['naziv'],
+                'has_image' => $this->product['has_image'],
+                'has_description' => $this->product['has_description'],
+                'resolved' => 0,
+                'data' => $this->product['data'],
+                'date_added' => Carbon::now(),
+                'date_modified' => Carbon::now(),
+            ]);
+        }
     }
 }

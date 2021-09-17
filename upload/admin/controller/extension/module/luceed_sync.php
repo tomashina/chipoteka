@@ -217,9 +217,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
     public function importLuceedProducts()
     {
+        Product::where('updated', 1)->update([
+            'updated'  => 0,
+            'hash' => 'asdfsadfdsfasdfasdfasdfa'
+        ]);
+
         $_loc = new LOC_Product(LuceedProduct::all());
 
-        return $this->response($_loc->populateLuceedData(), 'products');
+        return $this->output(['status' => 200, 'message' => $_loc->populateLuceedData()]);
     }
 
 
@@ -230,6 +235,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
         // Check products for UPDATE
         if ($_loc->hasForUpdate()) {
+            if ( ! isset($_loc->product['naziv'])) {
+                return $this->output($_loc->finishUpdateError());
+            }
+
             $product = $this->resolveOldProductData($_loc->product_to_update);
 
             $this->model_catalog_product->editProduct(
@@ -250,7 +259,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
             }
         }
 
-        return $this->output($_loc);
+        return $this->output($_loc->finish());
     }
 
 

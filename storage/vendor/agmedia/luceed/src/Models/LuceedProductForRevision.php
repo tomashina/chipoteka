@@ -11,7 +11,7 @@ class LuceedProductForRevision extends Model
     /**
      * @var string
      */
-    protected $table = 'product_import_revision';
+    protected $table = 'product_luceed_revision';
 
     /**
      * @var string

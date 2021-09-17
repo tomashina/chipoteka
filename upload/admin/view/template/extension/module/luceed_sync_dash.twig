@@ -44,15 +44,11 @@
 {#                                        <a href="javascript:void(0)" id="import-luceed-products" data-toggle="tooltip" title="Import Kupaca" class="btn btn-info btn-block">Pokreni</a>#}
 {#                                    </div>#}
 {#                                    <div class="col-sm-10">#}
-{#                                        <div id="luceed-products-imported" class="h5 lighten" style="display: none;">Luceed proizvodi učitani u bazu!</div>#}
-{#                                        <div class="p small lighten">Učitavanje: <span id="luceed-products-importing">0</span>/7200</div>#}
-{#                                    </div>#}
-
-{#                                    <div class="col-sm-10">#}
 {#                                        <div id="luceed-all-imported" class="lead lighten">Luceed proizvodi su učitani u lokalnu bazu..!</div>#}
-{#                                        <div class="p lighten">Učitavanje: <span id="luceed-importing">0</span>/7200</div>#}
+{#                                        <div class="p lighten">Učitavanje: <span id="luceed-importing">0</span>/<span id="luceed-total">0</span></div>#}
 {#                                        <div class="p lighten">Update: <span id="luceed-updated">0</span></div>#}
 {#                                        <div class="p lighten">Import: <span id="luceed-inserted">0</span></div>#}
+{#                                        <div class="p lighten">Error: <span id="luceed-error">0</span></div>#}
 {#                                    </div>#}
 {#                                </div>#}
 {#                            </div>#}
@@ -325,6 +321,13 @@
                     success: function(json) {
                         if (json.status == 200) {
                             document.getElementById('luceed-all-imported').style.display = 'block';
+                            document.getElementById('luceed-total').innerHTML = json.message;
+
+                            localStorage.removeItem('sync_updated');
+                            localStorage.removeItem('sync_error');
+                            localStorage.removeItem('sync_inserted');
+                            localStorage.removeItem('sync_total');
+
                             updateProducts();
                         }
                     }
@@ -344,6 +347,7 @@
 
         function updateProducts() {
             let updated = localStorage.getItem('sync_updated') ? localStorage.getItem('sync_updated') : 1;
+            let error = localStorage.getItem('sync_error') ? localStorage.getItem('sync_error') : 1;
             let inserted = localStorage.getItem('sync_inserted') ? localStorage.getItem('sync_inserted') : 1;
             let total = localStorage.getItem('sync_total') ? localStorage.getItem('sync_total') : 1;
 
@@ -354,22 +358,31 @@
                     if (json.status == 200) {
                         total++;
 
-                        if (json.message = 'updated') {
+                        if (json.message == 'updated') {
                             updated++;
 
                             localStorage.setItem('sync_updated', updated);
                             document.getElementById('luceed-updated').innerHTML = updated;
                         }
 
-                        if (json.message = 'inserted') {
+                        if (json.message == 'inserted') {
                             inserted++;
 
                             localStorage.setItem('sync_inserted', inserted);
                             document.getElementById('luceed-inserted').innerHTML = inserted;
                         }
 
-                        if (json.message = 'finish') {
+                        if (json.message == 'error') {
+                            error++;
+
+                            localStorage.setItem('sync_error', error);
+                            document.getElementById('luceed-error').innerHTML = error;
+                        }
+
+                        if (json.message == 'finish') {
                             document.getElementById('luceed-all-imported').innerHTML = 'Sinkroniziranje završeno..!';
+                            releseTarget('Završeno', $('#import-luceed-products'));
+                            return;
                         }
 
                         localStorage.setItem('sync_total', total);
