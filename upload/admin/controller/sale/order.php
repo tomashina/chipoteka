@@ -1855,17 +1855,16 @@ class ControllerSaleOrder extends Controller {
             $this->load->model('sale/order');
             $oc_order = $this->model_sale_order->getOrder($order_id);
 
-
             $order    = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Order($oc_order);
-            \Agmedia\Helpers\Log::store($oc_order);
             $customer = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Customer($order->getCustomerData());
-            \Agmedia\Helpers\Log::store('$customer');
-            \Agmedia\Helpers\Log::store($customer);
 
             if ( ! $customer->exist()) {
                 \Agmedia\Helpers\Log::store('customer does NOT exist');
                 $customer->store();
             }
+
+            \Agmedia\Helpers\Log::store('$customer');
+            \Agmedia\Helpers\Log::store($customer);
 
             $invoice_no = $order->setCustomerUid($customer->getUid())->store();
 

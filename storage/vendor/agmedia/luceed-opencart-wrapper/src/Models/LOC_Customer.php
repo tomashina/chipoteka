@@ -156,12 +156,7 @@ class LOC_Customer
      */
     public function exist(): bool
     {
-        Log::store('$exist_before');
-
         $this->service = new Luceed();
-
-        Log::store('$exist_before');
-
         // Set the response from Luceed service.
         $exist = $this->setResponseData(
             $this->service->getCustomerByEmail($this->customer['e_mail'])
@@ -172,11 +167,9 @@ class LOC_Customer
 
         if ( ! empty($exist)) {
             foreach ($exist as $l_customer) {
-                Log::store($this->order_customer['shipping_address']);
-                Log::store($l_customer->adresa);
-                Log::store($l_customer->grupacija);
                 // Kupac
                 if ( ! $this->diffAddress() && $this->order_customer['shipping_address'] == $l_customer->adresa && ! $l_customer->grupacija) {
+                    Log::store('Kupac::: ::: if ( ! $this->diffAddress() && $this->order_customer[shipping_address] == $l_customer->adresa && ! $l_customer->grupacija) {');
                     Customer::where('customer_id', $this->customer['id'])->update([
                         'luceed_uid' => $l_customer->partner_uid
                     ]);
@@ -188,6 +181,7 @@ class LOC_Customer
 
                 // Korisnik
                 if ($this->diffAddress() && $l_customer->adresa == $this->order_customer['shipping_address']) {
+                    Log::store('Korisnik::: ::: if ($this->diffAddress() && $l_customer->adresa == $this->order_customer');
                     $l_customer->grupacija = $this->customer['uid'];
 
                     $this->alter_customer = $this->populateCustomerForLuceed(collect($l_customer), true);
