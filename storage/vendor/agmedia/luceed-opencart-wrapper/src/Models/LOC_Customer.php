@@ -176,7 +176,7 @@ class LOC_Customer
 
                     $this->customer['uid'] = $l_customer->partner_uid;
                     $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
-                    $this->alter_customer = $l_customer;
+                    $this->alter_customer = $this->customer;
                 }
 
                 // Korisnik
@@ -188,9 +188,9 @@ class LOC_Customer
 
                     if ( ! $l_customer->grupacija) {
                         // updejtaj alter partnera i grupaciju.
-                        /*json_decode(
+                        json_decode(
                             $this->service->updateCustomer(['partner' => [$this->alter_customer]])
-                        );*/
+                        );
                     }
                 }
 
