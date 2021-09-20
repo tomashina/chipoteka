@@ -194,9 +194,9 @@ class LOC_Customer
 
                     if ( ! $l_customer->grupacija) {
                         // updejtaj alter partnera i grupaciju.
-                        json_decode(
+                        /*json_decode(
                             $this->service->updateCustomer(['partner' => [$this->alter_customer]])
-                        );
+                        );*/
                     }
                 }
 
