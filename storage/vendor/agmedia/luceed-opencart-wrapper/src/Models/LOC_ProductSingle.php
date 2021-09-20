@@ -24,22 +24,27 @@ class LOC_ProductSingle
     /**
      * @var array
      */
-    public $product;
+    public $product = null;
 
     /**
      * @var Collection
      */
-    public $product_to_update;
+    public $product_to_update = null;
 
     /**
      * @var Collection
      */
-    public $product_to_insert;
+    public $product_to_insert = null;
 
     /**
      * @var Collection
      */
-    private $luceed_product;
+    private $luceed_product = null;
+
+    /**
+     * @var string
+     */
+    private $hash = '';
 
     /**
      * @var array
@@ -75,9 +80,9 @@ class LOC_ProductSingle
         $uids_list = LuceedProduct::pluck('uid');
         $this->product_to_update = Product::whereIn('luceed_uid', $uids_list)->where('updated', 0)->first();
 
-        if ($this->product_to_update) {
-            $this->luceed_product = LuceedProduct::where('uid', $this->product_to_update->luceed_uid)
-                                                 ->where('hash', '!=', $this->product_to_update->hash)
+        if ($this->product_to_update && isset($this->product_to_update['luceed_uid'])) {
+            $this->luceed_product = LuceedProduct::where('uid', $this->product_to_update['luceed_uid'])
+                                                 ->where('hash', '!=', $this->product_to_update['hash'])
                                                  ->first();
 
             if ($this->luceed_product) {
@@ -88,6 +93,24 @@ class LOC_ProductSingle
         }
 
         return false;
+    }
+
+
+    /**
+     * @param \stdClass $product
+     */
+    public function setForUpdate(array $product)
+    {
+        $this->hash = sha1(collect($product)->toJson());
+        $this->product_to_update = Product::where('luceed_uid', $product['artikl_uid'])->first();
+
+        if ($this->product_to_update) {
+            $this->product = collect($product);
+        } else {
+            $this->product_to_insert = collect($product);
+        }
+
+        return $this;
     }
 
 
@@ -118,6 +141,8 @@ class LOC_ProductSingle
      */
     public function finishInsert(): array
     {
+        $this->markChecked('insert');
+
         return [
             'status'  => 200,
             'message' => 'inserted'
@@ -130,11 +155,8 @@ class LOC_ProductSingle
      */
     public function finishUpdate(): array
     {
-        if ($this->product_to_update && $this->luceed_product) {
-            Product::where('product_id', $this->product_to_update->product_id)->update([
-                'updated'  => 1,
-                'hash' => $this->luceed_product->hash
-            ]);
+        if ($this->product_to_update) {
+            $this->markChecked();
 
             return [
                 'status'  => 200,
@@ -149,12 +171,8 @@ class LOC_ProductSingle
      */
     public function finishUpdateError(): array
     {
-        Product::where('product_id', $this->product_to_update->product_id)->update([
-            'updated'  => 1,
-            'hash' => $this->luceed_product->hash
-        ]);
-
         $this->pushToRevision();
+        $this->markChecked();
 
         return [
             'status'  => 200,
@@ -303,7 +321,7 @@ class LOC_ProductSingle
 
             if ( ! isset($this->product['naziv'])) {
                 $this->product['naziv'] = ProductDescription::where('product_id', $this->product_to_update->product_id)->pluck('name')->first();
-                $this->product['artikl_uid'] = $this->product_to_update->luceed_uid;
+                $this->product['artikl_uid'] = $this->product_to_update['luceed_uid'];
                 $this->product['artikl'] = $this->product_to_update->sku;
                 $this->product['data'] = 'Error importing Luceed data..!';
             }
@@ -335,5 +353,39 @@ class LOC_ProductSingle
                 'date_modified' => Carbon::now(),
             ]);
         }
+    }
+
+
+    /**
+     *
+     */
+    private function checkHash(): void
+    {
+        if ($this->luceed_product) {
+            $this->hash = $this->luceed_product->hash;
+        }
+    }
+
+
+    /**
+     * @return mixed
+     */
+    private function markChecked(string $type = null)
+    {
+        $imported = 0;
+
+        if ($type) {
+            $imported = 1;
+        }
+
+        $this->checkHash();
+
+        Log::store($this->product);
+
+        return Product::where('luceed_uid', $this->product['artikl_uid'])->update([
+            'updated' => 1,
+            'imported' => $imported,
+            'hash'    => $this->hash
+        ]);
     }
 }
