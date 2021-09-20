@@ -64,7 +64,11 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $data['revision_products'] = LuceedProductForRevision::with('product')->get();
         $data['rev_ids'] = $data['revision_products']->pluck('uid')->flatten();
         $last_rev = LuceedProductForRevisionData::orderBy('last_revision_date', 'desc')->first();
-        $data['last_rev'] = Carbon::make($last_rev->last_revision_date)->diffForHumans();
+
+        $data['last_rev'] = 'Nepoznato';
+        if ($last_rev) {
+            $data['last_rev'] = Carbon::make($last_rev->last_revision_date)->diffForHumans();
+        }
 
         $data['breadcrumbs'] = array();
 
@@ -229,14 +233,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function importLuceedProducts()
     {
-        Product::where('updated', 1)->update([
+        /*Product::where('updated', 1)->update([
             'updated'  => 0,
             'hash' => 'asdfsadfdsfasdfasdfasdfa'
-        ]);
+        ]);*/
 
         $_loc = new LOC_Product(LuceedProduct::all());
 
-        return $this->output(['status' => 200, 'message' => $_loc->populateLuceedData()]);
+        return $this->output($_loc->populateLuceedData());
     }
 
 
@@ -255,8 +259,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $for_update = $_loc_p->sortForUpdate($list)
                                  ->getProductsToAdd();
 
-            \Agmedia\Helpers\Log::store($this->request->get['products']);
-            \Agmedia\Helpers\Log::store($for_update);
+            $_loc_p->cleanRevisionTable();
 
             foreach ($for_update as $product) {
                 $_loc_ps->setForUpdate(json_decode(json_encode($product), true));
@@ -276,10 +279,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
                     }
                 }
             }
-
-            $_loc_p->cleanRevisionTable();
-
-            \Agmedia\Helpers\Log::store($for_update->count());
 
             return $this->response($for_update->count(), 'products');
         }

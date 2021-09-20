@@ -279,7 +279,24 @@ class LOC_Product
         $db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_luceed`");
         $db->query("INSERT INTO " . DB_PREFIX . "product_luceed (uid, sifra, `data`, `hash`) VALUES " . substr($query_str, 0, -1) . ";");
 
-        return $count;
+        $diff = $db->query("SELECT uid, `hash`
+                                FROM (
+                                SELECT uid, `hash` FROM oc_product_luceed
+                                UNION ALL
+                                SELECT luceed_uid, `hash` FROM oc_product
+                                ) tbl
+                                GROUP BY uid, `hash`
+                                HAVING count(*) = 1
+                                ORDER BY uid;");
+
+        Log::store($count);
+        Log::store($diff->num_rows);
+
+        return [
+            'status' => 200,
+            'total' => $count,
+            'updating' => $count - ($count - ($diff->num_rows / 2))
+        ];
     }
 
 

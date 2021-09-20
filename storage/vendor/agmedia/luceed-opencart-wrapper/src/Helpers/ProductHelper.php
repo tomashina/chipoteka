@@ -201,7 +201,12 @@ class ProductHelper
 
         // Setup and create the image with GD library.
         $bin   = base64_decode(static::getImageString($product, $key));
+
+        $errorlevel=error_reporting();
+        error_reporting(0);
         $image = imagecreatefromstring($bin);
+        error_reporting($errorlevel);
+
 
         if ($image !== false) {
             imagejpeg($image, DIR_IMAGE . $image_path . $name, 90);

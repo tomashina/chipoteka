@@ -252,7 +252,7 @@ class LOC_ProductSingle
             $description = ProductHelper::getDescription($this->product, $old_description);
         }
 
-        if (empty($this->product['opis']) && empty($this->product['dokumenti'])) {
+        if ( ! $this->product['opis'] || empty($this->product['dokumenti'])) {
             $status = 0;
             $this->pushToRevision();
         }
@@ -327,15 +327,15 @@ class LOC_ProductSingle
             }
         }
 
-        $this->product['has_image'] = false;
-        $this->product['has_description'] = false;
+        $this->product['has_image'] = 0;
+        $this->product['has_description'] = 0;
 
-        if ( ! empty($this->product['opis'])) {
-            $this->product['has_description'] = true;
+        if (isset($this->product['opis']) && $this->product['opis']) {
+            $this->product['has_description'] = 1;
         }
 
         if ( ! empty($this->product['dokumenti'])) {
-            $this->product['has_image'] = true;
+            $this->product['has_image'] = 1;
         }
 
         $has = LuceedProductForRevision::where('uid', $this->product['artikl_uid'])->first();

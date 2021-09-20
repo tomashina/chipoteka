@@ -218,7 +218,7 @@
                                             <div class="col-sm-4">
                                                 <div class="text-info" style="font-size: 2.5rem; font-weight: lighter;">Učitavanje:
                                                     <br>
-                                                    <span class="lead" id="luceed-importing">0</span>/<span class="lead" id="luceed-total">0</span>
+                                                    <span class="lead" id="luceed-importing">0</span>/<span class="lead" id="luceed-updating">0</span> <span style="font-size: 1.5rem;">od ukupno</span> <span class="lead" id="luceed-total">0</span>
                                                 </div>
                                             </div>
                                             <div class="col-sm-8">
@@ -373,7 +373,8 @@
                     success: function(json) {
                         if (json.status == 200) {
                             document.getElementById('luceed-all-imported').style.display = 'block';
-                            document.getElementById('luceed-total').innerHTML = json.message;
+                            document.getElementById('luceed-updating').innerHTML = json.updating;
+                            document.getElementById('luceed-total').innerHTML = json.total;
                             document.getElementById('luceed-updated').innerHTML = 0;
                             document.getElementById('luceed-inserted').innerHTML = 0;
                             document.getElementById('luceed-error').innerHTML = 0;
