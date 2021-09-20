@@ -142,7 +142,7 @@ class LOC_Customer
     {
         return [
             'main' => $this->customer['uid'] ?: '',
-            'alter' => $this->alter_customer['uid'] ?: '',
+            'alter' => (isset($this->alter_customer['uid']) && $this->alter_customer['uid']) ? $this->alter_customer['uid'] : '',
         ];
     }
 
