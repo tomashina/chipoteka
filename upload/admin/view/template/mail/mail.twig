@@ -10,7 +10,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="x-apple-disable-message-reformatting">
     <title>{{ mail_title }}</title>
+
+
     <style type="text/css">/* Reset */
+
+        @media print {
+            body {transform: scale(.40);}
+            table {page-break-inside: avoid;}
+            .printnone{display:none}
+        }
+
+
         .email_body,
         .email_section table,
         .email_section td,
@@ -1324,7 +1334,7 @@
     </tbody>
 </table>
 <!-- spacer -->
-<table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
+<table class="email_section printnone" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
     <tbody>
     <tr>
         <td class="email_bg bg_light px" style="font-size: 0;text-align: center;line-height: 100%;background-color: #F5F5F5;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
@@ -1352,7 +1362,7 @@
     </tbody>
 </table>
 <!-- footer_dark_center -->
-<table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
+<table class="email_section printnone" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
     <tbody>
     <tr>
         <td class="email_bg bg_light px pb_md" style="font-size: 0;text-align: center;line-height: 100%;background-color: #F5F5F5;padding-left: 16px;padding-right: 16px;padding-bottom: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
