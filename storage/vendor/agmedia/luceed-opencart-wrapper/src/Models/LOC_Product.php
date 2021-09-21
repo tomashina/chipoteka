@@ -143,7 +143,7 @@ class LOC_Product
             $products = str_replace('&quot;', '', $products);
             $products = explode(',', $products);
 
-            $this->products_to_add = $this->getProducts()->whereIn('artikl_uid', $products);
+            $this->products_to_add = $this->getProducts()->whereIn('artikl', $products);
 
             return $this;
         }
