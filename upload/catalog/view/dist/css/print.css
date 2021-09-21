@@ -1,3 +1,20 @@
 header, footer, aside, nav, form, iframe, .menu, .hero, .adslot, #cart {
     display: none;
 }
+
+.handheld-toolbar, #st-1, .st-inline-share-buttons, #st-1 .st-btn, #st-1 .st-btn img, .modal-content, .btn-scroll-top{
+     display: none;
+ }
+
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap");
+
+
+
+
+body{margin:0;font-family:"Rubik", sans-serif;font-size:1rem;line-height: 1.2rem}
+
+
+img{
+    max-width:400px;
+    height:auto;
+}
