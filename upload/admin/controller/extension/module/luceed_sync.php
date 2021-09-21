@@ -1,11 +1,14 @@
 <?php
 
+use Agmedia\Helpers\Log;
 use Agmedia\Luceed\Facade\LuceedGroup;
 use Agmedia\Luceed\Facade\LuceedManufacturer;
 use Agmedia\Luceed\Facade\LuceedOrder;
 use Agmedia\Luceed\Facade\LuceedPayments;
 use Agmedia\Luceed\Facade\LuceedProduct;
 use Agmedia\Luceed\Facade\LuceedWarehouse;
+use Agmedia\Luceed\Models\LuceedProductForRevision;
+use Agmedia\Luceed\Models\LuceedProductForRevisionData;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Action;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Category;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Customer;
@@ -20,6 +23,7 @@ use Agmedia\Models\Category\Category;
 use Agmedia\Models\Order\Order;
 use Agmedia\Models\Product\Product;
 use Agmedia\Models\Product\ProductCategory;
+use Carbon\Carbon;
 
 class ControllerExtensionModuleLuceedSync extends Controller
 {
@@ -57,6 +61,15 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $this->load->language('extension/module/luceed_sync');
 
         $this->document->setTitle($this->language->get('heading_title'));
+
+        $data['revision_products'] = LuceedProductForRevision::with('product')->get();
+        $data['rev_ids'] = $data['revision_products']->pluck('sku')->flatten();
+        $last_rev = LuceedProductForRevisionData::orderBy('last_revision_date', 'desc')->first();
+
+        $data['last_rev'] = 'Nepoznato';
+        if ($last_rev) {
+            $data['last_rev'] = Carbon::make($last_rev->last_revision_date)->diffForHumans();
+        }
 
         $data['breadcrumbs'] = array();
 
@@ -215,51 +228,107 @@ class ControllerExtensionModuleLuceedSync extends Controller
     }
 
 
+    /**
+     * @return mixed
+     * @throws Exception
+     */
     public function importLuceedProducts()
     {
-        Product::where('updated', 1)->update([
+        /*Product::where('updated', 1)->update([
             'updated'  => 0,
             'hash' => 'asdfsadfdsfasdfasdfasdfa'
-        ]);
+        ]);*/
 
         $_loc = new LOC_Product(LuceedProduct::all());
 
-        return $this->output(['status' => 200, 'message' => $_loc->populateLuceedData()]);
+        return $this->output($_loc->populateLuceedData());
     }
 
 
+    /**
+     * @return mixed
+     */
     public function updateProduct()
     {
+        $_loc_ps = new LOC_ProductSingle();
         $this->load->model('catalog/product');
-        $_loc = new LOC_ProductSingle();
 
-        // Check products for UPDATE
-        if ($_loc->hasForUpdate()) {
-            if ( ! isset($_loc->product['naziv'])) {
-                return $this->output($_loc->finishUpdateError());
+        // Ako smo mu dali uid preko revision liste.
+        if (isset($this->request->get['products'])) {
+            $_loc_p = new LOC_Product(LuceedProduct::all());
+            $list = substr($this->request->get['products'], 1, -1);
+            $for_update = $_loc_p->sortForUpdate($list)
+                                 ->getProductsToAdd();
+
+            $_loc_p->cleanRevisionTable();
+            Log::store($for_update, 'opis_root');
+
+            // 9150018909 9150025699
+
+            foreach ($for_update as $product) {
+                $_loc_ps->setForUpdate(json_decode(json_encode($product), true));
+
+                if ($_loc_ps->product) {
+                    Log::store('$_loc_ps->product', 'opis_root');
+                    $product = $this->resolveOldProductData($_loc_ps->product_to_update);
+
+                    $this->model_catalog_product->editProduct(
+                        $_loc_ps->product_to_update->product_id,
+                        $_loc_ps->makeForUpdate($product)
+                    );
+                } else {
+                    Log::store('else $_loc_ps->product', 'opis_root');
+                    if ($_loc_ps->product_to_insert) {
+                        $this->model_catalog_product->addProduct(
+                            $_loc_ps->makeForInsert()
+                        );
+                    }
+                }
             }
 
-            $product = $this->resolveOldProductData($_loc->product_to_update);
+            return $this->response($for_update->count(), 'products');
+        }
+
+        // Ako ima proizvoda za UPDATE
+        if ($_loc_ps->hasForUpdate()) {
+            if ( ! isset($_loc_ps->product['naziv'])) {
+                return $this->output($_loc_ps->finishUpdateError());
+            }
+
+            $product = $this->resolveOldProductData($_loc_ps->product_to_update);
 
             $this->model_catalog_product->editProduct(
-                $_loc->product_to_update->product_id,
-                $_loc->makeForUpdate($product)
+                $_loc_ps->product_to_update->product_id,
+                $_loc_ps->makeForUpdate($product)
             );
 
-            return $this->output($_loc->finishUpdate());
+            return $this->output($_loc_ps->finishUpdate());
 
         } else {
-            // Check products for INSERT
-            if ($_loc->hasForInsert()) {
+            // Ako ima proizvoda za INSERT
+            if ($_loc_ps->hasForInsert()) {
                 $this->model_catalog_product->addProduct(
-                    $_loc->makeForInsert()
+                    $_loc_ps->makeForInsert()
                 );
 
-                return $this->output($_loc->finishInsert());
+                return $this->output($_loc_ps->finishInsert());
             }
         }
 
-        return $this->output($_loc->finish());
+        return $this->output($_loc_ps->finish());
+    }
+
+
+    public function finishUpdateProduct()
+    {
+        \Agmedia\Helpers\Log::store($this->request->post['data'], 'finish');
+
+        if (isset($this->request->post['data'])) {
+            LuceedProductForRevisionData::insert([
+                'last_revision_date' => Carbon::now(),
+                'data' => serialize($this->request->post['data'])
+            ]);
+        }
     }
 
 

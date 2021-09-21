@@ -27,35 +27,11 @@
 
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Sync Manager</a></li>
-            <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Product Import Info</a></li>
+            <li role="presentation"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Sync Manager</a></li>
+            <li role="presentation" class="active"><a href="#products" aria-controls="products" role="tab" data-toggle="tab">Products</a></li>
         </ul>
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="home">
-{#                <div class="row">#}
-{#                    <div class="col-sm-12">#}
-{#                        <div class="panel panel-default">#}
-{#                            <div class="panel-heading darker-bg">#}
-{#                                <h3 class="panel-title"><i class="fa fa-list"></i> Update Proizvoda</h3>#}
-{#                            </div>#}
-{#                            <div class="panel-body">#}
-{#                                <div class="row">#}
-{#                                    <div class="col-sm-2 text-center pt-3">#}
-{#                                        <a href="javascript:void(0)" id="import-luceed-products" data-toggle="tooltip" title="Import Kupaca" class="btn btn-info btn-block">Pokreni</a>#}
-{#                                    </div>#}
-{#                                    <div class="col-sm-10">#}
-{#                                        <div id="luceed-all-imported" class="lead lighten">Luceed proizvodi su učitani u lokalnu bazu..!</div>#}
-{#                                        <div class="p lighten">Učitavanje: <span id="luceed-importing">0</span>/<span id="luceed-total">0</span></div>#}
-{#                                        <div class="p lighten">Update: <span id="luceed-updated">0</span></div>#}
-{#                                        <div class="p lighten">Import: <span id="luceed-inserted">0</span></div>#}
-{#                                        <div class="p lighten">Error: <span id="luceed-error">0</span></div>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-
+            <div role="tabpanel" class="tab-pane" id="home">
                 <div class="row">
                     <div class="col-sm-12 col-md-5">
                         <div class="panel panel-default">
@@ -219,54 +195,109 @@
 
                 </div>
             </div>
-            <div role="tabpanel" class="tab-pane" id="profile">
+            <div role="tabpanel" class="tab-pane active" id="products">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading darker-bg">
+                                <h3 class="panel-title"><i class="fa fa-list"></i> Update Proizvoda</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-2 text-center pt-3">
+                                        <a href="javascript:void(0)" id="import-luceed-products" data-toggle="tooltip" title="Pokreni Update Proizvoda" class="btn btn-info btn-block">Update Proizvoda</a>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div id="luceed-all-imported" class="lead lighten" style="display: none;">Luceed proizvodi su učitani u lokalnu bazu..!</div>
+                                            </div>
+                                            <div class="col-sm-6 text-right">
+                                                <div id="luceed-all-imported" class="lead lighten"><span style="font-size: 1.3rem;">Zadnji update:</span> {{ last_rev }}</div>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <div class="text-info" style="font-size: 2.5rem; font-weight: lighter;">Učitavanje:
+                                                    <br>
+                                                    <span class="lead" id="luceed-importing">0</span>/<span class="lead" id="luceed-updating">0</span> <span style="font-size: 1.5rem;">od ukupno</span> <span class="lead" id="luceed-total">0</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-8">
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+                                                        <div class="text-info" style="font-size: 2.5rem; font-weight: lighter;">Update:
+                                                            <br>
+                                                            <span class="lead text-success" id="luceed-updated">0</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <div class="text-info" style="font-size: 2.5rem; font-weight: lighter;">Import:
+                                                            <br>
+                                                            <span class="lead text-success" id="luceed-inserted">0</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <div class="text-info" style="font-size: 2.5rem; font-weight: lighter;">Potrebna Revizija:
+                                                            <br>
+                                                            <span class="lead text-danger" id="luceed-error">0</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col-sm-12 col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading darker-bg">
-                                <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_categories_import_panel }}</h3>
+                                <h3 class="panel-title"><i class="fa fa-list"></i> Lista proizvoda za reviziju</h3>
+                                <div class="options text-right">
+                                    <button type="button" data-toggle="tooltip" title="Ponovi upload liste za reviziju." class="btn btn-sm btn-info" onclick="updateList();"><i class="fa fa-upload"></i> Upload Liste</button>
+                                </div>
                             </div>
                             <div class="panel-body form-horizontal">
 
-                                    <table class="table table-striped">
-                                        <thead>
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Naziv</th>
+                                        <th scope="col">Luceed-UID</th>
+                                        <th scope="col">Šifra</th>
+                                        <th scope="col">Ima sliku</th>
+                                        <th scope="col">Ima opis</th>
+                                        <th scope="col">Data</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for rev_product in revision_products %}
                                         <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">Product ID</th>
-                                            <th scope="col">Naziv</th>
-                                            <th scope="col">Luceed-UID</th>
-                                            <th scope="col">Ima sliku</th>
-                                            <th scope="col">Ima opis</th>
+                                            <th scope="row">{{ loop.index }}</th>
+                                            <td>{{ rev_product.product.product_id }}</td>
+                                            <td>{{ rev_product.name }}</td>
+                                            <td>{{ rev_product.uid }}</td>
+                                            <td>{{ rev_product.sku }}</td>
+                                            {% if rev_product.has_image %}
+                                                <td class="bold text-success">DA</td>
+                                            {% else %}
+                                                <td class="bold text-danger">NE</td>
+                                            {% endif %}
+                                            {% if rev_product.has_description %}
+                                                <td class="bold text-success">DA</td>
+                                            {% else %}
+                                                <td class="bold text-danger">NE</td>
+                                            {% endif %}
+                                            <td class="small">{{ rev_product.data }}</td>
                                         </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <th scope="row">1</th>
-                                            <td>5858</td>
-                                            <td>Ime artikla</td>
-                                            <td>6544565466</td>
-                                            <td>NE</td>
-                                            <td>Da</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">1</th>
-                                            <td>5858</td>
-                                            <td>Ime artikla</td>
-                                            <td>6544565466</td>
-                                            <td>NE</td>
-                                            <td>Da</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">1</th>
-                                            <td>5858</td>
-                                            <td>Ime artikla</td>
-                                            <td>6544565466</td>
-                                            <td>NE</td>
-                                            <td>Da</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -279,6 +310,14 @@
 
     <script type="text/javascript">
         $(() => {
+            //
+            if (localStorage.getItem('sync_updated')) {
+                document.getElementById('luceed-updated').innerHTML = localStorage.getItem('sync_updated') ? localStorage.getItem('sync_updated') : 0;
+                document.getElementById('luceed-inserted').innerHTML = localStorage.getItem('sync_inserted') ? localStorage.getItem('sync_inserted') : 0;
+                document.getElementById('luceed-error').innerHTML = localStorage.getItem('sync_error') ? localStorage.getItem('sync_error') : 0;
+            }
+
+            //
             $('#import-luceed-products').on('click', e => { callApi(e, 'importLuceedProducts'); });
 
 
@@ -305,6 +344,19 @@
         });
 
 
+        function updateList() {
+            $.ajax({
+                url: 'index.php?route=extension/module/luceed_sync/updateProduct&products={{ rev_ids }}&user_token={{ user_token }}',
+                dataType: 'json',
+                success: function(json) {
+                    checkResult(json);
+                    window.setTimeout(() => {
+                        location.reload();
+                    }, 5000);
+                }
+            });
+        }
+
         /**
          *
          */
@@ -321,11 +373,19 @@
                     success: function(json) {
                         if (json.status == 200) {
                             document.getElementById('luceed-all-imported').style.display = 'block';
-                            document.getElementById('luceed-total').innerHTML = json.message;
+                            document.getElementById('luceed-updating').innerHTML = json.updating;
+                            document.getElementById('luceed-total').innerHTML = json.total;
+                            document.getElementById('luceed-updated').innerHTML = 0;
+                            document.getElementById('luceed-inserted').innerHTML = 0;
+                            document.getElementById('luceed-error').innerHTML = 0;
+
+                            localStorage.setItem('sync_updated', 0);
+                            localStorage.setItem('sync_inserted', 0);
+                            localStorage.setItem('sync_error', 0);
 
                             localStorage.removeItem('sync_updated');
-                            localStorage.removeItem('sync_error');
                             localStorage.removeItem('sync_inserted');
+                            localStorage.removeItem('sync_error');
                             localStorage.removeItem('sync_total');
 
                             updateProducts();
@@ -346,10 +406,10 @@
 
 
         function updateProducts() {
-            let updated = localStorage.getItem('sync_updated') ? localStorage.getItem('sync_updated') : 1;
-            let error = localStorage.getItem('sync_error') ? localStorage.getItem('sync_error') : 1;
-            let inserted = localStorage.getItem('sync_inserted') ? localStorage.getItem('sync_inserted') : 1;
-            let total = localStorage.getItem('sync_total') ? localStorage.getItem('sync_total') : 1;
+            let updated = localStorage.getItem('sync_updated') ? localStorage.getItem('sync_updated') : 0;
+            let error = localStorage.getItem('sync_error') ? localStorage.getItem('sync_error') : 0;
+            let inserted = localStorage.getItem('sync_inserted') ? localStorage.getItem('sync_inserted') : 0;
+            let total = localStorage.getItem('sync_total') ? localStorage.getItem('sync_total') : 0;
 
             $.ajax({
                 url: 'index.php?route=extension/module/luceed_sync/updateProduct&user_token={{ user_token }}',
@@ -382,6 +442,23 @@
                         if (json.message == 'finish') {
                             document.getElementById('luceed-all-imported').innerHTML = 'Sinkroniziranje završeno..!';
                             releseTarget('Završeno', $('#import-luceed-products'));
+
+                            let data = {
+                                updated: updated,
+                                inserted: inserted,
+                                error: error
+                            };
+
+                            $.ajax({
+                                url: 'index.php?route=extension/module/luceed_sync/finishUpdateProduct&user_token={{ user_token }}',
+                                type: 'POST',
+                                data: { data: data},
+                                success: function(json) {
+                                    checkResult(json);
+                                }
+                            });
+
+                            location.reload();
                             return;
                         }
 
