@@ -2,7 +2,7 @@ header, footer, aside, nav, form, iframe, .menu, .hero, .adslot, #cart {
     display: none;
 }
 
-.handheld-toolbar, #st-1, .st-inline-share-buttons, #st-1 .st-btn, #st-1 .st-btn img, .modal-content, .btn-scroll-top{
+.handheld-toolbar, #st-1, .st-inline-share-buttons, #st-1 .st-btn, #st-1 .st-btn img, .modal-content, .btn-scroll-top, .btn{
      display: none;
  }
 
