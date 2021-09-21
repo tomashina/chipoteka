@@ -382,6 +382,12 @@ class LOC_Customer
     {
         $places = new LOC_Places(LuceedPlaces::getByName($city));
 
+        $place = $places->resolveUID($zip, $city);
+
+        if ( ! $place) {
+            return '';
+        }
+
         return $places->resolveUID($zip, $city)->mjesto_uid;
     }
 
