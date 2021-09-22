@@ -63,7 +63,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $this->document->setTitle($this->language->get('heading_title'));
 
         $data['revision_products'] = LuceedProductForRevision::with('product')->get();
-        $data['rev_ids'] = $data['revision_products']->pluck('sku')->flatten();
+        $data['rev_ids'] = $data['revision_products']->where('has_image', 0)->where('has_description', 0)->pluck('sku')->take(700)->flatten();
         $last_rev = LuceedProductForRevisionData::orderBy('last_revision_date', 'desc')->first();
 
         $data['last_rev'] = 'Nepoznato';

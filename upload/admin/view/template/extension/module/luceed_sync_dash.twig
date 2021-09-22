@@ -257,7 +257,7 @@
                             <div class="panel-heading darker-bg">
                                 <h3 class="panel-title"><i class="fa fa-list"></i> Lista proizvoda za reviziju</h3>
                                 <div class="options text-right">
-                                    <button type="button" data-toggle="tooltip" title="Ponovi upload liste za reviziju." class="btn btn-sm btn-info" onclick="updateList();"><i class="fa fa-upload"></i> Upload Liste</button>
+                                    <button type="button" data-toggle="tooltip" title="Ponovi upload liste za reviziju." class="btn btn-sm btn-info" id="btn-updating-list" onclick="updateList();"><i class="fa fa-upload"></i> Upload Liste</button>
                                 </div>
                             </div>
                             <div class="panel-body form-horizontal">
@@ -345,6 +345,8 @@
 
 
         function updateList() {
+            lockTarget('u', $('#btn-updating-list'));
+
             $.ajax({
                 url: 'index.php?route=extension/module/luceed_sync/updateProduct&products={{ rev_ids }}&user_token={{ user_token }}',
                 dataType: 'json',

@@ -37,9 +37,12 @@ class ControllerCheckoutSuccess extends Controller {
              *                                Copyright : AGmedia                           *
              *                              email: filip@agmedia.hr                         *
              *******************************************************************************/
+            $nhs_no = $order_id . date("ym");
+            $poziv_nb = $nhs_no . $this->mod11INI($nhs_no);
 
             $this->load->model('checkout/order');
             $oc_order = $this->model_checkout_order->getOrder($order_id);
+            $oc_order['poziv_na_broj'] = $poziv_nb;
             $order    = new LOC_Order($oc_order);
             $customer = new LOC_Customer($order->getCustomerData());
 

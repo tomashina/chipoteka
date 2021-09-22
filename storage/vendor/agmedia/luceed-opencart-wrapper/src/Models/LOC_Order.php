@@ -190,6 +190,10 @@ class LOC_Order
             'stavke'                    => $this->getItems(),
         ];
 
+        if ($this->oc_order) {
+            $this->order['vezani_poziv_na_broj'] = $this->oc_order['poziv_na_broj'];
+        }
+
         if ($this->items_available) {
             $this->order['sa__skladiste'] = agconf('luceed.stock_warehouse_uid');
             $this->order['na__skladiste'] = agconf('luceed.default_warehouse_uid');
