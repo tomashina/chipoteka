@@ -77,7 +77,7 @@ class LOC_Action
      */
     public function getActions(): Collection
     {
-        return collect($this->actions)->where('partner', '==', null);
+        return collect($this->actions)/*->where('partner', '==', null)*/;
     }
 
 
@@ -97,8 +97,8 @@ class LOC_Action
     {
         $this->prices_to_update = collect();
         $action = $this->getActions()
-                       ->where('naziv', '==', 'web_cijene')
-                       ->first();
+                        ->where('status', '!=', '1')
+                        ->where('naziv', '=', 'web_cijene')->first();
 
         $categories = collect();
         $manufacturers = collect();
@@ -126,6 +126,9 @@ class LOC_Action
             }
         }
 
+        $time = time();
+        Log::store($manufacturers, 'manu' . $time);
+
         foreach ($categories as $sifra => $discount) {
             $category = Category::where('luceed_uid', $sifra)->with('products')->first();
 
@@ -149,6 +152,8 @@ class LOC_Action
                 }
             }
         }
+
+        Log::store($this->prices_to_update, 'manu' . $time);
 
         foreach ($action->stavke as $item) {
             if ($item->mpc) {
