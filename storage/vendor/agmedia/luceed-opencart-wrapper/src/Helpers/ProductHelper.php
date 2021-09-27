@@ -113,7 +113,9 @@ class ProductHelper
 
         $response[agconf('import.default_language')] = [
             'name'              => $naziv,
+            'update_name'       => $old_description ? $old_description['update_name'] : 1,
             'description'       => $description,
+            'update_description'=> $old_description ? $old_description['update_description'] : 1,
             'spec_description'  => $spec ?: '',
             'short_description' => $description,
             'tag'               => $naziv,

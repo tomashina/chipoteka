@@ -236,7 +236,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
     {
         /*Product::where('updated', 1)->update([
             'updated'  => 0,
-            'hash' => 'asdfsadfdsfasdfasdfasdfa'
+            'hash' => '_'
         ]);*/
 
         $_loc = new LOC_Product(LuceedProduct::all());
@@ -319,15 +319,20 @@ class ControllerExtensionModuleLuceedSync extends Controller
     }
 
 
+    /**
+     *
+     */
     public function finishUpdateProduct()
     {
         \Agmedia\Helpers\Log::store($this->request->post['data'], 'finish');
 
         if (isset($this->request->post['data'])) {
-            LuceedProductForRevisionData::insert([
+            $inserted = LuceedProductForRevisionData::insert([
                 'last_revision_date' => Carbon::now(),
                 'data' => serialize($this->request->post['data'])
             ]);
+
+            return $this->output($inserted);
         }
     }
 
