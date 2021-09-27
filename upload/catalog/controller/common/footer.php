@@ -7,7 +7,7 @@ class ControllerCommonFooter extends Controller {
         $mssConfigLf = (array) $this->config->get( 'msmart_search_lf' );
         $mssVer = ! empty( $mssConfig['minify_support'] ) ? '' : '?v' .$this->config->get( 'msmart_search_version' );
         $mssFiles = array(
-            'js' => array( 'js_params.js', 'bloodhound.min.js', 'typeahead.jquery.min.js', 'live_search.min.js' ),
+            'js' => array( 'js_params.js', 'bloodhound.min.js', 'typeahead.jquery.min.js', 'live_search.js' ),
            // 'css' => array( 'style.css', 'style-2.css' ),
         );
 

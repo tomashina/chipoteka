@@ -153,9 +153,15 @@ jQuery(function(){
 							out += data.special;
 							out += '<br />';
 							out += '<strike>';
+
+							out += data.price_2;
 						}
 
-						out += data.price;
+						else{
+							out += data.price;
+						}
+
+
 
 						if( data.special ) {
 							out += '</strike>';
@@ -175,7 +181,12 @@ jQuery(function(){
 				if( data.price ) {
 					out += '<span class="product-price">';
 					out += data.special ? '<strike>' : '';
-					out += data.price;
+					if( data.special ) {
+						out += data.price_2;
+					}
+					else{
+						out += data.price;
+					}
 					out += data.special ? '</strike>' : '';
 					out += '</span>';
 					
