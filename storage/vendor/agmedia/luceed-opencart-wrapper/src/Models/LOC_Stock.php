@@ -72,9 +72,12 @@ class LOC_Stock
             }
 
             foreach ($this->skladista->groupBy('artikl_uid')->all() as $key => $item) {
+                $qty = $item->sum('stanje_kol');
+
                 $this->skladista_stock->push([
                     'artikl_uid' => $key,
-                    'stanje_kol' => $item->sum('stanje_kol')
+                    'stanje_kol' => $qty,
+                    'stock_status' => $qty ? agconf('import.default_stock_full') : agconf('import.default_stock_empty')
                 ]);
             }
 
@@ -88,9 +91,11 @@ class LOC_Stock
             }
 
             foreach ($this->dobavljaci->where('main', 'D')->groupBy('sifra_artikla')->all() as $key => $item) {
+                $qty = $item->sum('stanje_kol');
+
                 $this->dobavljaci_stock->push([
                     'artikl' => $key,
-                    'stanje_kol' => $item->sum('dobavljac_stanje')
+                    'stanje_kol' => $qty
                 ]);
             }
 
@@ -108,7 +113,7 @@ class LOC_Stock
     {
         if ($this->skladista_sorted && $this->skladista_stock) {
             foreach ($this->skladista_stock as $item) {
-                $this->skladista_query .= '("' . $item['artikl_uid'] . '", ' . $item['stanje_kol'] . ', 0),';
+                $this->skladista_query .= '("' . $item['artikl_uid'] . '", ' . $item['stanje_kol'] . ', ' . $item['stock_status'] . '),';
             }
         }
 
@@ -129,7 +134,7 @@ class LOC_Stock
     {
         if ($this->skladista_query != '') {
             $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($this->skladista_query, 0, -1) . ";");
-            $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.luceed_uid = pt.uid SET p.quantity = pt.quantity");
+            $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.luceed_uid = pt.uid SET p.quantity = pt.quantity, p.stock_status_id = pt.price");
 
             $this->deleteProductTempDB();
 
