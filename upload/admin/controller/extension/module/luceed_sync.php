@@ -63,7 +63,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $this->document->setTitle($this->language->get('heading_title'));
 
         $data['revision_products'] = LuceedProductForRevision::with('product')->get();
-        $data['rev_ids'] = $data['revision_products']->pluck('sku')->flatten();
+        $data['rev_ids'] = $data['revision_products']->pluck('sku')->take(200)->flatten();
         $last_rev = LuceedProductForRevisionData::orderBy('last_revision_date', 'desc')->first();
 
         $data['last_rev'] = 'Nepoznato';
@@ -220,6 +220,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 $this->model_catalog_product->addProduct(
                     $_loc->make($product)
                 );
+                Log::store('5', 'product');
                 $count++;
             }
         }
@@ -261,15 +262,12 @@ class ControllerExtensionModuleLuceedSync extends Controller
                                  ->getProductsToAdd();
 
             $_loc_p->cleanRevisionTable();
-            Log::store($for_update, 'opis_root');
-
-            // 9150018909 9150025699
 
             foreach ($for_update as $product) {
                 $_loc_ps->setForUpdate(json_decode(json_encode($product), true));
 
                 if ($_loc_ps->product) {
-                    Log::store('$_loc_ps->product', 'opis_root');
+                    Log::store('$_loc_ps->product - UPDATE', 'opis_root');
                     $product = $this->resolveOldProductData($_loc_ps->product_to_update);
 
                     $this->model_catalog_product->editProduct(
@@ -277,7 +275,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
                         $_loc_ps->makeForUpdate($product)
                     );
                 } else {
-                    Log::store('else $_loc_ps->product', 'opis_root');
+                    Log::store('else $_loc_ps->product - INSERT', 'opis_root');
                     if ($_loc_ps->product_to_insert) {
                         $this->model_catalog_product->addProduct(
                             $_loc_ps->makeForInsert()

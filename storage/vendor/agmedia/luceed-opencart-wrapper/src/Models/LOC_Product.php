@@ -15,6 +15,7 @@ use Agmedia\Models\Category\Category;
 use Agmedia\Models\Manufacturer\Manufacturer;
 use Agmedia\Models\Option\OptionValueDescription;
 use Agmedia\Models\Product\Product;
+use Agmedia\Models\Product\ProductDescription;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -124,8 +125,12 @@ class LOC_Product
                           ->diff($this->existing)
                           ->flatten();
 
+        Log::store($list_diff, 'product');
+
         // Full list of products to add to DB.
         $this->products_to_add = $this->getProducts()->whereIn('artikl', $list_diff);
+
+        Log::store($this->products_to_add, 'product_to_add');
 
         return $this;
     }
@@ -269,9 +274,11 @@ class LOC_Product
         $query_str = '';
 
         foreach ($luceed_products as $product) {
-            $data = collect($product)->toJson();
+            $product_array = ProductHelper::collectLuceedData($product);
+            Log::store($product_array, 'product_array');
+            $data = collect($product_array)->toJson();
 
-            $query_str .= '("' . $product->artikl_uid . '", "' . $product->artikl . '", "' . htmlspecialchars($data) . '", "' . sha1($data) . '"),';
+            $query_str .= '("' . $product->artikl_uid . '", "' . $product->artikl . '", "' . base64_encode(serialize($product_array)) . '", "' . sha1($data) . '"),';
 
             $count++;
         }
@@ -295,7 +302,7 @@ class LOC_Product
         return [
             'status' => 200,
             'total' => $count,
-            'updating' => $count - ($count - ($diff->num_rows / 2))
+            'updating' => floor($count - ($count - ($diff->num_rows / 2)))
         ];
     }
 
@@ -321,37 +328,53 @@ class LOC_Product
      */
     public function make($product): array
     {
-        $this->product = $product;
-        $manufacturer  = ProductHelper::getManufacturer($this->product);
-        $stock_status  = $this->product->stanje_kol ? agconf('import.default_stock_full') : agconf('import.default_stock_empty');
-
+        $product = collect($product);
+        Log::store('1', 'product');
+        $manufacturer = ProductHelper::getManufacturer($product);
+        Log::store('2', 'product');
+        $stock_status = $product['stanje_kol'] ? agconf('import.default_stock_full') : agconf('import.default_stock_empty');
         $status       = 1;
 
-        $description = ProductHelper::getDescription($this->product);
+        Log::store('3', 'product');
 
-        if (empty($this->product['opis']) && empty($this->product['dokumenti'])) {
-            $status = 0;
-            //$this->pushToRevision();
-        }
+        $description = ProductHelper::getDescription($product);
 
-        if ($this->product['enabled'] == 'N') {
+        if ( ! $product['opis'] || empty($product['dokumenti'])) {
             $status = 0;
         }
+
+        if ($product['enabled'] == 'N') {
+            $status = 0;
+        }
+
+        Log::store('3.1', 'product');
+
+        $image_path = ProductHelper::getImagePath($product);
+
+        Log::store('3.2', 'product');
+
+        $attributes = ProductHelper::getAttributes($product);
+
+        Log::store('3.3', 'product');
+
+        $images = ProductHelper::getImages($product);
+
+        Log::store('3.4', 'product');
 
         $prod = [
-            'model'               => $this->product['artikl'],
-            'sku'                 => $this->product['artikl'],
-            'luceed_uid'          => $this->product['artikl_uid'],
-            'upc'                 => $this->product['barcode'],
+            'model'               => $product['artikl'],
+            'sku'                 => $product['artikl'],
+            'luceed_uid'          => $product['artikl_uid'],
+            'upc'                 => $product['barcode'],
             'ean'                 => '',
             'jan'                 => '',
             'isbn'                => '5',
-            'mpn'                 => $this->product['jamstvo_naziv'] ?: '',
+            'mpn'                 => $product['jamstvo_naziv'] ?: '',
             'location'            => '',
-            'price'               => $this->product['mpc'],
-            'price_2'             => $this->product['mpc'],
+            'price'               => $product['mpc'],
+            'price_2'             => $product['mpc'],
             'tax_class_id'        => agconf('import.default_tax_class'),
-            'quantity'            => $this->product['stanje_kol'],
+            'quantity'            => $product['stanje_kol'],
             'minimum'             => 1,
             'subtract'            => 1,
             'stock_status_id'     => $stock_status,
@@ -371,16 +394,19 @@ class LOC_Product
             'filter'              => '',
             'download'            => '',
             'related'             => '',
-            'image'               => ! empty($this->product['dokumenti']) ? ProductHelper::getImagePath($this->product) : agconf('import.image_placeholder'),
+            'image'               => ! empty($product['dokumenti']) ? $image_path : agconf('import.image_placeholder'),
             'points'              => '',
             'product_store'       => [0 => 0],
-            'product_attribute'   => ProductHelper::getAttributes($this->product),
+            'product_attribute'   => $attributes,
             'product_description' => $description,
-            'product_image'       => ProductHelper::getImages($this->product),
+            'product_image'       => $images,
             'product_layout'      => [0 => ''],
-            'product_category'    => ProductHelper::getCategories($this->product),
-            'product_seo_url'     => [0 => ProductHelper::getSeoUrl($this->product)],
+            'product_category'    => ProductHelper::getCategories($product),
+            'product_seo_url'     => [0 => ProductHelper::getSeoUrl($product)],
         ];
+
+        Log::store('4', 'product');
+        Log::store($prod, 'product');
 
         return $prod;
     }
