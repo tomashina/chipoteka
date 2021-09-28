@@ -221,15 +221,21 @@ class ProductHelper
                 $name = Str::slug($product['naziv']) . '-' . strtoupper(Str::random(9)) . '.' . $newstring;
             }
 
+            Log::store('3.13', 'product');
+
             // Setup and create the image with GD library.
             $bin   = base64_decode(static::getImageString($product, $key));
 
+            Log::store('3.14', 'product');
+
             $errorlevel=error_reporting();
             error_reporting(0);
+            Log::store('3.15', 'product');
             $image = imagecreatefromstring($bin);
+            Log::store('3.16', 'product');
             error_reporting($errorlevel);
 
-            Log::store('3.13', 'product');
+            Log::store('3.17', 'product');
 
             if ($image !== false) {
                 imagejpeg($image, DIR_IMAGE . $image_path . $name, 90);
@@ -433,13 +439,19 @@ class ProductHelper
      */
     private static function getImageString(Collection $product, int $key)
     {
+        Log::store('3.131', 'product');
+
         if (isset($product['dokumenti'][$key]->file_uid)) {
             $result = LuceedProduct::getImage($product['dokumenti'][$key]->file_uid);
         } else {
             $result = LuceedProduct::getImage($product['dokumenti'][$key]['file_uid']);
         }
 
+        Log::store('3.132', 'product');
+
         $image = json_decode($result);
+
+        Log::store($image, 'product');
 
         return $image->result[0]->files[0]->content;
     }

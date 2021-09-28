@@ -78,6 +78,8 @@ class LOC_ProductSingle
      */
     public function hasForUpdate(): bool
     {
+        Log::store('01', 'product_update');
+
         $uids_list = LuceedProduct::pluck('uid');
         $this->product_to_update = Product::whereIn('luceed_uid', $uids_list)->where('updated', 0)->first();
 
@@ -89,9 +91,13 @@ class LOC_ProductSingle
             if ($this->luceed_product) {
                 $this->product = $this->resolveLuceedProductData();
 
+                Log::store('02', 'product_update');
+
                 return true;
             }
         }
+
+        Log::store('03', 'product_update');
 
         return false;
     }
@@ -205,7 +211,12 @@ class LOC_ProductSingle
             return false;
         }
 
+        Log::store('31', 'product_update');
+
         $product                     = $this->make();
+
+        Log::store('32', 'product_update');
+
         $product['product_discount'] = $old_product['product_discount'];
         $product['product_special']  = $old_product['product_special'];
         $product['product_download'] = $old_product['product_download'];
@@ -239,11 +250,18 @@ class LOC_ProductSingle
      */
     public function make(): array
     {
+        Log::store('311', 'product_update');
+
         $manufacturer = ProductHelper::getManufacturer($this->product);
+
+        Log::store('312', 'product_update');
+
         $stock_status = $this->product['stanje_kol'] ? agconf('import.default_stock_full') : agconf('import.default_stock_empty');
         $status       = 1;
 
         $description = ProductHelper::getDescription($this->product);
+
+        Log::store('313', 'product_update');
 
         if ($this->product_to_update) {
             $old_description = ProductDescription::where('product_id', $this->product_to_update->product_id)
@@ -253,6 +271,8 @@ class LOC_ProductSingle
             $description = ProductHelper::getDescription($this->product, $old_description);
         }
 
+        Log::store('314', 'product_update');
+
         if ( ! $this->product['opis'] || empty($this->product['dokumenti'])) {
             $status = 0;
             $this->pushToRevision();
@@ -261,6 +281,8 @@ class LOC_ProductSingle
         if ($this->product['enabled'] == 'N') {
             $status = 0;
         }
+
+        Log::store('315', 'product_update');
 
         $prod = [
             'model'               => $this->product['artikl'],
@@ -305,6 +327,8 @@ class LOC_ProductSingle
             'product_category'    => ProductHelper::getCategories($this->product),
             'product_seo_url'     => [0 => ProductHelper::getSeoUrl($this->product)],
         ];
+
+        Log::store('316', 'product_update');
 
         return $prod;
     }
