@@ -261,7 +261,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $for_update = $_loc_p->sortForUpdate($list)
                                  ->getProductsToAdd();
 
-            $_loc_p->cleanRevisionTable();
+            $_loc_p->cleanRevisionTable($for_update->pluck('artikl_uid'));
 
             foreach ($for_update as $product) {
                 $_loc_ps->setForUpdate(json_decode(json_encode($product), true));

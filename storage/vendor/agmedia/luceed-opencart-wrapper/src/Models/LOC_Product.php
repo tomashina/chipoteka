@@ -310,9 +310,13 @@ class LOC_Product
     /**
      * @return $this
      */
-    public function cleanRevisionTable()
+    public function cleanRevisionTable($uids = null)
     {
-        LuceedProductForRevision::truncate();
+        if ($uids) {
+            LuceedProductForRevision::whereIn('uid', $uids)->delete();
+        } else {
+            LuceedProductForRevision::truncate();
+        }
 
         return $this;
     }
