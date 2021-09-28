@@ -284,6 +284,20 @@ class LOC_ProductSingle
 
         Log::store('315', 'product_update');
 
+        Log::store('3.1.', 'product');
+
+        $image_path = ProductHelper::getImagePath($this->product);
+
+        Log::store('3.2.', 'product');
+
+        $attributes = ProductHelper::getAttributes($this->product);
+
+        Log::store('3.3.', 'product');
+
+        $images = ProductHelper::getImages($this->product);
+
+        Log::store('3.4.', 'product');
+
         $prod = [
             'model'               => $this->product['artikl'],
             'sku'                 => $this->product['artikl'],
@@ -317,12 +331,12 @@ class LOC_ProductSingle
             'filter'              => '',
             'download'            => '',
             'related'             => '',
-            'image'               => ! empty($this->product['dokumenti']) ? ProductHelper::getImagePath($this->product) : agconf('import.image_placeholder'),
+            'image'               => ! empty($this->product['dokumenti']) ? $image_path : agconf('import.image_placeholder'),
             'points'              => '',
             'product_store'       => [0 => 0],
-            'product_attribute'   => ProductHelper::getAttributes($this->product),
+            'product_attribute'   => $attributes,
             'product_description' => $description,
-            'product_image'       => ProductHelper::getImages($this->product),
+            'product_image'       => $images,
             'product_layout'      => [0 => ''],
             'product_category'    => ProductHelper::getCategories($this->product),
             'product_seo_url'     => [0 => ProductHelper::getSeoUrl($this->product)],
