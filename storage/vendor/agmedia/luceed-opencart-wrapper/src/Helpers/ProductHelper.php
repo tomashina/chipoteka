@@ -228,20 +228,22 @@ class ProductHelper
 
             Log::store('3.14', 'product');
 
-            $errorlevel=error_reporting();
-            error_reporting(0);
-            Log::store('3.15', 'product');
-            $image = imagecreatefromstring($bin);
-            Log::store('3.16', 'product');
-            error_reporting($errorlevel);
+            if ($bin) {
+                $errorlevel=error_reporting();
+                error_reporting(0);
+                Log::store('3.15', 'product');
+                $image = imagecreatefromstring($bin);
+                Log::store('3.16', 'product');
+                error_reporting($errorlevel);
 
-            Log::store('3.17', 'product');
+                Log::store('3.17', 'product');
 
-            if ($image !== false) {
-                imagejpeg($image, DIR_IMAGE . $image_path . $name, 90);
+                if ($image !== false) {
+                    imagejpeg($image, DIR_IMAGE . $image_path . $name, 90);
 
-                // Return only the image path.
-                return $image_path . $name;
+                    // Return only the image path.
+                    return $image_path . $name;
+                }
             }
         }
 
@@ -442,10 +444,16 @@ class ProductHelper
         Log::store('3.131', 'product');
 
         if (isset($product['dokumenti'][$key]->file_uid)) {
-            $result = LuceedProduct::getImage($product['dokumenti'][$key]->file_uid);
+            $uid = $product['dokumenti'][$key]->file_uid;
         } else {
-            $result = LuceedProduct::getImage($product['dokumenti'][$key]['file_uid']);
+            $uid = $product['dokumenti'][$key]['file_uid'];
         }
+
+        if (in_array($uid, ['108736-1063'])) {
+            return false;
+        }
+
+        $result = LuceedProduct::getImage($uid);
 
         Log::store('3.132', 'product');
 
