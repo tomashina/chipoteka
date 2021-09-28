@@ -89,8 +89,6 @@ class LOC_ProductSingle
             if ($this->luceed_product) {
                 $this->product = $this->resolveLuceedProductData();
 
-                Log::store($this->product, 'opis4');
-
                 return true;
             }
         }
@@ -241,7 +239,6 @@ class LOC_ProductSingle
      */
     public function make(): array
     {
-        Log::store('make()', 'opis2');
         $manufacturer = ProductHelper::getManufacturer($this->product);
         $stock_status = $this->product['stanje_kol'] ? agconf('import.default_stock_full') : agconf('import.default_stock_empty');
         $status       = 1;
@@ -256,10 +253,7 @@ class LOC_ProductSingle
             $description = ProductHelper::getDescription($this->product, $old_description);
         }
 
-        Log::store($this->product, 'opis2');
-
         if ( ! $this->product['opis'] || empty($this->product['dokumenti'])) {
-            Log::store('pushToRevision', 'opis2');
             $status = 0;
             $this->pushToRevision();
         }
