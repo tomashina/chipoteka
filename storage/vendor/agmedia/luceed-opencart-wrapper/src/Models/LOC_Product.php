@@ -269,9 +269,10 @@ class LOC_Product
         $query_str = '';
 
         foreach ($luceed_products as $product) {
-            $data = collect($product)->toJson();
+            $product_array = ProductHelper::collectLuceedData($product);
+            $data = collect($product_array)->toJson();
 
-            $query_str .= '("' . $product->artikl_uid . '", "' . $product->artikl . '", "' . htmlspecialchars($data) . '", "' . sha1($data) . '"),';
+            $query_str .= '("' . $product->artikl_uid . '", "' . $product->artikl . '", "' . base64_encode(serialize($product_array)) . '", "' . sha1($data) . '"),';
 
             $count++;
         }

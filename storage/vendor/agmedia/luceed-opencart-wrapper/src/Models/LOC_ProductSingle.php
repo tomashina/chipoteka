@@ -65,10 +65,11 @@ class LOC_ProductSingle
      */
     public function resolveLuceedProductData(): Collection
     {
-        return collect(json_decode(
+        /*return collect(json_decode(
             htmlspecialchars_decode($this->luceed_product->data),
             true
-        ));
+        ));*/
+        return collect(unserialize(base64_decode($this->luceed_product->data)));
     }
 
 

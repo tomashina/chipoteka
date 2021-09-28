@@ -244,10 +244,86 @@ class ProductHelper
     }
 
 
+    /**
+     * @param \stdClass $product
+     *
+     * @return array
+     */
+    public static function collectLuceedData(\stdClass $product): array
+    {
+        $atributi = [];
+        $dokumenti = [];
+
+        if ( ! empty($product->atributi)) {
+            foreach ($product->atributi as $atr) {
+                $atributi[] = [
+                    'atribut_uid' => $atr->atribut_uid,
+                    'naziv' => $atr->naziv,
+                    'aktivan' => $atr->aktivan,
+                    'vidljiv' => $atr->vidljiv,
+                    'vrijednost' => $atr->vrijednost,
+                ];
+            }
+        }
+
+        if ( ! empty($product->dokumenti)) {
+            foreach ($product->dokumenti as $dok) {
+                $dokumenti[] = [
+                    'file_uid' => $dok->file_uid,
+                    'filename' => $dok->filename,
+                    'naziv' => $dok->naziv,
+                    'md5' => $dok->md5,
+                ];
+            }
+        }
+
+        return [
+            'artikl_uid' => $product->artikl_uid,
+            'artikl' => $product->artikl,
+            'naziv' => $product->naziv,
+            'barcode' => $product->barcode,
+            'jm' => $product->jm,
+            'opis' => static::setDescription($product->opis),
+            'vpc' => $product->vpc,
+            'mpc' => $product->mpc,
+            'enabled' => $product->enabled,
+            'specifikacija' => static::setDescription($product->specifikacija),
+            'stopa_pdv' => $product->stopa_pdv,
+            'nadgrupa_artikla' => $product->nadgrupa_artikla,
+            'nadgrupa_artikla_naziv' => $product->nadgrupa_artikla_naziv,
+            'grupa_artikla' => $product->grupa_artikla,
+            'grupa_artikla_naziv' => $product->grupa_artikla_naziv,
+            'robna_marka' => $product->robna_marka,
+            'robna_marka_naziv' => $product->robna_marka_naziv,
+            'jamstvo_naziv' => $product->jamstvo_naziv,
+            'stanje_kol' => $product->stanje_kol,
+            'atributi' => $atributi,
+            'dokumenti' => $dokumenti,
+        ];
+    }
+
+
     /*******************************************************************************
     *                                Copyright : AGmedia                           *
     *                              email: filip@agmedia.hr                         *
     *******************************************************************************/
+
+    /**
+     * @param string|null $text
+     *
+     * @return string
+     */
+    private static function setDescription(string $text = null): string
+    {
+        if ($text) {
+            $text = str_replace("\n", '<br>', $text);
+            $text = str_replace("\r", '<br>', $text);
+            $text = str_replace("\t", '<tab>', $text);
+        }
+
+        return '';
+    }
+
 
     /**
      * @param $attribute
