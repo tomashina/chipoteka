@@ -51,12 +51,15 @@ class LOC_Stock
 
     private $dobavljaci_query = '';
 
+    private $status;
+
     /**
      * LOC_Product constructor.
      */
     public function __construct()
     {
         $this->db = new Database(DB_DATABASE);
+        $this->status = agconf('import.default_stock_empty');
     }
 
 
@@ -74,10 +77,16 @@ class LOC_Stock
             foreach ($this->skladista->groupBy('artikl_uid')->all() as $key => $item) {
                 $qty = $item->sum('stanje_kol');
 
+                if ($qty) {
+                    $this->status = agconf('import.default_stock_full');
+                } else {
+                    $this->status = agconf('import.default_stock_empty');
+                }
+
                 $this->skladista_stock->push([
                     'artikl_uid' => $key,
                     'stanje_kol' => $qty,
-                    'stock_status' => $qty ? agconf('import.default_stock_full') : agconf('import.default_stock_empty')
+                    'stock_status' => $this->status
                 ]);
             }
 
@@ -91,11 +100,16 @@ class LOC_Stock
             }
 
             foreach ($this->dobavljaci->where('main', 'D')->groupBy('sifra_artikla')->all() as $key => $item) {
-                $qty = $item->sum('stanje_kol');
+                $qty = $item->sum('dobavljac_stanje');
+
+                if ($this->status == agconf('import.default_stock_empty') && $qty) {
+                    $this->status = agconf('import.default_stock_full');
+                }
 
                 $this->dobavljaci_stock->push([
                     'artikl' => $key,
-                    'stanje_kol' => $qty
+                    'stanje_kol' => $qty,
+                    'stock_status' => $this->status
                 ]);
             }
 
@@ -119,7 +133,7 @@ class LOC_Stock
 
         if ($this->dobavljaci_sorted && $this->dobavljaci_stock) {
             foreach ($this->dobavljaci_stock as $item) {
-                $this->dobavljaci_query .= '("' . $item['artikl'] . '", ' . $item['stanje_kol'] . ', 0),';
+                $this->dobavljaci_query .= '("' . $item['artikl'] . '", ' . $item['stanje_kol'] . ', ' . $item['stock_status'] . '),';
             }
         }
 
@@ -132,6 +146,8 @@ class LOC_Stock
      */
     public function update(): int
     {
+        $this->truncateProductsQuantity();
+
         if ($this->skladista_query != '') {
             $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($this->skladista_query, 0, -1) . ";");
             $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.luceed_uid = pt.uid SET p.quantity = pt.quantity, p.stock_status_id = pt.price");
@@ -140,7 +156,7 @@ class LOC_Stock
 
             if ($this->dobavljaci_query != '') {
                 $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($this->dobavljaci_query, 0, -1) . ";");
-                $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.quantity = p.quantity + pt.quantity");
+                $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.quantity = p.quantity + pt.quantity, p.stock_status_id = pt.price");
             }
 
             return 1;
@@ -192,6 +208,15 @@ class LOC_Stock
     private function deleteProductTempDB(): void
     {
         $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_temp`");
+    }
+
+
+    /**
+     * @throws \Exception
+     */
+    private function truncateProductsQuantity(): void
+    {
+        $this->db->query("UPDATE `" . DB_PREFIX . "product` SET quantity = 0 WHERE 1");
     }
 
 }
