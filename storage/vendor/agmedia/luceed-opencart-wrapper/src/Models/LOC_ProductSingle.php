@@ -92,6 +92,7 @@ class LOC_ProductSingle
                 $this->product = $this->resolveLuceedProductData();
 
                 Log::store('02', 'product_update');
+                Log::store($this->product, 'product_for_update');
 
                 return true;
             }
