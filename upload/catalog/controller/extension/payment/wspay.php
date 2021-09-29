@@ -92,7 +92,7 @@ class ControllerExtensionPaymentWSPay extends Controller {
                 $ShopID = $data['merchant'] = $this->config->get('payment_wspay_merchant');
                 $SecretKey = $data['password'] = $this->config->get('payment_wspay_password');
                 $ShoppingCartID = $posted['ShoppingCartID'];
-        $ShoppingCartID = substr($ShoppingCartID, 0, strpos($variable, "-"));
+        $ShoppingCartID = substr($ShoppingCartID, 0, strpos($ShoppingCartID, "-"));
                
                 $Success = $posted['Success'];
                
