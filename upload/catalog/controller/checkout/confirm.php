@@ -489,7 +489,7 @@ class ControllerCheckoutConfirm extends Controller {
 
             } else {
 
-              echo   $data['totalno'] = $this->cart->getSubTotal();
+          $data['totalno'] = $this->cart->getSubTotal();
                 $data['total_amount'] = $this->currency->format($data['totalno'], $this->session->data['currency']);
 
                 $data['notif'] ='' ;

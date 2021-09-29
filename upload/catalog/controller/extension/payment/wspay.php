@@ -92,7 +92,7 @@ class ControllerExtensionPaymentWSPay extends Controller {
                 $ShopID = $data['merchant'] = $this->config->get('payment_wspay_merchant');
                 $SecretKey = $data['password'] = $this->config->get('payment_wspay_password');
                 $ShoppingCartID = $posted['ShoppingCartID'];
-        $ShoppingCartID = substr($ShoppingCartID, 0, strpos($ShoppingCartID, "-"));
+       // $ShoppingCartID = substr($ShoppingCartID, 0, strpos($ShoppingCartID, "-"));
                
                 $Success = $posted['Success'];
                
@@ -125,9 +125,9 @@ class ControllerExtensionPaymentWSPay extends Controller {
                 else if($PaymentCard == 'VISA' && $PaymentPlan == '0000'){
                     $kartica = 'VISA';
                 }
+        $ShoppingCartIDbez = substr($ShoppingCartID, 0, strpos($ShoppingCartID, "-"));
 
-
-                  $this->db->query("UPDATE `" . DB_PREFIX . "order` SET payment_card = '" . $this->db->escape($kartica) . "' WHERE order_id = '" . (int)$ShoppingCartID . "'");
+                  $this->db->query("UPDATE `" . DB_PREFIX . "order` SET payment_card = '" . $this->db->escape($kartica) . "' WHERE order_id = '" . (int)$ShoppingCartIDbez . "'");
 
               
            
