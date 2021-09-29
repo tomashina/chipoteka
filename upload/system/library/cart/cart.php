@@ -194,10 +194,10 @@ class Cart {
                 }
 
 
-                if ($special == '' && $this->session->data['payment_method']['code']=='wspay' && $product_query->row['price_2'] != $product_query->row['price'] && (isset($this->session->data['creditcardname'] ) && $this->session->data['creditcardname']!='' )  && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='' )) {
+                if ($special == '' && (isset($this->session->data['payment_method']) && $this->session->data['payment_method']['code']=='wspay') && $product_query->row['price_2'] != $product_query->row['price'] && (isset($this->session->data['creditcardname'] ) && $this->session->data['creditcardname']!='' )  && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='' )) {
 
 
-                    $price = $product_query->row['price_2'];
+                 $price = $product_query->row['price_2'];
 
                 }
 

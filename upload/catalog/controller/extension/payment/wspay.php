@@ -36,7 +36,7 @@ class ControllerExtensionPaymentWSPay extends Controller {
 
       $data['merchant'] = $this->config->get('payment_wspay_merchant');
       $data['password'] = $this->config->get('payment_wspay_password');
-        $data['order_id'] = $order_info['order_id'];
+        $data['order_id'] = $order_info['order_id'].'-'.date("Y");
         $data['currency'] = $order_info['currency_code'];
          $data['tecaj'] = $order_info['currency_value'];
         $data['description'] = $this->config->get('config_name') . ' - #' . $order_info['order_id'];      
@@ -92,6 +92,7 @@ class ControllerExtensionPaymentWSPay extends Controller {
                 $ShopID = $data['merchant'] = $this->config->get('payment_wspay_merchant');
                 $SecretKey = $data['password'] = $this->config->get('payment_wspay_password');
                 $ShoppingCartID = $posted['ShoppingCartID'];
+        $ShoppingCartID = substr($ShoppingCartID, 0, strpos($variable, "-"));
                
                 $Success = $posted['Success'];
                

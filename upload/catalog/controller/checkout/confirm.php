@@ -457,28 +457,30 @@ class ControllerCheckoutConfirm extends Controller {
             $data['shipping_name'] = $this->session->data['shipping_method']['title'];
 			$data['payment'] = $this->load->controller('extension/payment/' . $this->session->data['payment_method']['code']);
 
-            if ($this->cart->getSubTotal()  && (isset($this->session->data['creditcardname'] ) && $this->session->data['creditcardname']!='' )  && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0000' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0200' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0300' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0400' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0500' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0600' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0700' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0800' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0900' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='1000' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='1100' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='1200' )) {
 
 
-                if($this->session->data['payment_method']['code']=='wspay'){
+
+            if ($this->cart->getSubTotal()  &&  (isset($this->session->data['payment_method'] ) && $this->session->data['payment_method']['code']=='wspay') && (isset($this->session->data['creditcardname'] ) && $this->session->data['creditcardname']!='' )  && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0000' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0200' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0300' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0400' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0500' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0600' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0700' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0800' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0900' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='1000' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='1100' ) && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='1200' )) {
+
+
                     $pricecalculate = $this->config->get('total_low_order_fee_fee') /100  * $this->cart->getSubTotal();
-                }
-                else{
-                    $pricecalculate = $this->cart->getSubTotal();
-                }
 
-                $data['totalno'] = $this->cart->getSubTotal();
+                    $data['totalno'] = $this->cart->getSubTotal();
 
-                $data['totalno'] += $pricecalculate;
+                    $data['totalno'] += $pricecalculate;
 
-                $data['total_amount'] = $this->currency->format($data['totalno'], $this->session->data['currency']);
+                    $data['total_amount'] = $this->currency->format($data['totalno'], $this->session->data['currency']);
+
+
+
+
 
 
                 $data['notif'] ='<div class="alert alert-primary alert-dismissible fade show mt-3" role="alert" id="modif"> Cijena je modificirana iz razloga jer je odabrano kartično plaćanje na više od 12 rata.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>' ;
 
 
 
-           } elseif ($this->cart->getSubTotal() && $this->session->data['payment_method']['code']=='wspay' && (isset($this->session->data['creditcardname'] ) && $this->session->data['creditcardname']!='' )  && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='' ) ) {
+           } elseif ($this->cart->getSubTotal() &&   (isset($this->session->data['payment_method'] ) && $this->session->data['payment_method']['code']=='wspay') && (isset($this->session->data['creditcardname'] ) && $this->session->data['creditcardname']!='' )  && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='' ) ) {
 
                 $data['notif'] ='<div class="alert alert-primary alert-dismissible fade show mt-3" role="alert" id="modif"> Cijena je modificirana iz razloga jer je odabrano kartično plaćanje na rate.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 
@@ -487,12 +489,14 @@ class ControllerCheckoutConfirm extends Controller {
 
             } else {
 
-                $data['totalno'] = $this->cart->getSubTotal();
+              echo   $data['totalno'] = $this->cart->getSubTotal();
                 $data['total_amount'] = $this->currency->format($data['totalno'], $this->session->data['currency']);
 
                 $data['notif'] ='' ;
 
             }
+
+
 
 
 		} else {
