@@ -601,7 +601,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     private function sendRevisionMail()
     {
-       $products = LuceedProductForRevision::query()->pluck('name', 'sku');
+        $data = LuceedProductForRevision::query()->pluck('name', 'sku');
 
        // $products = LuceedProductForRevision::query()->select('name', 'sku')->toArray();
 
@@ -617,7 +617,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $mail->setFrom($this->config->get('config_email'));
         $mail->setSender(html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'));
         $mail->setSubject('Proizvodi za reviziju... ' . Carbon::now()->format('d.m.Y'));
-        $mail->setHtml($this->load->view('mail/updatemail', $products));
+        $mail->setHtml($this->load->view('mail/updatemail', $data));
         $mail->send();
     }
 
