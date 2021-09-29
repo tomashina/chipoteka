@@ -18,10 +18,10 @@
         <tbody>
 
 
-        {% for product in products %}
+        {% for sku,name in products %}
             <tr>
-                <td style="font-size: 12px; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #dddddd; text-align: left; padding: 7px;"><img src="{{ product.sku }}"/></td>
-                <td style="font-size: 12px; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: left; padding: 7px;"><img src="{{ product.name }}"/></td>
+                <td style="font-size: 12px; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #dddddd; text-align: left; padding: 7px;"><img src="{{ sku }}"/></td>
+                <td style="font-size: 12px; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: left; padding: 7px;"><img src="{{ name }}"/></td>
 
             </tr>
         {% endfor %}
