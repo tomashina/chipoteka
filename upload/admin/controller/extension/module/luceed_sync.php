@@ -341,6 +341,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
             $this->sendRevisionMail();
 
+            $this->db->query("UPDATE `" . DB_PREFIX . "product` SET updated = 0 WHERE 1");
+
             return $this->output($inserted);
         }
     }

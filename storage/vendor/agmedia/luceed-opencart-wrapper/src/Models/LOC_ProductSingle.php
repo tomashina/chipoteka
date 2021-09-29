@@ -422,8 +422,6 @@ class LOC_ProductSingle
 
         $this->checkHash();
 
-        Log::store($this->product);
-
         return Product::where('luceed_uid', $this->product['artikl_uid'])->update([
             'updated' => 1,
             'imported' => $imported,
