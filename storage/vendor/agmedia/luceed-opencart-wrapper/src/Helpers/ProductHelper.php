@@ -124,7 +124,7 @@ class ProductHelper
             'short_description' => $description,
             'tag'               => $naziv,
             'meta_title'        => $naziv,
-            'meta_description'  => $description,
+            'meta_description'  => strip_tags($description),
             'meta_keyword'      => $naziv,
         ];
 
