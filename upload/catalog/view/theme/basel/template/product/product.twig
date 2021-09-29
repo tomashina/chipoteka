@@ -81,7 +81,7 @@
                                     <div class="description-short  ">
                                         {% if meta_description %}
                                             <h5 class="title">{{ text_short_description }}</h5>
-                                            {{ meta_description }}
+                                            {{ meta_description|striptags }}
                                         {% endif %}
                                     </div>
                                     <div class="price-wrapper">
