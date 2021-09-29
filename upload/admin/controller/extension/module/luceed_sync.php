@@ -601,10 +601,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     private function sendRevisionMail()
     {
-        $products = LuceedProductForRevision::query()->pluck('name', 'sku');
+       // $products = LuceedProductForRevision::query()->pluck('name', 'sku');
 
+        $products = LuceedProductForRevision::query()->select('name', 'sku')->toArray();
 
-        \Agmedia\Helpers\Log::store($products);
 
         $mail = new Mail($this->config->get('config_mail_engine'));
         $mail->parameter = $this->config->get('config_mail_parameter');
