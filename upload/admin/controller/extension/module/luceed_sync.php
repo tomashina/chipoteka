@@ -553,7 +553,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
             $data['mail_poziv_na_broj'] = $nhs_no.$this->mod11INI($nhs_no);
 
-            \Agmedia\Helpers\Log::store($data);
+
 
 
            // $html = $this->load->view('mail/mail', $data);
@@ -608,7 +608,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $data = [];
 
         $data['products'] = $products;
-
+        \Agmedia\Helpers\Log::store($data);
 
         $mail = new Mail($this->config->get('config_mail_engine'));
         $mail->parameter = $this->config->get('config_mail_parameter');

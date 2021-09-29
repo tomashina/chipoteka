@@ -20,8 +20,8 @@
 
         {% for sku,name in products %}
             <tr>
-                <td style="font-size: 12px; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #dddddd; text-align: left; padding: 7px;"><img src="{{ sku }}"/></td>
-                <td style="font-size: 12px; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: left; padding: 7px;"><img src="{{ name }}"/></td>
+                <td>{{ sku }}</td>
+                <td>{{ name }}</td>
 
             </tr>
         {% endfor %}
