@@ -10,7 +10,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>{{ title }}</title>
 <base href="{{ base }}" />
-{% if description %}<meta name="description" content="{{ description }}" />{% endif %}
+{% if description %}<meta name="description" content="{{ description|striptags }}" />{% endif %}
 {% if keywords %}<meta name="keywords" content= "{{ keywords }}" />{% endif %}
 <!-- Load essential resources -->
   <!-- Vendor Styles including: Font Icons, Plugins, etc.-->
