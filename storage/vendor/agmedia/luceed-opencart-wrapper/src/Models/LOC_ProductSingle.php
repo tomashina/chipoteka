@@ -84,7 +84,7 @@ class LOC_ProductSingle
         $this->product_to_update = Product::whereIn('luceed_uid', $uids_list)->where('updated', 0)->first();
 
         if ($this->product_to_update && isset($this->product_to_update['luceed_uid'])) {
-            $this->luceed_product = LuceedProduct::where('uid', $this->product_to_update['luceed_uid'])
+            $this->luceed_product = LuceedProduct::query()->where('uid', '==', $this->product_to_update['luceed_uid'])
                                                  ->where('hash', '!=', $this->product_to_update['hash'])
                                                  ->first();
 
