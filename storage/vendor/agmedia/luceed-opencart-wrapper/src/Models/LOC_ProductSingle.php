@@ -84,7 +84,7 @@ class LOC_ProductSingle
         $this->product_to_update = Product::whereIn('luceed_uid', $uids_list)->where('updated', 0)->first();
 
         if ($this->product_to_update && isset($this->product_to_update['luceed_uid'])) {
-            $this->luceed_product = LuceedProduct::query()->where('uid', '=', $this->product_to_update['luceed_uid'])
+            /*$this->luceed_product = LuceedProduct::query()->where('uid', '=', $this->product_to_update['luceed_uid'])
                                                  ->where('hash', '!=', $this->product_to_update['hash'])
                                                  ->first();
 
@@ -95,16 +95,32 @@ class LOC_ProductSingle
 
             Log::store($this->luceed_product, 'product_for_update');
             Log::store('$res :::', 'product_for_update');
-            Log::store($res, 'product_for_update');
+            Log::store($res, 'product_for_update');*/
+
+
+            $this->luceed_product = LuceedProduct::where('uid', $this->product_to_update['luceed_uid'])
+                                                 ->first();
 
             if ($this->luceed_product) {
+                if ($this->luceed_product['hash'] != $this->product_to_update['hash']) {
+                    Log::store($this->luceed_product, 'product_for_update');
+
+                    $this->product = $this->resolveLuceedProductData();
+                    
+                    Log::store($this->product, 'product_for_update');
+
+                    return true;
+                }
+            }
+
+            /*if ($this->luceed_product) {
                 $this->product = $this->resolveLuceedProductData();
 
                 Log::store('02', 'product_update');
                 Log::store($this->product, 'product_for_update');
 
                 return true;
-            }
+            }*/
         }
 
         Log::store('03', 'product_update');
