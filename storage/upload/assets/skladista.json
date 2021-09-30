@@ -115,5 +115,18 @@
         "mjesto": "10360",
         "telefax": "+385 1 2022 740",
         "e_mail": null
+    },
+    "26": {
+        "skladiste_uid": "237-1063",
+        "skladiste": "007",
+        "naziv": "CHIPOTEKA PULA",
+        "pj_uid": "4348-1",
+        "pj": "07",
+        "pj_naziv": "PJ Pula",
+        "adresa": "Ciscuttijeva 2",
+        "postanski_broj": "52100",
+        "mjesto": "52100",
+        "telefax": null,
+        "e_mail": null
     }
 }
