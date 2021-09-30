@@ -88,6 +88,8 @@ class LOC_ProductSingle
                                                  ->where('hash', '!=', $this->product_to_update['hash'])
                                                  ->first();
 
+            Log::store($this->luceed_product, 'product_for_update');
+
             if ($this->luceed_product) {
                 $this->product = $this->resolveLuceedProductData();
 
