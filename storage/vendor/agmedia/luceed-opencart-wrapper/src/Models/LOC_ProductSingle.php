@@ -101,16 +101,14 @@ class LOC_ProductSingle
             $this->luceed_product = LuceedProduct::where('uid', $this->product_to_update['luceed_uid'])
                                                  ->first();
 
-            if ($this->luceed_product) {
-                if ($this->luceed_product['hash'] != $this->product_to_update['hash']) {
-                    Log::store($this->luceed_product, 'product_for_update');
+            if ($this->luceed_product['hash'] != $this->product_to_update['hash']) {
+                Log::store($this->luceed_product, 'product_for_update');
 
-                    $this->product = $this->resolveLuceedProductData();
-                    
-                    Log::store($this->product, 'product_for_update');
+                $this->product = $this->resolveLuceedProductData();
 
-                    return true;
-                }
+                Log::store($this->product, 'product_for_update');
+
+                return true;
             }
 
             /*if ($this->luceed_product) {
