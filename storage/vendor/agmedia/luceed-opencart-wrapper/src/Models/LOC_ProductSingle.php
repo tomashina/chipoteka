@@ -8,6 +8,7 @@ use Agmedia\Kaonekad\AttributeHelper;
 use Agmedia\Kaonekad\ScaleHelper;
 use Agmedia\Luceed\Models\LuceedProduct;
 use Agmedia\Luceed\Models\LuceedProductForRevision;
+use Agmedia\Luceed\Models\LuceedProductForUpdate;
 use Agmedia\LuceedOpencartWrapper\Helpers\ProductHelper;
 use Agmedia\Models\Product\Product;
 use Agmedia\Models\Product\ProductDescription;
@@ -78,12 +79,29 @@ class LOC_ProductSingle
      */
     public function hasForUpdate(): bool
     {
-        Log::store('01', 'product_update');
+        Log::store('1', 'product_for_update');
 
-        $uids_list = LuceedProduct::pluck('uid');
-        $this->product_to_update = Product::whereIn('luceed_uid', $uids_list)->where('updated', 0)->first();
+        $uid = LuceedProductForUpdate::all()->first();
 
-        if ($this->product_to_update && isset($this->product_to_update['luceed_uid'])) {
+        Log::store('2', 'product_for_update');
+
+        if ($uid) {
+            Log::store('3', 'product_for_update');
+            $this->product_to_update = Product::where('luceed_uid', $uid->uid)->first();
+            $this->luceed_product = LuceedProduct::query()->where('uid', $uid->uid)->first();
+
+            if ($this->product_to_update && $this->luceed_product) {
+                $this->product = $this->resolveLuceedProductData();
+                Log::store($this->product, 'product_for_update');
+
+                return true;
+            }
+        }
+
+        /*$uids_list = LuceedProduct::pluck('uid');
+        $this->product_to_update = Product::whereIn('luceed_uid', $uids_list)->where('updated', 0)->first();*/
+
+        //if ($this->product_to_update && isset($this->product_to_update['luceed_uid'])) {
             /*$this->luceed_product = LuceedProduct::query()->where('uid', '=', $this->product_to_update['luceed_uid'])
                                                  ->where('hash', '!=', $this->product_to_update['hash'])
                                                  ->first();
@@ -98,7 +116,7 @@ class LOC_ProductSingle
             Log::store($res, 'product_for_update');*/
 
 
-            $this->luceed_product = LuceedProduct::where('uid', $this->product_to_update['luceed_uid'])
+            /*$this->luceed_product = LuceedProduct::where('uid', $this->product_to_update['luceed_uid'])
                                                  ->first();
 
             if ($this->product_to_update['sku'] == '1099900638') {
@@ -122,7 +140,7 @@ class LOC_ProductSingle
                 Log::store($this->product, 'product_for_update');
 
                 return true;
-            }
+            }*/
 
             /*if ($this->luceed_product) {
                 $this->product = $this->resolveLuceedProductData();
@@ -132,7 +150,7 @@ class LOC_ProductSingle
 
                 return true;
             }*/
-        }
+        //}
 
         Log::store('03', 'product_update');
 

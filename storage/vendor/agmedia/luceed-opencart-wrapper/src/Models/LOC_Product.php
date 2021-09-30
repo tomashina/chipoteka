@@ -275,7 +275,6 @@ class LOC_Product
 
         foreach ($luceed_products as $product) {
             $product_array = ProductHelper::collectLuceedData($product);
-            Log::store($product_array, 'product_array');
             $data = collect($product_array)->toJson();
 
             $query_str .= '("' . $product->artikl_uid . '", "' . $product->artikl . '", "' . base64_encode(serialize($product_array)) . '", "' . sha1($data) . '"),';
@@ -296,8 +295,17 @@ class LOC_Product
                                 HAVING count(*) = 1
                                 ORDER BY uid;");
 
-        Log::store($count);
-        Log::store($diff->num_rows);
+        $db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_luceed_for_update`");
+        $res = $db->query("SELECT p.luceed_uid FROM oc_product p JOIN oc_product_luceed pl ON p.luceed_uid = pl.uid WHERE p.hash <> pl.hash;");
+
+        if ($res->num_rows) {
+            $query_str = '';
+            foreach ($res->rows as $row) {
+                $query_str .= '("' . $row['luceed_uid'] . '"),';
+            }
+
+            $db->query("INSERT INTO " . DB_PREFIX . "product_luceed_for_update (uid) VALUES " . substr($query_str, 0, -1) . ";");
+        }
 
         return [
             'status' => 200,

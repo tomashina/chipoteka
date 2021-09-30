@@ -307,6 +307,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 $_loc_ps->makeForUpdate($product)
             );
 
+            \Agmedia\Luceed\Models\LuceedProductForUpdate::where('uid', $_loc_ps->product_to_update['luceed_uid'])->delete();
+
             Log::store('4', 'product_update');
 
             return $this->output($_loc_ps->finishUpdate());
