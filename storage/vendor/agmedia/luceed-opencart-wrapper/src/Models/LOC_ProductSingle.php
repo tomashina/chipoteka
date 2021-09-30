@@ -91,7 +91,7 @@ class LOC_ProductSingle
             $db = new Database(DB_DATABASE);
             $uid = $this->product_to_update['luceed_uid'];
             $hash = $this->product_to_update['hash'];
-            $res = $db->query("SELECT * FROM oc_product_luceed WHERE uid = " . $uid . " AND `hash` != " . $hash);
+            $res = $db->query("SELECT * FROM oc_product_luceed WHERE uid = '" . $uid . "' AND `hash` != '" . $hash . "';");
 
             Log::store($this->luceed_product, 'product_for_update');
             Log::store('$res :::', 'product_for_update');
