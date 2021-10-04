@@ -369,7 +369,7 @@ class LOC_ProductSingle
             'price'               => $this->product['mpc'],
             'price_2'             => $this->product['mpc'],
             'tax_class_id'        => agconf('import.default_tax_class'),
-            'quantity'            => $this->product['stanje_kol'],
+            'quantity'            => $this->product['stanje_kol'] ?: 0,
             'minimum'             => 1,
             'subtract'            => 1,
             'stock_status_id'     => $stock_status,
