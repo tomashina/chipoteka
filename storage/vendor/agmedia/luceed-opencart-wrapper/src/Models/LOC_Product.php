@@ -282,7 +282,7 @@ class LOC_Product
             $count++;
         }
 
-        $db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_luceed`");
+        $db->query("TRUNCATE TABLE " . DB_PREFIX . "product_luceed");
         $db->query("INSERT INTO " . DB_PREFIX . "product_luceed (uid, sifra, `data`, `hash`) VALUES " . substr($query_str, 0, -1) . ";");
 
         $diff = $db->query("SELECT uid, `hash`
@@ -295,7 +295,7 @@ class LOC_Product
                                 HAVING count(*) = 1
                                 ORDER BY uid;");
 
-        $db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_luceed_for_update`");
+        $db->query("TRUNCATE TABLE " . DB_PREFIX . "product_luceed_for_update");
         $res = $db->query("SELECT p.luceed_uid FROM oc_product p JOIN oc_product_luceed pl ON p.luceed_uid = pl.uid WHERE p.hash <> pl.hash;");
 
         if ($res->num_rows) {
