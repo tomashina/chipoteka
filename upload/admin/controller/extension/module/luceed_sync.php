@@ -336,6 +336,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
             }
         }
 
+        $loc = new LOC_Product();
+        $loc->deleteExcessProducts();
+
         return $this->output($_loc_ps->finish());
     }
 

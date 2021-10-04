@@ -178,7 +178,7 @@ class LOC_Action
                         ->where('naziv', '!=', 'web_cijene');
 
         foreach ($actions as $key => $action) {
-            if ( ! empty($action->stavke)) {
+            if ( ! empty($action->stavke) && $this->isForWeb($action)) {
                 if (( ! $action->start_date || (Carbon::createFromFormat('d.m.Y', $action->start_date) < Carbon::now())) &&
                     ( ! $action->end_date || (Carbon::createFromFormat('d.m.Y', $action->end_date) > Carbon::now()->addDay()))
                 ) {
@@ -188,6 +188,23 @@ class LOC_Action
         }
 
         return $this;
+    }
+
+
+    /**
+     * @param $action
+     *
+     * @return bool
+     */
+    private function isForWeb($action): bool
+    {
+        foreach ($action->poslovne_jedinice as $item) {
+            if ($item->pj == '10') {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
