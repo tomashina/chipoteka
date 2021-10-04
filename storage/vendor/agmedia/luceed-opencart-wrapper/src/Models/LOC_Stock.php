@@ -75,7 +75,7 @@ class LOC_Stock
             }
 
             foreach ($this->skladista->groupBy('artikl_uid')->all() as $key => $item) {
-                $qty = $item->sum('stanje_kol');
+                $qty = $item->sum('raspolozivo_kol');
 
                 if ($qty) {
                     $this->status = agconf('import.default_stock_full');
