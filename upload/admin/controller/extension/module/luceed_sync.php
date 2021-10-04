@@ -290,7 +290,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         // Ako ima proizvoda za UPDATE
         if ($_loc_ps->hasForUpdate()) {
 
-            Log::store('1', 'product_update');
+            Log::store('$_loc_ps->hasForUpdate():: 1', 'product_update');
 
             if ( ! isset($_loc_ps->product['naziv'])) {
                 return $this->output($_loc_ps->finishUpdateError());
@@ -303,7 +303,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
             Log::store('3', 'product_update');
 
             $this->model_catalog_product->editProduct(
-                $_loc_ps->product_to_update->product_id,
+                $_loc_ps->product_to_update['product_id'],
                 $_loc_ps->makeForUpdate($product)
             );
 

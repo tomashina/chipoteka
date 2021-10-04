@@ -92,7 +92,7 @@ class ProductHelper
      */
     public static function getDescription(Collection $product, $old_description = null): array
     {
-        Log::store('3.01', 'product');
+        Log::store('getDescription:: 3.01', 'product');
         // Check if description exist.
         //If not add title for description.
         $naziv = $product['naziv'];
@@ -139,7 +139,7 @@ class ProductHelper
      */
     public static function getAttributes(Collection $product): array
     {
-        Log::store('3.21.', 'product');
+        Log::store('getAttributes:: 3.21.', 'product');
 
         $response   = [];
         $attributes = collect($product['atributi']);
@@ -204,7 +204,7 @@ class ProductHelper
      */
     public static function getImagePath(Collection $product, int $key = 0): string
     {
-        Log::store('3.10', 'product');
+        Log::store('getImagePath:: 3.10', 'product');
 
         if (isset($product['dokumenti'][$key])) {
             $image_path = agconf('import.image_path');
@@ -268,7 +268,7 @@ class ProductHelper
      */
     public static function getImages(Collection $product): array
     {
-        Log::store('3.30', 'product');
+        Log::store('getImages:: 3.30', 'product');
 
         $response = [];
         $default  = collect($product['dokumenti']);
@@ -451,7 +451,7 @@ class ProductHelper
      */
     private static function getImageString(Collection $product, int $key)
     {
-        Log::store('3.131', 'product');
+        Log::store('getImageString:: 3.131', 'product');
 
         if (isset($product['dokumenti'][$key]->file_uid)) {
             $uid = $product['dokumenti'][$key]->file_uid;
