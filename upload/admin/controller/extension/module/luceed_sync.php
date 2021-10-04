@@ -308,6 +308,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
             Log::store('3..', 'product_update');
             Log::store($product_for_update, 'product_update');
 
+            if ($product_for_update['sku'] == '6129256300') {
+                return $this->output($_loc_ps->finishUpdate());
+            }
+
             $this->model_catalog_product->editProduct(
                 $_loc_ps->product_to_update['product_id'],
                 $product_for_update
