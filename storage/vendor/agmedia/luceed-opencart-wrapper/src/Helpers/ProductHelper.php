@@ -139,12 +139,18 @@ class ProductHelper
      */
     public static function getAttributes(Collection $product): array
     {
+        Log::store('3.21.', 'product');
+
         $response   = [];
         $attributes = collect($product['atributi']);
+
+        Log::store('3.22.', 'product');
 
         foreach ($attributes as $attribute) {
             $attribute = collect($attribute);
             if (static::checkAttributeForImport($attribute)) {
+                Log::store('3.22.', 'product');
+
                 $has = Attribute::where('luceed_uid', $attribute['atribut_uid'])->first();
 
                 if ($has && $has->count()) {
@@ -152,6 +158,8 @@ class ProductHelper
                 } else {
                     $id = static::makeAttribute($attribute);
                 }
+
+                Log::store('3.23.', 'product');
 
                 if ($id) {
                     $response[] = [
@@ -165,6 +173,8 @@ class ProductHelper
                 }
             }
         }
+
+        Log::store('3.24.', 'product');
 
         return $response;
     }
