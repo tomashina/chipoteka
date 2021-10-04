@@ -280,6 +280,8 @@ class LOC_ProductSingle
         $product['product_related']  = $old_product['product_related'];
         $product['product_reward']   = $old_product['product_reward'];
 
+        Log::store('33', 'product_for_update');
+
         return $product;
     }
 

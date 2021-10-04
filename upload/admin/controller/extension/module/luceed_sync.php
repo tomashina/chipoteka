@@ -645,7 +645,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
     {
         $this->load->model('catalog/product');
         
-        $data = [];
+        $data = $product->toArray();
         $data['product_discount'] = $this->model_catalog_product->getProductDiscounts($product['id']);
         $data['product_special'] = $this->model_catalog_product->getProductSpecials($product['id']);
         $data['product_download'] = $this->model_catalog_product->getProductDownloads($product['id']);
