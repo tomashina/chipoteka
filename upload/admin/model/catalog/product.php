@@ -142,11 +142,17 @@ class ModelCatalogProduct extends Model {
 	}
 
 	public function editProduct($product_id, $data) {
+        \Agmedia\Helpers\Log::store('editProduct($product_id, $data) :: 1', 'product_update');
+
 		$this->db->query("UPDATE " . DB_PREFIX . "product SET model = '" . $this->db->escape($data['model']) . "', sku = '" . $this->db->escape($data['sku']) . "', upc = '" . $this->db->escape($data['upc']) . "', ean = '" . $this->db->escape($data['ean']) . "', jan = '" . $this->db->escape($data['jan']) . "', isbn = '" . $this->db->escape($data['isbn']) . "', mpn = '" . $this->db->escape($data['mpn']) . "', location = '" . $this->db->escape($data['location']) . "', quantity = '" . (int)$data['quantity'] . "', minimum = '" . (int)$data['minimum'] . "', subtract = '" . (int)$data['subtract'] . "', stock_status_id = '" . (int)$data['stock_status_id'] . "', date_available = '" . $this->db->escape($data['date_available']) . "', manufacturer_id = '" . (int)$data['manufacturer_id'] . "', shipping = '" . (int)$data['shipping'] . "', price = '" . (float)$data['price'] . "', price_2 = '" . (float)$data['price_2'] . "', points = '" . (int)$data['points'] . "', weight = '" . (float)$data['weight'] . "', weight_class_id = '" . (int)$data['weight_class_id'] . "', length = '" . (float)$data['length'] . "', width = '" . (float)$data['width'] . "', height = '" . (float)$data['height'] . "', length_class_id = '" . (int)$data['length_class_id'] . "', status = '" . (int)$data['status'] . "', tax_class_id = '" . (int)$data['tax_class_id'] . "', sort_order = '" . (int)$data['sort_order'] . "', date_modified = NOW() WHERE product_id = '" . (int)$product_id . "'");
+
+        \Agmedia\Helpers\Log::store('2', 'product_update');
 
 		if (isset($data['image'])) {
 			$this->db->query("UPDATE " . DB_PREFIX . "product SET image = '" . $this->db->escape($data['image']) . "' WHERE product_id = '" . (int)$product_id . "'");
 		}
+
+        \Agmedia\Helpers\Log::store('3', 'product_update');
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_description WHERE product_id = '" . (int)$product_id . "'");
 
@@ -155,7 +161,7 @@ class ModelCatalogProduct extends Model {
             $this->db->query("UPDATE " . DB_PREFIX . "product_description SET short_description = '" . $this->db->escape($value['short_description']) . "' WHERE product_id = '" . (int)$product_id . "' AND language_id='".(int)$language_id."'");
             $this->db->query("UPDATE " . DB_PREFIX . "product_description SET spec_description = '" . $this->db->escape($value['spec_description']) . "' WHERE product_id = '" . (int)$product_id . "' AND language_id='".(int)$language_id."'");
 		}
-
+        \Agmedia\Helpers\Log::store('4', 'product_update');
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_store WHERE product_id = '" . (int)$product_id . "'");
 
 		if (isset($data['product_store'])) {
@@ -163,7 +169,7 @@ class ModelCatalogProduct extends Model {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "product_to_store SET product_id = '" . (int)$product_id . "', store_id = '" . (int)$store_id . "'");
 			}
 		}
-
+        \Agmedia\Helpers\Log::store('5', 'product_update');
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_attribute WHERE product_id = '" . (int)$product_id . "'");
 
 		if (!empty($data['product_attribute'])) {
@@ -178,7 +184,7 @@ class ModelCatalogProduct extends Model {
 				}
 			}
 		}
-
+        \Agmedia\Helpers\Log::store('6', 'product_update');
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_option WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_option_value WHERE product_id = '" . (int)$product_id . "'");
 
@@ -199,7 +205,7 @@ class ModelCatalogProduct extends Model {
 				}
 			}
 		}
-
+        \Agmedia\Helpers\Log::store('7', 'product_update');
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "product_recurring` WHERE product_id = " . (int)$product_id);
 
 		if (isset($data['product_recurring'])) {
@@ -227,7 +233,7 @@ class ModelCatalogProduct extends Model {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "product_special SET product_id = '" . (int)$product_id . "', customer_group_id = '" . (int)$product_special['customer_group_id'] . "', priority = '" . (int)$product_special['priority'] . "', price = '" . (float)$product_special['price'] . "', date_start = '" . $this->db->escape($product_special['date_start']) . "', date_end = '" . $this->db->escape($product_special['date_end']) . "'");
 			}
 		}
-
+        \Agmedia\Helpers\Log::store('8', 'product_update');
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_image WHERE product_id = '" . (int)$product_id . "'");
 
 		if (isset($data['product_image'])) {
@@ -259,7 +265,7 @@ class ModelCatalogProduct extends Model {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "product_filter SET product_id = '" . (int)$product_id . "', filter_id = '" . (int)$filter_id . "'");
 			}
 		}
-
+        \Agmedia\Helpers\Log::store('9', 'product_update');
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_related WHERE product_id = '" . (int)$product_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_related WHERE related_id = '" . (int)$product_id . "'");
 
@@ -302,7 +308,7 @@ class ModelCatalogProduct extends Model {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "product_to_layout SET product_id = '" . (int)$product_id . "', store_id = '" . (int)$store_id . "', layout_id = '" . (int)$layout_id . "'");
 			}
 		}
-
+        \Agmedia\Helpers\Log::store('10', 'product_update');
 		$this->cache->delete('product');
 	}
 
