@@ -400,7 +400,8 @@ class LOC_ProductSingle
             'product_seo_url'     => [0 => ProductHelper::getSeoUrl($this->product)],
         ];
 
-        Log::store('316', 'product_for_update');
+        Log::store('3.5.', 'product_for_update');
+        Log::store($prod, 'product_for_update');
 
         return $prod;
     }
