@@ -271,6 +271,7 @@ class LOC_ProductSingle
         $product                     = $this->make();
 
         Log::store('32', 'product_for_update');
+        Log::store($old_product, 'product_for_update');
 
         $product['product_discount'] = $old_product['product_discount'];
         $product['product_special']  = $old_product['product_special'];
