@@ -301,11 +301,15 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $product = $this->resolveOldProductData($_loc_ps->product_to_update);
 
             Log::store('3', 'product_update');
+            Log::store($_loc_ps->product_to_update, 'product_update');
+            Log::store($product, 'product_update');
 
             $this->model_catalog_product->editProduct(
                 $_loc_ps->product_to_update['product_id'],
                 $_loc_ps->makeForUpdate($product)
             );
+
+            Log::store('3.1', 'product_update');
 
             \Agmedia\Luceed\Models\LuceedProductForUpdate::where('uid', $_loc_ps->product_to_update['luceed_uid'])->delete();
 
