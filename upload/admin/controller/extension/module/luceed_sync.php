@@ -302,11 +302,15 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
             Log::store('3', 'product_update');
             Log::store($_loc_ps->product_to_update, 'product_update');
-            Log::store($product, 'product_update');
+
+            $product_for_update = $_loc_ps->makeForUpdate($product);
+
+            Log::store('3..', 'product_update');
+            Log::store($product_for_update, 'product_update');
 
             $this->model_catalog_product->editProduct(
                 $_loc_ps->product_to_update['product_id'],
-                $_loc_ps->makeForUpdate($product)
+                $product_for_update
             );
 
             Log::store('3.1', 'product_update');
@@ -645,7 +649,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
     {
         $this->load->model('catalog/product');
         
-        $data = $product->toArray();
+        $data = [];
         $data['product_discount'] = $this->model_catalog_product->getProductDiscounts($product['id']);
         $data['product_special'] = $this->model_catalog_product->getProductSpecials($product['id']);
         $data['product_download'] = $this->model_catalog_product->getProductDownloads($product['id']);
