@@ -143,13 +143,13 @@ class LOC_Warehouse
             $has = $defaults->where('skladiste_uid', $house['skladiste_uid'])->first();
 
             if ($has) {
-                $qty_default += $has->raspolozivo_kol;
+                $qty_default += max($has->raspolozivo_kol, 0);
             }
         }
 
-        if ($qty_default < 0) {
+        /*if ($qty_default < 0) {
             $qty_default = 0;
-        }
+        }*/
 
         $qty_stores = 0;
         // STORES WAREHOUSE COUNT
