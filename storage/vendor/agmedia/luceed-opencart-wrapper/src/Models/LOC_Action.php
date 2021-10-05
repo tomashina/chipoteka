@@ -200,8 +200,11 @@ class LOC_Action
      */
     private function isForWeb($action): bool
     {
+        if (empty($action->poslovne_jedinice)) {
+            return true;
+        }
+
         foreach ($action->poslovne_jedinice as $item) {
-            Log::store($item, 'actions_test');
             if ($item->pj == '10') {
                 return true;
             }

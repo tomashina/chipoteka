@@ -75,7 +75,12 @@ class LOC_Stock
             }
 
             foreach ($this->skladista->groupBy('artikl_uid')->all() as $key => $item) {
-                $qty = $item->sum('raspolozivo_kol');
+                //$qty = $item->sum('raspolozivo_kol');
+
+                $qty = 0;
+                foreach ($item as $stock) {
+                    $qty = $qty + max($stock->raspolozivo_kol, 0);
+                }
 
                 if ($qty) {
                     $this->status = agconf('import.default_stock_full');
@@ -100,7 +105,12 @@ class LOC_Stock
             }
 
             foreach ($this->dobavljaci->where('main', 'D')->groupBy('sifra_artikla')->all() as $key => $item) {
-                $qty = $item->sum('dobavljac_stanje');
+                //$qty = $item->sum('dobavljac_stanje');
+
+                $qty = 0;
+                foreach ($item as $stock) {
+                    $qty = $qty + max($stock->dobavljac_stanje, 0);
+                }
 
                 if ($this->status == agconf('import.default_stock_empty') && $qty) {
                     $this->status = agconf('import.default_stock_full');

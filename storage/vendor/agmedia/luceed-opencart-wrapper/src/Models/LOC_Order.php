@@ -172,6 +172,7 @@ class LOC_Order
             'sa__skladiste'             => '001',
             'status'                    => $this->getStatus(),
             'napomena'                  => $this->oc_order['comment'],
+            'poruka_dolje'              => $this->oc_order['comment'],
             //'raspored'          => $this->getDeliveryTime(),
             'komercijalist__radnik_uid' => '206-1063',
             'placa_porez'               => 'D',
