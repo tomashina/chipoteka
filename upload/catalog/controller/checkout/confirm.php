@@ -495,7 +495,7 @@ class ControllerCheckoutConfirm extends Controller {
 
 
 
-           } elseif ($this->cart->getSubTotal() &&   (isset($this->session->data['payment_method'] ) && $this->session->data['payment_method']['code']=='wspay') && (isset($this->session->data['creditcardname'] ) && $this->session->data['creditcardname']!='' )  && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='' ) ) {
+           } elseif ($this->cart->getSubTotal() &&   (isset($this->session->data['payment_method'] ) && $this->session->data['payment_method']['code']=='wspay') && (isset($this->session->data['creditcardname'] ) && $this->session->data['creditcardname']!='' )  && (isset($this->session->data['paymentplan'] ) && $this->session->data['paymentplan']!='0000' ) ) {
 
                 $data['notif'] ='<div class="alert alert-primary alert-dismissible fade show mt-3" role="alert" id="modif"> Cijena je modificirana iz razloga jer je odabrano kartično plaćanje na rate.<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>';
 
