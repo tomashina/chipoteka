@@ -268,6 +268,13 @@ class ControllerProductProduct extends Controller {
             $product_info['short_description'] = str_replace('<br><br><br><br>', '<br>', $product_info['short_description']);
             $product_info['short_description'] = str_replace('<br><br>', '<br>', $product_info['short_description']);
 
+
+            $str = $product_info['short_description'];
+            if( strlen( $product_info['short_description']) > 300) {
+                $str = explode( "\n", wordwrap( $product_info['short_description'], 300));
+                $product_info['short_description'] = $str[0] . '...';
+            }
+
             $data['short_description'] = html_entity_decode($product_info['short_description'], ENT_QUOTES, 'UTF-8');
             $data['spec_description'] = html_entity_decode($product_info['spec_description'], ENT_QUOTES, 'UTF-8');
 
