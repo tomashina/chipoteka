@@ -334,6 +334,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
                 return $this->output($_loc_ps->finishInsert());
             }
+
+            if ($_loc_ps->hasForDelete()) {
+                $this->model_catalog_product->deleteProduct(
+                    $_loc_ps->getDeleteProductId()
+                );
+
+                return $this->output($_loc_ps->finishDelete());
+            }
         }
 
         $loc = new LOC_Product();

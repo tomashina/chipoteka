@@ -223,19 +223,25 @@
                                             </div>
                                             <div class="col-sm-8">
                                                 <div class="row">
-                                                    <div class="col-sm-4">
+                                                    <div class="col-sm-3">
                                                         <div class="text-info" style="font-size: 2.5rem; font-weight: lighter;">Update:
                                                             <br>
                                                             <span class="lead text-success" id="luceed-updated">0</span>
                                                         </div>
                                                     </div>
-                                                    <div class="col-sm-4">
+                                                    <div class="col-sm-3">
                                                         <div class="text-info" style="font-size: 2.5rem; font-weight: lighter;">Import:
                                                             <br>
                                                             <span class="lead text-success" id="luceed-inserted">0</span>
                                                         </div>
                                                     </div>
-                                                    <div class="col-sm-4">
+                                                    <div class="col-sm-3">
+                                                        <div class="text-info" style="font-size: 2.5rem; font-weight: lighter;">Delete:
+                                                            <br>
+                                                            <span class="lead text-success" id="luceed-deleted">0</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-3">
                                                         <div class="text-info" style="font-size: 2.5rem; font-weight: lighter;">Greške:
                                                             <br>
                                                             <span class="lead text-danger" id="luceed-error">0</span>
@@ -315,6 +321,7 @@
                 document.getElementById('luceed-updated').innerHTML = localStorage.getItem('sync_updated') ? localStorage.getItem('sync_updated') : 0;
                 document.getElementById('luceed-inserted').innerHTML = localStorage.getItem('sync_inserted') ? localStorage.getItem('sync_inserted') : 0;
                 document.getElementById('luceed-error').innerHTML = localStorage.getItem('sync_error') ? localStorage.getItem('sync_error') : 0;
+                document.getElementById('luceed-deleted').innerHTML = localStorage.getItem('sync_deleted') ? localStorage.getItem('sync_deleted') : 0;
             }
 
             //
@@ -380,14 +387,17 @@
                             document.getElementById('luceed-updated').innerHTML = 0;
                             document.getElementById('luceed-inserted').innerHTML = 0;
                             document.getElementById('luceed-error').innerHTML = 0;
+                            document.getElementById('luceed-deleted').innerHTML = 0;
 
                             localStorage.setItem('sync_updated', 0);
                             localStorage.setItem('sync_inserted', 0);
                             localStorage.setItem('sync_error', 0);
+                            localStorage.setItem('sync_deleted', 0);
 
                             localStorage.removeItem('sync_updated');
                             localStorage.removeItem('sync_inserted');
                             localStorage.removeItem('sync_error');
+                            localStorage.removeItem('sync_deleted');
                             localStorage.removeItem('sync_total');
 
                             updateProducts();
@@ -410,6 +420,7 @@
         function updateProducts() {
             let updated = localStorage.getItem('sync_updated') ? localStorage.getItem('sync_updated') : 0;
             let error = localStorage.getItem('sync_error') ? localStorage.getItem('sync_error') : 0;
+            let deleted = localStorage.getItem('sync_deleted') ? localStorage.getItem('sync_deleted') : 0;
             let inserted = localStorage.getItem('sync_inserted') ? localStorage.getItem('sync_inserted') : 0;
             let total = localStorage.getItem('sync_total') ? localStorage.getItem('sync_total') : 0;
 
@@ -439,6 +450,13 @@
 
                             localStorage.setItem('sync_error', error);
                             document.getElementById('luceed-error').innerHTML = error;
+                        }
+
+                        if (json.message == 'deleted') {
+                            deleted++;
+
+                            localStorage.setItem('sync_deleted', deleted);
+                            document.getElementById('luceed-deleted').innerHTML = deleted;
                         }
 
                         if (json.message == 'finish') {

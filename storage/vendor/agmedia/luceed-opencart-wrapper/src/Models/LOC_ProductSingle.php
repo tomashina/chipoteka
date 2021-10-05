@@ -40,6 +40,11 @@ class LOC_ProductSingle
     /**
      * @var Collection
      */
+    public $product_to_delete = null;
+
+    /**
+     * @var Collection
+     */
     private $luceed_product = null;
 
     /**
@@ -98,60 +103,6 @@ class LOC_ProductSingle
             }
         }
 
-        /*$uids_list = LuceedProduct::pluck('uid');
-        $this->product_to_update = Product::whereIn('luceed_uid', $uids_list)->where('updated', 0)->first();*/
-
-        //if ($this->product_to_update && isset($this->product_to_update['luceed_uid'])) {
-            /*$this->luceed_product = LuceedProduct::query()->where('uid', '=', $this->product_to_update['luceed_uid'])
-                                                 ->where('hash', '!=', $this->product_to_update['hash'])
-                                                 ->first();
-
-            $db = new Database(DB_DATABASE);
-            $uid = $this->product_to_update['luceed_uid'];
-            $hash = $this->product_to_update['hash'];
-            $res = $db->query("SELECT * FROM oc_product_luceed WHERE uid = '" . $uid . "' AND `hash` != '" . $hash . "';");
-
-            Log::store($this->luceed_product, 'product_for_update');
-            Log::store('$res :::', 'product_for_update');
-            Log::store($res, 'product_for_update');*/
-
-
-            /*$this->luceed_product = LuceedProduct::where('uid', $this->product_to_update['luceed_uid'])
-                                                 ->first();
-
-            if ($this->product_to_update['sku'] == '1099900638') {
-                $arr = [
-                    'u' => $this->product_to_update['luceed_uid'],
-                    's' => $this->product_to_update['sku'],
-                    'h' => $this->product_to_update['hash'],
-                    'uu' => $this->luceed_product['uid'],
-                    'ss' => $this->luceed_product['sku'],
-                    'hh' => $this->luceed_product['hash']
-                ];
-
-                Log::store($arr, 'product_for_update_2');
-            }
-
-            if ($this->luceed_product['hash'] != $this->product_to_update['hash']) {
-                Log::store($this->luceed_product, 'product_for_update');
-
-                $this->product = $this->resolveLuceedProductData();
-
-                Log::store($this->product, 'product_for_update');
-
-                return true;
-            }*/
-
-            /*if ($this->luceed_product) {
-                $this->product = $this->resolveLuceedProductData();
-
-                Log::store('02', 'product_for_update');
-                Log::store($this->product, 'product_for_update');
-
-                return true;
-            }*/
-        //}
-
         Log::store('03', 'product_for_update');
 
         return false;
@@ -195,6 +146,51 @@ class LOC_ProductSingle
         }
 
         return false;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function hasForDelete()
+    {
+        $luceed = LuceedProduct::pluck('sifra');
+        $existing = Product::pluck('sku');
+
+        $diff = $existing->diff($luceed);
+
+        if ($diff->count()) {
+            $this->product_to_delete = Product::where('sku', $diff->first())->first();
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function getDeleteProductId(): int
+    {
+        if ($this->product_to_delete) {
+            return $this->product_to_delete['product_id'];
+        }
+
+        return 0;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function finishDelete(): array
+    {
+        return [
+            'status'  => 200,
+            'message' => 'deleted'
+        ];
     }
 
 
