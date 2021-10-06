@@ -303,6 +303,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
             Log::store('3', 'product_update');
             Log::store($_loc_ps->product_to_update, 'product_update');
 
+            // first check known errors
             $product_for_update = $_loc_ps->makeForUpdate($product);
 
             Log::store('3..', 'product_update');
@@ -328,8 +329,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
         } else {
             // Ako ima proizvoda za INSERT
             if ($_loc_ps->hasForInsert()) {
+                // first check known errors
+                $product_for_insert = $_loc_ps->makeForInsert();
+                if ($product_for_insert['sku'] == '6129256300') {
+                    return $this->output($_loc_ps->finishUpdate());
+                }
+
                 $this->model_catalog_product->addProduct(
-                    $_loc_ps->makeForInsert()
+                    $product_for_insert
                 );
 
                 return $this->output($_loc_ps->finishInsert());
