@@ -76,6 +76,11 @@ class LOC_Order
      */
     private $query_update_status = '';
 
+    /**
+     * @var string
+     */
+    private $query_update_history = '';
+
 
     /**
      * LOC_Order constructor.
@@ -353,6 +358,7 @@ class LOC_Order
             // Collect update status query.
             foreach ($this->collection as $item) {
                 $this->query_update_status .= '(' . $item['order_id'] . ', ' . $item['oc_status_to'] . ', NULL, NULL),';
+                $this->query_update_history = '(' . $item['order_id'] . ', ' . $item['oc_status_to'] . ', 1, "", ' . Carbon::now() . '),';
             }
         }
 
@@ -371,6 +377,7 @@ class LOC_Order
 
             $this->db->query("INSERT INTO " . DB_PREFIX . "order_temp (id, status, data_1, data_2) VALUES " . substr($this->query_update_status, 0, -1) . ";");
             $this->db->query("UPDATE " . DB_PREFIX . "order o INNER JOIN " . DB_PREFIX . "order_temp ot ON o.order_id = ot.id SET o.order_status_id = ot.status, o.order_status_changed = NOW();");
+            $this->db->query("INSERT INTO " . DB_PREFIX . "order_history (order_id, order_status_id, notify, comment, date_added) VALUES " . substr($this->query_update_history, 0, -1) . ";");
 
             $this->deleteOrderTempDB();
         }
