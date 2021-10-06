@@ -310,7 +310,7 @@ class LOC_Product
         return [
             'status' => 200,
             'total' => $count,
-            'updating' => floor($count - ($count - ($diff->num_rows / 2)))
+            'updating' => $res->num_rows,//floor($count - ($count - ($diff->num_rows / 2)))
         ];
     }
 
