@@ -216,13 +216,23 @@
                                                 <div id="luceed-all-imported" class="lead lighten"><span style="font-size: 1.3rem;">Zadnji update:</span> {{ last_rev }}</div>
                                             </div>
                                             <div class="col-sm-4">
-                                                <div class="text-info" style="font-size: 2.5rem; font-weight: lighter;">Učitavanje:
-                                                    <br>
-                                                    <span class="lead" id="luceed-importing">0</span>/<span class="lead" id="luceed-updating">0</span> <span style="font-size: 1.5rem;">od ukupno</span> <span class="lead" id="luceed-total">0</span>
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                        <div class="text-info" style="font-size: 2.5rem; font-weight: lighter;">Učitavanje: <span class="text-success" id="luceed-importing">0</span></div>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="lead" style="margin-bottom: 0px;"><span id="luceed-inserting">0</span> <span style="font-size: 1.5rem;">za import</span></div>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="lead" style="margin-bottom: 0px;"><span id="luceed-updating">0</span> <span style="font-size: 1.5rem;">za update</span></div>
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <div class="lead"><span id="luceed-total-for">0</span> <span style="font-size: 1.5rem;">od ukupno</span> <span id="luceed-total">0</span></div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-sm-8">
-                                                <div class="row">
+                                                <div class="row text-center">
                                                     <div class="col-sm-3">
                                                         <div class="text-info" style="font-size: 2.5rem; font-weight: lighter;">Update:
                                                             <br>
@@ -383,6 +393,8 @@
                         if (json.status == 200) {
                             document.getElementById('luceed-all-imported').style.display = 'block';
                             document.getElementById('luceed-updating').innerHTML = json.updating;
+                            document.getElementById('luceed-inserting').innerHTML = json.inserting;
+                            document.getElementById('luceed-total-for').innerHTML = json.updating + json.inserting;
                             document.getElementById('luceed-total').innerHTML = json.total;
                             document.getElementById('luceed-updated').innerHTML = 0;
                             document.getElementById('luceed-inserted').innerHTML = 0;

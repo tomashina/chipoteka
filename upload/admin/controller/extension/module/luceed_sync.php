@@ -332,7 +332,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 // first check known errors
                 $product_for_insert = $_loc_ps->makeForInsert();
                 if ($product_for_insert['sku'] == '6129256300') {
-                    return $this->output($_loc_ps->finishUpdate());
+                    return $this->output([
+                        'status'  => 200,
+                        'message' => 'inserted'
+                    ]);
                 }
 
                 $this->model_catalog_product->addProduct(

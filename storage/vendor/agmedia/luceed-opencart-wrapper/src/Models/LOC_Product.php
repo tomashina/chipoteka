@@ -307,12 +307,13 @@ class LOC_Product
             $db->query("INSERT INTO " . DB_PREFIX . "product_luceed_for_update (uid) VALUES " . substr($query_str, 0, -1) . ";");
         }
 
-        Log::store($res);
+        $products_count = Product::pluck('sku')->count();
 
         return [
             'status' => 200,
             'total' => $count,
-            'updating' => floor($count - ($count - ($diff->num_rows / 2)))
+            'inserting' => max($count - $products_count, 0),
+            'updating' => $res->num_rows,//floor($count - ($count - ($diff->num_rows / 2)))
         ];
     }
 

@@ -89,6 +89,7 @@ class LOC_ProductSingle
         $uid = LuceedProductForUpdate::all()->first();
 
         Log::store('2', 'product_for_update');
+        Log::store($uid, 'product_for_update');
 
         if ($uid) {
             Log::store('3', 'product_for_update');

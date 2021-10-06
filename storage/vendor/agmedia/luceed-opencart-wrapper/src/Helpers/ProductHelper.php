@@ -424,7 +424,7 @@ class ProductHelper
         $id = Attribute::insertGetId([
             'luceed_uid' => $attribute['atribut_uid'],
             'attribute_group_id' => agconf('import.default_attribute_group'),
-            'sort_order' => $attribute['redoslijed'] ?: 9
+            'sort_order' => isset($attribute['redoslijed']) ? $attribute['redoslijed'] : 9
         ]);
 
         if ($id) {
