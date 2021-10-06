@@ -394,7 +394,7 @@ class LOC_Order
         foreach ($orders as $order) {
             $status = $statuses->where('order_status_id', $order->order_status_id)->first();
 
-            if ($order->order_status_changed < Carbon::now()->subHour(168) && $status->luceed_status_id == '11') {
+            if ($order->order_status_changed < Carbon::now()->subHour(168) && $order->order_status_changed > Carbon::now()->subHour(72) && $status->luceed_status_id == '11') {
                 $this->collection[] = [
                     'order_id'    => $order->order_id,
                     'longer_then' => 168,
@@ -404,7 +404,7 @@ class LOC_Order
                 ];
             }
 
-            if ($order->order_status_changed < Carbon::now()->subHour(72) && in_array($status->luceed_status_id, ['02', '05'])) {
+            if ($order->order_status_changed < Carbon::now()->subHour(72) && $order->order_status_changed > Carbon::now()->subHour(48) && in_array($status->luceed_status_id, ['02', '05'])) {
                 $this->collection[] = [
                     'order_id'    => $order->order_id,
                     'longer_then' => 72,
@@ -414,7 +414,7 @@ class LOC_Order
                 ];
             }
 
-            if ($order->order_status_changed < Carbon::now()->subHour(48) && in_array($status->luceed_status_id, ['12'])) {
+            if ($order->order_status_changed < Carbon::now()->subHour(48) && $order->order_status_changed > Carbon::now()->subHour(24) && in_array($status->luceed_status_id, ['12'])) {
                 $this->collection[] = [
                     'order_id'    => $order->order_id,
                     'longer_then' => 48,
@@ -424,7 +424,7 @@ class LOC_Order
                 ];
             }
 
-            if ($order->order_status_changed < Carbon::now()->subHour(24) && in_array($status->luceed_status_id, ['02', '05', '12'])) {
+            if ($order->order_status_changed < Carbon::now()->subHour(24) && $order->order_status_changed > Carbon::now() && in_array($status->luceed_status_id, ['02', '05', '12'])) {
                 $this->collection[] = [
                     'order_id'    => $order->order_id,
                     'longer_then' => 24,
