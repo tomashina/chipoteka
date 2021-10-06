@@ -37,11 +37,11 @@
                                     <div class="product-gallery-preview gallery">
                                         {% if thumb or images %}
                                             {% if thumb %}
-                                                <div class="product-gallery-preview-item active" id="first"><a class="gallery-item rounded-3" href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}" data-zoom="{{ popup }}" alt="{{ heading_title }}"></a>
+                                                <div class="product-gallery-preview-item active" id="first"><a class="gallery-item rounded-3" href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}"  data-zoom="{{ popup }}" alt="{{ heading_title }}"></a>
                                                 </div>
                                             {% endif %}
                                             {% for image in images %}
-                                                <div class="product-gallery-preview-item" id="image{{ image.imageid }}"><a class="gallery-item rounded-3" href="{{ image.popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ image.thumb_lg }}"  alt="{{ heading_title }}"></a></div>
+                                                <div class="product-gallery-preview-item" id="image{{ image.imageid }}"><a class="gallery-item rounded-3" href="{{ image.popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ image.thumb_lg }}" loading="lazy" alt="{{ heading_title }}"></a></div>
                                             {% endfor %}
                                         {% endif %}
                                     </div>
@@ -49,11 +49,11 @@
                                         <div class="d-flex">
                                             <div class="product-gallery-thumblist mx-auto justify-content-center" style="display: flex;flex-wrap: wrap;">
                                                 {% if thumb  %}
-                                                    <a class="product-gallery-thumblist-item active" style="display: inline-block !important;" href="#first"><img src="{{ thumb_sm }}" alt="{{ heading_title }}"></a>
+                                                    <a class="product-gallery-thumblist-item active" style="display: inline-block !important;" href="#first"><img loading="lazy" src="{{ thumb_sm }}" alt="{{ heading_title }}"></a>
                                                 {% endif %}
                                                 {% for image in images %}
 
-                                                    <a class="product-gallery-thumblist-item" style="display: inline-block !important;" href="#image{{ image.imageid }}"><img src="{{ image.thumb }}" alt="{{ heading_title }}"></a>
+                                                    <a class="product-gallery-thumblist-item" style="display: inline-block !important;" href="#image{{ image.imageid }}"><img loading="lazy" src="{{ image.thumb }}" alt="{{ heading_title }}"></a>
                                                 {% endfor %}
                                             </div>
                                         </div>
@@ -77,7 +77,6 @@
                                             </div>
                                         {% endif %}
                                     </div>
-
                                     <div class="description-short  ">
                                         {% if short_description %}
                                             <h5 class="title">{{ text_short_description }}</h5>
