@@ -257,7 +257,7 @@ class ProductHelper
         $docs  = collect($product['dokumenti']);
 
         if ($docs->count()) {
-            for ($i = 0; $i < $docs->count(); $i++) {
+            /*for ($i = 0; $i < $docs->count(); $i++) {
                 if (isset($product['dokumenti'][$i]['filename']) && substr($product['dokumenti'][$i]['filename'], -3) == 'pdf') {
                     if (isset($product['dokumenti'][$i]['file_uid'])) {
                         $uid = $product['dokumenti'][$i]['file_uid'];
@@ -271,9 +271,10 @@ class ProductHelper
                         'sort_order' => $i
                     ];
                 }
-            }
+            }*/
 
-            /*foreach ($docs as $doc) {
+            $count = 0;
+            foreach ($docs as $doc) {
                 Log::store(substr($doc['filename'], -3), 'product_image');
                 if (isset($doc['file_uid']) && substr($doc['filename'], -3) != 'pdf') {
                     if (isset($doc['file_uid'])) {
@@ -284,11 +285,13 @@ class ProductHelper
 
                     $response[] = [
                         'uid'        => $uid,
-                        'image'      => static::getImagePath($product, $i),
-                        'sort_order' => $i
+                        'image'      => static::getImagePath($product, $count),
+                        'sort_order' => $count
                     ];
+
+                    $count++;
                 }
-            }*/
+            }
         }
 
         return $response;
