@@ -275,6 +275,7 @@ class ProductHelper
 
             $count = 0;
             foreach ($docs as $doc) {
+                $count++;
                 Log::store(substr($doc['filename'], -3), 'product_image');
                 if (isset($doc['file_uid']) && substr($doc['filename'], -3) != 'pdf') {
                     if (isset($doc['file_uid'])) {
@@ -288,8 +289,6 @@ class ProductHelper
                         'image'      => static::getImagePath($product, $count),
                         'sort_order' => $count
                     ];
-
-                    $count++;
                 }
             }
         }
