@@ -212,8 +212,8 @@ class ProductHelper
                 mkdir(DIR_IMAGE . $image_path, 0777, true);
             }
 
-            if (isset($product['dokumenti'][$key]->filename)) {
-                $newstring = substr($product['dokumenti'][$key]->filename, -3);
+            if (isset($product['dokumenti'][$key]['filename'])) {
+                $newstring = substr($product['dokumenti'][$key]['filename'], -3);
             } else {
                 $newstring = substr($product['dokumenti'][$key]['filename'], -3);
             }
@@ -436,8 +436,8 @@ class ProductHelper
      */
     private static function getImageString(Collection $product, int $key)
     {
-        if (isset($product['dokumenti'][$key]->file_uid)) {
-            $uid = $product['dokumenti'][$key]->file_uid;
+        if (isset($product['dokumenti'][$key]['file_uid'])) {
+            $uid = $product['dokumenti'][$key]['file_uid'];
         } else {
             $uid = $product['dokumenti'][$key]['file_uid'];
         }
