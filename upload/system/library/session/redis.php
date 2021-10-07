@@ -9,7 +9,7 @@ final class REDIS {
 	public $expire = '';
 	
 	public function __construct($registry) {
-		$this->expire = CACHE_EXPIRE;
+		$this->expire = '3600';
         $this->cache = new \Redis();
         $this->cache->pconnect(CACHE_HOSTNAME, CACHE_PORT);
 
