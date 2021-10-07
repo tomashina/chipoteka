@@ -1,7 +1,13 @@
 <?php
+
+define('CACHE_EXPIRE', 3600);
+
+
 // Site
 $_['site_url']          = HTTP_SERVER;
 $_['site_ssl']          = HTTPS_SERVER;
+
+
 
 // Database
 $_['db_autostart']      = true;
