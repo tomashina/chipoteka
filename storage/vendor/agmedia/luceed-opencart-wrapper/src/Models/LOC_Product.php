@@ -319,24 +319,6 @@ class LOC_Product
 
 
     /**
-     *
-     */
-    public function deleteExcessProducts()
-    {
-        $luceed = \Agmedia\Luceed\Models\LuceedProduct::pluck('sifra');
-        $existing = Product::pluck('sku');
-
-        $diff_l = $luceed->diff($existing);
-        $diff_e = $existing->diff($luceed);
-
-        Log::store('$luceed - ' . $luceed->count(), 'diff_L');
-        Log::store('$existing - ' . $existing->count(), 'diff_L');
-        Log::store('$diff_l->count() - ' . $diff_l->count(), 'diff_L');
-        Log::store('$diff_e->count() - ' . $diff_e->count(), 'diff_L');
-    }
-
-
-    /**
      * @return $this
      */
     public function cleanRevisionTable($uids = null)

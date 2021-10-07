@@ -1341,4 +1341,46 @@ class ControllerCatalogProduct extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+
+
+    public function luceed()
+    {
+        $this->load->model('catalog/product');
+
+        $product_l = \Agmedia\Luceed\Facade\LuceedProduct::getById($this->request->get['sku']);
+        $loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle($product_l);
+
+        $loc->setForUpdate(json_decode(json_encode($loc->product), true));
+
+        $this->model_catalog_product->editProduct(
+            $loc->product_to_update['product_id'],
+            $loc->makeForUpdate(
+                $this->resolveOldProductData($loc->product_to_update)
+            )
+        );
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode(['success' => 200]));
+	}
+
+
+    /**
+     * @param $product
+     *
+     * @return array
+     */
+    private function resolveOldProductData($product): array
+    {
+        $this->load->model('catalog/product');
+
+        $data = [];
+        $data['product_discount'] = $this->model_catalog_product->getProductDiscounts($product['product_id']);
+        $data['product_special'] = $this->model_catalog_product->getProductSpecials($product['product_id']);
+        $data['product_download'] = $this->model_catalog_product->getProductDownloads($product['product_id']);
+        $data['product_filter'] = $this->model_catalog_product->getProductFilters($product['product_id']);
+        $data['product_related'] = $this->model_catalog_product->getProductRelated($product['product_id']);
+        $data['product_reward'] = $this->model_catalog_product->getProductRewards($product['product_id']);
+
+        return $data;
+    }
 }

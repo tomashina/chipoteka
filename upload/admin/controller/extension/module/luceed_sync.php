@@ -271,7 +271,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
                     $product = $this->resolveOldProductData($_loc_ps->product_to_update);
 
                     $this->model_catalog_product->editProduct(
-                        $_loc_ps->product_to_update->product_id,
+                        $_loc_ps->product_to_update['product_id'],
                         $_loc_ps->makeForUpdate($product)
                     );
                 } else {
@@ -353,9 +353,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 return $this->output($_loc_ps->finishDelete());
             }
         }
-
-        $loc = new LOC_Product();
-        $loc->deleteExcessProducts();
 
         return $this->output($_loc_ps->finish());
     }
@@ -675,12 +672,12 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $this->load->model('catalog/product');
         
         $data = [];
-        $data['product_discount'] = $this->model_catalog_product->getProductDiscounts($product['id']);
-        $data['product_special'] = $this->model_catalog_product->getProductSpecials($product['id']);
-        $data['product_download'] = $this->model_catalog_product->getProductDownloads($product['id']);
-        $data['product_filter'] = $this->model_catalog_product->getProductFilters($product['id']);
-        $data['product_related'] = $this->model_catalog_product->getProductRelated($product['id']);
-        $data['product_reward'] = $this->model_catalog_product->getProductRewards($product['id']);
+        $data['product_discount'] = $this->model_catalog_product->getProductDiscounts($product['product_id']);
+        $data['product_special'] = $this->model_catalog_product->getProductSpecials($product['product_id']);
+        $data['product_download'] = $this->model_catalog_product->getProductDownloads($product['product_id']);
+        $data['product_filter'] = $this->model_catalog_product->getProductFilters($product['product_id']);
+        $data['product_related'] = $this->model_catalog_product->getProductRelated($product['product_id']);
+        $data['product_reward'] = $this->model_catalog_product->getProductRewards($product['product_id']);
 
         return $data;
     }

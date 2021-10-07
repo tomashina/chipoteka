@@ -61,7 +61,12 @@ class LOC_ProductSingle
     /**
      * LOC_ProductSingle constructor.
      */
-    public function __construct() {}
+    public function __construct($product = null)
+    {
+        if ($product) {
+            $this->product = $this->setProduct($product);
+        }
+    }
 
 
     /**
@@ -441,5 +446,21 @@ class LOC_ProductSingle
             'imported' => $imported,
             'hash'    => $this->hash
         ]);
+    }
+
+
+    /**
+     * Return the corrected response from luceed service.
+     * Without unnecessary tags.
+     *
+     * @param $products
+     *
+     * @return array
+     */
+    private function setProduct($product): array
+    {
+        $prods = json_decode($product);
+
+        return $prods->result[0]->artikli[0];
     }
 }
