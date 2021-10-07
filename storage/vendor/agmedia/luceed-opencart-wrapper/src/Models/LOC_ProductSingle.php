@@ -61,9 +61,7 @@ class LOC_ProductSingle
     /**
      * LOC_ProductSingle constructor.
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
 
     /**
@@ -71,10 +69,6 @@ class LOC_ProductSingle
      */
     public function resolveLuceedProductData(): Collection
     {
-        /*return collect(json_decode(
-            htmlspecialchars_decode($this->luceed_product->data),
-            true
-        ));*/
         return collect(unserialize(base64_decode($this->luceed_product->data)));
     }
 
@@ -84,27 +78,18 @@ class LOC_ProductSingle
      */
     public function hasForUpdate(): bool
     {
-        Log::store('hasForUpdate:: 1', 'product_for_update');
-
         $uid = LuceedProductForUpdate::all()->first();
 
-        Log::store('2', 'product_for_update');
-        Log::store($uid, 'product_for_update');
-
         if ($uid) {
-            Log::store('3', 'product_for_update');
             $this->product_to_update = Product::where('luceed_uid', $uid->uid)->first();
             $this->luceed_product = LuceedProduct::query()->where('uid', $uid->uid)->first();
 
             if ($this->product_to_update && $this->luceed_product) {
                 $this->product = $this->resolveLuceedProductData();
-                Log::store($this->product, 'product_for_update');
 
                 return true;
             }
         }
-
-        Log::store('03', 'product_for_update');
 
         return false;
     }
@@ -263,21 +248,13 @@ class LOC_ProductSingle
             return false;
         }
 
-        Log::store('makeForUpdate:: 31', 'product_for_update');
-
         $product                     = $this->make();
-
-        Log::store('32', 'product_for_update');
-        Log::store($old_product, 'product_for_update');
-
         $product['product_discount'] = $old_product['product_discount'];
         $product['product_special']  = $old_product['product_special'];
         $product['product_download'] = $old_product['product_download'];
         $product['product_filter']   = $old_product['product_filter'];
         $product['product_related']  = $old_product['product_related'];
         $product['product_reward']   = $old_product['product_reward'];
-
-        Log::store('33', 'product_for_update');
 
         return $product;
     }
@@ -305,18 +282,11 @@ class LOC_ProductSingle
      */
     public function make(): array
     {
-        Log::store('make:: 311', 'product_for_update');
-
         $manufacturer = ProductHelper::getManufacturer($this->product);
-
-        Log::store('312', 'product_for_update');
-
         $stock_status = $this->product['stanje_kol'] ? agconf('import.default_stock_full') : agconf('import.default_stock_empty');
         $status       = 1;
 
         $description = ProductHelper::getDescription($this->product);
-
-        Log::store('313', 'product_for_update');
 
         if ($this->product_to_update) {
             $old_description = ProductDescription::where('product_id', $this->product_to_update->product_id)
@@ -325,8 +295,6 @@ class LOC_ProductSingle
 
             $description = ProductHelper::getDescription($this->product, $old_description);
         }
-
-        Log::store('314', 'product_for_update');
 
         if ( ! $this->product['opis'] || empty($this->product['dokumenti'])) {
             $status = 0;
@@ -337,19 +305,14 @@ class LOC_ProductSingle
             $status = 0;
         }
 
-        Log::store('315', 'product_for_update');
-
-        Log::store('3.1.', 'product_for_update');
-
-        $image_path = ProductHelper::getImagePath($this->product);
-
-        Log::store('3.2.', 'product_for_update');
-
+        //$image_path = ProductHelper::getImagePath($this->product);
         $attributes = ProductHelper::getAttributes($this->product);
 
         Log::store('3.3.', 'product_for_update');
 
         $images = ProductHelper::getImages($this->product);
+        $image_path = isset($images[0]['image']) ? $images[0]['image'] : 'image/placeholder.png';
+        unset($images[0]);
 
         Log::store('3.4.', 'product_for_update');
 
@@ -396,9 +359,6 @@ class LOC_ProductSingle
             'product_category'    => ProductHelper::getCategories($this->product),
             'product_seo_url'     => [0 => ProductHelper::getSeoUrl($this->product)],
         ];
-
-        Log::store('3.5.', 'product_for_update');
-        Log::store($prod, 'product_for_update');
 
         return $prod;
     }

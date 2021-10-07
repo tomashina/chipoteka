@@ -204,8 +204,6 @@ class ProductHelper
      */
     public static function getImagePath(Collection $product, int $key = 0): string
     {
-        Log::store('getImagePath:: 3.10', 'product');
-
         if (isset($product['dokumenti'][$key])) {
             $image_path = agconf('import.image_path');
             // Check if the image path exist.
@@ -213,9 +211,6 @@ class ProductHelper
             if ( ! is_dir(DIR_IMAGE . $image_path)) {
                 mkdir(DIR_IMAGE . $image_path, 0777, true);
             }
-
-            Log::store('3.11', 'product');
-            Log::store($product['dokumenti'], 'product');
 
             if (isset($product['dokumenti'][$key]->filename)) {
                 $newstring = substr($product['dokumenti'][$key]->filename, -3);
@@ -225,28 +220,18 @@ class ProductHelper
 
             $name = Str::slug($product['naziv']) . '-' . strtoupper(Str::random(9)) . '.jpg';
 
-            Log::store('3.12', 'product');
-
             if (in_array($newstring, ['png', 'PNG'])) {
                 $name = Str::slug($product['naziv']) . '-' . strtoupper(Str::random(9)) . '.' . $newstring;
             }
 
-            Log::store('3.13', 'product');
-
             // Setup and create the image with GD library.
             $bin   = base64_decode(static::getImageString($product, $key));
-
-            Log::store('3.14', 'product');
 
             if ($bin) {
                 $errorlevel=error_reporting();
                 error_reporting(0);
-                Log::store('3.15', 'product');
                 $image = imagecreatefromstring($bin);
-                Log::store('3.16', 'product');
                 error_reporting($errorlevel);
-
-                Log::store('3.17', 'product');
 
                 if ($image !== false) {
                     imagejpeg($image, DIR_IMAGE . $image_path . $name, 90);
@@ -268,45 +253,26 @@ class ProductHelper
      */
     public static function getImages(Collection $product): array
     {
-        Log::store('getImages:: 3.30', 'product');
-
         $response = [];
-        $default  = collect($product['dokumenti']);
+        $docs  = collect($product['dokumenti']);
 
-        Log::store('3.31', 'product');
-
-        if ($default->count() > 1) {
-
-            Log::store('3.310', 'product');
-
-            $docs = $default->splice(1);
-
-            Log::store('3.311', 'product');
-
-            if ($docs->count()) {
-                for ($i = 0; $i < $docs->count(); $i++) {
-                    if (isset($product['dokumenti'][$i + 1]->file_uid)) {
-                        $uid = $product['dokumenti'][$i + 1]->file_uid;
+        if ($docs->count()) {
+            for ($i = 0; $i < $docs->count(); $i++) {
+                if (isset($product['dokumenti'][$i]->filename) && substr($product['dokumenti'][$i]->filename, -3) == 'pdf') {
+                    if (isset($product['dokumenti'][$i]->file_uid)) {
+                        $uid = $product['dokumenti'][$i]->file_uid;
                     } else {
-                        $uid = $product['dokumenti'][$i + 1]['file_uid'];
+                        $uid = $product['dokumenti'][$i]['file_uid'];
                     }
-
-                    Log::store('3.3110', 'product');
 
                     $response[] = [
                         'uid'        => $uid,
-                        'image'      => static::getImagePath($product, $i + 1),
+                        'image'      => static::getImagePath($product, $i),
                         'sort_order' => $i
                     ];
-
-                    Log::store('3.3111', 'product');
                 }
             }
-
-            Log::store('3.312', 'product');
         }
-
-        Log::store('3.32', 'product');
 
         return $response;
     }
@@ -451,8 +417,6 @@ class ProductHelper
      */
     private static function getImageString(Collection $product, int $key)
     {
-        Log::store('getImageString:: 3.131', 'product');
-
         if (isset($product['dokumenti'][$key]->file_uid)) {
             $uid = $product['dokumenti'][$key]->file_uid;
         } else {
@@ -464,12 +428,7 @@ class ProductHelper
         }
 
         $result = LuceedProduct::getImage($uid);
-
-        Log::store('3.132', 'product');
-
         $image = json_decode($result);
-
-        Log::store($image, 'product');
 
         return $image->result[0]->files[0]->content;
     }
