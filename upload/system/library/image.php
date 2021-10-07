@@ -176,7 +176,7 @@ class Image {
 			imagealphablending($this->image, false);
 			imagesavealpha($this->image, true);
 
-			$background = imagecolorallocatealpha($this->image, 255, 255, 255, 127);
+			$background = imagecolorallocatealpha($this->image, 255, 255, 255, 0);
 
 			imagecolortransparent($this->image, $background);
 
