@@ -26,6 +26,7 @@
 !/storage/modification/index.html
 
 /storage/upload/assets/skladista.json
+/storage/orders_logs/*
 
 # Download Files
 /upload/system/storage/download/*
