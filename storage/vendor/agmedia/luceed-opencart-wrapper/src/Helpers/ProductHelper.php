@@ -202,9 +202,9 @@ class ProductHelper
      *
      * @return string
      */
-    public static function getImagePath(Collection $product, int $key = 0): string
+    public static function getImagePath($product, string $naziv): string
     {
-        if (isset($product['dokumenti'][$key])) {
+        if ($product) {
             $image_path = agconf('import.image_path');
             // Check if the image path exist.
             // Create it if not.
@@ -212,20 +212,20 @@ class ProductHelper
                 mkdir(DIR_IMAGE . $image_path, 0777, true);
             }
 
-            if (isset($product['dokumenti'][$key]['filename'])) {
-                $newstring = substr($product['dokumenti'][$key]['filename'], -3);
+            if (isset($product['filename'])) {
+                $newstring = substr($product['filename'], -3);
             } else {
-                $newstring = substr($product['dokumenti'][$key]['filename'], -3);
+                $newstring = substr($product['filename'], -3);
             }
 
-            $name = Str::slug($product['naziv']) . '-' . strtoupper(Str::random(9)) . '.jpg';
+            $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.jpg';
 
             if (in_array($newstring, ['png', 'PNG'])) {
-                $name = Str::slug($product['naziv']) . '-' . strtoupper(Str::random(9)) . '.' . $newstring;
+                $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.' . $newstring;
             }
 
             // Setup and create the image with GD library.
-            $bin   = base64_decode(static::getImageString($product, $key));
+            $bin   = base64_decode(static::getImageString($product));
 
             if ($bin) {
                 $errorlevel=error_reporting();
@@ -285,7 +285,7 @@ class ProductHelper
 
                     $response[] = [
                         'uid'        => $uid,
-                        'image'      => static::getImagePath($product, $count),
+                        'image'      => static::getImagePath($doc, $product['naziv']),
                         'sort_order' => $count
                     ];
                 }
@@ -430,17 +430,16 @@ class ProductHelper
     /**
      * Get the image string from luceed service.
      *
-     * @param Collection $product
-     * @param int        $key
+     * @param $product
      *
-     * @return mixed
+     * @return false
      */
-    private static function getImageString(Collection $product, int $key)
+    private static function getImageString($product)
     {
-        if (isset($product['dokumenti'][$key]['file_uid'])) {
-            $uid = $product['dokumenti'][$key]['file_uid'];
+        if (isset($product['file_uid'])) {
+            $uid = $product['file_uid'];
         } else {
-            $uid = $product['dokumenti'][$key]['file_uid'];
+            $uid = $product['file_uid'];
         }
 
         if (in_array($uid, ['108736-1063'])) {
