@@ -36,11 +36,11 @@ $_['mail_verp']            = false;
 $_['mail_parameter']       = '';
 
 // Cache
-$_['cache_engine']         = 'redisp'; // apc, file, mem or memcached
+$_['cache_engine']         = 'file'; // apc, file, mem or memcached
 $_['cache_expire']         = 3600;
 
 // Session
-$_['session_engine']       = 'db';
+$_['session_engine']       = 'redis';
 $_['session_autostart']    = true;
 $_['session_name']         = 'OCSESSID';
 

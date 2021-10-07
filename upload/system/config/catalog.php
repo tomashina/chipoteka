@@ -17,7 +17,7 @@ $_['db_port']            = DB_PORT;
 
 // Session
 $_['session_autostart']  = false;
-$_['session_engine']     = 'db';
+$_['session_engine']     = 'redis';
 $_['session_name']       = 'OCSESSID';
 
 // Template
