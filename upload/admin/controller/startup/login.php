@@ -6,7 +6,11 @@ class ControllerStartupLogin extends Controller {
 		$ignore = array(
 			'common/login',
 			'common/forgotten',
-			'common/reset'
+			'common/reset',
+            'extension/module/luceed_sync/updatePrices',
+            'extension/module/luceed_sync/updateQuantities',
+            'extension/module/luceed_sync/updateOrderStatuses',
+            'extension/module/luceed_sync/checkOrderStatusDuration',
 		);
 
 		// User
@@ -23,7 +27,11 @@ class ControllerStartupLogin extends Controller {
 				'common/forgotten',
 				'common/reset',
 				'error/not_found',
-				'error/permission'
+				'error/permission',
+                'extension/module/luceed_sync/updatePrices',
+                'extension/module/luceed_sync/updateQuantities',
+                'extension/module/luceed_sync/updateOrderStatuses',
+                'extension/module/luceed_sync/checkOrderStatusDuration',
 			);
 
 			if (!in_array($route, $ignore) && (!isset($this->request->get['user_token']) || !isset($this->session->data['user_token']) || ($this->request->get['user_token'] != $this->session->data['user_token']))) {
