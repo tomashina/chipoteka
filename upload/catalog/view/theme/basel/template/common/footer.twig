@@ -7,82 +7,22 @@
 <!-- Dark footer -->
 <footer class="page-footer  pt-5">
     <img class="logo-footer" src="catalog/view/dist/img/logo-dark.svg" alt="Chipoteka logo" />
-    <div class="container page-footer__top">
-        <div class="row pb-2 ps-lg-4 pe-lg-3">
-            <div class="col-md-9">
-                <div class="widget widget-links widget-light pb-2 mb-4">
-
-                    {% if custom_links %}
-                        {% for column in basel_footer_columns %}
-                            {% if column.title=='Web shop' %}
-                                <h3 class="widget-title text-light">
-                                    {{ column.title }}
-                                </h3>
-                                {% if column.links is defined %}
-                                    <ul class="widget-list">
-                                        {% for link in column.links %}
-                                            <li class="widget-list-item">
-                                                <a class="widget-list-link" href="{{ link.target }}">
-                                                    {{ link.title }}
-                                                </a>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% endif %}
-
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="widget widget-links widget-light pb-2 mb-4">
-                    {% if custom_links %}
-                        {% for column in basel_footer_columns %}
-                            {% if column.title!='Web shop' %}
-                                <h3 class="widget-title text-light">
-                                    {{ column.title }}
-                                </h3>
-                                {% if column.links is defined %}
-                                    <ul class="widget-list">
-                                        {% for link in column.links %}
-                                            <li class="widget-list-item">
-                                                <a class="widget-list-link" href="{{ link.target }}">
-                                                    {{ link.title }}
-                                                </a>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                {% endif %}
-
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="accent-links">
-
         <a href="poslovnice">
             <span>
                 Poslovnice
-                                
                 <i class="fal fa-chevron-right"></i>
             </span>
         </a>
         <a href="veleprodaja">
             <span>
                 Veleprodaja
-                                
                 <i class="fal fa-chevron-right"></i>
             </span>
         </a>
         <a href="servis">
             <span>
                 Servis
-
                 <i class="fal fa-chevron-right"></i>
             </span>
         </a>
@@ -93,11 +33,9 @@
                 <div class="col-xl-3 col-sm-6 mb-4">
                     <div class="d-flex">
                         <img src="catalog/view/dist/img/icon-30g.svg" alt="Više od 30 godina sa vama" />
- 
                         <div class="ps-3 d-flex align-items-center">
                             <h6 class="mb-0">
                                 Više od 30 godina sa vama
-                                                            
                             </h6>
                         </div>
                     </div>
@@ -108,7 +46,6 @@
                         <div class="ps-3 d-flex align-items-center">
                             <h6 class="mb-0">
                                 100% sigurna trgovina
-                                                            
                             </h6>
                         </div>
                     </div>
@@ -132,8 +69,6 @@
                         <div class="ps-3 d-flex align-items-center">
                             <h6 class="mb-0">
                           <a style="color:#F5F5F5" href="https://www.facebook.com/Chipoteka">Pratite nas na facebooku</a>
-                                                                                            
-                                                            
                             </h6>
                         </div>
                     </div>
@@ -141,7 +76,6 @@
             </div>
             <hr class="hr-light mb-5">
                 <div class="row pb-2 ps-lg-4 pe-lg-3">
-
                     <div class="col mb-4 payment-cards">
                         <a class="mb-3" href="#">
                             <img src="catalog/view/dist/img/maestro.png" alt="Maestro Card" />
@@ -198,8 +132,6 @@
         </footer>
         <div class="handheld-toolbar" >
             <div class="d-table table-layout-fixed w-100">
-
-
                 {% if kategorija=='product/category' or kategorija=='product/manufacturer/info' %}
                 <a class="d-table-cell handheld-toolbar-item" href="javascript:void(0)" data-bs-toggle="collapse" onclick="window.scrollTo(0, 0)" data-bs-target="#shop-filters">
                     <span class="handheld-toolbar-icon">
@@ -210,9 +142,6 @@
                     </span>
                 </a>
                 {% endif %}
-
-
-
                 <a class="d-table-cell handheld-toolbar-item" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#sideNav">
                     <span class="handheld-toolbar-icon">
                     <i class="fal fa-bars"></i>
@@ -221,7 +150,6 @@
                         Menu
                     </span>
                 </a>
-
                 <a class="d-table-cell handheld-toolbar-item" href="{{ login }}" >
                     <span class="handheld-toolbar-icon">
                     <i class="fal fa-user"></i>
@@ -253,7 +181,6 @@
         <i class="btn-scroll-top-icon fas fa-arrow-up"></i>
     </a>
 <div class="modal fade" id="myModalw" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
-
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-body" id="notew">

@@ -9,6 +9,7 @@
             <div class=" mb-3 mb-lg-0">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb flex-lg-nowrap justify-content-center justify-content-lg-start">
+                        {% set breadcrumbs = breadcrumbs|slice(0,-1) %}
                         {% for breadcrumb in breadcrumbs %}
                             <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
                         {% endfor %}
