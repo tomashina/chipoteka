@@ -322,6 +322,7 @@ class LOC_Order
                          ->where('order_status_id', '!=', 0)
                          ->get();
 
+
         Log::store($statuses->toArray(), 'order_statuses');
         Log::store($orders->toArray(), 'order_statuses');
         Log::store($this->orders->toArray(), 'order_statuses');
