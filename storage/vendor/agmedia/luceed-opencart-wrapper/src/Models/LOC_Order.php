@@ -325,7 +325,7 @@ class LOC_Order
 
         Log::store($statuses->toArray(), 'order_statuses');
         Log::store($orders->toArray(), 'order_statuses');
-        Log::store($this->orders->toArray(), 'order_statuses');
+        //Log::store($this->orders->toArray(), 'order_statuses');
 
         // Check if status have changed.
         foreach ($orders as $order) {
