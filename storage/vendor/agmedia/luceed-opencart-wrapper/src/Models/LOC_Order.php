@@ -365,7 +365,7 @@ class LOC_Order
             // Collect update status query.
             foreach ($this->collection as $item) {
                 $this->query_update_status .= '(' . $item['order_id'] . ', ' . $item['oc_status_to'] . ', NULL, NULL),';
-                $this->query_update_history = '(' . $item['order_id'] . ', ' . $item['oc_status_to'] . ', 1, "", ' . Carbon::now() . '),';
+                $this->query_update_history = '(' . $item['order_id'] . ', ' . $item['oc_status_to'] . ', 1, "", "' . Carbon::now() . '"),';
             }
         }
 
