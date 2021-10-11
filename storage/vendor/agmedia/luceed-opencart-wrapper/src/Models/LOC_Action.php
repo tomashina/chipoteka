@@ -182,7 +182,7 @@ class LOC_Action
         foreach ($actions as $key => $action) {
             if ( ! empty($action->stavke) && $this->isForWeb($action)) {
                 if (( ! $action->start_date || (Carbon::createFromFormat('d.m.Y', $action->start_date) < Carbon::now())) &&
-                    ( ! $action->end_date || (Carbon::createFromFormat('d.m.Y', $action->end_date) > Carbon::now()->addDay()))
+                    ( ! $action->end_date || (Carbon::createFromFormat('d.m.Y', $action->end_date) > Carbon::now()))
                 ) {
                     array_push($this->actions_to_add, $action);
                 }
