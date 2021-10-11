@@ -11,6 +11,7 @@ class ControllerStartupLogin extends Controller {
             'extension/module/luceed_sync/updateQuantities',
             'extension/module/luceed_sync/updateOrderStatuses',
             'extension/module/luceed_sync/checkOrderStatusDuration',
+            'extension/module/luceed_sync/importActions',
 		);
 
 		// User
@@ -32,6 +33,7 @@ class ControllerStartupLogin extends Controller {
                 'extension/module/luceed_sync/updateQuantities',
                 'extension/module/luceed_sync/updateOrderStatuses',
                 'extension/module/luceed_sync/checkOrderStatusDuration',
+                'extension/module/luceed_sync/importActions',
 			);
 
 			if (!in_array($route, $ignore) && (!isset($this->request->get['user_token']) || !isset($this->session->data['user_token']) || ($this->request->get['user_token'] != $this->session->data['user_token']))) {
