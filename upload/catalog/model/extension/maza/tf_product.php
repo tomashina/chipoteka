@@ -612,10 +612,10 @@ class ModelExtensionMazaTfProduct extends Model {
                     $sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.product_id = pd.product_id)";
                 }
                 
-             /   if($this->config->get('config_tax') && (!empty($data['filter_min_price']) || !empty($data['filter_max_price']) || isset($data['filter_special']) || in_array('price', $additional_field))){
+            /*   if($this->config->get('config_tax') && (!empty($data['filter_min_price']) || !empty($data['filter_max_price']) || isset($data['filter_special']) || in_array('price', $additional_field))){
                     $sql .= " LEFT JOIN (SELECT tax_class_id, SUM(`rate`) total FROM " . DB_PREFIX . "tf_user_ftax_rates GROUP BY tax_class_id) ftax ON (ftax.tax_class_id = p.tax_class_id)";
                     $sql .= " LEFT JOIN (SELECT tax_class_id, SUM(`rate`) total FROM " . DB_PREFIX . "tf_user_ptax_rates GROUP BY tax_class_id) ptax ON (ptax.tax_class_id = p.tax_class_id)";
-                }
+                }*/
                 
                 if(!empty($data['filter_custom'])){
                     reset($data['filter_custom']);
