@@ -232,20 +232,47 @@ class ControllerExtensionBlogBlog extends Controller {
 					$price = false;
 				}
 
-				if ((float)$result['special']) {
-					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-				} else {
-					$special = false;
-				}
-				if ( (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
-					if ($this->config->get('salebadge_status') == '2') {
-						$sale_badge = '-' . number_format(((($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
-					} else {
-						$sale_badge = $this->language->get('basel_text_sale');
-					}		
-				} else {
-					$sale_badge = false;
-				}
+                if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+                    $price_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                } else {
+                    $price_2 = false;
+                }
+
+
+
+
+                if (!is_null($result['special']) && (float)$result['special'] >= 0) {
+                    $special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                    $tax_price = (float)$result['special'];
+                    if($result['special'] >= FREESHIPPING){
+                        $freeshipping = true;
+                    }
+                    else{
+                        $freeshipping = false;
+                    }
+                } else {
+                    $special = false;
+
+                    if($result['price'] >= FREESHIPPING){
+                        $freeshipping = true;
+                    }
+                    else{
+                        $freeshipping = false;
+                    }
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
 				if ($this->config->get('config_tax')) {
 					$tax = $this->currency->format((float)$result['special'] ? $result['special'] : $result['price'], $this->session->data['currency']);
 				} else {
@@ -272,9 +299,10 @@ class ControllerExtensionBlogBlog extends Controller {
 					'name'        => $result['name'],
 					'description' => utf8_substr(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get('config_product_description_length')) . '..',
 					'price'       => $price,
+                    'price_2'       => $price_2,
+                    'freeshipping' => $freeshipping,
 					'special'     => $special,
 					'tax'         => $tax,
-					'sale_badge' => $sale_badge,
 					'new_label'  => $is_new,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $rating,

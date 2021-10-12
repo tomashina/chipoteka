@@ -94,17 +94,21 @@
                                     {% if product.price %}
                                         <div class="product-price">
                                             {% if product.special %}
-                                                <span>{{ product.special }}</span>
-                                                <span><del>{{ product.price }}</del></span>
+
+                                                <span><del>{{ product.price_2 }}</del></span>
+
                                             {% else %}
-                                                <span> {{ product.price }}</span>
+                                                <span> {{ product.price_2 }}</span>
                                             {% endif %}
                                         </div><!-- .price -->
                                     {% endif %}
-                                    {% if product.rating %}
-                                        <div class="star-rating {{ product.rating }}"><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fal fa-star"></i>
+                                    {% if product.price and product.special  %}
+                                        <div class="product-badge-cpta product-badge-cpta__discount">
+                                            <span> AKCIJA</span>
+                                            <span> Uštedi <strong>{{ product.sale_badge }}</strong></span>
                                         </div>
                                     {% endif %}
+
                                     {% if product.price and product.special  %}
                                         <div class="product-badge-cpta product-badge-cpta__discount">
                                             <span> AKCIJA</span>
