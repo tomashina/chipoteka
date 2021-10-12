@@ -81,10 +81,12 @@
                             <div class="position-relative">
                                 <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
                                 <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img loading="lazy" src="{{ product.thumb }}" alt="{{ product.name }}"></div>
-                                <div class="product-badge-cpta product-badge-cpta__free-shipping">
-                                    <span> Besplatna dostava</span>
-                                    <i class="fas fa-shipping-fast"></i>
-                                </div>
+                                {% if product.freeshipping %}
+                                    <div class="product-badge-cpta product-badge-cpta__free-shipping">
+                                        <span> Besplatna dostava</span>
+                                        <i class="fas fa-shipping-fast"></i>
+                                    </div>
+                                {% endif %}
                             </div>
                             <a class="stretched-link" href="{{ product.href }}">
                                 <div class="card-body">
@@ -103,22 +105,26 @@
                                         <div class="star-rating {{ product.rating }}"><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fal fa-star"></i>
                                         </div>
                                     {% endif %}
-                                    <div class="product-badge-cpta product-badge-cpta__discount">
-                                        <span> Black Friday</span>
-                                        <span> Uštedi <strong>54%</strong></span>
-                                    </div>
+                                    {% if product.price and product.special  %}
+                                        <div class="product-badge-cpta product-badge-cpta__discount">
+                                            <span> AKCIJA</span>
+                                            <span> Uštedi <strong>{{ product.sale_badge }}</strong></span>
+                                        </div>
+                                    {% endif %}
                                     <div class="product-price--web">
-                                        <span>Web cijena:</span>
-                                        <span>{{ product.special }}</span>
+                <span>
+                     {% if  product.special  %} Akcija:    {% else %}  {% if product.price_2 != product.price %}   Web cijena: {% endif %} {% endif %}
+                </span>
+                                        <span>
+                          {% if  product.special  %}
+                              {{ product.special }}
+                          {% else %}
+                              {% if product.price_2 != product.price %}   {{ product.price }} {% endif %}
+                          {% endif %}
+                </span>
                                     </div>
                                 </div>
-                                <div class="product-delivery-time">
-                                    <i class="fas fa-shipping-timed"></i>
-                                    <div class="d-flex flex-column">
-                                        <span>Proizvod kod dobavljača</span>
-                                        <span>Šaljemo do 05.05.2021</span>
-                                    </div>
-                                </div>
+
                             </a>
                         </div>
                     </div>
