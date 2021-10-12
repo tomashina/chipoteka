@@ -271,11 +271,8 @@ class ControllerExtensionModuleMsmartSearch extends Controller {
 					INNER JOIN
 						`" . DB_PREFIX . "category_description` AS `cd`
 					ON
-						`c`.`category_id` = `cd`.`category_id` AND `cd`.`language_id` = " . (int) $this->config->get( 'config_language_id' ) . "
-					INNER JOIN 
-						`" . DB_PREFIX . "category_to_store` AS `c2s` 
-					ON 
-						`c`.`category_id` = `c2s`.`category_id` AND `c2s`.`store_id` = '" . (int)$this->config->get('config_store_id') . "'
+						`c`.`category_id` = `cd`.`category_id` 
+
 					WHERE
 						`c`.`status` = '1' AND
 						( " . Msmart_Search::make( $this )->prepareConditionsForCategories( $replacedPhrase ) . " )
