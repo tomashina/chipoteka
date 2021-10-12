@@ -12,7 +12,7 @@
     "3": {
         "subject": "Chipoteka.hr  - Vaša narudžba broj %s se obrađuje",
         "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">roba iz va&scaron;e narudžbe <strong>%s</strong> se obrađuje na na&scaron;em skladi&scaron;tu.</p>\n\n<p>Čim je predamo dostavnoj službi, poslat ćemo Vam informaciju na mail.</p>",
-        "data": "1"
+        "data": "0"
     },
     "4": {
         "subject": "Chipoteka.hr  - Vaš paket je spakiran i predan dostavnoj službi",
@@ -42,7 +42,7 @@
     "9": {
         "subject": "Chipoteka.hr  - Zaprimili smo uplatu za narudžbu %s",
         "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a, zahvaljujemo Vam na Va&scaron;oj uplati.</p>\n\n<p>Uplatu kao i narudžbu broj %s smo uredno zaprimili i na&scaron; tim u webshopu će je obraditi u najbržem mogućem roku.</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Hvala Vam.</p>",
-        "data": "1"
+        "data": "0"
     },
     "10": {
         "subject": "Chipoteka.hr - Molimo Vas za malo strpljenja za narudžbu broj %s",
