@@ -174,6 +174,7 @@ class LOC_Customer
                     ]);
 
                     $this->customer['uid'] = $l_customer->partner_uid;
+                    $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
                 }
 
                 // Kupac
@@ -191,17 +192,19 @@ class LOC_Customer
                 // Korisnik
                 if ($this->diffAddress() && $l_customer->adresa == $this->order_customer['shipping_address']) {
                     Log::store('Korisnik::: ::: if ($this->diffAddress() && $l_customer->adresa == $this->order_customer');
-                    $l_customer = collect($l_customer);
-                    $l_customer->put('grupacija_parent', $this->customer['uid']);
+                    $luc_customer = collect($l_customer);
+                    $luc_customer->put('grupacija_parent', $this->customer['uid']);
                     //$l_customer->grupacija = $this->customer['uid'];
 
-                    $this->alter_customer = $this->populateCustomerForLuceed($l_customer, true);
+                    $this->alter_customer = $this->populateCustomerForLuceed($luc_customer, true);
 
                     if ( ! $l_customer->grupacija) {
+                        Log::store('if ( ! $l_customer->grupacija) {');
+
                         // updejtaj alter partnera i grupaciju.
-                        json_decode(
-                            $this->service->updateCustomer(['partner' => [$this->alter_customer]])
-                        );
+                        $res = $this->service->updateCustomer(['partner' => [$this->alter_customer]]);
+
+                        Log::store($res);
                     }
                 }
 
