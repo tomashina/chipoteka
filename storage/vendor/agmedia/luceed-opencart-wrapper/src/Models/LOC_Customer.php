@@ -167,6 +167,15 @@ class LOC_Customer
 
         if ( ! empty($exist)) {
             foreach ($exist as $l_customer) {
+
+                if ( ! $this->checkUid($l_customer)) {
+                    Customer::where('customer_id', $this->customer['id'])->update([
+                        'luceed_uid' => $l_customer->partner_uid
+                    ]);
+
+                    $this->customer['uid'] = $l_customer->partner_uid;
+                }
+
                 // Kupac
                 if ( ! $this->diffAddress() && $this->order_customer['shipping_address'] == $l_customer->adresa && ! $l_customer->grupacija) {
                     Log::store('Kupac::: ::: if ( ! $this->diffAddress() && $this->order_customer[shipping_address] == $l_customer->adresa && ! $l_customer->grupacija) {');
@@ -369,6 +378,18 @@ class LOC_Customer
         } else {
             $this->customer['uid'] = $uid ?: null;
         }
+    }
+
+
+    private function checkUid($cutomer)
+    {
+        $uid = Customer::find($this->customer['id']);
+
+        if ($uid->luceed_uid && $uid->luceed_uid != '') {
+            return true;
+        }
+
+        return false;
     }
 
 
