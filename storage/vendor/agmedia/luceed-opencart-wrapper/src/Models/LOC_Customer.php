@@ -163,7 +163,7 @@ class LOC_Customer
         );
 
         Log::store('$exist_after');
-        Log::store($this->order_customer);
+        Log::store($exist);
 
         if ( ! empty($exist)) {
             foreach ($exist as $l_customer) {
