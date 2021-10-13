@@ -1852,8 +1852,12 @@ class ControllerSaleOrder extends Controller {
                 $order_id = 0;
             }
 
+            $nhs_no = $order_id . date("ym");
+            $poziv_nb = $nhs_no . $this->mod11INI($nhs_no);
+
             $this->load->model('sale/order');
             $oc_order = $this->model_sale_order->getOrder($order_id);
+            $oc_order['poziv_na_broj'] = $poziv_nb;
 
             $order    = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Order($oc_order);
             $customer = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Customer($order->getCustomerData());
@@ -1880,5 +1884,40 @@ class ControllerSaleOrder extends Controller {
 
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
+    }
+
+
+    /**
+     * @param string $nb
+     *
+     * @return float|int|mixed
+     */
+    public function mod11INI(string $nb)
+    {
+        $i = 0;
+        $v = 0;
+        $p = 2;
+        $c = ' ';
+
+        for ($i = strlen($nb); $i >= 1 ; $i--) {
+            $c = substr($nb, $i - 1, 1);
+
+            if ('0' <= $c && $c <= '9' && $v >= 0) {
+                $v = $v + $p * $c;
+                $p = $p + 1;
+            } else {
+                $v = -1;
+            }
+        }
+
+        if ($v >= 0) {
+            $v = 11 - ($v%11);
+
+            if ($v > 9) {
+                $v = 0;
+            }
+        }
+
+        return $v;
     }
 }
