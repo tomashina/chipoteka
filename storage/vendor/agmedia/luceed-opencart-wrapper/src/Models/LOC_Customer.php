@@ -301,11 +301,11 @@ class LOC_Customer
      */
     private function populateCustomerForLuceed(Collection $collection, $luceed_data = false): array
     {
-        if ( ! isset($collection->uid)) {
+        if ( ! isset($collection['uid'])) {
             $collection->put('uid', null);
         }
 
-        if ( ! isset($collection->grupacija)) {
+        if ( ! isset($collection['grupacija'])) {
             $collection->put('grupacija', null);
         }
 
@@ -315,18 +315,18 @@ class LOC_Customer
         if ($luceed_data) {
             return [
                 'id'                  => 0,
-                'uid'                 => $collection->partner_uid,
-                'parent__partner_uid' => $collection->grupacija_parent,
-                'naziv'               => $collection->ime . ' ' . $collection->prezime,
-                'ime'                 => $collection->ime,
-                'prezime'             => $collection->prezime,
+                'uid'                 => $collection['partner_uid'],
+                'parent__partner_uid' => $collection['grupacija_parent'],
+                'naziv'               => $collection['ime'] . ' ' . $collection['prezime'],
+                'ime'                 => $collection['ime'],
+                'prezime'             => $collection['prezime'],
                 'enabled'             => 'D',
                 'tip_komitenta'       => 'F',
-                'adresa'              => $collection->adresa,
-                'telefon'             => $collection->telefon,
+                'adresa'              => $collection['adresa'],
+                'telefon'             => $collection['telefon'],
                 'e_mail'              => $this->customer['e_mail'],
-                'postanski_broj'      => $collection->postanski_broj,
-                'mjesto_uid'          => $collection->mjesto_uid,
+                'postanski_broj'      => $collection['postanski_broj'],
+                'mjesto_uid'          => $collection['mjesto_uid'],
             ];
         }
 
