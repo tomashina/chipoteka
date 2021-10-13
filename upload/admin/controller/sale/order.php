@@ -1843,6 +1843,8 @@ class ControllerSaleOrder extends Controller {
 
         $json = array();
 
+        \Agmedia\Helpers\Log::store('Enter:::', 'testing_process');
+
         if (!$this->user->hasPermission('modify', 'sale/order')) {
             $json['error'] = $this->language->get('error_permission');
         } elseif (isset($this->request->get['order_id'])) {
@@ -1852,14 +1854,18 @@ class ControllerSaleOrder extends Controller {
                 $order_id = 0;
             }
 
+            \Agmedia\Helpers\Log::store('Enter::: 1', 'testing_process');
+
             $nhs_no = $order_id . date("ym");
             $poziv_nb = $nhs_no . $this->mod11INI($nhs_no);
+
+            \Agmedia\Helpers\Log::store('Enter::: 2', 'testing_process');
 
             $this->load->model('sale/order');
             $oc_order = $this->model_sale_order->getOrder($order_id);
             $oc_order['poziv_na_broj'] = $poziv_nb;
 
-            \Agmedia\Helpers\Log::store('Enter:::', 'testing_process');
+            \Agmedia\Helpers\Log::store('Enter::: 3', 'testing_process');
 
             $order    = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Order($oc_order);
 
