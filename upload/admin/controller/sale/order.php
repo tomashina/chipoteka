@@ -1859,8 +1859,15 @@ class ControllerSaleOrder extends Controller {
             $oc_order = $this->model_sale_order->getOrder($order_id);
             $oc_order['poziv_na_broj'] = $poziv_nb;
 
+            \Agmedia\Helpers\Log::store('Enter:::', 'testing_process');
+
             $order    = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Order($oc_order);
+
+            \Agmedia\Helpers\Log::store($order, 'testing_process');
+
             $customer = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Customer($order->getCustomerData());
+
+            \Agmedia\Helpers\Log::store($customer, 'testing_process');
 
             if ( ! $customer->exist()) {
                 \Agmedia\Helpers\Log::store('customer does NOT exist');
