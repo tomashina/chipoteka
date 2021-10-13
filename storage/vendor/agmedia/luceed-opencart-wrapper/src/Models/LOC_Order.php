@@ -322,11 +322,6 @@ class LOC_Order
                          ->where('order_status_id', '!=', 0)
                          ->get();
 
-
-        Log::store($statuses->toArray(), 'order_statuses');
-        Log::store($orders->toArray(), 'order_statuses');
-        //Log::store($this->orders->toArray(), 'order_statuses');
-
         // Check if status have changed.
         foreach ($orders as $order) {
             $l_order = $this->orders->where('nalog_prodaje_uid', $order->luceed_uid)->first();
@@ -354,6 +349,8 @@ class LOC_Order
             // Get the apropriate mail.
             for ($i = 0; $i < count($this->collection); $i++) {
                 foreach (agconf('mail.' . $this->collection[$i]['payment']) as $key => $item) {
+                    Log::store($this->collection[$i], 'order_statuses');
+                    Log::store($item, 'order_statuses');
                     if ($key) {
                         if ($this->collection[$i]['status_from'] == $item['from'] && $this->collection[$i]['status_to'] == $item['to']) {
                             $this->collection[$i]['mail'] = $key;
