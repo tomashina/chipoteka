@@ -191,9 +191,11 @@ class LOC_Customer
                 // Korisnik
                 if ($this->diffAddress() && $l_customer->adresa == $this->order_customer['shipping_address']) {
                     Log::store('Korisnik::: ::: if ($this->diffAddress() && $l_customer->adresa == $this->order_customer');
-                    $l_customer->grupacija = $this->customer['uid'];
+                    $l_customer = collect($l_customer);
+                    $l_customer->put('grupacija_parent', $this->customer['uid']);
+                    //$l_customer->grupacija = $this->customer['uid'];
 
-                    $this->alter_customer = $this->populateCustomerForLuceed(collect($l_customer), true);
+                    $this->alter_customer = $this->populateCustomerForLuceed($l_customer, true);
 
                     if ( ! $l_customer->grupacija) {
                         // updejtaj alter partnera i grupaciju.
@@ -314,7 +316,7 @@ class LOC_Customer
             return [
                 'id'                  => 0,
                 'uid'                 => $collection->partner_uid,
-                'parent__partner_uid' => $collection->grupacija,
+                'parent__partner_uid' => $collection->grupacija_parent,
                 'naziv'               => $collection->ime . ' ' . $collection->prezime,
                 'ime'                 => $collection->ime,
                 'prezime'             => $collection->prezime,
