@@ -343,9 +343,10 @@ class LOC_Product
             $status = 0;
         }
 
-        $image_path = ProductHelper::getImagePath($product);
         $attributes = ProductHelper::getAttributes($product);
         $images = ProductHelper::getImages($product);
+        $image_path = isset($images[0]['image']) ? $images[0]['image'] : 'image/placeholder.png';
+        unset($images[0]);
 
         $prod = [
             'model'               => $product['artikl'],
