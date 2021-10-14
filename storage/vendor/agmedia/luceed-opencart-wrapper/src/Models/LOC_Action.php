@@ -126,15 +126,11 @@ class LOC_Action
             }
         }
 
-        $time = time();
-        Log::store($manufacturers, 'manu' . $time);
-
         foreach ($categories as $sifra => $discount) {
             $category = Category::where('luceed_uid', $sifra)->with('products')->first();
 
             if ($category) {
                 $ids = ProductCategory::where('category_id', $category->category_id)->pluck('product_id');
-
                 $products = Product::whereIn('product_id', $ids)->get();
 
                 foreach ($products as $product) {
@@ -153,12 +149,9 @@ class LOC_Action
             }
         }
 
-        Log::store($this->prices_to_update, 'manu' . $time);
-
         foreach ($action->stavke as $item) {
             if ($item->mpc) {
                 $this->prices_to_update->put($item->artikl, $item->mpc);
-                //$this->prices_to_update->push($item);
             }
         }
 
@@ -172,12 +165,9 @@ class LOC_Action
      */
     public function collectActive()
     {
-        //$articles = collect();
         $actions = $this->getActions()
                         ->where('status', '=', '2')
                         ->where('naziv', '!=', 'web_cijene');
-
-        Log::store($actions, 'actions_test');
 
         foreach ($actions as $key => $action) {
             if ( ! empty($action->stavke) && $this->isForWeb($action)) {
@@ -226,8 +216,6 @@ class LOC_Action
         $cat_action_id = agconf('import.default_action_category');
 
         $this->deleteActionsCategoriesDB();
-
-        Log::store($this->getActionsToAdd(), 'actions_test');
 
         foreach ($this->getActionsToAdd() as $key => $action) {
             $data = [

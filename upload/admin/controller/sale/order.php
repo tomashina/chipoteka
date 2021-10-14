@@ -1838,12 +1838,14 @@ class ControllerSaleOrder extends Controller {
         $this->response->setOutput($this->load->view('sale/order_shipping', $data));
     }
 
+
+    /**
+     *
+     */
     public function sendLuceed() {
         $this->load->language('sale/order');
 
         $json = array();
-
-        \Agmedia\Helpers\Log::store('Enter:::', 'testing_process');
 
         if (!$this->user->hasPermission('modify', 'sale/order')) {
             $json['error'] = $this->language->get('error_permission');
@@ -1854,38 +1856,21 @@ class ControllerSaleOrder extends Controller {
                 $order_id = 0;
             }
 
-            \Agmedia\Helpers\Log::store('Enter::: 1', 'testing_process');
-
             $nhs_no = $order_id . date("ym");
             $poziv_nb = $nhs_no . $this->mod11INI($nhs_no);
-
-            \Agmedia\Helpers\Log::store('Enter::: 2', 'testing_process');
 
             $this->load->model('sale/order');
             $oc_order = $this->model_sale_order->getOrder($order_id);
             $oc_order['poziv_na_broj'] = $poziv_nb;
 
-            \Agmedia\Helpers\Log::store('Enter::: 3', 'testing_process');
-
             $order    = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Order($oc_order);
-
-            \Agmedia\Helpers\Log::store($order, 'testing_process');
-
             $customer = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Customer($order->getCustomerData());
 
-            \Agmedia\Helpers\Log::store($customer, 'testing_process');
-
             if ( ! $customer->exist()) {
-                \Agmedia\Helpers\Log::store('customer does NOT exist');
                 $customer->store();
             }
 
-            \Agmedia\Helpers\Log::store('$customer');
-            \Agmedia\Helpers\Log::store($customer);
-
             $invoice_no = $order->setCustomerUid($customer->getUid())->store();
-
-            \Agmedia\Helpers\Log::store($invoice_no);
 
             if ( ! $invoice_no) {
                 $json['error'] = $this->language->get('error_action');

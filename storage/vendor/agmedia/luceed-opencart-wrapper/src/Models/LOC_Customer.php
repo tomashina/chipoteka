@@ -162,9 +162,6 @@ class LOC_Customer
             $this->service->getCustomerByEmail($this->customer['e_mail'])
         );
 
-        Log::store('$exist_after');
-        Log::store($exist);
-
         if ( ! empty($exist)) {
             foreach ($exist as $l_customer) {
 
@@ -194,17 +191,12 @@ class LOC_Customer
                     Log::store('Korisnik::: ::: if ($this->diffAddress() && $l_customer->adresa == $this->order_customer');
                     $luc_customer = collect($l_customer);
                     $luc_customer->put('grupacija_parent', $this->customer['uid']);
-                    //$l_customer->grupacija = $this->customer['uid'];
 
                     $this->alter_customer = $this->populateCustomerForLuceed($luc_customer, true);
 
                     if ( ! $l_customer->grupacija) {
-                        Log::store('if ( ! $l_customer->grupacija) {');
-
                         // updejtaj alter partnera i grupaciju.
-                        $res = $this->service->updateCustomer(['partner' => [$this->alter_customer]]);
-
-                        Log::store($res);
+                        $this->service->updateCustomer(['partner' => [$this->alter_customer]]);
                     }
                 }
 
@@ -214,10 +206,6 @@ class LOC_Customer
                     $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
                 }
             }
-
-            Log::store('First ::::: customer i alter...');
-            Log::store($this->customer);
-            Log::store($this->alter_customer);
 
             // Ima kupca, ali nema korisnika
             if ( ! empty($this->customer['uid']) && ! $this->alter_customer) {
@@ -247,10 +235,6 @@ class LOC_Customer
                     $this->alter_customer['uid'] = $response->result[0];
                 }
             }
-
-            Log::store('Second ::::: customer i alter...');
-            Log::store($this->customer);
-            Log::store($this->alter_customer);
 
             return true;
         }
@@ -291,7 +275,6 @@ class LOC_Customer
     private function create(array $customer = null): array
     {
         Log::store('create');
-
         return $this->populateCustomerForLuceed(collect($customer));
     }
 
@@ -308,12 +291,13 @@ class LOC_Customer
             $collection->put('uid', null);
         }
 
-        if ( ! isset($collection['grupacija'])) {
-            $collection->put('grupacija', null);
+        if ( ! isset($collection['grupacija_parent'])) {
+            $collection->put('grupacija_parent', null);
         }
 
-        Log::store('$collection');
+        Log::store('populateCustomerForLuceed::$collection');
         Log::store($collection);
+        Log::store($luceed_data);
 
         if ($luceed_data) {
             return [
@@ -333,17 +317,10 @@ class LOC_Customer
             ];
         }
 
-        Log::store('$this->setUid');
-        Log::store($this->setUid($collection['customer_id'], true));
-
-        $mjesto_uid = $this->setCityUid($collection['zip'], $collection['city']);
-        Log::store('$this->setCityUid()->mjesto_uid');
-        Log::store($mjesto_uid);
-
         $data = [
             'id'                  => $collection['customer_id'],
             'uid'                 => $this->setUid($collection['customer_id'], true),
-            'parent__partner_uid' => $collection['grupacija'],
+            'parent__partner_uid' => $collection['grupacija_parent'],
             'naziv'               => $collection['fname'] . ' ' . $collection['lname'],
             'ime'                 => $collection['fname'],
             'prezime'             => $collection['lname'],
@@ -355,8 +332,6 @@ class LOC_Customer
             'postanski_broj'      => $collection['zip'],
             'mjesto_uid'          => $this->setCityUid($collection['zip'], $collection['city']),
         ];
-
-        Log::store($data);
 
         return $data;
     }

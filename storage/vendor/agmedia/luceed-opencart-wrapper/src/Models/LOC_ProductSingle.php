@@ -310,17 +310,10 @@ class LOC_ProductSingle
             $status = 0;
         }
 
-        //$image_path = ProductHelper::getImagePath($this->product);
         $attributes = ProductHelper::getAttributes($this->product);
-
-        Log::store('3.3.', 'product_for_update');
-
         $images = ProductHelper::getImages($this->product);
-        Log::store($images, 'product_image');
         $image_path = isset($images[0]['image']) ? $images[0]['image'] : 'image/placeholder.png';
         unset($images[0]);
-
-        Log::store('3.4.', 'product_for_update');
 
         $prod = [
             'model'               => $this->product['artikl'],

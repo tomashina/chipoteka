@@ -9,6 +9,7 @@ use Agmedia\Luceed\Facade\LuceedProduct;
 use Agmedia\Luceed\Facade\LuceedWarehouse;
 use Agmedia\Luceed\Models\LuceedProductForRevision;
 use Agmedia\Luceed\Models\LuceedProductForRevisionData;
+use Agmedia\Luceed\Models\LuceedProductForUpdate;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Action;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Category;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Customer;
@@ -63,8 +64,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $this->document->setTitle($this->language->get('heading_title'));
 
         $data['revision_products'] = LuceedProductForRevision::with('product')->get();
-        $data['rev_ids'] = $data['revision_products']->pluck('sku')->take(200)->flatten();
-        $last_rev = LuceedProductForRevisionData::orderBy('last_revision_date', 'desc')->first();
+        $data['rev_ids']           = $data['revision_products']->pluck('sku')->take(200)->flatten();
+        $last_rev                  = LuceedProductForRevisionData::orderBy('last_revision_date', 'desc')->first();
 
         $data['last_rev'] = 'Nepoznato';
         if ($last_rev) {
@@ -220,7 +221,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 $this->model_catalog_product->addProduct(
                     $_loc->make($product)
                 );
-                Log::store('5', 'product');
+
                 $count++;
             }
         }
@@ -256,8 +257,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
         // Ako smo mu dali uid preko revision liste.
         if (isset($this->request->get['products'])) {
-            $_loc_p = new LOC_Product(LuceedProduct::all());
-            $list = substr($this->request->get['products'], 1, -1);
+            $_loc_p     = new LOC_Product(LuceedProduct::all());
+            $list       = substr($this->request->get['products'], 1, -1);
             $for_update = $_loc_p->sortForUpdate($list)
                                  ->getProductsToAdd();
 
@@ -267,7 +268,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 $_loc_ps->setForUpdate(json_decode(json_encode($product), true));
 
                 if ($_loc_ps->product) {
-                    Log::store('$_loc_ps->product - UPDATE', 'opis_root');
                     $product = $this->resolveOldProductData($_loc_ps->product_to_update);
 
                     $this->model_catalog_product->editProduct(
@@ -275,7 +275,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
                         $_loc_ps->makeForUpdate($product)
                     );
                 } else {
-                    Log::store('else $_loc_ps->product - INSERT', 'opis_root');
                     if ($_loc_ps->product_to_insert) {
                         $this->model_catalog_product->addProduct(
                             $_loc_ps->makeForInsert()
@@ -289,25 +288,13 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
         // Ako ima proizvoda za UPDATE
         if ($_loc_ps->hasForUpdate()) {
-
-            Log::store('$_loc_ps->hasForUpdate():: 1', 'product_update');
-
             if ( ! isset($_loc_ps->product['naziv'])) {
                 return $this->output($_loc_ps->finishUpdateError());
             }
 
-            Log::store('2', 'product_update');
-
             $product = $this->resolveOldProductData($_loc_ps->product_to_update);
-
-            Log::store('3', 'product_update');
-            Log::store($_loc_ps->product_to_update, 'product_update');
-
             // first check known errors
             $product_for_update = $_loc_ps->makeForUpdate($product);
-
-            Log::store('3..', 'product_update');
-            Log::store($product_for_update, 'product_update');
 
             if ($product_for_update['sku'] == '6129256300') {
                 return $this->output($_loc_ps->finishUpdate());
@@ -318,11 +305,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 $product_for_update
             );
 
-            Log::store('3.1', 'product_update');
-
-            \Agmedia\Luceed\Models\LuceedProductForUpdate::where('uid', $_loc_ps->product_to_update['luceed_uid'])->delete();
-
-            Log::store('4', 'product_update');
+            LuceedProductForUpdate::where('uid', $_loc_ps->product_to_update['luceed_uid'])->delete();
 
             return $this->output($_loc_ps->finishUpdate());
 
@@ -331,12 +314,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
             if ($_loc_ps->hasForInsert()) {
                 // first check known errors
                 $product_for_insert = $_loc_ps->makeForInsert();
-                /*if ($product_for_insert['sku'] == '6129256300') {
-                    return $this->output([
-                        'status'  => 200,
-                        'message' => 'inserted'
-                    ]);
-                }*/
 
                 $this->model_catalog_product->addProduct(
                     $product_for_insert
@@ -368,7 +345,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         if (isset($this->request->post['data'])) {
             $inserted = LuceedProductForRevisionData::insert([
                 'last_revision_date' => Carbon::now(),
-                'data' => serialize($this->request->post['data'])
+                'data'               => serialize($this->request->post['data'])
             ]);
 
             $this->sendRevisionMail();
@@ -573,34 +550,27 @@ class ControllerExtensionModuleLuceedSync extends Controller
     private function sendMail(array $order = null)
     {
         if ($order && isset($order['order_id']) && isset($order['mail'])) {
-            $email = $this->loadEmails($order['mail']);
-            $data = Order::where('order_id', $order['order_id'])->with('products', 'totals')->first()->toArray();
+            $email             = $this->loadEmails($order['mail']);
+            $data              = Order::where('order_id', $order['order_id'])->with('products', 'totals')->first()->toArray();
             $data['mail_text'] = sprintf($email['text'], $order['order_id']);
 
-          for ($i = 0; $i < count($data['products']); $i++) {
-                $data['products'][$i]['image'] = HTTPS_CATALOG.'image/'.Product::where('product_id', $data['products'][$i]['product_id'])->pluck('image')->first();
+            for ($i = 0; $i < count($data['products']); $i++) {
+                $data['products'][$i]['image'] = HTTPS_CATALOG . 'image/' . Product::where('product_id', $data['products'][$i]['product_id'])->pluck('image')->first();
             }
-            $data['mail_logo'] = HTTPS_CATALOG.'image/chipoteka-hd.png';
-            $data['mail_title'] = sprintf($email['subject'], $order['order_id']);
 
-            $data['mail_data'] = $email['data'];
+            $data['mail_logo']          = HTTPS_CATALOG . 'image/chipoteka-hd.png';
+            $data['mail_title']         = sprintf($email['subject'], $order['order_id']);
+            $data['mail_data']          = $email['data'];
+            $nhs_no                     = $order['order_id'] . date("ym");
+            $data['mail_poziv_na_broj'] = $nhs_no . $this->mod11INI($nhs_no);
 
-            $nhs_no = $order['order_id'].date("ym");
-
-            $data['mail_poziv_na_broj'] = $nhs_no.$this->mod11INI($nhs_no);
-
-
-
-
-           // $html = $this->load->view('mail/mail', $data);
-
-            $mail = new Mail($this->config->get('config_mail_engine'));
-            $mail->parameter = $this->config->get('config_mail_parameter');
+            $mail                = new Mail($this->config->get('config_mail_engine'));
+            $mail->parameter     = $this->config->get('config_mail_parameter');
             $mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
             $mail->smtp_username = $this->config->get('config_mail_smtp_username');
             $mail->smtp_password = html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8');
-            $mail->smtp_port = $this->config->get('config_mail_smtp_port');
-            $mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
+            $mail->smtp_port     = $this->config->get('config_mail_smtp_port');
+            $mail->smtp_timeout  = $this->config->get('config_mail_smtp_timeout');
             $mail->setTo($order['email']);
             $mail->setFrom($this->config->get('config_email'));
             $mail->setSender(html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'));
@@ -618,7 +588,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     private function loadEmails($key = null)
     {
-        $file = json_decode(file_get_contents(DIR_STORAGE . 'upload/assets/emails.json'),TRUE);
+        $file = json_decode(file_get_contents(DIR_STORAGE . 'upload/assets/emails.json'), true);
 
         if ($file) {
             if ($key) {
@@ -646,13 +616,13 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $data['products'] = $products;
         \Agmedia\Helpers\Log::store($data);
 
-        $mail = new Mail($this->config->get('config_mail_engine'));
-        $mail->parameter = $this->config->get('config_mail_parameter');
+        $mail                = new Mail($this->config->get('config_mail_engine'));
+        $mail->parameter     = $this->config->get('config_mail_parameter');
         $mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
         $mail->smtp_username = $this->config->get('config_mail_smtp_username');
         $mail->smtp_password = html_entity_decode($this->config->get('config_mail_smtp_password'), ENT_QUOTES, 'UTF-8');
-        $mail->smtp_port = $this->config->get('config_mail_smtp_port');
-        $mail->smtp_timeout = $this->config->get('config_mail_smtp_timeout');
+        $mail->smtp_port     = $this->config->get('config_mail_smtp_port');
+        $mail->smtp_timeout  = $this->config->get('config_mail_smtp_timeout');
         $mail->setTo('pmovi@chipoteka.hr');
         $mail->setFrom($this->config->get('config_email'));
         $mail->setSender(html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'));
@@ -670,14 +640,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
     private function resolveOldProductData($product): array
     {
         $this->load->model('catalog/product');
-        
-        $data = [];
+
+        $data                     = [];
         $data['product_discount'] = $this->model_catalog_product->getProductDiscounts($product['product_id']);
-        $data['product_special'] = $this->model_catalog_product->getProductSpecials($product['product_id']);
+        $data['product_special']  = $this->model_catalog_product->getProductSpecials($product['product_id']);
         $data['product_download'] = $this->model_catalog_product->getProductDownloads($product['product_id']);
-        $data['product_filter'] = $this->model_catalog_product->getProductFilters($product['product_id']);
-        $data['product_related'] = $this->model_catalog_product->getProductRelated($product['product_id']);
-        $data['product_reward'] = $this->model_catalog_product->getProductRewards($product['product_id']);
+        $data['product_filter']   = $this->model_catalog_product->getProductFilters($product['product_id']);
+        $data['product_related']  = $this->model_catalog_product->getProductRelated($product['product_id']);
+        $data['product_reward']   = $this->model_catalog_product->getProductRewards($product['product_id']);
 
         return $data;
     }
@@ -729,7 +699,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $p = 2;
         $c = ' ';
 
-        for ($i = strlen($nb); $i >= 1 ; $i--) {
+        for ($i = strlen($nb); $i >= 1; $i--) {
             $c = substr($nb, $i - 1, 1);
 
             if ('0' <= $c && $c <= '9' && $v >= 0) {
@@ -741,7 +711,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         if ($v >= 0) {
-            $v = 11 - ($v%11);
+            $v = 11 - ($v % 11);
 
             if ($v > 9) {
                 $v = 0;

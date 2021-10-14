@@ -113,7 +113,6 @@ class LOC_Product
     {
         // List of existing product identifiers.
         $this->existing = Product::pluck('sku');
-
         // List of product identifiers without
         // existing products.
         $list_diff = $this->getProducts()
@@ -125,12 +124,8 @@ class LOC_Product
                           ->diff($this->existing)
                           ->flatten();
 
-        Log::store($list_diff, 'product');
-
         // Full list of products to add to DB.
         $this->products_to_add = $this->getProducts()->whereIn('artikl', $list_diff);
-
-        Log::store($this->products_to_add, 'product_to_add');
 
         return $this;
     }
@@ -285,16 +280,6 @@ class LOC_Product
         $db->query("TRUNCATE TABLE " . DB_PREFIX . "product_luceed");
         $db->query("INSERT INTO " . DB_PREFIX . "product_luceed (uid, sifra, `data`, `hash`) VALUES " . substr($query_str, 0, -1) . ";");
 
-        $diff = $db->query("SELECT uid, `hash`
-                                FROM (
-                                SELECT uid, `hash` FROM oc_product_luceed
-                                UNION ALL
-                                SELECT luceed_uid, `hash` FROM oc_product
-                                ) tbl
-                                GROUP BY uid, `hash`
-                                HAVING count(*) = 1
-                                ORDER BY uid;");
-
         $db->query("TRUNCATE TABLE " . DB_PREFIX . "product_luceed_for_update");
         $res = $db->query("SELECT p.luceed_uid FROM oc_product p JOIN oc_product_luceed pl ON p.luceed_uid = pl.uid WHERE p.hash <> pl.hash;");
 
@@ -344,13 +329,9 @@ class LOC_Product
     public function make($product): array
     {
         $product = collect($product);
-        Log::store('1', 'product');
         $manufacturer = ProductHelper::getManufacturer($product);
-        Log::store('2', 'product');
         $stock_status = $product['stanje_kol'] ? agconf('import.default_stock_full') : agconf('import.default_stock_empty');
         $status       = 1;
-
-        Log::store('3', 'product');
 
         $description = ProductHelper::getDescription($product);
 
@@ -362,19 +343,9 @@ class LOC_Product
             $status = 0;
         }
 
-        Log::store('3.1', 'product');
-
         $image_path = ProductHelper::getImagePath($product);
-
-        Log::store('3.2', 'product');
-
         $attributes = ProductHelper::getAttributes($product);
-
-        Log::store('3.3', 'product');
-
         $images = ProductHelper::getImages($product);
-
-        Log::store('3.4', 'product');
 
         $prod = [
             'model'               => $product['artikl'],
@@ -419,9 +390,6 @@ class LOC_Product
             'product_category'    => ProductHelper::getCategories($product),
             'product_seo_url'     => [0 => ProductHelper::getSeoUrl($product)],
         ];
-
-        Log::store('4', 'product');
-        Log::store($prod, 'product');
 
         return $prod;
     }

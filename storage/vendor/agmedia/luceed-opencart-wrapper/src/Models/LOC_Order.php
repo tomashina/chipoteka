@@ -343,14 +343,10 @@ class LOC_Order
             }
         }
 
-        Log::store($this->collection, 'order_statuses');
-
         if ( ! empty($this->collection)) {
             // Get the apropriate mail.
             for ($i = 0; $i < count($this->collection); $i++) {
                 foreach (agconf('mail.' . $this->collection[$i]['payment']) as $key => $item) {
-                    Log::store($this->collection[$i], 'order_statuses');
-                    Log::store($item, 'order_statuses');
                     if ($key) {
                         if ($this->collection[$i]['status_from'] == $item['from'] && $this->collection[$i]['status_to'] == $item['to']) {
                             $this->collection[$i]['mail'] = $key;
@@ -365,9 +361,6 @@ class LOC_Order
                 $this->query_update_history = '(' . $item['order_id'] . ', ' . $item['oc_status_to'] . ', 1, "", "' . Carbon::now() . '"),';
             }
         }
-
-        Log::store($this->query_update_status, 'order_statuses');
-        Log::store($this->query_update_history, 'order_statuses');
 
         return $this;
     }
