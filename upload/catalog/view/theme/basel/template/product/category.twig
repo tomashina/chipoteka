@@ -102,4 +102,16 @@
             </div>
         </div>
     </div>
+
+    <script type="text/javascript">
+        // Basel
+        $(document).ready(function() {
+            $('.filter-trigger-btn').addClass('active').html('<i class="icon-line-menu icon"></i> <b>{{ heading_title }}</b>');
+            // Basel
+            $(".filter-trigger-btn").click(function(){
+                $('html').addClass('no-scroll side-filter-open');
+                $('.body-cover').addClass('active');
+            });
+        });
+    </script>
 {{ footer }}

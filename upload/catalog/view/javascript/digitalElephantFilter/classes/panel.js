@@ -26,9 +26,11 @@ function DigitalElephantFilterPanel() {
     };
 
     this.holdOn = function() {
-        $(this.selector).append('<div id="' + this.holdId + '" class="hold-on"></div>');
-        $('#' + this.holdId).css('height', $(this.selector).height() + 'px');
-        $('#' + this.holdId).css('top', '0');
+       // $(this.selector).append('<div id="' + this.holdId + '" class="hold-on"></div>');
+       // $('#' + this.holdId).css('height', $(this.selector).height() + 'px');
+      //  $('#' + this.holdId).css('top', '0');
+        $("#shop-filters").removeClass( "show" );
+
     };
 
     this.holdOff = function() {
