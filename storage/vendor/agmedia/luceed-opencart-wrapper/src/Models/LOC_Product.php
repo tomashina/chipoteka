@@ -345,10 +345,14 @@ class LOC_Product
             $has_image = isset($insert[$product->product_id]['image']) ? 0 : 1;
             $has_description = isset($insert[$product->product_id]['description']) ? 0 : 1;
 
-            $query_str .= '("' . $product->luceed_uid . '", "' . $product->sku . '", "' . $product->description(2)->first()->name . '", ' . $has_image . ', ' . $has_description . ', 0, "", NOW(), NOW()),';
+            $query_str .= '("' . $product->luceed_uid . '", "' . $product->sku . '", "' . $db->escape($product->description(2)->first()->name) . '", ' . $has_image . ', ' . $has_description . ', 0, "", NOW(), NOW()),';
         }
 
-        $db->query("INSERT INTO " . DB_PREFIX . "product_luceed_revision (uid, sku, `name`, has_image, has_description, resolved, `data`, date_added, date_modified) VALUES " . substr($query_str, 0, -1) . ";");
+        try {
+            $db->query("INSERT INTO " . DB_PREFIX . "product_luceed_revision (uid, sku, `name`, has_image, has_description, resolved, `data`, date_added, date_modified) VALUES " . substr($query_str, 0, -1) . ";");
+        } catch (\Exception $exception) {
+            Log::store($exception->getMessage());
+        }
 
         return $products->count();
     }
