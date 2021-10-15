@@ -264,8 +264,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
             $_loc_p->cleanRevisionTable($for_update->pluck('artikl_uid'));
 
-            return $this->response(1, 'products');
-
             foreach ($for_update as $product) {
                 $_loc_ps->setForUpdate(json_decode(json_encode($product), true));
 
@@ -336,6 +334,17 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         return $this->output($_loc_ps->finish());
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function checkRevision()
+    {
+        $loc_p = new LOC_Product();
+
+        return $this->response($loc_p->checkRevisionTable(), 'products');
     }
 
 

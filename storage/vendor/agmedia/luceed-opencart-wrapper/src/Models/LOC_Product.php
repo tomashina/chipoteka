@@ -322,6 +322,38 @@ class LOC_Product
     }
 
 
+    public function checkRevisionTable()
+    {
+        $db = new Database(DB_DATABASE);
+        $descriptions = ProductDescription::where('description', '')->orWhere('description', '=')->pluck('product_id');
+        $images = Product::where('image', '')->orWhere('image', 'catalog/products/no-image.jpg')->pluck('product_id');
+        $insert = [];
+
+        foreach ($descriptions as $item) {
+            $insert[$item]['description'] = 0;
+        }
+
+        foreach ($images as $item) {
+            $insert[$item]['image'] = 0;
+        }
+
+        LuceedProductForRevision::truncate();
+        $products = Product::whereIn('product_id', collect($descriptions)->merge($images)->unique())->get();
+        $query_str = '';
+
+        foreach ($products as $product) {
+            $has_image = isset($insert[$product->product_id]['image']) ? 0 : 1;
+            $has_description = isset($insert[$product->product_id]['description']) ? 0 : 1;
+
+            $query_str .= '("' . $product->luceed_uid . '", "' . $product->sku . '", "' . $product->description(2)->first()->name . '", ' . $has_image . ', ' . $has_description . ', 0, "", NOW(), NOW()),';
+        }
+
+        $db->query("INSERT INTO " . DB_PREFIX . "product_luceed_revision (uid, sku, `name`, has_image, has_description, resolved, `data`, date_added, date_modified) VALUES " . substr($query_str, 0, -1) . ";");
+
+        return $products->count();
+    }
+
+
     /**
      * Collect, make and sort the data
      * for 1 products to make.

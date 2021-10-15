@@ -270,8 +270,9 @@
                 <div class="row">
                     <div class="col-sm-12 col-md-12">
                         <div class="panel panel-default">
-                            <div class="panel-heading darker-bg">
+                            <div class="panel-heading darker-bg" style="height: 52px;">
                                 <div class="pull-right">
+                                    <button type="button" data-toggle="tooltip" title="Ponovi upload liste za reviziju." class="btn btn-sm btn-info" id="btn-check-list" onclick="checkRevisionList()" style="margin-right: 10px;"><i class="fa fa-upload"></i> Provjera Revizijske Liste</button>
                                     <button type="button" data-toggle="tooltip" title="Ponovi upload liste za reviziju." class="btn btn-sm btn-info" id="btn-updating-list" onclick="updateList();"><i class="fa fa-upload"></i> Upload Liste</button>
                                 </div>
                                 <h3 class="panel-title"><i class="fa fa-list"></i> Lista proizvoda za reviziju</h3>
@@ -282,7 +283,6 @@
                                     <thead>
                                     <tr>
                                         <th scope="col">#</th>
-                                        <th scope="col">ID</th>
                                         <th scope="col">Naziv</th>
                                         <th scope="col">Luceed-UID</th>
                                         <th scope="col">Šifra</th>
@@ -295,19 +295,18 @@
                                     {% for rev_product in revision_products %}
                                         <tr>
                                             <th scope="row">{{ loop.index }}</th>
-                                            <td>{{ rev_product.product.product_id }}</td>
                                             <td>{{ rev_product.name }}</td>
                                             <td>{{ rev_product.uid }}</td>
                                             <td>{{ rev_product.sku }}</td>
                                             {% if rev_product.has_image %}
-                                                <td class="bold text-success">DA</td>
+                                                <td class="bold text-success"><i class="fa fa-check text-success"></i></td>
                                             {% else %}
-                                                <td class="bold text-danger">NE</td>
+                                                <td class="bold text-danger"><i class="fa fa-warning text-danger"></i></td>
                                             {% endif %}
                                             {% if rev_product.has_description %}
-                                                <td class="bold text-success">DA</td>
+                                                <td class="bold text-success"><i class="fa fa-check text-success"></i></td>
                                             {% else %}
-                                                <td class="bold text-danger">NE</td>
+                                                <td class="bold text-danger"><i class="fa fa-warning text-danger"></i></td>
                                             {% endif %}
                                             <td class="small">{{ rev_product.data }}</td>
                                         </tr>
@@ -371,7 +370,22 @@
                     checkResult(json);
                     window.setTimeout(() => {
                         location.reload();
-                    }, 5000);
+                    }, 3000);
+                }
+            });
+        }
+
+        function checkRevisionList() {
+            lockTarget('u', $('#btn-check-list'));
+
+            $.ajax({
+                url: 'index.php?route=extension/module/luceed_sync/checkRevision&user_token={{ user_token }}',
+                dataType: 'json',
+                success: function(json) {
+                    checkResult(json);
+                    window.setTimeout(() => {
+                        location.reload();
+                    }, 3000);
                 }
             });
         }
