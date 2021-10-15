@@ -308,6 +308,10 @@ class LOC_Product
      */
     public function cleanRevisionTable($uids = null)
     {
+        $exist = Product::pluck('sku');
+        $revs = LuceedProductForRevision::pluck('sku');
+        LuceedProductForRevision::whereIn('sku', $revs->diff($exist))->delete();
+
         if ($uids) {
             LuceedProductForRevision::whereIn('uid', $uids)->delete();
         } else {

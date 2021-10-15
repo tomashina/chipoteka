@@ -264,6 +264,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
             $_loc_p->cleanRevisionTable($for_update->pluck('artikl_uid'));
 
+            return $this->response(1, 'products');
+
             foreach ($for_update as $product) {
                 $_loc_ps->setForUpdate(json_decode(json_encode($product), true));
 
@@ -326,6 +328,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 $this->model_catalog_product->deleteProduct(
                     $_loc_ps->getDeleteProductId()
                 );
+
+                $_loc_ps->deleteFromRevision();
 
                 return $this->output($_loc_ps->finishDelete());
             }

@@ -174,6 +174,19 @@ class LOC_ProductSingle
 
 
     /**
+     * @return int
+     */
+    public function deleteFromRevision()
+    {
+        if ($this->product_to_delete) {
+            return LuceedProductForRevision::where('sku', $this->product_to_delete['sku'])->delete();
+        }
+
+        return 0;
+    }
+
+
+    /**
      * @return array
      */
     public function finishDelete(): array
