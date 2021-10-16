@@ -10,6 +10,10 @@ class ControllerStartupPermission extends Controller {
                 return;
             }
 
+            if (isset($part[2]) && in_array($part[2], ['refreshcron'])) {
+                return;
+            }
+
 			if (isset($part[0])) {
 				$route .= $part[0];
 			}
