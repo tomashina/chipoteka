@@ -43,7 +43,242 @@
 </head>
 <body>
 
-{% include 'basel/template/common/headers/' ~ basel_header ~ '.twig' %}
+<header class="page-header" data-fixed-element>
+  {% if notification_status %}
+
+    <div class="alert alert-warning alert-promo {% if top_promo_close %} alert-dismissible {% endif %}  fade show top_notificaiton mb-0 {{ top_promo_align }}" role="alert">
+      {{ top_promo_text }}
+      <button type="button" class="btn-close" onClick="addCookie('basel_top_promo', 1, 30);$(this).closest('.top_notificaiton').slideUp();$('#sideNav').toggleClass('active-top-notification');" data-bs-dismiss="alert" aria-label="Close">
+        <i class="fal fa-times"></i>
+      </button>
+    </div>
+    <script>
+      $(document).ready(function() {
+        if ($(window).width() > 1280) {
+          $('body > aside.offcanvas').toggleClass( "active-top-notification");
+        }
+      });
+    </script>
+
+  {% endif %}
+  <div class="navbar navbar-expand-xl navbar-light py-0">
+    <div class="container-fluid px-0">
+      <a class="navbar-brand me-0 me-xl-4 flex-shrink-0 py-0" href="{{ home }}">
+        <img src="catalog/view/dist/img/logo-chipoteka.svg" alt="{{ name }}"></a>
+      {# <a class="navbar-brand d-sm-none me-2" href="{{ home }}">
+                                                  <img src="catalog/view/dist/img/logo-chipoteka.svg" width="74" alt="{{ name }}">
+                                              </a> #}
+      <!-- Search-->
+      {{ basel_search }}
+      <!-- Toolbar-->
+      <div class="navbar-toolbar d-flex flex-shrink-0 align-items-center ms-xl-2">
+
+        <button class="navbar-tool navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideNav">
+          <div class="navbar-tool-icon-box">
+            <i class="fal fa-bars navbar-tool-icon"></i>
+          </div>
+        </button>
+        <a class="navbar-tool d-flex d-xl-none" data-bs-target="#searchBox" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="searchBox">
+                        <span class="navbar-tool-tooltip">
+                            Search
+
+                        </span>
+          <div class="navbar-tool-icon-box">
+            <i class="fal fa-search navbar-tool-icon start-0"></i>
+          </div>
+        </a>
+        <a class="navbar-tool" href="{{ wishlist }}">
+                        <span class="navbar-tool-tooltip">
+                            Lista želja
+
+                        </span>
+          <div class="navbar-tool-icon-box">
+            <i class="navbar-tool-icon fal fa-heart"></i>
+          </div>
+        </a>
+        <a class="navbar-tool" href="{% if logged %}{{ account }}{% else %} {{ login }}{% endif %}">
+          <div class="navbar-tool-icon-box">
+            <i class="fal fa-user navbar-tool-icon"></i>
+          </div>
+          {% if logged %}
+            <div class="navbar-tool-text">
+              <small>
+                Dobro došao/la,
+
+              </small>
+              {{ text_logged }}
+            </div>
+          {% else %}
+            <div class="navbar-tool-text ">
+              <small>
+                Dobro došao/la,
+
+              </small>
+              Prijavi se ili registriraj
+
+            </div>
+          {% endif %}
+        </a>
+
+        <div class="navbar-tool dropdown" id="cart">
+          <a class="navbar-tool-icon-box dropdown-toggle" href="{{ shopping_cart }}">
+                            <span class="navbar-tool-label" id="cart-total">
+                                <span class="counter cart-total-items">
+                                    {{ cart_items }}
+                                </span>
+                            </span>
+            <i class="fal fa-shopping-basket navbar-tool-icon"></i>
+          </a>
+          <a class="navbar-tool-text" href="{{ shopping_cart }}">
+            <small>
+              Moja košarice
+
+            </small>
+            <span class="cart-total-amount hidden-sm hidden-xs">
+                                {{ cart_amount }}
+                            </span>
+          </a>
+          {{ cart }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Search collapse-->
+  <div class="page-search collapse" id="searchBox">
+    <div class="card pt-4 pb-4 border-0 rounded-0">
+      <div class="container">
+
+        {{ search }}
+      </div>
+    </div>
+  </div>
+</header>
+
+<aside id="sideNav" class="sidebar offcanvas offcanvas-expand w-100 border-end zindex-xl-5 pt-xl-5"  {% if notification_status %} {% endif %}>
+  <div class="pt-2 d-none d-xl-block"></div>
+  <ul class="nav nav-tabs nav-justified mt-0 mt-xl-5 mb-0" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" href="#categories" data-bs-toggle="tab" role="tab">
+        <i class="fas fa-store"></i>
+        Web shop
+
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#menu" data-bs-toggle="tab" role="tab">
+        <i class="fas fa-info-circle"></i>
+        Info
+
+      </a>
+    </li>
+    <li class="nav-item d-xl-none">
+      <a class="nav-link fs-sm" href="#" data-bs-dismiss="offcanvas" role="tab">
+        <i class="fal fa-times fs-xl"></i>
+        <span class="sr-only">
+                        Close
+
+                    </span>
+      </a>
+    </li>
+  </ul>
+  <div class="offcanvas-body px-0 pb-0" data-simplebar>
+    <div class="tab-content">
+      <!-- Categories-->
+      <div class="sidebar-nav tab-pane fade show active" id="categories" role="tabpanel">
+        <div class="widget widget-categories">
+          <div class="accordion" id="shop-categories">
+            {% if primary_menu == 'oc' %}
+              <!-- Default menu -->
+              {{ default_menu }}
+            {% elseif primary_menu is defined %}
+              <!-- Mega menu -->
+              {% for key, row in primary_menu_desktop %}
+                {% include 'basel/template/common/menus/mega_menu.twig' %}
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <!-- Menu-->
+      <div class="sidebar-nav tab-pane fade" id="menu" role="tabpanel">
+        <div class="widget widget-categories">
+          <div class="accordion" id="shop-menu">
+            {% for information in informations %}
+              {% if information.informations_children %}
+                <div class="accordion-item border-bottom">
+                  <h3 class="accordion-header">
+                    <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#id{{ information.infoid }}" aria-expanded="false" aria-controls="home">
+                      {{ information.title }}
+                    </button>
+                  </h3>
+                  <div class="collapse" id="id{{ information.infoid }}" data-bs-parent="#shop-menu">
+                    <div class="pt-1">
+                      <div class="widget widget-links">
+                        <ul class="widget-list">
+                          {% for informations_child in information.informations_children %}
+                            <li class="widget-list-item">
+                              <a href="{{ informations_child.href }}" class="widget-list-link">
+                                {{ informations_child.title }}
+                              </a>
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% else %}
+                <div class="accordion-item border-bottom">
+                  <h3 class="accordion-header">
+                    <a class="accordion-button noneafter collapsed py-3" href="{{ information.href }}">
+                      {{ information.title }}
+                    </a>
+                  </h3>
+                  <style>.sidebar #menu .accordion-item .accordion-header .accordion-button.noneafter::after{content:unset}</style>
+                </div>
+              {% endif %}
+            {% endfor %}
+            <div class="accordion-item border-bottom">
+              <h3 class="accordion-header">
+                <a class="accordion-button noneafter collapsed py-3" href="poslovnice">
+                  Poslovnice
+
+                </a>
+              </h3>
+              <style>.sidebar #menu .accordion-item .accordion-header .accordion-button.noneafter::after{content:unset}</style>
+            </div>
+            <div class="accordion-item border-bottom">
+              <h3 class="accordion-header">
+                <a class="accordion-button noneafter collapsed py-3" href="servis">
+                  Servis
+
+                </a>
+              </h3>
+              <style>.sidebar #menu .accordion-item .accordion-header .accordion-button.noneafter::after{content:unset}</style>
+            </div>
+            <div class="accordion-item border-bottom">
+              <h3 class="accordion-header">
+                <a class="accordion-button noneafter collapsed py-3" href="veleprodaja">
+                  Veleprodaja
+
+                </a>
+              </h3>
+              <style>.sidebar #menu .accordion-item .accordion-header .accordion-button.noneafter::after{content:unset}</style>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="offcanvas-cap d-block px-grid-gutter pt-4 pb-2 pb-xl-5 mb-3">
+    <div class="d-flex">
+      <a class="btn-social bs-facebook me-3" href="https://www.facebook.com/Chipoteka">
+        <img src="catalog/view/dist/img/icon-fb-gray.svg" alt="Facebook" />
+      </a>
+    </div>
+  </div>
+</aside>
+
 <!-- breadcrumb -->
 <div class="container">
 {{ position_top }}
