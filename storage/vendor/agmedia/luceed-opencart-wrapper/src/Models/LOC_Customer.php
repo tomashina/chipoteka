@@ -164,46 +164,47 @@ class LOC_Customer
 
         if ( ! empty($exist)) {
             foreach ($exist as $l_customer) {
+                if ($l_customer->enabled == 'D') {
+                    if ( ! $this->checkUid($l_customer)) {
+                        Customer::where('customer_id', $this->customer['id'])->update([
+                            'luceed_uid' => $l_customer->partner_uid
+                        ]);
 
-                if ( ! $this->checkUid($l_customer)) {
-                    Customer::where('customer_id', $this->customer['id'])->update([
-                        'luceed_uid' => $l_customer->partner_uid
-                    ]);
-
-                    $this->customer['uid'] = $l_customer->partner_uid;
-                    $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
-                }
-
-                // Kupac
-                if ( ! $this->diffAddress() && $this->order_customer['shipping_address'] == $l_customer->adresa && ! $l_customer->grupacija) {
-                    Log::store('Kupac::: ::: if ( ! $this->diffAddress() && $this->order_customer[shipping_address] == $l_customer->adresa && ! $l_customer->grupacija) {');
-                    Customer::where('customer_id', $this->customer['id'])->update([
-                        'luceed_uid' => $l_customer->partner_uid
-                    ]);
-
-                    $this->customer['uid'] = $l_customer->partner_uid;
-                    $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
-                    $this->alter_customer = $this->customer;
-                }
-
-                // Korisnik
-                if ($this->diffAddress() && $l_customer->adresa == $this->order_customer['shipping_address']) {
-                    Log::store('Korisnik::: ::: if ($this->diffAddress() && $l_customer->adresa == $this->order_customer');
-                    $luc_customer = collect($l_customer);
-                    $luc_customer->put('grupacija_parent', $this->customer['uid']);
-
-                    $this->alter_customer = $this->populateCustomerForLuceed($luc_customer, true);
-
-                    if ( ! $l_customer->grupacija) {
-                        // updejtaj alter partnera i grupaciju.
-                        $this->service->updateCustomer(['partner' => [$this->alter_customer]]);
+                        $this->customer['uid'] = $l_customer->partner_uid;
+                        $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
                     }
-                }
 
-                // Neregani kupac
-                if ( ! $this->customer['uid'] && ! empty($l_customer->adresa)) {
-                    $this->customer['uid'] = $l_customer->partner_uid;
-                    $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
+                    // Kupac
+                    if ( ! $this->diffAddress() && $this->order_customer['shipping_address'] == $l_customer->adresa && ! $l_customer->grupacija) {
+                        Log::store('Kupac::: ::: if ( ! $this->diffAddress() && $this->order_customer[shipping_address] == $l_customer->adresa && ! $l_customer->grupacija) {');
+                        Customer::where('customer_id', $this->customer['id'])->update([
+                            'luceed_uid' => $l_customer->partner_uid
+                        ]);
+
+                        $this->customer['uid'] = $l_customer->partner_uid;
+                        $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
+                        $this->alter_customer = $this->customer;
+                    }
+
+                    // Korisnik
+                    if ($this->diffAddress() && $l_customer->adresa == $this->order_customer['shipping_address']) {
+                        Log::store('Korisnik::: ::: if ($this->diffAddress() && $l_customer->adresa == $this->order_customer');
+                        $luc_customer = collect($l_customer);
+                        $luc_customer->put('grupacija_parent', $this->customer['uid']);
+
+                        $this->alter_customer = $this->populateCustomerForLuceed($luc_customer, true);
+
+                        if ( ! $l_customer->grupacija) {
+                            // updejtaj alter partnera i grupaciju.
+                            $this->service->updateCustomer(['partner' => [$this->alter_customer]]);
+                        }
+                    }
+
+                    // Neregani kupac
+                    if ( ! $this->customer['uid'] && ! empty($l_customer->adresa)) {
+                        $this->customer['uid'] = $l_customer->partner_uid;
+                        $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
+                    }
                 }
             }
 
