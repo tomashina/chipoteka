@@ -328,7 +328,7 @@ class LOC_Product
     public function checkRevisionTable()
     {
         $db = new Database(DB_DATABASE);
-        $descriptions = ProductDescription::where('description', '')->where('description', '!=', ' ')->pluck('product_id');
+        $descriptions = ProductDescription::where('description', '')->pluck('product_id');
         $images = Product::where('image', '')->orWhere('image', 'catalog/products/no-image.jpg')->pluck('product_id');
         $insert = [];
 
