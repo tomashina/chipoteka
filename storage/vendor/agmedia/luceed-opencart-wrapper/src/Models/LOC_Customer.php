@@ -162,9 +162,17 @@ class LOC_Customer
             $this->service->getCustomerByEmail($this->customer['e_mail'])
         );
 
+        // l_customer = luceed customer data.
+        // $this->>customer = Created local class customer data.
+        // $this->order_customer = Collected data from OC customer.
+
+        $customer_exist = false;
+
         if ( ! empty($exist)) {
             foreach ($exist as $l_customer) {
                 if ($l_customer->enabled == 'D') {
+                    $customer_exist = true;
+
                     if ( ! $this->checkUid($l_customer)) {
                         Customer::where('customer_id', $this->customer['id'])->update([
                             'luceed_uid' => $l_customer->partner_uid
@@ -236,11 +244,9 @@ class LOC_Customer
                     $this->alter_customer['uid'] = $response->result[0];
                 }
             }
-
-            return true;
         }
 
-        return false;
+        return $customer_exist;
     }
 
 
