@@ -38,6 +38,8 @@ class ControllerExtensionModuleMsmartSearch extends Controller {
 		/* @var $price string|null */
 		$price = null;
 
+        $price_2 = null;
+
 		/* @var $special string|null */
 		$special = null;
 
