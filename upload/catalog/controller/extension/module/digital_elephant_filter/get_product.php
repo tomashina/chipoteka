@@ -160,6 +160,14 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                 $price = false;
             }
 
+            //price_2 agmedia
+
+            if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+                $price_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+            } else {
+                $price_2 = false;
+            }
+
             if ((float)$result['special']) {
                 $special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
                 if($result['special'] >= FREESHIPPING){
@@ -236,6 +244,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 				'quantity'  => $result['quantity'],
                 'description' => $description,
                 'price'       => $price,
+                'price_2'       => $price_2,
                 'saljemodo'     => $saljemodo,
                 'freeshipping' => $freeshipping,
 				'sale_badge'  => $sale_badge,
