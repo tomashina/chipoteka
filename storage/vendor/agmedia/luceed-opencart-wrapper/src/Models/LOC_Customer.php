@@ -223,13 +223,18 @@ class LOC_Customer
                     'mjesto_uid'          => $this->setCityUid($this->order_customer['shipping_zip'], $this->order_customer['shipping_city']),
                 ];
 
-                $response = json_decode(
-                    $this->service->createCustomer(['partner' => [$this->alter_customer]])
-                );
+                if ($this->diffAddress()) {
+                    $response = json_decode(
+                        $this->service->createCustomer(['partner' => [$this->alter_customer]])
+                    );
 
-                // složi podatke za order
-                if (isset($response->result[0])) {
-                    $this->alter_customer['uid'] = $response->result[0];
+                    // složi podatke za order
+                    if (isset($response->result[0])) {
+                        $this->alter_customer['uid'] = $response->result[0];
+                    }
+
+                } else {
+                    $this->alter_customer['uid'] = $this->customer['uid'];
                 }
             }
         }
