@@ -349,10 +349,14 @@ class LOC_Customer
         if (isset($response->result[0])) {
             $this->customer['uid'] = $response->result[0];
 
-            Customer::where('customer_id', $this->customer['id'])->update([
-                'luceed_uid' => $response->result[0]
-            ]);
+            if ($this->customer['id']) {
+                Customer::where('customer_id', $this->customer['id'])->update([
+                    'luceed_uid' => $response->result[0]
+                ]);
+            }
         }
+
+        $this->exist();
 
         return $this;
     }
