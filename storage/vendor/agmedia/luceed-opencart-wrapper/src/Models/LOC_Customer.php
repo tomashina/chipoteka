@@ -343,12 +343,15 @@ class LOC_Customer
             $this->service->createCustomer(['partner' => [$this->customer]])
         );
 
+        Log::store('public function store()::::::: $response =');
+        Log::store($response);
+
         if (isset($response->result[0])) {
+            $this->customer['uid'] = $response->result[0];
+
             Customer::where('customer_id', $this->customer['id'])->update([
                 'luceed_uid' => $response->result[0]
             ]);
-
-            $this->customer['uid'] = $response->result[0];
         }
 
         return $this;
