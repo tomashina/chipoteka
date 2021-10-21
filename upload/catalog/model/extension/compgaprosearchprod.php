@@ -64,14 +64,23 @@ class ModelExtensioncompgaprosearchprod extends Controller {
 				$view_search_results['event_label'] = $searchstr;
 			}
 
-$json_view_search_results = json_encode($view_search_results);
-$code = <<<EOF
-<script type="text/javascript">
-gtag('event', 'view_search_results', $json_view_search_results);
-</script>
-EOF;
 
-return $code;
+			if(isset($view_search_results)){
+
+                $json_view_search_results = json_encode($view_search_results);
+
+
+                $code = <<<EOF
+                <script type="text/javascript">
+                gtag('event', 'view_search_results', $json_view_search_results);
+                </script>
+                  EOF;
+
+                return $code;
+
+            }
+
+
 		
  		} 
 	} 
