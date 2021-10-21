@@ -186,7 +186,7 @@ class LOC_Warehouse
 
         if ( ! $qty_default && $suplier->dobavljac_stanje) {
             $title = 'warning';
-            $btn = 'DOSTUPNO ODMAH';
+            $btn = 'DOSTUPNO NA IZDVOJENOM SKLADIŠTU';
             $date = 'Šaljemo do ' . Carbon::now()->addWeekdays(5)->format('d.m.Y');
         }
 
