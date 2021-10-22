@@ -93,18 +93,24 @@
 
     <div class="alert getred alert-secondary d-flex" role="alert">
 
-    <div class="form-check  required">
+        <div class="form-check  required">
 
-      <label class="form-check-label " >
+          <label class="form-check-label " >
 
-        {% if agree %}
-          <input type="checkbox" class="form-check-input" name="agree" value="1" checked="checked" required/>
-        {% else %}
-          <input type="checkbox" class="form-check-input" name="agree" value="1" required/>
-        {% endif %}
+            {% if agree %}
+              <input type="checkbox" class="form-check-input" name="agree" value="1" checked="checked" required/>
+            {% else %}
+              <input type="checkbox" class="form-check-input" name="agree" value="1" required/>
+            {% endif %}
 
-        {{ text_agree }}</label>
+            {{ text_agree }}</label>
+        </div>
+
+
     </div>
+
+    <div class="alert getred alert-secondary d-flex" role="alert">
+      <small>Zbog mogućih pogrešaka u sustavu ili više sile, Chipoteka zadržava pravo ne isporučiti naručeni proizvod ukoliko je došlo do pogreške u navođenju cijene ili nije u mogućnosti izvršiti isporuku robe zbog iscrpljenih zaliha. U navedenim slučajevima, Chipoteka obavijestit će kupca o nastaloj situaciji te izvršiti povrat novca čim prije moguće, a najkasnije u roku od 15 dana od obavijesti kupcu.</small>
     </div>
 
 
