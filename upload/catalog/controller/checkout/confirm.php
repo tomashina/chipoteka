@@ -111,7 +111,10 @@ class ControllerCheckoutConfirm extends Controller {
 			$this->load->language('checkout/checkout');
 
             if ($this->cart->getTotal() < FREESHIPPING ) {
-                $data['freeshipppingnotification'] = $this->language->get('freeshipppingnotification');
+                $razlika = FREESHIPPING - $this->cart->getTotal();
+
+                $razlika = number_format($razlika, 2, ',', '');
+                $data['freeshipppingnotification'] =   sprintf($this->language->get('freeshipppingnotification'), $razlika);
 
             } else {
                 $data['freeshipppingnotification'] = '';

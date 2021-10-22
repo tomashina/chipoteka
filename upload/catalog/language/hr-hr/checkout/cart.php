@@ -6,7 +6,7 @@ $_['heading_title']            = 'Košarica';
 // Text
 $_['text_success']             = '<span class="text-uppercase d-block fw-lighter fsc-4 mb-2">Uspješno:</span> Dodali ste <strong> <a class="text-accent" href="%s">%s</a></strong> u Vašu <a class="text-decoration-underline" href="%s">košaricu</a>!';
 $_['text_remove']              = 'Uspješno: Ažurirali ste Vašu košaricu!';
-$_['freeshipppingnotification']              = 'Dodaj u košaricu za još 500 kuna i izbjegni trošak dostave. Na sve narudžbe iznad 500 kuna nemaš troškove dostave. Iskoristi priliku!';
+$_['freeshipppingnotification']              = 'Dodaj u košaricu za još %s kuna i izbjegni trošak dostave. Na sve narudžbe iznad 500 kuna nemaš troškove dostave. Iskoristi priliku!';
 $_['text_login']               = 'Pažnja: Morate se <a href="%s">prijaviti (logirati)</a> ili <a href="%s">kreirati korisnički račun</a> da biste vidjeli cijene!';
 $_['text_items']               = '%s artikala - %s';
 $_['text_points']              = 'Nagradni bodovi: %s';
