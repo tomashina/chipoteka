@@ -7,6 +7,7 @@ $_['heading_title']                  = 'Postupak narudžbe';
 $_['text_cart']                      = 'Košarica';
 $_['text_checkout_option']           = 'Korak %s: Opcije naplate';
 $_['text_checkout_account']          = 'Korak %s: Detalji o korisničkom računu i naplati';
+$_['freeshipppingnotification']              = 'Dodaj u košaricu za još 500 kuna i izbjegni trošak dostave. Na sve narudžbe iznad 500 kuna nemaš troškove dostave. Iskoristi priliku!';
 $_['text_checkout_payment_note']  = 'Obavijest: ispunite obrazac manualno';
 $_['text_checkout_payment_address']  = 'Korak %s: Detalji o naplati';
 $_['text_checkout_shipping_address'] = 'Korak %s: Detalji o dostavi (isporuci)';

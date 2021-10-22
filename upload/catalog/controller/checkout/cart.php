@@ -214,6 +214,16 @@ class ControllerCheckoutCart extends Controller {
 				);
 			}
 
+            if ($this->cart->getTotal() < FREESHIPPING ) {
+                $data['freeshipppingnotification'] = $this->language->get('freeshipppingnotification');
+
+            } else {
+                $data['freeshipppingnotification'] = '';
+            }
+
+
+
+
 			$data['continue'] = $this->url->link('common/home');
 
 			$data['checkout'] = $this->url->link('checkout/checkout', '', true);

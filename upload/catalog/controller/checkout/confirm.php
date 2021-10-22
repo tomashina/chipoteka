@@ -36,6 +36,9 @@ class ControllerCheckoutConfirm extends Controller {
 			$redirect = $this->url->link('checkout/cart');
 		}
 
+
+
+
 		// Validate minimum quantity requirements.
 		$products = $this->cart->getProducts();
 
@@ -106,6 +109,13 @@ class ControllerCheckoutConfirm extends Controller {
 			$order_data['totals'] = $totals;
 
 			$this->load->language('checkout/checkout');
+
+            if ($this->cart->getTotal() < FREESHIPPING ) {
+                $data['freeshipppingnotification'] = $this->language->get('freeshipppingnotification');
+
+            } else {
+                $data['freeshipppingnotification'] = '';
+            }
 
 			$order_data['invoice_prefix'] = $this->config->get('config_invoice_prefix');
 			$order_data['store_id'] = $this->config->get('config_store_id');
