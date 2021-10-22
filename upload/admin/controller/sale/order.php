@@ -459,7 +459,7 @@ class ControllerSaleOrder extends Controller {
             'href' => $this->url->link('sale/order', 'user_token=' . $this->session->data['user_token'] . $url, true)
         );
 
-        $data['cancel'] = $this->url->link('sale/order', 'user_token=' . $this->session->data['user_token'] . $url, true);
+        $data['cancel'] = $this->url->link('extension/me_order_manager', 'user_token=' . $this->session->data['user_token'] . $url, true);
 
         $data['user_token'] = $this->session->data['user_token'];
 
@@ -785,7 +785,7 @@ class ControllerSaleOrder extends Controller {
             $data['shipping'] = $this->url->link('sale/order/shipping', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . (int)$this->request->get['order_id'], true);
             $data['invoice'] = $this->url->link('sale/order/invoice', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . (int)$this->request->get['order_id'], true);
             $data['edit'] = $this->url->link('sale/order/edit', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . (int)$this->request->get['order_id'], true);
-            $data['cancel'] = $this->url->link('sale/order', 'user_token=' . $this->session->data['user_token'] . $url, true);
+            $data['cancel'] = $this->url->link('extension/me_order_manager', 'user_token=' . $this->session->data['user_token'] . $url, true);
 
             $data['user_token'] = $this->session->data['user_token'];
 

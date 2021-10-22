@@ -467,7 +467,7 @@
 						{% if order_manager_setting.quickviewbtn or order_manager_setting.invoicebtn or order_manager_setting.editbtn or order_manager_setting.deletebtn %}
 						<td class="text-right">
 							{% if order_manager_setting.quickviewbtn %}
-							<a href="#" data-toggle="tooltip" title="{{ button_quick_view }}" class="btn btn-info btn-sm btn-quickview" rel="{{ order.order_id }}"><i class="fa fa-eye"></i></a>
+							<a href="{{ order.view }}" data-toggle="tooltip" title="{{ button_quick_view }}" class="btn btn-info btn-sm "><i class="fa fa-eye"></i></a>
 							{% endif %}
 							{% if order_manager_setting.invoicebtn %}
 							<a href="{{ order.invoice }}" data-toggle="tooltip" title="{{ button_invoice }}" target="_new" class="btn btn-success btn-sm"><i class="fa fa-print"></i></a>
