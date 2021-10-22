@@ -19,7 +19,6 @@ class ControllerCheckoutSuccess extends Controller {
 
             $data['data_layer_order_data'] = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
-            print_r($data['data_layer_order_data']);
             $data['data_layer_order_data']['products'] = $this->model_checkout_order->getOrderProducts($this->session->data['order_id']);
             $data['data_layer_order_data']['totals'] = $this->model_checkout_order->getOrderTotals($this->session->data['order_id']);
 
