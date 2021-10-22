@@ -35,7 +35,6 @@ class ControllerCheckoutSuccess extends Controller {
             }
 
             $order_id = $this->session->data['order_id'];
-
             $order_info = $this->model_checkout_order->getOrder($order_id);
 
             $data['paymethod'] = $order_info['payment_code'];
