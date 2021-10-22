@@ -9,6 +9,32 @@ class ControllerCheckoutSuccess extends Controller {
 
 		if (isset($this->session->data['order_id'])) {
             $this->load->model('checkout/order');
+            $data['data_layer_order_data'] = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+            $data['data_layer_order_data']['products'] = $this->model_checkout_order->getOrderProducts($this->session->data['order_id']);
+
+
+            $this->load->model('checkout/order');
+            $this->load->model('catalog/product');
+            $this->load->model('catalog/category');
+
+            $data['data_layer_order_data'] = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+
+            print_r($data['data_layer_order_data']);
+            $data['data_layer_order_data']['products'] = $this->model_checkout_order->getOrderProducts($this->session->data['order_id']);
+            $data['data_layer_order_data']['totals'] = $this->model_checkout_order->getOrderTotals($this->session->data['order_id']);
+
+            $data['data_layer_order_data']['categories'] = array();
+            foreach($data['data_layer_order_data']['products'] as $prods){
+                $cats = $this->model_catalog_product->getCategories($prods['product_id']);
+
+                foreach ($cats as $cat){
+                    $catarr = $this->model_catalog_category->getCategory($cat['category_id']);
+                    $data['data_layer_order_data']['categories'][] =  array ('cat' => $catarr['name'],'pid' => $prods['product_id'] );
+
+                }
+
+            }
+
             $order_id = $this->session->data['order_id'];
 
             $order_info = $this->model_checkout_order->getOrder($order_id);
@@ -40,7 +66,7 @@ class ControllerCheckoutSuccess extends Controller {
             $nhs_no = $order_id . date("ym");
             $poziv_nb = $nhs_no . $this->mod11INI($nhs_no);
 
-            $this->load->model('checkout/order');
+           $this->load->model('checkout/order');
             $oc_order = $this->model_checkout_order->getOrder($order_id);
             $oc_order['poziv_na_broj'] = $poziv_nb;
             $order    = new LOC_Order($oc_order);
@@ -91,6 +117,7 @@ class ControllerCheckoutSuccess extends Controller {
             $this->load->model('account/order');
         $data['order_id'] = (int)$order_id;
         $data['date_added'] = date($this->language->get('date_format_short'), strtotime($order_info['date_added']));
+
 
         if ($order_info['payment_address_format']) {
             $format = $order_info['payment_address_format'];
@@ -373,6 +400,9 @@ class ControllerCheckoutSuccess extends Controller {
           }
 
 		$data['continue'] = $this->url->link('common/home');
+
+
+
 
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');

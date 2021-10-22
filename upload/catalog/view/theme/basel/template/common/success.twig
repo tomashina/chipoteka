@@ -1,4 +1,39 @@
 {{ header }}
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+  dataLayer.push({
+    'event': 'orderComplete',
+    'transactionId': '{{ data_layer_order_data.order_id }}',
+    'transactionAffiliation': 'Chipoteka',
+    'transactionTotal': {{ data_layer_order_data.total }},
+    'transactionTax': 0,
+    'transactionShipping': {% for tots in data_layer_order_data.totals %}{% if tots.code == 'shipping' %}{{ tots.value }}{% endif %}{% endfor %},
+    'transactionProducts': [
+      {% for prods in data_layer_order_data.products %}
+      {% if loop.last %}
+      {
+        'sku': '{{ prods.product_id }}',
+        'name': '{{ prods.name }}',
+        'category': '{% for cats in data_layer_order_data.categories %}{% if cats.pid == prods.product_id %}{{ cats.cat }}{% endif %}{% endfor %}',
+        'price':{{ prods.price }},
+        'quantity': {{ prods.quantity }}
+      }{% else %}
+      {
+        'sku': '{{ prods.product_id }}',
+        'name': '{{ prods.name }}',
+        'category': '{% for cats in data_layer_order_data.categories %}{% if cats.pid == prods.product_id %}{{ cats.cat }}{% endif %}{% endfor %}',
+        'price':{{ prods.price }} ,
+        'quantity': {{ prods.quantity }}
+      },
+      {% endif %}
+      {% endfor %}
+    ]
+  });
+</script>
+<!-- g og -->
+
+
 <main class="offcanvas-enabled">
 <div class="container-fluid pb-5 mb-sm-4">
   <div class="pt-5">
