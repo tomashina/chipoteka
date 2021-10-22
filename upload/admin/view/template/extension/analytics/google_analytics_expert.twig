@@ -1,0 +1,398 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-analytics-google-analytics-expert" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %} 
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %} 
+      </ul>
+    </div>
+    <div class="panel-heading" style="padding:0 0 20px 25px; color:#e47911">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %} 
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %} 
+    {% if success %} 
+    	<div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}
+    	</div>
+    	{% endif %} 
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-analytics-google-analytics-expert" class="form-horizontal">
+        	<ul class="nav nav-tabs">
+            	<li class="active"><a href="#tab-installation" data-toggle="tab">{{ tab_installation }}</a></li>
+            	<li><a href="#tab-analytics" data-toggle="tab">{{ tab_analytics }}</a></li>
+            	<li><a href="#tab-adwords" data-toggle="tab">{{ tab_adwords }}</a></li>
+            	<li><a href="#tab-events" data-toggle="tab">{{ tab_events }}</a></li>
+            	<li><a href="#tab-faq" data-toggle="tab">{{ tab_faq }}</a></li>
+            	<li><a href="#tab-log" data-toggle="tab">{{ tab_log }}</a></li>
+            	<li><a href="#tab-support" data-toggle="tab">{{ tab_support }}</a></li>
+          	</ul>
+        	<div class="tab-content">
+        		<div class="tab-pane active" id="tab-installation">
+        			<p><span style="font-size:20px">Thank you</span> for purchasing this extension! <br /><br />You should find everything you need within this guide, please read on to complete set up.</p>
+          			<h3>Checklist</h3>
+					<p class="warning">
+						Before continuing with installation please make sure
+						<ul>
+							<li>No other Google Analytics extension/module/vqmod/ocmod/hardcode is running or active on the store you want to use this on</li>
+							<li><span>You have an existing <a target="_blank" href="http://www.google.com/analytics/analytics/">Google Analytics account</a> and have set up basic details such as Website URL, currency etc</span></li>
+							<li>That you have set up a web property for each store/multi-store you want this to run on</li>
+							<li>You have your Google Analytics Property ID for each store ready to use. <a href="https://support.google.com/analytics/answer/1032385?hl=en" target="_blank">How do I find this?</a></li>
+							<li>That you have downloaded the <a href="http://www.opencart.com/index.php?route=extension/extension/info&amp;extension_id=4496" target="_blank">latest version of the extension</a> and the correct version for your OC installation {{ compatibility }}</li>
+						</ul>
+					</p>
+					<div class="page-header">
+						<h3>Installation Guide</h3>
+						<p>Open the installation guide to begin <a target="_blank" href="view/template/extension/analytics/google_analytics_expert_installation.html">Click here</a></p>
+					</div>
+					
+					<div class="page-header">
+						<h3>Stuck?</h3>
+						<p>You've checked everything at least twice and you're not a happy bunny... Please <a class="orange" href="javascript:void(0)" onclick="$('.nav-tabs li:eq(6) a').tab('show'); ;">send a support request</a> to get some help.</p>
+					</div>
+
+          		</div>
+            	<div class="tab-pane" id="tab-analytics">
+            		<div class="form-group">
+            			<label class="col-sm-3 control-label" for="analytics_google_analytics_expert_status">{{ entry_status }}</label>
+            			<div class="col-sm-9">
+            				<select name="analytics_google_analytics_expert_status" id="analytics_google_analytics_expert_status" class="form-control">
+								<option value="">Select...</option>
+                				{% if analytics_google_analytics_expert_status %} 
+                					<option value="1" selected="selected">{{ text_enabled }}</option>
+                					<option value="0">{{ text_disabled }}</option>
+                				{% else %}   
+                					<option value="1">{{ text_enabled }}</option>
+                					<option value="0" selected="selected">{{ text_disabled }}</option>
+                				{% endif %} 
+            				</select>
+            			</div>
+            		</div>
+          			<div class="form-group">
+          				<label class="col-sm-3 control-label"><span data-toggle="tooltip" title="{{ help_gae_exclude_admin }}">{{ entry_gae_exclude_admin }}</span></label>
+          				<div class="col-sm-9">
+          					<select name="analytics_google_analytics_expert_exclude_admin" id="analytics_google_analytics_expert_exclude_admin" class="form-control">
+								<option value="">Select...</option>
+                				{% if analytics_google_analytics_expert_exclude_admin %} 
+                					<option value="1" selected="selected">{{ text_no_track }}</option>
+                					<option value="0">{{ text_track }}</option>
+                				{% else %}   
+                					<option value="1">{{ text_no_track }}</option>
+                					<option value="0" selected="selected">{{ text_track }}</option>
+                				{% endif %}  
+              				</select>
+          				</div>
+          			</div>
+          			<div class="form-group">
+          				<label class="col-sm-3 control-label" for="analytics_google_analytics_expert_property_id"><span data-toggle="tooltip" title="{{ help_gae_tracking }}">{{ entry_gae_tracking }}</span></label>
+          				<div class="col-sm-9">
+            		      <input type="text" id="analytics_google_analytics_expert_property_id" name="analytics_google_analytics_expert_property_id" value="{{ analytics_google_analytics_expert_property_id }}" class="form-control" />
+            		    </div>
+          			</div>
+          			<div class="form-group">
+          				<label class="col-sm-3 control-label"><span data-toggle="tooltip" title="{{ help_gae_remarketing }}">{{ entry_gae_remarketing }}</span></label>
+          				<div class="col-sm-9">
+          					<select name="analytics_google_analytics_expert_remarketing" id="analytics_google_analytics_expert_remarketing" class="form-control">
+								<option value="">Select...</option>
+            		    		{% if analytics_google_analytics_expert_remarketing %} 
+            		    			<option value="1" selected="selected">{{ text_enabled }}</option>
+            		    			<option value="0">{{ text_disabled }}</option>
+            		    		{% else %}   
+            		    			<option value="1">{{ text_enabled }}</option>
+            		    			<option value="0" selected="selected">{{ text_disabled }}</option>
+            		    		{% endif %}  
+            		  		</select>
+          				</div>
+          			</div>
+					<div class="form-group">
+          				<label class="col-sm-3 control-label"><span data-toggle="tooltip" title="{{ help_gae_cookie }}">{{ entry_gae_cookie }}</span></label>
+          				<div class="col-sm-9">
+          					<select name="analytics_google_analytics_expert_cookie" id="analytics_google_analytics_expert_cookie" class="form-control">
+								<option value="">Select...</option>
+            		    		{% if analytics_google_analytics_expert_cookie %} 
+            		    			<option value="1" selected="selected">{{ text_enabled }}</option>
+            		    			<option value="0">{{ text_disabled }}</option>
+            		    		{% else %}   
+            		    			<option value="1">{{ text_enabled }}</option>
+            		    			<option value="0" selected="selected">{{ text_disabled }}</option>
+            		    		{% endif %}  
+            		  		</select>
+          				</div>
+          			</div>
+            	</div>
+				<div class="tab-pane" id="tab-adwords">
+          			<div class="form-group">
+          				<label class="col-sm-3 control-label"><span data-toggle="tooltip" title="{{ help_gae_adwords }}">{{ entry_gae_adwords }}</span></label>
+          				<div class="col-sm-9">
+          					<select name="analytics_google_analytics_expert_adwords" id="analytics_google_analytics_expert_adwords" class="form-control show-adwords">
+								<option value="">Select...</option>
+            		    		{% if analytics_google_analytics_expert_adwords %} 
+            		    			<option value="1" selected="selected">{{ text_enabled }}</option>
+            		    			<option value="0">{{ text_disabled }}</option>
+            		    		{% else %}   
+            		    			<option value="1">{{ text_enabled }}</option>
+            		    			<option value="0" selected="selected">{{ text_disabled }}</option>
+            		    		{% endif %}  
+            		  		</select>
+          				</div>
+          			</div>
+          			<div class="form-group adwords-visible">
+          				<label class="col-sm-3 control-label" for="analytics_google_analytics_expert_conversion_id"><span data-toggle="tooltip" title="{{ help_gae_conversion_id }}">{{ entry_gae_conversion_id }}</span></label>
+          				<div class="col-sm-9">
+            		    	<input type="text" id="analytics_google_analytics_expert_conversion_id" name="analytics_google_analytics_expert_conversion_id" value="{{ analytics_google_analytics_expert_conversion_id }}" class="form-control" />
+            		    </div>
+          			</div>
+          			<div class="form-group adwords-visible">
+          				<label class="col-sm-3 control-label" for="analytics_google_analytics_expert_label"><span data-toggle="tooltip" title="{{ help_gae_label }}">{{ entry_gae_label }}</span></label>
+          				<div class="col-sm-9">
+            		    	<input type="text" id="analytics_google_analytics_expert_label" name="analytics_google_analytics_expert_label" value="{{ analytics_google_analytics_expert_label }}" class="form-control" />
+            		    </div>
+          			</div>
+          			<div class="form-group" style="display:none">
+            			<label class="col-sm-3 control-label" for="input-code"></label>
+            			<div class="col-sm-9">
+            				<textarea name="analytics_google_analytics_expert_code" rows="0" placeholder="" id="analytics_google_analytics_expert_code" class="form-control">{{ analytics_google_analytics_expert_code }}</textarea>
+            			</div>
+          			</div>
+          		</div>
+          		
+          		<div class="tab-pane" id="tab-events">
+          			<p>
+          				Event Tracking for <i>Add To Cart, Add To Wishlist &amp; Add To Compare</i> clicks on any page of your store is built in and will work without any modifications on sites using the default OpenCart theme. They may also work on custom themes where the theme developer has followed the opencart coding standards.<br /><br />
+          				Any stores using a custom theme where the events do not work, but wish to have them, will need to <a class="orange" href="javascript:void(0)" onclick="$('.nav-tabs li:eq(6) a').tab('show'); ;">send a support request</a>. <br />Any modifications will be a chargeable customisation.<br /><br />
+						If you have modified any of the templates that Event Tracking uses to track data, more specifically the add to cart, add to wishlist or add to compare parts of those templates, you may find that it no longer works. There are many extensions that can modify your site therefore it is impossible to predict what may have changed.<br /><br />
+						Please note: If you have a modified/custom theme and you find that events are not working, the other features of the extension will continue to function.
+					</p>
+          		</div>
+
+          		<div class="tab-pane" id="tab-faq">
+          			<link rel="stylesheet" href="view/template/extension/analytics/google_analytics_expert_docs/css/custom.css" media="screen">
+					<link rel="stylesheet" href="view/template/extension/analytics/google_analytics_expert_docs/js/jquery-ui-1.12.1.custom.css" />
+					<script src="view/template/extension/analytics/google_analytics_expert_docs/js/jquery-ui-1.12.1.custom.js"></script>
+
+          			<script type="text/javascript">
+						$(document).ready(function() {
+							$(".accordion").accordion({ header: "h6",heightStyle: "content",collapsible: true,active: false,clearStyle: true, autoHeight: false });		
+						});
+					</script>
+	<style type="text/css">
+	/*!
+ 	* jQuery UI Accordion 1.8.23
+ 	*
+	 * Copyright 2012, AUTHORS.txt (http://jqueryui.com/about)
+	 * Dual licensed under the MIT or GPL Version 2 licenses.
+ 	* http://jquery.org/license
+	 *
+ 	* http://docs.jquery.com/UI/Accordion#theming
+ 	*/
+	/* IE/Win - Fix animation bug - #4615 */
+	.ui-accordion { width: 100%; }
+	.ui-accordion .ui-accordion-header { cursor: pointer; position: relative; margin-top: 1px; zoom: 1; }
+	.ui-accordion .ui-accordion-li-fix { display: inline; }
+	.ui-accordion .ui-accordion-header-active { border-bottom: 0 !important; }
+	.ui-accordion .ui-accordion-header a { display: block; font-size: 1em; padding: .5em .5em .5em .7em; }
+	.ui-accordion-icons .ui-accordion-header a { padding-left: 2.2em; }
+	.ui-accordion .ui-accordion-header .ui-icon { position: absolute; left: .5em; top: 50%; margin-top: -8px; }
+	.ui-accordion .ui-accordion-content { padding: 1em 2.2em; border-top: 0; margin-top: -5px; position: relative; top: 1px; margin-bottom: 2px; overflow: auto; display: none; zoom: 1; background-color: #FFFFFF }
+	.ui-accordion .ui-accordion-content-active { display: block; }
+	/*a.orange{color:#e47911;}*/
+	a.orange{color:#1e91cf;}
+	.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {font-weight:normal;}
+	</style>
+
+    <div class="accordion">
+		<h6><a href="#">I'm not receiving any e-commerce data in my Google Analytics account</a></h6>
+		<div>
+		The data sent to Google is not all reported in real time. The <a class="orange" href="https://support.google.com/analytics/answer/1070983?hl=en" target="_blank">
+		official word from Google</a> is that it can take 24-48 hours for all data to show in your account. In reality, I've found that most data is in the account within a couple of hours at most but I have seen it take much longer. Please keep this in mind before getting in touch.<br /><br />
+		Another reason this could be happening is a possible problem with your payment option.<br />
+		In order for your site to send the data to GA, the order success page needs to be loaded.
+		There have been instances where PayPal orders have not been tracked because the customer has closed the window before returning to your site<span lang="en-gb"> 
+		due to PayPal's ridiculously long redirect time!</span>.<br /><br />
+		<strong>Important Note:</strong> If using PayPal as a payment method, it is important that you set up 'Auto Return' to minimise any delay in returning the customer to your site after a successful order.<br /><br />
+		To turn on Auto Return for Paypal, please log in into your PayPal account and go to Profile -> Website Payment Preferences -> select Auto Return: on and in Return URL fill in http://example.com/index.php?route=checkout/success (change example.com to your store URL)<br /><br />
+		You can find more information about Auto Return by following the links below:<br />
+		<a class="orange" href="https://www.paypal.com/cgi-bin/webscr?cmd=p/mer/express_return_summary-outside">https://www.paypal.com/cgi-bin/webscr?cmd=p/mer/express_return_summary-outside</a><br />
+		<a class="orange" href="http://forum.opencart.com/viewtopic.php?f=113&t=37334">http://forum.opencart.com/viewtopic.php?f=113&t=37334</a><br />
+		<a class="orange" href="http://forum.opencart.com/viewtopic.php?f=19&t=39871">http://forum.opencart.com/viewtopic.php?f=19&t=39871</a><br />
+		<a class="orange" href="http://forum.opencart.com/viewtopic.php?f=113&t=66696">http://forum.opencart.com/viewtopic.php?f=113&t=66696</a><br />
+		<a class="orange" href="https://www.x.com/developers/paypal/forums/paypal-sandbox/auto-return-and-opencart-not-working-sandbox">https://www.x.com/developers/paypal/forums/paypal-sandbox/auto-return-and-opencart-not-working-sandbox</a>
+		<br /><br />
+		Some payment options &amp; themes also use their own success page. If this is the case the transaction &amp; e-commerce data may not be passed to GA without modification.<br /><br />
+		There may be a conflict with another extension or the extension might not be able to run for some reason. If this is the case, you must check your vqmod logs for errors relating to this extension.<br /><br />
+		<strong>If you have checked all of the above</strong> and you are still having problems, please <a class="orange" href="javascript:void(0)" onclick="$('.nav-tabs li:eq(6) a').tab('show'); ;">send a support request</a>.
+		</div>
+	<h6><a href="#">I'm using PayPal Standard and not all of these transactions are being tracked in Google Analytics</a></h6>
+		<div>
+		In order for your site to send the data to GA, the OpenCart order success page needs to be loaded.<br />
+		There have been instances where PayPal orders have not been tracked because the customer has closed the window before returning to your site.<br /><br />
+		<strong>Important Note:</strong> If using PayPal as a payment method, it is important that you set up 'Auto Return' to minimise any delay in returning the customer to your site after a successful order.<br /><br />
+		To turn on Auto Return for Paypal, please log in into your PayPal account and go to Profile -> Website Payment Preferences -> select Auto Return: on and in Return URL fill in http://example.com/index.php?route=checkout/success (change example.com to your store URL)<br /><br />
+		You can find more information about Auto Return by following the links below:<br />
+		<a class="orange" href="https://www.paypal.com/cgi-bin/webscr?cmd=p/mer/express_return_summary-outside">https://www.paypal.com/cgi-bin/webscr?cmd=p/mer/express_return_summary-outside</a><br />
+		<a class="orange" href="http://forum.opencart.com/viewtopic.php?f=113&t=37334">http://forum.opencart.com/viewtopic.php?f=113&t=37334</a><br />
+		<a class="orange" href="http://forum.opencart.com/viewtopic.php?f=19&t=39871">http://forum.opencart.com/viewtopic.php?f=19&t=39871</a><br />
+		<a class="orange" href="http://forum.opencart.com/viewtopic.php?f=113&t=66696">http://forum.opencart.com/viewtopic.php?f=113&t=66696</a><br />
+		<a class="orange" href="https://www.x.com/developers/paypal/forums/paypal-sandbox/auto-return-and-opencart-not-working-sandbox">https://www.x.com/developers/paypal/forums/paypal-sandbox/auto-return-and-opencart-not-working-sandbox</a>
+		<br /><br />
+		</div>
+	<h6><a href="#">I have followed instructions and set everything up but I don't see any tracking code in the source code in my browser</a></h6>
+		<div>
+		This usually happens when you have set the 'Track Admin Visits' settings in the analytics settings tab to 'Do Not Track'.<br />
+		If you aren't seeing any GA tracking code when you view the source code of the browser, make sure you aren't logged in as admin and check the setting isn't configured to 'Do Not Track'.<br /><br />
+		If you definitely have the setting to 'Track' admin visits <i>or</i> you are not logged in as admin but you still can't view the source code, please check your error logs and <a class="orange" href="javascript:void(0)" onclick="$('.nav-tabs li:eq(6) a').tab('show'); ;">send a support request</a> with the details.
+		</div>
+		
+	<h6><a href="#">Goal Value in Google Analytics is zero... Why isn't my product revenue listed?</a></h6>
+		<div>
+		The Goal Value is not related to any purchased products.<br />
+		When you set up your goal (look in goal settings), you can assign a value to each successful goal. So you can say, each completed goal has a value to you of &#163;10.00. However, this doesn't make much sense for what you want to achieve with an e-commerce site and each goal will have the same goal value, and because product pricing is different for each product, applying this setting will hold no relevance.
+		Goal Value should be left blank, the extension adds the value based on the transaction.<br /><br />
+		To look at product value/revenue, you need to go into the e-commerce section of GA.<br />
+		If you look at the e-commerce overview, it shows you the product revenue. If you click product performance, it breaks it down for each product. Have a play around and you can dig even deeper!
+		</div>
+		
+	<h6><a href="#">How can I view Conversion data in Google Adwords &amp; why is this data different to the Google Analytics Data</a></h6>
+		<div>
+		To view the conversion data in Google Adwords so that you can see how much profit you have made against the cost of your advertising, follow these steps:<br />
+		<ol>
+		<li>Log in to adwords and select a campaign</li>
+		<li>Click 'Columns' then 'Customise columns'</li>
+		<li>Click 'Conversions'</li>
+		<li>Make sure all of these columns are added:<br />
+		Total conv. value<br />
+		Conv. value / cost<br />
+		Conv. value / click<br />
+		Value / conv. (1-per-click)<br />
+		</li>
+		<li>Click the Apply button</li>
+		<li>Ensure these steps are carried out for the Ad Groups, Ads &amp; Keywords tabs so that the new columns can be visible in all reports</li>
+		</ol>
+		You can then see the conversion data for current view. and compare it against your cost data to see how much profit you have made.<br />
+		As this is for profit reporting purposes, the data you see here may differ from the data you see in Google Analytics.<br />
+		The value of a conversion brought in to Google Adwords <strong>excludes</strong> tax from both the products and shipping (if applicable) so you can see exactly how much profit you have made for each transaction keeping the data accurate. 
+		Google Analytics has the option to filter tax and shipping costs from your order data.</div>
+
+	<h6><a href="#">The Event Tracking Feature is not working</a></h6>
+		<div>
+			Please see the <a class="orange" href="javascript:void(0)" onclick="$('.nav-tabs li:eq(3) a').tab('show'); ;">Events</a> tab.
+		</div>
+		
+	<h6><a href="#">Search Tracking is not working in Google Analytics</a></h6>
+		<div>
+		This will happen if you have installed a custom search or SEO extension which modifies the URL of the search result pages.<br />
+		Please <a class="orange" href="javascript:void(0)" onclick="$('.nav-tabs li:eq(6) a').tab('show'); ;">send a support request</a> with details on the specific extension you are using and the URL to your site so I can tell you what needs to be changed.
+		</div>
+
+	<h6><a href="#">Why is paypal.com (or other) being recorded as a referrer?</a></h6>
+		<div>
+			Please see the 
+			<a class="orange" href="https://support.google.com/analytics/answer/2795830?hl=en" target="_blank">Google documentation</a> for more info and how to exclude certain referrers from showing in your reports.<br />
+		</div>
+	<h6><a href="#">How Do I update Google Analytics Expert?</a></h6>
+		<div>
+		To update this extension simply <a href="https://www.opencart.com/index.php?route=marketplace/extension/info&amp;extension_id=4496" target="_blank">download the latest version</a> (you must have a valid licence) and follow the instructions. You should remove/uninstall the previous version completely before installing the new version. You may need to re-enter your settings.
+		</div>
+	</div>
+
+          		</div>
+          		
+<div class="tab-pane" id="tab-log">
+<h4 id="changelog_version_701_22_08_17_">Version 7.0.1 (22/08/17)</h4>
+<pre class="prettyprint lang-plain linenums">
+Fixed <span class="nocode pln">OCMOD installer process. Now showing in modifications list</span>
+</pre>
+<h4 id="changelog_version_700_20_08_17_">Version 7.0.0 (20/08/17)</h4>
+<pre class="prettyprint lang-plain linenums">
+Updated <span class="nocode pln">documentation and set up procedure</span>
+Added <span class="nocode pln">OCMOD support (minimal to avoid conflicts)</span>
+Dropped <span class="nocode pln">vQmod support</span>
+Updated <span class="nocode pln">the extension to support OC 3.x</span>
+</pre>
+<h4 id="changelog_version_612_20_06_17_">Version 6.1.2 (20/06/17)</h4>
+<pre class="prettyprint lang-plain linenums">
+Fixed <span class="nocode pln">error in vQmod file that stopped the extension from running</span>
+Dropped <span class="nocode pln">support for OCv3.0x until issues fixed and updated</span>
+</pre>
+<h4 id="changelog_version_611_09_06_17_">Version 6.1.1 (09/06/17)</h4>
+<pre class="prettyprint lang-plain linenums">
+Updated <span class="nocode pln">the extension to add support for OC3.0.0.0</span>
+</pre>
+<h4 id="changelog_version_610_08_06_17_">Version 6.1.0 (08/06/17)</h4>
+<pre class="prettyprint lang-plain linenums">
+Updated <span class="nocode pln">the extension to add support for all OC versions from 2.1x - 2.3x</span>
+Updated <span class="nocode pln">documentation</span>
+Fixed <span class="nocode pln">issues with multistore setups when saving settings</span>
+</pre>
+<h4 id="changelog_version_604_23_02_16_">Version 6.0.4 (23/02/16)</h4>
+<pre class="prettyprint lang-plain linenums">
+Added <span class="nocode pln">query optimisation to ensure any large product option queries are executed without error</span>
+</pre>
+<h4 id="changelog_version_603_18_01_16_">Version 6.0.3 (18/01/16)</h4>
+<pre class="prettyprint lang-plain linenums">
+Fixed <span class="nocode pln">error upon saving settings in admin</span>
+</pre>
+<h4 id="changelog_version_602_14_01_16_">Version 6.0.2 (14/01/16)</h4>
+<pre class="prettyprint lang-plain linenums">
+Fixed <span class="nocode pln">error where extension would not run on stores with more than one admin language</span>
+</pre>
+<h4 id="changelog_version_601_08_01_16_">Version 6.0.1 (08/01/16)</h4>
+<pre class="prettyprint lang-plain linenums">
+Fixed <span class="nocode pln">db table error whilst accessing admin settings</span>
+Fixed <span class="nocode pln">undefined variable error on category pages</span>
+Fixed <span class="nocode pln">settings not saving due to error</span>
+Fixed <span class="nocode pln">documentation bug that prevented google chrome users from acccessing menus</span>
+</pre>
+<h4 id="changelog_version_600_06_01_16_">Version 6.0.0 (06/01/16)</h4>
+<pre class="prettyprint lang-plain linenums">
+Rewritten <span class="nocode pln">for OC 2.1.0.1</span>
+Added <span class="nocode pln">support for journal2 one page checkout</span>
+Updated <span class="nocode pln">analytics category tag to show full category path instead of single category</span>
+Removed <span class="nocode pln">usage of deprecated classic analytics tracking - more info here: "support.google.com/analytics/answer/4457764?hl=en"</span>
+Updated <span class="nocode pln">EU cookie consent script</span>
+Updated <span class="nocode pln">documentation</span>
+</pre>
+</div>
+
+				<div class="tab-pane" id="tab-support">
+					<p>If you are struggling and need to contact for support, please read the paragraphs below carefully.</p>
+					<p style="font-style: italic;">
+						Upgrades &amp; support are provided for 6 months from the date of purchase.<br />
+						Please do not post any questions, code or errors related to the extension in the comments area or forum. Any support questions received there will be ignored and deleted.
+						Read the <a href="http://forum.opencart.com/viewtopic.php?t=91029" style="color:#e47911" target="_blank">extension store policy</a> and get support directly by contacting <span style="color:#1e91cf;">spitosopencart@gmail.com</span>.
+					</p>
+					<p><span style="font-size:20px">Help me to help you!</span> Please include the following details to help speed up your support query (please copy, paste and add any missing info to direct email):<br /><br />
+					Note: Support requests containing these details below will be prioritised over requests missing this important information. If you include all the details requested in your query, the aim is respond within 24 hours (excl weekends) and subsequent replies will be much quicker. Any requests made without this important information will be placed to the back of the queue and you will receive a response in up to 72 hours.
+						<ul>
+							<li>Opencart Order ID for the purchase of this extension</li>
+							<li>The Opencart version you are using (you are using <span style="color:#1e91cf;">v{{ version }})</span></li>
+							<li>What version of the GA Expert are you using (you are using <span style="color:#1e91cf;">v{{ gaev }}</span>)</li>
+							<li>What theme you are using (you are using <span style="color:#1e91cf;">{{ theme }}</span> theme)</li>
+							<li>What checkout extension (if any) you are using</li>
+							<li>List any Google Analytics Expert related errors you see</li>
+							<li>Your site URL</li>
+						</ul>
+					</p>
+					<p>
+						Positive comments &amp; ratings are welcome and help to ensure that this extension is updated regularly with new features. <br />
+						Please take the time to <a href="https://www.opencart.com/index.php?route=marketplace/extension/info&amp;extension_id=4496" target="_blank">set a rating and leave a short positive comment</a> about this extension on the Opencart marketplace.
+					</p>
+          		</div>
+          	</div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }} 

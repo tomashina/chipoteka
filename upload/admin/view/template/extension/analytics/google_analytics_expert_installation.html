@@ -1,0 +1,365 @@
+<!doctype html>  
+<!--[if IE 6 ]><html lang="en-gb" class="ie6"> <![endif]-->
+<!--[if IE 7 ]><html lang="en-gb" class="ie7"> <![endif]-->
+<!--[if IE 8 ]><html lang="en-gb" class="ie8"> <![endif]-->
+<!--[if (gt IE 7)|!(IE)]><!-->
+<html lang="en-gb"><!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	
+	<title>Google Analytics Expert</title>
+	
+	<meta name="description" content="">
+	<meta name="author" content="Spitos">
+	<meta name="copyright" content="Spitos">
+	<meta name="generator" content="Documenter v2.0 http://rxa.li/documenter">
+	<meta name="date" content="2016-01-05T00:00:00+01:00">
+	
+	<link rel="stylesheet" href="google_analytics_expert_docs/css/documenter_style.css" media="all">
+	<link rel="stylesheet" href="google_analytics_expert_docs/js/google-code-prettify/prettify.css" media="screen">
+	<script src="google_analytics_expert_docs/js/google-code-prettify/prettify.js"></script>
+
+	<link rel="stylesheet" href="google_analytics_expert_docs/css/custom.css" media="screen">
+	<link rel="stylesheet" href="google_analytics_expert_docs/css/ui-lightness/jquery-ui-1.8.23.custom.css" />
+	
+	<script src="google_analytics_expert_docs/js/jquery.js"></script>
+	<script src="google_analytics_expert_docs/js/jquery-ui-1.8.23.custom.min.js"></script>
+	<script src="google_analytics_expert_docs/js/jquery.scrollTo.js"></script>
+	<script src="google_analytics_expert_docs/js/jquery.easing.js"></script>
+	
+	<script>document.createElement('section');var duration='450',easing='easeOutExpo';</script>
+	<script src="google_analytics_expert_docs/js/script.js"></script>
+	
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$(".accordion").accordion({ header: "h6",collapsible: true,active: false,clearStyle: true, autoHeight: false });			
+		});
+	</script>
+	<script type="text/javascript">
+		// Includes: jquery.ui.accordion.js
+		// Copyright (c) 2012 AUTHORS.txt; Licensed MIT, GPL */
+		(function(a,b){a.widget("ui.accordion",{options:{active:0,animated:"slide",autoHeight:!0,clearStyle:!1,collapsible:!1,event:"click",fillSpace:!1,header:"> li > :first-child,> :not(li):even",icons:{header:"ui-icon-triangle-1-e",headerSelected:"ui-icon-triangle-1-s"},navigation:!1,navigationFilter:function(){return this.href.toLowerCase()===location.href.toLowerCase()}},_create:function(){var b=this,c=b.options;b.running=0,b.element.addClass("ui-accordion ui-widget ui-helper-reset").children("li").addClass("ui-accordion-li-fix"),b.headers=b.element.find(c.header).addClass("ui-accordion-header ui-helper-reset ui-state-default ui-corner-all").bind("mouseenter.accordion",function(){if(c.disabled)return;a(this).addClass("ui-state-hover")}).bind("mouseleave.accordion",function(){if(c.disabled)return;a(this).removeClass("ui-state-hover")}).bind("focus.accordion",function(){if(c.disabled)return;a(this).addClass("ui-state-focus")}).bind("blur.accordion",function(){if(c.disabled)return;a(this).removeClass("ui-state-focus")}),b.headers.next().addClass("ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom");if(c.navigation){var d=b.element.find("a").filter(c.navigationFilter).eq(0);if(d.length){var e=d.closest(".ui-accordion-header");e.length?b.active=e:b.active=d.closest(".ui-accordion-content").prev()}}b.active=b._findActive(b.active||c.active).addClass("ui-state-default ui-state-active").toggleClass("ui-corner-all").toggleClass("ui-corner-top"),b.active.next().addClass("ui-accordion-content-active"),b._createIcons(),b.resize(),b.element.attr("role","tablist"),b.headers.attr("role","tab").bind("keydown.accordion",function(a){return b._keydown(a)}).next().attr("role","tabpanel"),b.headers.not(b.active||"").attr({"aria-expanded":"false","aria-selected":"false",tabIndex:-1}).next().hide(),b.active.length?b.active.attr({"aria-expanded":"true","aria-selected":"true",tabIndex:0}):b.headers.eq(0).attr("tabIndex",0),a.browser.safari||b.headers.find("a").attr("tabIndex",-1),c.event&&b.headers.bind(c.event.split(" ").join(".accordion ")+".accordion",function(a){b._clickHandler.call(b,a,this),a.preventDefault()})},_createIcons:function(){var b=this.options;b.icons&&(a("<span></span>").addClass("ui-icon "+b.icons.header).prependTo(this.headers),this.active.children(".ui-icon").toggleClass(b.icons.header).toggleClass(b.icons.headerSelected),this.element.addClass("ui-accordion-icons"))},_destroyIcons:function(){this.headers.children(".ui-icon").remove(),this.element.removeClass("ui-accordion-icons")},destroy:function(){var b=this.options;this.element.removeClass("ui-accordion ui-widget ui-helper-reset").removeAttr("role"),this.headers.unbind(".accordion").removeClass("ui-accordion-header ui-accordion-disabled ui-helper-reset ui-state-default ui-corner-all ui-state-active ui-state-disabled ui-corner-top").removeAttr("role").removeAttr("aria-expanded").removeAttr("aria-selected").removeAttr("tabIndex"),this.headers.find("a").removeAttr("tabIndex"),this._destroyIcons();var c=this.headers.next().css("display","").removeAttr("role").removeClass("ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content ui-accordion-content-active ui-accordion-disabled ui-state-disabled");return(b.autoHeight||b.fillHeight)&&c.css("height",""),a.Widget.prototype.destroy.call(this)},_setOption:function(b,c){a.Widget.prototype._setOption.apply(this,arguments),b=="active"&&this.activate(c),b=="icons"&&(this._destroyIcons(),c&&this._createIcons()),b=="disabled"&&this.headers.add(this.headers.next())[c?"addClass":"removeClass"]("ui-accordion-disabled ui-state-disabled")},_keydown:function(b){if(this.options.disabled||b.altKey||b.ctrlKey)return;var c=a.ui.keyCode,d=this.headers.length,e=this.headers.index(b.target),f=!1;switch(b.keyCode){case c.RIGHT:case c.DOWN:f=this.headers[(e+1)%d];break;case c.LEFT:case c.UP:f=this.headers[(e-1+d)%d];break;case c.SPACE:case c.ENTER:this._clickHandler({target:b.target},b.target),b.preventDefault()}return f?(a(b.target).attr("tabIndex",-1),a(f).attr("tabIndex",0),f.focus(),!1):!0},resize:function(){var b=this.options,c;if(b.fillSpace){if(a.browser.msie){var d=this.element.parent().css("overflow");this.element.parent().css("overflow","hidden")}c=this.element.parent().height(),a.browser.msie&&this.element.parent().css("overflow",d),this.headers.each(function(){c-=a(this).outerHeight(!0)}),this.headers.next().each(function(){a(this).height(Math.max(0,c-a(this).innerHeight()+a(this).height()))}).css("overflow","auto")}else b.autoHeight&&(c=0,this.headers.next().each(function(){c=Math.max(c,a(this).height("").height())}).height(c));return this},activate:function(a){this.options.active=a;var b=this._findActive(a)[0];return this._clickHandler({target:b},b),this},_findActive:function(b){return b?typeof b=="number"?this.headers.filter(":eq("+b+")"):this.headers.not(this.headers.not(b)):b===!1?a([]):this.headers.filter(":eq(0)")},_clickHandler:function(b,c){var d=this.options;if(d.disabled)return;if(!b.target){if(!d.collapsible)return;this.active.removeClass("ui-state-active ui-corner-top").addClass("ui-state-default ui-corner-all").children(".ui-icon").removeClass(d.icons.headerSelected).addClass(d.icons.header),this.active.next().addClass("ui-accordion-content-active");var e=this.active.next(),f={options:d,newHeader:a([]),oldHeader:d.active,newContent:a([]),oldContent:e},g=this.active=a([]);this._toggle(g,e,f);return}var h=a(b.currentTarget||c),i=h[0]===this.active[0];d.active=d.collapsible&&i?!1:this.headers.index(h);if(this.running||!d.collapsible&&i)return;var j=this.active,g=h.next(),e=this.active.next(),f={options:d,newHeader:i&&d.collapsible?a([]):h,oldHeader:this.active,newContent:i&&d.collapsible?a([]):g,oldContent:e},k=this.headers.index(this.active[0])>this.headers.index(h[0]);this.active=i?a([]):h,this._toggle(g,e,f,i,k),j.removeClass("ui-state-active ui-corner-top").addClass("ui-state-default ui-corner-all").children(".ui-icon").removeClass(d.icons.headerSelected).addClass(d.icons.header),i||(h.removeClass("ui-state-default ui-corner-all").addClass("ui-state-active ui-corner-top").children(".ui-icon").removeClass(d.icons.header).addClass(d.icons.headerSelected),h.next().addClass("ui-accordion-content-active"));return},_toggle:function(b,c,d,e,f){var g=this,h=g.options;g.toShow=b,g.toHide=c,g.data=d;var i=function(){if(!g)return;return g._completed.apply(g,arguments)};g._trigger("changestart",null,g.data),g.running=c.size()===0?b.size():c.size();if(h.animated){var j={};h.collapsible&&e?j={toShow:a([]),toHide:c,complete:i,down:f,autoHeight:h.autoHeight||h.fillSpace}:j={toShow:b,toHide:c,complete:i,down:f,autoHeight:h.autoHeight||h.fillSpace},h.proxied||(h.proxied=h.animated),h.proxiedDuration||(h.proxiedDuration=h.duration),h.animated=a.isFunction(h.proxied)?h.proxied(j):h.proxied,h.duration=a.isFunction(h.proxiedDuration)?h.proxiedDuration(j):h.proxiedDuration;var k=a.ui.accordion.animations,l=h.duration,m=h.animated;m&&!k[m]&&!a.easing[m]&&(m="slide"),k[m]||(k[m]=function(a){this.slide(a,{easing:m,duration:l||700})}),k[m](j)}else h.collapsible&&e?b.toggle():(c.hide(),b.show()),i(!0);c.prev().attr({"aria-expanded":"false","aria-selected":"false",tabIndex:-1}).blur(),b.prev().attr({"aria-expanded":"true","aria-selected":"true",tabIndex:0}).focus()},_completed:function(a){this.running=a?0:--this.running;if(this.running)return;this.options.clearStyle&&this.toShow.add(this.toHide).css({height:"",overflow:""}),this.toHide.removeClass("ui-accordion-content-active"),this.toHide.length&&(this.toHide.parent()[0].className=this.toHide.parent()[0].className),this._trigger("change",null,this.data)}}),a.extend(a.ui.accordion,{version:"1.8.23",animations:{slide:function(b,c){b=a.extend({easing:"swing",duration:300},b,c);if(!b.toHide.size()){b.toShow.animate({height:"show",paddingTop:"show",paddingBottom:"show"},b);return}if(!b.toShow.size()){b.toHide.animate({height:"hide",paddingTop:"hide",paddingBottom:"hide"},b);return}var d=b.toShow.css("overflow"),e=0,f={},g={},h=["height","paddingTop","paddingBottom"],i,j=b.toShow;i=j[0].style.width,j.width(j.parent().width()-parseFloat(j.css("paddingLeft"))-parseFloat(j.css("paddingRight"))-(parseFloat(j.css("borderLeftWidth"))||0)-(parseFloat(j.css("borderRightWidth"))||0)),a.each(h,function(c,d){g[d]="hide";var e=(""+a.css(b.toShow[0],d)).match(/^([\d+-.]+)(.*)$/);f[d]={value:e[1],unit:e[2]||"px"}}),b.toShow.css({height:0,overflow:"hidden"}).show(),b.toHide.filter(":hidden").each(b.complete).end().filter(":visible").animate(g,{step:function(a,c){c.prop=="height"&&(e=c.end-c.start===0?0:(c.now-c.start)/(c.end-c.start)),b.toShow[0].style[c.prop]=e*f[c.prop].value+f[c.prop].unit},duration:b.duration,easing:b.easing,complete:function(){b.autoHeight||b.toShow.css("height",""),b.toShow.css({width:i,overflow:d}),b.complete()}})},bounceslide:function(a){this.slide(a,{easing:a.down?"easeOutBounce":"swing",duration:a.down?1e3:200})}}})})(jQuery);;/*! jQuery UI - v1.8.23 - 2012-08-15*/
+	</script>
+	
+	<style>
+		html{background-color:#E9E9E9;color:#383838;}
+		::-moz-selection{background:#FF9900;color:#424242;}
+		::selection{background:#FF9900;color:#424242;}
+		#documenter_sidebar #documenter_logo{background-image:url('google_analytics_expert_docs/images/google-analytics-expert.png');
+	}
+		a{color:#FF9900;}
+		a.orange{color:#EB8F00;}
+		.btn {
+			border-radius:3px;
+		}
+		.btn-primary {
+			  border-color: #B56D00 #B56D00 #bfbfbf;
+		color: #FFFFFF;
+		background-image: linear-gradient(top, #FFFFFF, #B56D00);
+	}
+		.btn-primary:hover,
+		.btn-primary:active,
+		.btn-primary.active,
+		.btn-primary.disabled,
+		.btn-primary[disabled] {
+		  border-color: #FFFFFF #FFFFFF #bfbfbf;
+		  background-color: #B56D00;
+		}
+		hr{border-top:1px solid #D4D4D4;border-bottom:1px solid #F7F7F7;}
+		#documenter_sidebar, #documenter_sidebar ul a{background-color:#BCBCBC;color:#222222;}
+		#documenter_sidebar ul a{-webkit-text-shadow:1px 1px 0px #DBDBDB;-moz-text-shadow:1px 1px 0px #DBDBDB;text-shadow:1px 1px 0px #DBDBDB;}
+		#documenter_sidebar ul{border-top:1px solid #A1A1A1;}
+		#documenter_sidebar ul a{border-top:1px solid #DBDBDB;border-bottom:1px solid #A1A1A1;color:#424242;}
+		#documenter_sidebar ul a:hover{background:#FF9900;color:#424242;border-top:1px solid #FF9900;border-bottom:1px solid #FF9900;}
+		#documenter_sidebar ul a.current{background:#e58800 !important;color:#ffffff;border-top:1px solid #FF9900;border-bottom:1px solid #FF9900;}
+		#documenter_copyright{display:block !important;visibility:visible !important;}
+	
+}
+	</style>
+	
+</head>
+<body class="documenter-project-google-analytics-expert">
+	<div id="documenter_sidebar">
+		<a href="#documenter_cover" id="documenter_logo"></a>
+		<ul id="documenter_nav">
+			<li><a class="current" href="#documenter_cover">Features</a></li>
+			<li><a href="#setting_up_google_analytics_to_display_the_data_we_send" title="Setting up Google Analytics to display the data we send">Setting up Google Analytics to display the data we send</a></li>
+			<li><a href="#setting_up_the_goal_funnel" title="Setting up the goal funnel">Setting up the goal funnel</a></li>
+			<li><a href="#enable_ecommerce_tracking" title="Enable Ecommerce Tracking">Enable Ecommerce Tracking</a></li>
+			<li><a href="#google_adwords_creating_a_new_conversion_tag" title="Google Adwords - Creating a new conversion tag">Google Adwords<br> Creating a new conversion tag</a></li>
+			<li><a href="#google_adwords_use_an_existing_conversion_tag" title="Google Adwords - Use an existing conversion tag">Google Adwords<br> Use an existing conversion tag</a></li>
+			<li><a href="#eu_cookie_consent" title="EU Cookie Consent">EU Cookie Consent</a></li>
+			<li><a href="#event_tracking" title="Event Tracking">Event Tracking</a></li>
+		</ul>
+		<div id="documenter_copyright">&copy; Spitos 2011-2017
+		<!--<br>
+		made with the <a href="http://rxa.li/documenter">Documenter v2.0</a> -->
+		</div>
+	</div>
+	<div id="documenter_content">
+	<section id="documenter_cover">
+	<h1>Google Analytics Expert</h1>
+	<div id="documenter_buttons">
+		
+	</div>
+	<hr>
+	<p>
+	Google Analytics Expert for OpenCart will link your Google Analytics and Google AdWords accounts to your opencart store, so you can view the data below (and much, much more) in the Google Analytics and Google Adwords user interface:</p>
+<ul>
+	<li>Conversion goals (Purchase)</li>
+	<li>Goal Funnel Visualisation (See which step of your pre defined goal the user left the funnel)</li>
+	<li>Product performance (Grouped by product name, you can see quantity purchased, unique purchases, revenue etc)</li>
+	<li>Sales performance (Revenue for sales)</li>
+	<li>Transactions (list of OC Order IDs)</li>
+	<li>Track your store&#39;s search queries (View revenue data for each term)</li>
+	<li>Event tracking (track clicks of the add to cart, add to compare &amp; add to wishlist)</li>
+	<li>Multistore support with separate GA tracking code for each website</li>
+	<li>EU cookie compliance to meet EU legislation (Make users aware you use cookies)</li>
+	<li>Option to exclude data you send to Google if logged in as an admin user (To see only customer activity)</li>
+	<li>AdWords conversion value tracking (Let AdWords know when you&#39;ve made a sale/conversion)</li>
+	<li>AdWords profit reporting (See the actual profit figure from each sale)</li>
+</ul>
+<p class="info">
+	All of the above can be viewed/filtered by a date range/period within the Google web interface</p>
+	</section>
+	<section id="setting_up_google_analytics_to_display_the_data_we_send">
+<div class="page-header"><h3>Setting up Google Analytics to display the data we send</h3><hr class="notop"></div>
+<ol>
+	<li class="c_1">
+		Login to your <a href="https://analytics.google.com/analytics/web/" target="_blank">Google Analytics</a> account &amp; select the site you want to set up<br>
+		&nbsp;</li>
+	<li class="c_1">
+		Click the Admin link in the header then click View Settings in the View list of the admin screen<br>
+		&nbsp;</li>
+	<li class="c_1">
+		Scroll down and select only the options you see in the image below and click the Save button:<br>
+		<img class="highlight" alt="" src="google_analytics_expert_docs/images/analytics-1.jpg" style="width: 384px; height: 446px;"><br>
+		For Query parameter enter this:<br>
+		<span class="highlight">filter_name,search</span>
+	</li>
+</ol>
+</section>
+<section id="setting_up_the_goal_funnel">
+<div class="page-header"><h3>Setting up the goal funnel</h3><hr class="notop"></div>
+<p class="c_1">
+	Click on Goals in the left pane and enter the settings as shown in the image below (scroll below the image to copy &amp; paste into analytics):<br /><br />
+	<img class="highlight" alt="" src="google_analytics_expert_docs/images/analytics-2.jpg" style="width: 712px; height: 832px;"><br>
+	<br>
+	For goal destination, select Regular Expression and enter this:<br />
+	<span class="highlight">/index\.php\?route=*checkout/success*</span></p>
+<p class="c_1">
+	You will need to adjust the goal funnel steps according to what theme or custom checkout you are using. The list below covers the most common set ups, adjust the goal funnel steps accordingly:</p>
+<div class="accordion">
+	<h6><a href="#">Default/Standard Checkout</a></h6>
+	<div><table class="tcell" style="width: 600px">
+	<tbody>
+		<tr>
+		</tr>
+		<tr>
+			<td style="width: 75px">
+				&nbsp;</td>
+			<td style="width: 170px">
+				<strong>Name</strong></td>
+			<td style="width: 356px">
+				<strong>Screen/Page</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 75px">
+				<strong>Step 1</strong></td>
+			<td style="width: 170px">
+				Account</td>
+			<td style="width: 356px">
+				/gae/checkout-options</td>
+		</tr>
+		<tr>
+			<td style="width: 75px">
+				<strong>Step 2</strong></td>
+			<td style="width: 170px">
+				Billing Address</td>
+			<td style="width: 356px">
+				/gae/payment-address</td>
+		</tr>
+		<tr>
+			<td style="width: 75px">
+				<strong>Step 3</strong></td>
+			<td style="width: 170px">
+				Shipping Address</td>
+			<td style="width: 356px">
+				/gae/shipping-address</td>
+		</tr>
+		<tr>
+			<td style="width: 75px">
+				<strong>Step 4</strong></td>
+			<td style="width: 170px">
+				Shipping Method</td>
+			<td style="width: 356px">
+				/gae/shipping-method</td>
+		</tr>
+		<tr>
+			<td style="width: 75px">
+				<strong>Step 5</strong></td>
+			<td style="width: 170px">
+				Payment Method</td>
+			<td style="width: 356px">
+				/gae/payment-method</td>
+		</tr>
+		<tr>
+			<td style="width: 75px">
+				<strong>Step 6</strong></td>
+			<td style="width: 170px">
+				Confirm Order</td>
+			<td style="width: 356px">
+				/gae/confirm</td>
+		</tr>
+	</tbody>
+</table>
+<p>Do you have a 3rd party one page checkout extension and you want to use a goal funnel to track checkout activity? Please send a support request in the extension settings for a quote.</p>
+</div>
+<h6><a href="#">Most one page checkouts (where the checkout route is checkout/checkout)</a></h6>
+	<div>
+<table class="tcell" style="width: 600px">
+	<tbody>
+		<tr>
+		</tr>
+		<tr>
+			<td style="width: 75px">
+				&nbsp;</td>
+			<td style="width: 170px">
+				<strong>Name</strong></td>
+			<td style="width: 356px">
+				<strong>Screen/Page</strong></td>
+		</tr>
+		<tr>
+			<td style="width: 75px">
+				<strong>Step 1</strong></td>
+			<td style="width: 170px">
+				Checkout</td>
+			<td style="width: 356px">
+				/gae/checkout</td>
+		</tr>
+	</tbody>
+</table></div>
+</div>
+</section>
+<section id="enable_ecommerce_tracking">
+<div class="page-header"><h3>Enable E<span>-</span>commerce Tracking</h3><hr class="notop"></div>
+<p class="c_1">
+		Click on <span>E-commerce Tracking</span> in the left pane and enter the settings as shown in the image below:<br>
+		<img class="highlight" alt="" src="google_analytics_expert_docs/images/analytics-4.jpg" style="width: 330px; height: 303px;"><br>
+		Enhanced E-commerce Settings should be OFF. This (overdue) feature will be added in one of the next updates but it is not available just yet.<br>
+</p>
+</section>
+<section id="event_tracking">
+	<div class="page-header"><h3>Event Tracking</h3><hr class="notop"></div>
+	<p>
+		Events are split into three elements. Category, Action &amp; Label.<br>
+		Below is a list of available elements in this extension to make things easier to track in GA.
+	</p>
+	<table class="tcell">
+		<tbody>
+			<tr>
+				<td>
+					<strong>Category</strong>
+				</td>
+				<td>&nbsp;</td>
+				<td>
+					<strong>Action</strong>
+				</td>
+				<td>&nbsp;</td>
+				<td>
+					<strong>Label</strong>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					The type of page/route the event took place on
+				</td>
+				<td>&nbsp;</td>
+				<td>
+					The action that took place - Add To Cart, Add To Wishlist or Add to Compare
+				</td>
+				<td>&nbsp;</td>
+				<td>
+					Product Name (SKU/Model)
+				</td>
+			</tr>
+	</tbody>
+</table>
+	<p>
+		To see the data gathered by this extension in GA, go to &#39;Content&#39;, then select &#39;Events&#39; as pictured below:<br>
+		<img class="highlight" alt="" src="google_analytics_expert_docs/images/analytics-3.jpg">
+	</p>
+</section>
+<section id="google_adwords_creating_a_new_conversion_tag">
+	<div class="page-header"><h3>Google Adwords - Creating a new conversion tag</h3><hr class="notop"></div>
+<ol>
+	<li class="c_1">
+		Login to AdWords<br>
+		&nbsp;</li>
+	<li class="c_1">
+		Click Tools &gt; Conversions<br>
+		<img class="highlight" alt="" src="google_analytics_expert_docs/images/adwords-1.jpg" style="width: 753px; height: 288px;"><br>
+		&nbsp;</li>
+	<li class="c_1">
+		Click the red button to add a new conversion<br>
+		<img class="highlight" alt="" src="google_analytics_expert_docs/images/adwords-2.jpg" style="width: 652px; height: 246px;"><br>
+		&nbsp;</li>
+	<li class="c_1">
+		Select the &#39;Website&#39; from the options<br>
+		<img class="highlight" alt="" src="google_analytics_expert_docs/images/adwords-3.jpg" style="width: 955px; height: 494px;"><br>
+		&nbsp;</li>
+	<li class="c_1">
+		Setup your conversion by copying the settings from the image below<br>
+		<img class="highlight" alt="" src="google_analytics_expert_docs/images/adwords-4.jpg" style="width: 829px; height: 763px;"><br>
+		&nbsp;</li>
+	<li class="c_1">
+		Click the &#39;Save and continue&#39; button<br>
+		&nbsp;</li>
+	<li class="c_1">
+		Scroll down to the &#39;Tag for Purchase&#39; code and copy the value of the google_conversion_id and google_conversion_label variables (excluding quotes) to the relevant Adwords Settings tab in the extension settings</li>
+</ol>
+</section>
+<section id="google_adwords_use_an_existing_conversion_tag">
+	<div class="page-header"><h3>Google Adwords - Use an existing conversion tag</h3><hr class="notop"></div>
+<ol>
+	<li class="c_1">
+		Login to AdWords<br>
+		&nbsp;</li>
+	<li class="c_1">
+		Click Tools &gt; Conversions<br>
+		<img class="highlight" alt="" src="google_analytics_expert_docs/images/adwords-1.jpg" style="width: 753px; height: 288px;"><br>
+		&nbsp;</li>
+	<li class="c_1">
+		Click on the name of the conversion (must be set up as a purchase conversion or you will need to create a new one)<br>
+		&nbsp;</li>
+	<li class="c_1">
+		Scroll down to the code for your existing conversion and copy the value of the google_conversion_id and google_conversion_label variables (excluding quotes) to a notepad for use in the installation guide later</li>
+</ol>
+</section>
+<section id="eu_cookie_consent">
+	<div class="page-header">
+		<h3>EU Cookie Consent</h3><hr class="notop">
+	</div>
+		<p class="list-item">
+			Set up is simple. Just choose to Enable or Disable the feature in the Google Analytics Expert settings.
+		</p>
+		<p>
+			The EU Cookie Consent feature is using an open source solution from <a href="https://cookieconsent.insites.com/" target="_blank">Insites</a> which I have included in the Google Analytics Expert extension.
+		</p>
+		<p>
+			This is a very minimalistic solution to ensure compliance. The message will show at the bottom of the browser window and it looks like this:<br>
+			<img alt="" src="google_analytics_expert_docs/images/eucookie.png" style="width: 863px; height: 63px;">
+		</p>
+		<p>
+			The message will display until the user clicks the &#39;Got it!&#39; button. At which point the message won&#39;t show again until the user clears your site cookies from their browser or 10 years has passed, whichever comes first!
+		</p>
+	
+		<h4>Modifying the message and options</h4>
+		<p>This feature will be available in the next update (temporarily removed as the extension is no longer using vqmod).</p>
+		<p class="warning">
+			Remember that you will not see the cookie message if you have already stored the cookie in your browser! Clear your domain cookies to see the message again.
+		</p>
+</section>
+	</div>
+</body>
+</html>
