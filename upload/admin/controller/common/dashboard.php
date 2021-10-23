@@ -17,6 +17,10 @@ class ControllerCommonDashboard extends Controller {
         $data['link_sync_manager'] = $this->url->link('extension/module/luceed_sync',
             'user_token=' . $this->session->data['user_token'], true);
 
+        $data['link_me_order_manager'] = $this->url->link('extension/me_order_manager',
+            'user_token=' . $this->session->data['user_token'], true);
+
+
 		$data['user_token'] = $this->session->data['user_token'];
 
 		$data['breadcrumbs'] = array();
