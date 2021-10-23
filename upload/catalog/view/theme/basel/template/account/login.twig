@@ -48,7 +48,7 @@
                                     <hr>-->
 
                                     <h3 class="fs-base pt-4 pb-2">Putem obrasca</h3>
-                                    <p>Poštovani korisnici, imamo novi webshop, a kako ne vidimo vaše lozinke (šifrirane su) nismo ih mogli preslikati u novi webshop. Tako da, pri prijavi, vaše stare lozinke neće raditi. Molim vas kliknite na zaboravljena lozinka kako bi je promjenili. Hvala vam :)</p>
+                                    <p>Poštovani korisnici, imamo novi webshop, a kako ne vidimo vaše lozinke (šifrirane su) nismo ih mogli preslikati u novi webshop. Tako da, pri prijavi, vaše stare lozinke neće raditi. Molim vas kliknite na zaboravljena lozinka kako bi je promjenili.<br> Hvala vam :)</p>
 
                                         <form action="{{ action }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                                             <div class="input-group mb-3"><i class="fas fa-envelope position-absolute top-50 translate-middle-y text-muted fs-base ms-3"></i>
@@ -112,4 +112,20 @@
             </section>
         </div>
     </section>
+
+    <script>
+        $(function(){
+            $("input#input-email").on({
+                keydown: function(e) {
+                    if (e.which === 32)
+                        return false;
+                },
+                change: function() {
+                    this.value = this.value.replace(/\s/g, "");
+                }
+            });
+        })
+    </script>
+
+
 {{ footer }}
