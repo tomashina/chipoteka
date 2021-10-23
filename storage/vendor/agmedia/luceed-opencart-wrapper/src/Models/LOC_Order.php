@@ -569,26 +569,7 @@ class LOC_Order
 
         if ($price < $product->price) {
             $cijena       = number_format($product->price, 2, '.', '');
-            $rabat        = (($price / $product->price) * 100) - 100;
-            $return_rabat = number_format((($price / $product->price) * 100 - 100), 2);
-
-            $B = [50, 75, 90];
-
-            if ($product->scale == 'B' && in_array($rabat, $B)) {
-                return [
-                    'cijena'   => $cijena,
-                    'rabat'    => 0,
-                    'quantity' => 1 - ($rabat / 100),
-                ];
-            }
-
-            if ($product->scale == 'C' && $rabat = 50) {
-                return [
-                    'cijena'   => $cijena,
-                    'rabat'    => 0,
-                    'quantity' => 1 - ($rabat / 100),
-                ];
-            }
+            $return_rabat = number_format((($price / $product->price) * 100 - 100), 4);
 
             return [
                 'cijena' => $cijena,
