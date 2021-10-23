@@ -88,20 +88,25 @@
                               {% endif %}
                           </div>
                            <div class=" col-sm-6  required">
-                            <label class="form-label" for="input-city">{{ entry_city }}<span class='text-danger'>*</span></label>
+                               <div class="form-group dropdown mb-3 required">
+                                   <label class="form-label" for="input-payment-city">{{ entry_city }}<span class="text-danger">*</span></label>
+                                   <input type="text" name="city" value="{{ city }}" placeholder="{{ entry_city }}" id="input-payment-city" class="form-control" autocomplete="off" />
+                                   <div id="payment-city-drop" class="dropdown-menu" style="display: none;"></div>
+                               </div>
 
-                              <input type="text" name="city" value="{{ city }}" placeholder="{{ entry_city }}" id="input-city" class="form-control" />
-                              {% if error_city %}
-                              <div class="text-danger">{{ error_city }}</div>
-                              {% endif %}
+                               {% if error_city %}
+                                   <div class="text-danger">{{ error_city }}</div>
+                               {% endif %}
                           </div>
 
                           <div class=" col-sm-6  required">
-                            <label class="form-label" for="input-postcode">{{ entry_postcode }}<span class='text-danger'>*</span></label>
-
-                              <input type="text" name="postcode" value="{{ postcode }}" placeholder="{{ entry_postcode }}" id="input-postcode" class="form-control" />
+                              <div class="form-group dropdown mb-3 required">
+                                  <label class="form-label" for="input-payment-postcode">{{ entry_postcode }}<span class="text-danger">*</span></label>
+                                  <input type="text" name="postcode" value="{{ postcode }}" placeholder="{{ entry_postcode }}" id="input-payment-postcode" class="form-control" autocomplete="off" />
+                                  <div id="payment-postcode-drop" class="dropdown-menu" style="display: none;"></div>
+                              </div>
                               {% if error_postcode %}
-                              <div class="text-danger">{{ error_postcode }}</div>
+                                  <div class="text-danger">{{ error_postcode }}</div>
                               {% endif %}
                           </div>
 
@@ -343,6 +348,35 @@
 
             </div>
         </div>
+
+        <script src="catalog/view/theme/chipoteka/js/agmedia_common.js"></script>
+        <script>
+            $(() => {
+                let key = 'payment';
+
+                $('#input-' + key + '-city, #input-' + key + '-postcode').keyup((e) => {
+                    let target = e.currentTarget;
+
+                    if (target.value.length > 1) {
+                        if (target.id == 'input-' + key + '-city') {
+                            callPlaces('city', target.value, key);
+
+                        }
+
+                        if (target.id == 'input-' + key + '-postcode') {
+                            callPlaces('postcode', target.value, key);
+                        }
+                    }
+                });
+
+                $('#input-' + key + '-city, #input-' + key + '-postcode').on('blur', () => {
+                    setTimeout(function() {
+                        document.getElementById(key + '-city-drop').style['display'] = 'none';
+                        document.getElementById(key + '-postcode-drop').style['display'] = 'none';
+                    }, 300);
+                });
+            });
+        </script>
 
         <script><!--
 $('select[name=\'country_id\']').on('change', function() {

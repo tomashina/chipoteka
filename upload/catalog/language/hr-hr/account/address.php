@@ -10,7 +10,7 @@ $_['text_address_add']   = 'Dodaj adresu';
 $_['text_address_edit']  = 'Promjeni adresu';
 $_['text_edit_address']    = 'Promjeni adresu';
 $_['text_add']             = 'Adresa je uspješno dodana';
-$_['text_edit']            = 'Adresa je uspješno izbrisana';
+$_['text_edit']            = 'Adresa je uspješno ažurirana';
 $_['text_delete']          = 'Adresa je uspješno izbrisana ';
 $_['text_empty']           = 'Nemate adresa u Vašem korisničkom računu.';
 
