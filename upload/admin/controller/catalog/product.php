@@ -321,6 +321,8 @@ class ControllerCatalogProduct extends Controller {
 
 		$data['products'] = array();
 
+        $data['export_csv'] = $this->url->link('catalog/product/exportCSV', 'user_token=' . $this->session->data['user_token'] . $url, true);
+
 		$filter_data = array(
 			'filter_name'	  => $filter_name,
 			'filter_model'	  => $filter_model,
@@ -1362,6 +1364,138 @@ class ControllerCatalogProduct extends Controller {
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode(['success' => 200]));
 	}
+
+
+    public function exportCSV(){
+
+        $this->load->model('catalog/product'); // Loading the Model of Products
+
+        $this->load->model('catalog/category');
+
+        $temp_data = $this->model_catalog_product->getProducts(); // Fetch all the Products where Status is Enabled
+
+      //  print_r($temp_data);
+
+
+        /* CSV Header Starts Here
+
+        header("Content-Type: text/csv");
+        header("Content-Disposition: attachment; filename=ProductsCSV-".date('d-m-Y').".csv");
+        // Disable caching
+        header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1
+        header("Pragma: no-cache"); // HTTP 1.0
+        header("Expires: 0"); // Proxies*/
+
+        /* CSV Header Ends Here */
+
+        $headers = 'ID2,ID2,Item title,Final URL,Image URL,Item subtitle,Item description,Item category,Price,Sale price,Contextual keywords,Item address,Tracking template,Custom parameter,Final mobile URL,Android app link,iOS app link,iOS app store ID';
+
+       // $output = fopen("php://output", "w"); //Opens and clears the contents of file; or creates a new file if it doesn't exist
+
+        $output = fopen ('../googleads.csv', "w");
+
+        fputcsv($output, explode(',', $headers));
+
+        $data = array();
+
+        $this->load->model('tool/image');
+
+       // print_r($temp_data);
+
+        // We don't want to export all the information to be exported so maintain a separate array for the information to be exported
+        foreach($temp_data as $data2)
+        {
+            $special = false;
+
+            $product_specials = $this->model_catalog_product->getProductSpecials($data2['product_id']);
+
+            foreach ($product_specials  as $product_special) {
+                if (($product_special['date_start'] == '0000-00-00' || strtotime($product_special['date_start']) < time()) && ($product_special['date_end'] == '0000-00-00' || strtotime($product_special['date_end']) > time())) {
+                    $special = $this->currency->format($product_special['price'], $this->config->get('config_currency'));
+
+                    break;
+                }
+            }
+
+            $category = $this->getCategoriesName($data2['product_id']);
+
+
+            $data[] = array(
+                'product_id' =>$data2['product_id'],
+                'model' =>$data2['model'],
+                'name' =>$data2['name'],
+                'quantity' =>$data2['quantity'],
+                'url' => $this->url->link('product/product', 'product_id=' . $data2['product_id']),
+                'image' => $this->model_tool_image->resize($data2['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')),
+                'subtitle' => '',
+                'description' => utf8_substr(trim(strip_tags(html_entity_decode($data2['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
+                'category' => $category,
+                'price' => number_format($data2['price'], '2', ',', '.').'kn',
+                'special' => $special,
+                'keywords'=>'',
+                'itemaddress'=>'',
+                'trackingtemplate'=>'',
+                'customparametar'=>'',
+                'finalmobileurl'=>'',
+                'androidapplink'=>'',
+                'iosapplink'=>'',
+                'iosappstoreid'=>''
+
+            );
+
+        }
+        //echo'<pre>';
+       // print_r($data);
+        //echo'</pre>';
+        // Exporting the CSV
+
+
+
+
+        foreach($data as $row)
+        {
+          $this->_fputcsv($output, $row); // here you can change delimiter/enclosure
+
+           // fputcsv($output, $row , "\"", "," ); // here you can change delimiter/enclosure
+
+
+        }
+
+
+        fclose($output); // Closing the File
+
+
+
+    }
+
+    public function _fputcsv($handle, $fields, $delimiter = ",", $enclosure = '"', $escape_char = "\\", $record_seperator = "\n")
+    {
+        $result = [];
+        foreach ($fields as $field) {
+            $result[] = $enclosure . str_replace($enclosure, $escape_char . $enclosure, $field) . $enclosure;
+        }
+        return fwrite($handle, implode($delimiter, $result) . $record_seperator);
+    }
+
+
+
+
+
+
+    public function getCategoriesName($id)
+    {
+        $this->load->model('catalog/category');
+        $data = $this->model_catalog_product->getProductCategories($id);
+        $name = '';
+        foreach ($data as $key => $item) {
+            $category = $this->model_catalog_category->getCategoryIme($item);
+            $name = '';
+            foreach ($category as $key => $val) {
+                $name = $category['name'];
+            }
+        }
+       return $name;
+    }
 
 
     /**
