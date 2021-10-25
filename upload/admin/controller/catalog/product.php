@@ -1388,7 +1388,7 @@ class ControllerCatalogProduct extends Controller {
 
         /* CSV Header Ends Here */
 
-        $headers = 'ID2,ID2,Item title,Final URL,Image URL,Item subtitle,Item description,Item category,Price,Sale price,Contextual keywords,Item address,Tracking template,Custom parameter,Final mobile URL,Android app link,iOS app link,iOS app store ID';
+        $headers = 'ID,ID2,Item title,Final URL,Image URL,Item subtitle,Item description,Item category,Price,Sale price,Contextual keywords,Item address,Tracking template,Custom parameter,Final mobile URL,Android app link,iOS app link,iOS app store ID';
 
        // $output = fopen("php://output", "w"); //Opens and clears the contents of file; or creates a new file if it doesn't exist
 
