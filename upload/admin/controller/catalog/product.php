@@ -1392,7 +1392,7 @@ class ControllerCatalogProduct extends Controller {
 
        // $output = fopen("php://output", "w"); //Opens and clears the contents of file; or creates a new file if it doesn't exist
 
-        $output = fopen ('../googleads.csv', "w");
+        $output = fopen ('../image/googleads.csv', "w");
 
         fputcsv($output, explode(',', $headers));
 
