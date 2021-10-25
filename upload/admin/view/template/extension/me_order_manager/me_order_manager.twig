@@ -129,26 +129,48 @@
 					{% if order_manager_filter.date_added %}
 					<div class="col-sm-2">
 						<div class="form-group">
-							<label class="control-label" for="input-date-added">{{ entry_date_added }}</label>
+							<label class="control-label" for="input-date-added">{{ entry_date_added }} od</label>
 							<div class="input-group date input-group-sm">
-							  <input type="text" name="filter_date_added" value="{{ filter_date_added }}" placeholder="{{ entry_date_added }}" data-date-format="YYYY-MM-DD" id="input-date-added" class="form-control" />
+							  <input type="text" name="filter_date_added" value="{{ filter_date_added }}" placeholder="{{ entry_date_added }} od" data-date-format="YYYY-MM-DD" id="input-date-added" class="form-control" />
 							  <span class="input-group-btn">
 							  <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
 							  </span> </div>
 						</div>
 					</div>
+
+						<div class="col-sm-2">
+							<div class="form-group">
+								<label class="control-label" for="input-date-added-to">{{ entry_date_added }} do</label>
+								<div class="input-group date input-group-sm">
+									<input type="text" name="filter_date_added_do" value="{{ filter_date_added_do }}" placeholder="{{ entry_date_added }} do" data-date-format="YYYY-MM-DD" id="input-date-added-to" class="form-control" />
+									<span class="input-group-btn">
+							  <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+							  </span> </div>
+							</div>
+						</div>
 					{% endif %}
 					{% if order_manager_filter.date_modified %}
 					<div class="col-sm-2">
 						<div class="form-group">
-							<label class="control-label" for="input-date-modified">{{ entry_date_modified }}</label>
+							<label class="control-label" for="input-date-modified">{{ entry_date_modified }} od</label>
 							<div class="input-group date input-group-sm">
-							  <input type="text" name="filter_date_modified" value="{{ filter_date_modified }}" placeholder="{{ entry_date_modified }}" data-date-format="YYYY-MM-DD" id="input-date-modified" class="form-control" />
+							  <input type="text" name="filter_date_modified" value="{{ filter_date_modified }}" placeholder="{{ entry_date_modified }} od" data-date-format="YYYY-MM-DD" id="input-date-modified" class="form-control" />
 							  <span class="input-group-btn">
 							  <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
 							  </span> </div>
 						</div>
 					</div>
+
+						<div class="col-sm-2">
+							<div class="form-group">
+								<label class="control-label" for="input-date-modified-do">{{ entry_date_modified }} do</label>
+								<div class="input-group date input-group-sm">
+									<input type="text" name="filter_date_modified_do" value="{{ filter_date_modified_do }}" placeholder="{{ entry_date_modified }} do" data-date-format="YYYY-MM-DD" id="input-date-modified-do" class="form-control" />
+									<span class="input-group-btn">
+							  <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+							  </span> </div>
+							</div>
+						</div>
 					{% endif %}
 					{% if order_manager_filter.payment_method %}
 					<div class="col-sm-2">
@@ -720,6 +742,12 @@ $('#button-filter').on('click', function() {
 	if (filter_date_added) {
 		url += '&filter_date_added=' + encodeURIComponent(filter_date_added);
 	}
+
+	var filter_date_added_do = $('input[name=\'filter_date_added_do\']').val();
+
+	if (filter_date_added_do) {
+		url += '&filter_date_added_do=' + encodeURIComponent(filter_date_added_do);
+	}
 	{% endif %}
 	{% if order_manager_filter.date_modified %}
 	var filter_date_modified = $('input[name=\'filter_date_modified\']').val();
@@ -727,6 +755,13 @@ $('#button-filter').on('click', function() {
 	if (filter_date_modified) {
 		url += '&filter_date_modified=' + encodeURIComponent(filter_date_modified);
 	}
+
+	var filter_date_modified_do = $('input[name=\'filter_date_modified_do\']').val();
+
+	if (filter_date_modified_do) {
+		url += '&filter_date_modified_do=' + encodeURIComponent(filter_date_modified_do);
+	}
+
 	{% endif %}
 	
 	{% if order_manager_filter.display_limit %}
@@ -1082,12 +1117,26 @@ $('#button-export').on('click', function() {
 	if (filter_date_added) {
 		url += '&filter_date_added=' + encodeURIComponent(filter_date_added);
 	}
+
+	var filter_date_added_do = $('input[name=\'filter_date_added_do\']').val();
+
+	if (filter_date_added) {
+		url += '&filter_date_added_do=' + encodeURIComponent(filter_date_added_do);
+	}
 	{% endif %}
+
+
 	{% if order_manager_filter.date_modified %}
 	var filter_date_modified = $('input[name=\'filter_date_modified\']').val();
 
 	if (filter_date_modified) {
 		url += '&filter_date_modified=' + encodeURIComponent(filter_date_modified);
+	}
+
+	var filter_date_modified_do = $('input[name=\'filter_date_modified_do\']').val();
+
+	if (filter_date_modified_do) {
+		url += '&filter_date_modified_do=' + encodeURIComponent(filter_date_modified_do);
 	}
 	{% endif %}
 	{% if order_manager_filter.ip %}
