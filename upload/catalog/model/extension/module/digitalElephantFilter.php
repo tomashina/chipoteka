@@ -51,8 +51,8 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                         AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())
                         AND pd2.customer_group_id = '" . (int)$customer_group_id . "')
                    LEFT JOIN `" . DB_PREFIX . "product_special` AS ps ON (ps.product_id = p.product_id
-                        AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW())
-                        AND (ps.date_start = '0000-00-00' OR ps.date_start < NOW())
+                        AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW())
+                        AND (ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW())
                         AND ps.customer_group_id = '" . (int)$customer_group_id . "')
                    LEFT JOIN `" . DB_PREFIX . "review` AS r1 ON (r1.product_id = p.product_id AND r1.status = 1)
                    LEFT JOIN (
@@ -129,7 +129,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
         }
         if (isset($data['special']) && $data['special']) {
             $sql .= " AND ps.customer_group_id = '" . (int)$customer_group_id . "'" .
-                " AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW( )) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW( )))";
+                " AND ((ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW( )) AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW( )))";
         }
 
         if (isset($data['manufacturer_id']) && $data['manufacturer_id']) {
@@ -210,7 +210,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
         }
         if (isset($data['special']) && $data['special']) {
             $sql .= " AND ps.customer_group_id = '" . (int)$customer_group_id . "'" .
-                " AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW( )) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW( )))";
+                " AND ((ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW( )) AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW( )))";
         }
 
         $sql .= " ORDER BY ";
@@ -286,7 +286,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
 
         if (isset($data['special']) && $data['special']) {
             $sql .= " AND ps.customer_group_id = '" . (int)$customer_group_id . "'" .
-                " AND ((ps.date_start = '0000-00-00' OR ps.date_start < NOW( )) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW( )))";
+                " AND ((ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW( )) AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW( )))";
         }
         if (isset($data['manufacturer_id']) && $data['manufacturer_id']) {
             $sql .= " AND p.manufacturer_id = '" . (int)$data['manufacturer_id'] . "'";
@@ -426,9 +426,9 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                                    FROM " . DB_PREFIX . "product_special ps
                                    WHERE ps.product_id = pa.product_id
                                      AND ps.customer_group_id = '1'
-                                     AND ((ps.date_start = '0000-00-00'
+                                     AND ((ps.date_start = '0000-00-00 00:00:00'
                                            OR ps.date_start < NOW())
-                                          AND (ps.date_end = '0000-00-00'
+                                          AND (ps.date_end = '0000-00-00 00:00:00'
                                                OR ps.date_end > NOW()))
                                    ORDER BY ps.priority ASC, ps.price ASC
                                    LIMIT 1) AS special
@@ -749,7 +749,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                     $sql .= " ORDER BY " . $data['sort'];
                 }
             } else {
-                $sql .= " ORDER BY p.price";
+                $sql .= " ORDER BY p.sort_order";
             }
 
             if (isset($data['order']) && ($data['order'] == 'DESC')) {
