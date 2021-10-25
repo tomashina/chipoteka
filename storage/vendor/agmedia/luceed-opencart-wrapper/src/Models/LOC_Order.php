@@ -512,17 +512,17 @@ class LOC_Order
 
         if ($order_products->count()) {
             foreach ($order_products as $order_product) {
-                $price = $this->getItemPrices($order_product->product_id, $order_product->price);
+                /*$price = $this->getItemPrices($order_product->product_id, $order_product->price);
 
                 if ( ! $price['rabat']) {
                     $price['rabat'] = $this->applyCouponDiscount();
-                }
+                }*/
 
                 $response[] = [
                     'artikl'   => $order_product->model,
-                    'kolicina' => isset($price['quantity']) ? $price['quantity'] : (int) $order_product->quantity,
-                    'cijena'   => (float) $price['cijena'],
-                    'rabat'    => (float) number_format($price['rabat'], 2),
+                    'kolicina' => (int) $order_product->quantity,
+                    'cijena'   => (float) number_format($order_product->price, 2, '.', ''),
+                    'rabat'    => 0 //(float) number_format($price['rabat'], 2),
                 ];
             }
         }
