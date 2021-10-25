@@ -156,7 +156,9 @@ class ModelExtensionMeordermanager extends Model {
 				'user_agent'              => $order_query->row['user_agent'],
 				'accept_language'         => $order_query->row['accept_language'],
 				'date_added'              => $order_query->row['date_added'],
-				'date_modified'           => $order_query->row['date_modified']
+                'date_added_do'              => $order_query->row['date_added'],
+				'date_modified'           => $order_query->row['date_modified'],
+                'date_modified_do'           => $order_query->row['date_modified']
 			);
 		} else {
 			return;
@@ -213,13 +215,34 @@ class ModelExtensionMeordermanager extends Model {
 			$sql .= " AND o.telephone LIKE '%" . $this->db->escape($data['filter_customer_telephone']) . "%'";
 		}
 
-		if (!empty($data['filter_date_added'])) {
-			$sql .= " AND DATE(o.date_added) = DATE('" . $this->db->escape($data['filter_date_added']) . "')";
-		}
+        if (!empty($data['filter_date_added']) && empty($data['filter_date_added_do'])) {
+            $sql .= " AND DATE(o.date_added) = DATE('" . $this->db->escape($data['filter_date_added']) . "')";
+        }
 
-		if (!empty($data['filter_date_modified'])) {
-			$sql .= " AND DATE(o.date_modified) = DATE('" . $this->db->escape($data['filter_date_modified']) . "')";
-		}
+        if (empty($data['filter_date_added']) && !empty($data['filter_date_added_do'])) {
+            $sql .= " AND DATE(o.date_added) <= DATE('" . $this->db->escape($data['filter_date_added_do']) . "')";
+        }
+
+
+        if (!empty($data['filter_date_added_do']) && !empty($data['filter_date_added'])) {
+            $sql .= " AND DATE(o.date_added) >= DATE('" . $this->db->escape($data['filter_date_added']) . "')";
+            $sql .= " AND DATE(o.date_added) <= DATE('" . $this->db->escape($data['filter_date_added_do']) . "')";
+        }
+
+
+
+        if (!empty($data['filter_date_modified']) && empty($data['filter_date_modified_do'])) {
+            $sql .= " AND DATE(o.date_modified) = DATE('" . $this->db->escape($data['filter_date_modified']) . "')";
+        }
+
+        if (empty($data['filter_date_modified']) && !empty($data['filter_date_modified_do'])) {
+            $sql .= " AND DATE(o.date_modified) <= DATE('" . $this->db->escape($data['filter_date_modified_do']) . "')";
+        }
+
+        if (!empty($data['filter_date_modified_do']) && !empty($data['filter_date_modified'])) {
+            $sql .= " AND DATE(o.date_modified) >= DATE('" . $this->db->escape($data['filter_date_modified']) . "')";
+            $sql .= " AND DATE(o.date_modified) <= DATE('" . $this->db->escape($data['filter_date_modified_do']) . "')";
+        }
 
 		if (!empty($data['filter_total'])) {
 			$sql .= " AND o.total = '" . (float)$data['filter_total'] . "'";
@@ -404,13 +427,34 @@ class ModelExtensionMeordermanager extends Model {
 			$sql .= " AND o.telephone LIKE '%" . $this->db->escape($data['filter_customer_telephone']) . "%'";
 		}
 
-		if (!empty($data['filter_date_added'])) {
-			$sql .= " AND DATE(o.date_added) = DATE('" . $this->db->escape($data['filter_date_added']) . "')";
-		}
 
-		if (!empty($data['filter_date_modified'])) {
-			$sql .= " AND DATE(o.date_modified) = DATE('" . $this->db->escape($data['filter_date_modified']) . "')";
-		}
+
+        if (!empty($data['filter_date_added']) && empty($data['filter_date_added_do'])) {
+            $sql .= " AND DATE(o.date_added) = DATE('" . $this->db->escape($data['filter_date_added']) . "')";
+        }
+
+        if (empty($data['filter_date_added']) && !empty($data['filter_date_added_do'])) {
+            $sql .= " AND DATE(o.date_added) <= DATE('" . $this->db->escape($data['filter_date_added_do']) . "')";
+        }
+
+        if (!empty($data['filter_date_added_do']) && !empty($data['filter_date_added'])) {
+            $sql .= " AND DATE(o.date_added) >= DATE('" . $this->db->escape($data['filter_date_added']) . "')";
+            $sql .= " AND DATE(o.date_added) <= DATE('" . $this->db->escape($data['filter_date_added_do']) . "')";
+        }
+
+
+        if (!empty($data['filter_date_modified']) && empty($data['filter_date_modified_do'])) {
+            $sql .= " AND DATE(o.date_modified) = DATE('" . $this->db->escape($data['filter_date_modified']) . "')";
+        }
+
+        if (empty($data['filter_date_modified']) && !empty($data['filter_date_modified_do'])) {
+            $sql .= " AND DATE(o.date_modified) <= DATE('" . $this->db->escape($data['filter_date_modified_do']) . "')";
+        }
+
+        if (!empty($data['filter_date_modified_do']) && !empty($data['filter_date_modified'])) {
+            $sql .= " AND DATE(o.date_modified) >= DATE('" . $this->db->escape($data['filter_date_modified']) . "')";
+            $sql .= " AND DATE(o.date_modified) <= DATE('" . $this->db->escape($data['filter_date_modified_do']) . "')";
+        }
 
 		if (!empty($data['filter_total'])) {
 			$sql .= " AND o.total = '" . (float)$data['filter_total'] . "'";
@@ -558,13 +602,34 @@ class ModelExtensionMeordermanager extends Model {
 			$sql .= " AND CONCAT(firstname, ' ', o.lastname) LIKE '%" . $this->db->escape($data['filter_customer']) . "%'";
 		}
 
-		if (!empty($data['filter_date_added'])) {
-			$sql .= " AND DATE(date_added) = DATE('" . $this->db->escape($data['filter_date_added']) . "')";
-		}
+        if (!empty($data['filter_date_added']) && empty($data['filter_date_added_do'])) {
+            $sql .= " AND DATE(o.date_added) = DATE('" . $this->db->escape($data['filter_date_added']) . "')";
+        }
 
-		if (!empty($data['filter_date_modified'])) {
-			$sql .= " AND DATE(date_modified) = DATE('" . $this->db->escape($data['filter_date_modified']) . "')";
-		}
+        if (empty($data['filter_date_added']) && !empty($data['filter_date_added_do'])) {
+            $sql .= " AND DATE(o.date_added) <= DATE('" . $this->db->escape($data['filter_date_added_do']) . "')";
+        }
+
+        if (!empty($data['filter_date_added_do']) && !empty($data['filter_date_added'])) {
+            $sql .= " AND DATE(o.date_added) >= DATE('" . $this->db->escape($data['filter_date_added']) . "')";
+            $sql .= " AND DATE(o.date_added) <= DATE('" . $this->db->escape($data['filter_date_added_do']) . "')";
+        }
+
+
+        if (!empty($data['filter_date_modified']) && empty($data['filter_date_modified_do'])) {
+            $sql .= " AND DATE(o.date_modified) = DATE('" . $this->db->escape($data['filter_date_modified']) . "')";
+        }
+
+        if (empty($data['filter_date_modified']) && !empty($data['filter_date_modified_do'])) {
+            $sql .= " AND DATE(o.date_modified) <= DATE('" . $this->db->escape($data['filter_date_modified_do']) . "')";
+        }
+
+        if (!empty($data['filter_date_modified_do']) && !empty($data['filter_date_modified'])) {
+            $sql .= " AND DATE(o.date_modified) >= DATE('" . $this->db->escape($data['filter_date_modified']) . "')";
+            $sql .= " AND DATE(o.date_modified) <= DATE('" . $this->db->escape($data['filter_date_modified_do']) . "')";
+        }
+
+
 
 		if (!empty($data['filter_total'])) {
 			$sql .= " AND total = '" . (float)$data['filter_total'] . "'";

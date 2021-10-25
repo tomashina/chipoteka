@@ -85,11 +85,24 @@ class ControllerExtensionMeordermanager extends Controller {
 			$filter_date_added = '';
 		}
 
+
+        if (isset($this->request->get['filter_date_added_do'])) {
+            $filter_date_added_do = $this->request->get['filter_date_added_do'];
+        } else {
+            $filter_date_added_do = '';
+        }
+
 		if (isset($this->request->get['filter_date_modified'])) {
 			$filter_date_modified = $this->request->get['filter_date_modified'];
 		} else {
 			$filter_date_modified = '';
 		}
+
+        if (isset($this->request->get['filter_date_modified_do'])) {
+            $filter_date_modified_do = $this->request->get['filter_date_modified_do'];
+        } else {
+            $filter_date_modified_do = '';
+        }
 		
 		if (isset($this->request->get['filter_payment_method'])) {
 			$filter_payment_method = $this->request->get['filter_payment_method'];
@@ -243,9 +256,18 @@ class ControllerExtensionMeordermanager extends Controller {
 			$url .= '&filter_date_added=' . $this->request->get['filter_date_added'];
 		}
 
+
+        if (isset($this->request->get['filter_date_added_do'])) {
+            $url .= '&filter_date_added_do=' . $this->request->get['filter_date_added_do'];
+        }
+
 		if (isset($this->request->get['filter_date_modified'])) {
 			$url .= '&filter_date_modified=' . $this->request->get['filter_date_modified'];
 		}
+
+        if (isset($this->request->get['filter_date_modified_do'])) {
+            $url .= '&filter_date_modified_do=' . $this->request->get['filter_date_modified_do'];
+        }
 		
 		if (isset($this->request->get['filter_tracking_code'])) {
 			$url .= '&filter_tracking_code=' . $this->request->get['filter_tracking_code'];
@@ -303,7 +325,9 @@ class ControllerExtensionMeordermanager extends Controller {
 			'filter_order_status_id' => $filter_order_status_id,
 			'filter_total'           => $filter_total,
 			'filter_date_added'      => $filter_date_added,
+            'filter_date_added_do'      => $filter_date_added_do,
 			'filter_date_modified'   => $filter_date_modified,
+            'filter_date_modified_do'   => $filter_date_modified_do,
 			'filter_payment_method'   => $filter_payment_method,
 			'filter_shipping_method'   => $filter_shipping_method,
 			'filter_customer_group'   => $filter_customer_group,
@@ -677,9 +701,18 @@ class ControllerExtensionMeordermanager extends Controller {
 			$url .= '&filter_date_added=' . $this->request->get['filter_date_added'];
 		}
 
-		if (isset($this->request->get['filter_date_modified'])) {
+        if (isset($this->request->get['filter_date_added_do'])) {
+            $url .= '&filter_date_added_do=' . $this->request->get['filter_date_added_do'];
+        }
+
+
+        if (isset($this->request->get['filter_date_modified'])) {
 			$url .= '&filter_date_modified=' . $this->request->get['filter_date_modified'];
 		}
+
+        if (isset($this->request->get['filter_date_modified_do'])) {
+            $url .= '&filter_date_modified_do=' . $this->request->get['filter_date_modified_do'];
+        }
 		
 		if (isset($this->request->get['filter_tracking_code'])) {
 			$url .= '&filter_tracking_code=' . $this->request->get['filter_tracking_code'];
@@ -831,9 +864,17 @@ class ControllerExtensionMeordermanager extends Controller {
 			$url .= '&filter_date_added=' . $this->request->get['filter_date_added'];
 		}
 
+        if (isset($this->request->get['filter_date_added_do'])) {
+            $url .= '&filter_date_added_do=' . $this->request->get['filter_date_added_do'];
+        }
+
 		if (isset($this->request->get['filter_date_modified'])) {
 			$url .= '&filter_date_modified=' . $this->request->get['filter_date_modified'];
 		}
+
+        if (isset($this->request->get['filter_date_modified_do'])) {
+            $url .= '&filter_date_modified_do=' . $this->request->get['filter_date_modified_do'];
+        }
 		
 		if (isset($this->request->get['filter_tracking_code'])) {
 			$url .= '&filter_tracking_code=' . $this->request->get['filter_tracking_code'];
@@ -876,7 +917,9 @@ class ControllerExtensionMeordermanager extends Controller {
 		$data['filter_order_status_id'] = $filter_order_status_id;
 		$data['filter_total'] = $filter_total;
 		$data['filter_date_added'] = $filter_date_added;
+        $data['filter_date_added_do'] = $filter_date_added_do;
 		$data['filter_date_modified'] = $filter_date_modified;
+        $data['filter_date_modified_do'] = $filter_date_modified_do;
 		$data['filter_payment_method'] = $filter_payment_method;
 		$data['filter_shipping_method'] = $filter_shipping_method;
 		$data['filter_customer_group'] = $filter_customer_group;
@@ -1024,9 +1067,17 @@ class ControllerExtensionMeordermanager extends Controller {
 				$url .= '&filter_date_added=' . $this->request->get['filter_date_added'];
 			}
 
+            if (isset($this->request->get['filter_date_added_do'])) {
+                $url .= '&filter_date_added_do=' . $this->request->get['filter_date_added_do'];
+            }
+
 			if (isset($this->request->get['filter_date_modified'])) {
 				$url .= '&filter_date_modified=' . $this->request->get['filter_date_modified'];
 			}
+
+            if (isset($this->request->get['filter_date_modified_do'])) {
+                $url .= '&filter_date_modified_do=' . $this->request->get['filter_date_modified_do'];
+            }
 			
 			if (isset($this->request->get['filter_ip'])) {
 				$url .= '&filter_ip=' . $this->request->get['filter_ip'];
@@ -2245,11 +2296,24 @@ class ControllerExtensionMeordermanager extends Controller {
 			$filter_date_added = '';
 		}
 
+        if (isset($this->request->get['filter_date_added_do'])) {
+            $filter_date_added_do = $this->request->get['filter_date_added_do'];
+        } else {
+            $filter_date_added_do = '';
+        }
+
 		if (isset($this->request->get['filter_date_modified'])) {
 			$filter_date_modified = $this->request->get['filter_date_modified'];
 		} else {
 			$filter_date_modified = '';
 		}
+
+
+        if (isset($this->request->get['filter_date_modified_do'])) {
+            $filter_date_modified_do = $this->request->get['filter_date_modified_do'];
+        } else {
+            $filter_date_modified_do = '';
+        }
 		
 		if (isset($this->request->get['filter_payment_method'])) {
 			$filter_payment_method = $this->request->get['filter_payment_method'];
@@ -2359,7 +2423,9 @@ class ControllerExtensionMeordermanager extends Controller {
 			'filter_order_status_id' => $filter_order_status_id,
 			'filter_total'           => $filter_total,
 			'filter_date_added'      => $filter_date_added,
+            'filter_date_added_do'      => $filter_date_added_do,
 			'filter_date_modified'   => $filter_date_modified,
+            'filter_date_modified_do'   => $filter_date_modified_do,
 			'filter_payment_method'   => $filter_payment_method,
 			'filter_shipping_method'   => $filter_shipping_method,
 			'filter_customer_group'   => $filter_customer_group,
