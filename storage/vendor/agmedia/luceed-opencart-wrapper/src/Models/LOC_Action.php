@@ -104,7 +104,7 @@ class LOC_Action
         $manufacturers = collect();
 
         foreach ($action->stavke as $item) {
-            if ($item->grupa_artikla && $item->mpc_rabat) {
+            if ($item->grupa_artikla && ! is_null($item->mpc_rabat)) {
 
                 if ($categories->has($item->grupa_artikla)) {
                     if ($item->grupa_artikla > $categories[$item->grupa_artikla]) {
@@ -115,7 +115,7 @@ class LOC_Action
                 }
             }
 
-            if ($item->robna_marka && $item->mpc_rabat) {
+            if ($item->robna_marka && ! is_null($item->mpc_rabat)) {
                 if ($manufacturers->has($item->robna_marka)) {
                     if ($item->robna_marka > $manufacturers[$item->robna_marka]) {
                         $manufacturers->put($item->robna_marka, $item->mpc_rabat);
@@ -402,6 +402,10 @@ class LOC_Action
      */
     private function calculateDiscountPrice(float $price, int $discount)
     {
+        if ( ! $discount) {
+            return $price;
+        }
+
         return $price - ($price * ($discount / 100));
     }
 }
