@@ -127,7 +127,7 @@ class ControllerExtensionPaymentWSPay extends Controller {
                 }
         $ShoppingCartIDbez = substr($ShoppingCartID, 0, strpos($ShoppingCartID, "-"));
 
-                  $this->db->query("UPDATE `" . DB_PREFIX . "order` SET payment_card = '" . $this->db->escape($kartica) . "' WHERE order_id = '" . (int)$ShoppingCartIDbez . "'");
+                  $this->db->query("UPDATE `" . DB_PREFIX . "order` SET payment_card = '" . $this->db->escape($kartica) . "', installment  = '" . $this->db->escape($PaymentPlan) . "' WHERE order_id = '" . (int)$ShoppingCartIDbez . "'");
 
               
            
