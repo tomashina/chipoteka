@@ -232,7 +232,8 @@ class ModelCheckoutOrder extends Model {
 				'accept_language'         => $order_query->row['accept_language'],
 				'date_added'              => $order_query->row['date_added'],
 				'date_modified'           => $order_query->row['date_modified'],
-                'scanimage'           => $order_query->row['scanimage']
+                'scanimage'               => $order_query->row['scanimage'],
+                'installment'             => $order_query->row['installment']
 			);
 		} else {
 			return false;

@@ -517,11 +517,16 @@ class LOC_Order
                 if ( ! $price['rabat']) {
                     $price['rabat'] = $this->applyCouponDiscount();
                 }*/
+                $price = $order_product->price;
+
+                if ($this->oc_order['installment'] > 12) {
+                    $price = $order_product->price * 1.07;
+                }
 
                 $response[] = [
                     'artikl'   => $order_product->model,
                     'kolicina' => (int) $order_product->quantity,
-                    'cijena'   => (float) number_format($order_product->price, 2, '.', ''),
+                    'cijena'   => (float) number_format($price, 2, '.', ''),
                     'rabat'    => 0 //(float) number_format($price['rabat'], 2),
                 ];
             }
