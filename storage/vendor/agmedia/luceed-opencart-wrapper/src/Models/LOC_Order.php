@@ -72,6 +72,11 @@ class LOC_Order
     private $discount;
 
     /**
+     * @var int
+     */
+    private $installments = 0;
+
+    /**
      * @var string
      */
     private $query_update_status = '';
@@ -92,6 +97,7 @@ class LOC_Order
         $this->oc_order = $order;
         $this->service  = new Luceed();
 
+        $this->checkInstallments();
         $this->resolveCouponDiscount();
     }
 
@@ -459,6 +465,21 @@ class LOC_Order
         return count($this->collection);
     }
 
+    /*******************************************************************************
+    *                                Copyright : AGmedia                           *
+    *                              email: filip@agmedia.hr                         *
+    *******************************************************************************/
+
+    /**
+     *
+     */
+    private function checkInstallments(): void
+    {
+        if ($this->oc_order['installment'] != '0000') {
+            $this->installments = (int) substr($this->oc_order['installment'], 0, 2);
+        }
+    }
+
 
     /**
      * Get order payment type UID.
@@ -517,9 +538,10 @@ class LOC_Order
                 if ( ! $price['rabat']) {
                     $price['rabat'] = $this->applyCouponDiscount();
                 }*/
+
                 $price = $order_product->price;
 
-                if ($this->oc_order['installment'] > 12) {
+                if ($this->installments > 12) {
                     $price = $order_product->price * 1.07;
                 }
 
