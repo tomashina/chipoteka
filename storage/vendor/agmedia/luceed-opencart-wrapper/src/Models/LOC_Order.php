@@ -530,6 +530,7 @@ class LOC_Order
         $order_products = OrderProduct::where('order_id', $this->oc_order['order_id'])->get();
 
         $this->log('$order_products', $order_products->toArray());
+        $this->log('$this->installments', $this->installments);
 
         if ($order_products->count()) {
             foreach ($order_products as $order_product) {
