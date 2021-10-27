@@ -18,6 +18,7 @@ class Document {
 	private $links = array();
 	private $styles = array();
 	private $scripts = array();
+    private $ogmetas = array();
 
     /// <<< Document addTag
     private $tags = array();
@@ -104,6 +105,17 @@ class Document {
 	public function getDescription() {
 		return $this->description;
 	}
+
+
+    public function addOGMeta($meta_name, $content) {
+        $this->ogmetas[] = array(
+            'meta_name'  => $meta_name,
+            'content'   => $content
+        );
+    }
+    public function getOGMeta() {
+        return $this->ogmetas;
+    }
 
 	/**
      * 

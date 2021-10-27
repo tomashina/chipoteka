@@ -234,6 +234,7 @@ class ControllerProductProduct extends Controller {
 
 			$this->document->setKeywords($product_info['meta_keyword']);
 			$this->document->addLink($this->url->link('product/product', 'product_id=' . $this->request->get['product_id']), 'canonical');
+            $this->document->addOGMeta('property="og:url"', $this->url->link('product/product', 'product_id=' . $this->request->get['product_id']) );
 
 			$data['heading_title'] = $product_info['name'];
 
@@ -311,6 +312,21 @@ class ControllerProductProduct extends Controller {
 			$data['images'] = array();
 
 			$results = $this->model_catalog_product->getProductImages($this->request->get['product_id']);
+
+            if ($product_info['image']) {
+                $this->document->addOGMeta('property="og:image"', 'https://cdn.chipoteka.hr/image/'.$product_info['image'] );
+                $this->document->addOGMeta('property="og:image:width"', '600');
+                $this->document->addOGMeta('property="og:image:height"', '600');
+            } else {
+                $this->document->addOGMeta( 'property="og:image"', str_replace(' ', '%20', $this->model_tool_image->resize($this->config->get('config_logo'), 300, 300)) );
+                $this->document->addOGMeta('property="og:image:width"', '300');
+                $this->document->addOGMeta('property="og:image:height"', '300');
+            }
+            foreach ($results as $result) {
+                $this->document->addOGMeta( 'property="og:image"', 'https://cdn.chipoteka.hr/image/'.$result['image']);
+                $this->document->addOGMeta('property="og:image:width"', '600');
+                $this->document->addOGMeta('property="og:image:height"', '600');
+            }
 
 			foreach ($results as $result) {
 				$data['images'][] = array(
@@ -437,6 +453,20 @@ class ControllerProductProduct extends Controller {
 					'required'             => $option['required']
 				);
 			}
+
+
+            $meta_price = ( $data['special'] != false) ? $data['special'] : $data['price'] ;
+            $meta_price = trim(trim(($data['special'] != false) ? $data['special'] : $data['price'], $this->currency->getSymbolLeft($this->session->data['currency'])), $this->currency->getSymbolRight($this->session->data['currency']));
+            $decimal_point_meta_price = $this->language->get('decimal_point') ? $this->language->get('decimal_point') : '.';
+            $thousand_point_meta_price = $this->language->get('thousand_point')? $this->language->get('thousand_point') : ' ';
+            $meta_price = str_replace($thousand_point_meta_price, '', $meta_price);
+            if ( $decimal_point_meta_price != '.' ) {
+                $meta_price = str_replace($decimal_point_meta_price, '.', $meta_price);
+            }
+            $meta_price = number_format((float)$meta_price, 2, '.', '');
+
+            $this->document->addOGMeta('property="product:price:amount"', $meta_price);
+            $this->document->addOGMeta('property="product:price:currency"', $this->session->data['currency']);
 
 			if ($product_info['minimum']) {
 				$data['minimum'] = $product_info['minimum'];

@@ -93,6 +93,31 @@ class ControllerCommonHeader extends Controller {
 		$data['checkout'] = $this->url->link('checkout/checkout', '', true);
 		$data['contact'] = $this->url->link('information/contact');
 		$data['telephone'] = $this->config->get('config_telephone');
+
+
+        // For page specific og tags
+        if (isset($this->request->get['route'])) {
+            if (isset($this->request->get['product_id'])) {
+                $class = '-' . $this->request->get['product_id'];
+                $this->document->addOGMeta('property="og:type"', 'product');
+            } elseif (isset($this->request->get['path'])) {
+                $class = '-' . $this->request->get['path'];
+            } elseif (isset($this->request->get['manufacturer_id'])) {
+                $class = '-' . $this->request->get['manufacturer_id'];
+            } elseif (isset($this->request->get['information_id'])) {
+                $class = '-' . $this->request->get['information_id'];
+                $this->document->addOGMeta('property="og:type"', 'article');
+            } else {
+                $class = '';
+            }
+            $data['class'] = str_replace('/', '-', $this->request->get['route']) . $class;
+        } else {
+            $data['class'] = 'common-home';
+            $this->document->addOGMeta('property="og:type"', 'website');
+        }
+        $this->load->model('tool/image');
+        $data['logo_meta'] = 'https://www.chipoteka.hr/catalog/view/theme/chipoteka/honeog.jpg';
+        $data['ogmeta'] = $this->document->getOGMeta();
 		
 		$data['language'] = $this->load->controller('common/language');
 		$data['currency'] = $this->load->controller('common/currency');
