@@ -37,6 +37,8 @@ RewriteRule ^brandovi index.php?route=product/manufacturer [L]
 RewriteRule ^servis index.php?route=information/contact&name=servis [L]
 RewriteRule ^veleprodaja index.php?route=information/contact&name=veleprodaja [L]
 
+RewriteRule ^files/products.xml index.php?route=extension/feed/nabavanet [L]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !.*\.(ico|gif|jpg|jpeg|png|js|css)
