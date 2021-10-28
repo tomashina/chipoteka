@@ -251,7 +251,7 @@ class ProductHelper
                         'uid'        => $uid,
                         'md5'        => $doc['md5'],
                         'image'      => static::getImagePath($doc, $product['naziv'], $product['artikl_uid']),
-                        'sort_order' => $doc['redoslijed'] ?: 0
+                        'sort_order' => isset($doc['redoslijed']) ? $doc['redoslijed'] : 0
                     ];
                 }
             }
