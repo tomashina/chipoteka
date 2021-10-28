@@ -40,7 +40,7 @@ $_['cache_engine']         = 'redis'; // apc, file, mem or memcached
 $_['cache_expire']         = 3600;
 
 // Session
-$_['session_engine']       = 'redis';
+$_['session_engine']       = 'db';
 $_['session_autostart']    = true;
 $_['session_name']         = 'OCSESSID';
 
