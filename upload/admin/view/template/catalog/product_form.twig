@@ -1194,7 +1194,7 @@
               $('#luceed-update-btn').html('<i class="fa spin fa-spinner"></i> Updating..!');
 
               $.ajax({
-                  url: 'index.php?route=catalog/product/luceed&user_token={{ user_token }}&sku={{ sku }}',
+                  url: 'index.php?route=catalog/product/luceed&user_token={{ user_token }}&sku={{ model }}',
                   dataType: 'json',
                   success: function(json) {
                       $('#luceed-update-btn').removeClass('btn-warning');

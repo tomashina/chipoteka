@@ -1349,10 +1349,14 @@ class ControllerCatalogProduct extends Controller {
     {
         $this->load->model('catalog/product');
 
+        \Agmedia\Helpers\Log::store($this->request->get, 'test');
+
         $product_l = \Agmedia\Luceed\Facade\LuceedProduct::getById($this->request->get['sku']);
         $loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle($product_l);
 
-        $loc->setForUpdate(json_decode(json_encode($loc->product), true));
+        $loc->setForUpdate();
+
+        \Agmedia\Helpers\Log::store('2', 'test');
 
         $this->model_catalog_product->editProduct(
             $loc->product_to_update['product_id'],
@@ -1360,6 +1364,8 @@ class ControllerCatalogProduct extends Controller {
                 $this->resolveOldProductData($loc->product_to_update)
             )
         );
+
+        \Agmedia\Helpers\Log::store('3', 'test');
 
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode(['success' => 200]));
