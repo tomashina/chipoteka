@@ -211,12 +211,12 @@ class ProductHelper
                 $errorlevel = error_reporting();
                 error_reporting(0);
                 $image = imagecreatefromstring($bin);
-                imagealphablending($image, false); // setting alpha blending on
-                imagesavealpha($image, true); // save alphablending setting (important)
-                error_reporting($errorlevel);
+              //  imagealphablending($image, false); // setting alpha blending on
+              //  imagesavealpha($image, true); // save alphablending setting (important)
+             //   error_reporting($errorlevel);
 
                 if ($image !== false) {
-                    if (in_array($newstring, ['png', 'PNG'])) {
+                  /*  if (in_array($newstring, ['png', 'PNG'])) {
                         $bg = imagecreatetruecolor(imagesx($image), imagesy($image));
 
                         // Allocate the color
@@ -236,9 +236,9 @@ class ProductHelper
                             $image = $bg;
                         }
                         imagepng($image, DIR_IMAGE . $image_path . $name, 8);
-                    } else {
+                    } else {*/
                         imagejpeg($image, DIR_IMAGE . $image_path . $name, 90);
-                    }
+                   // }
 
                     // Return only the image path.
                     return $image_path . $name;
