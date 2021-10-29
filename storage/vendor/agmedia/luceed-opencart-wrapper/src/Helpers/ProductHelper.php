@@ -33,7 +33,7 @@ class ProductHelper
     public static function getCategories(Collection $product): array
     {
         $response = [0 => agconf('import.default_category')];
-        $actual   = Category::where('luceed_uid', $product['grupa_artikla'])->first();
+        $actual = Category::where('luceed_uid', $product['grupa_artikla'])->first();
 
         if ($actual && $actual->count()) {
             $response[0] = $actual->category_id;
@@ -71,7 +71,7 @@ class ProductHelper
 
             if ($manufacturer) {
                 return [
-                    'id'   => $manufacturer->manufacturer_id,
+                    'id' => $manufacturer->manufacturer_id,
                     'name' => $manufacturer->name
                 ];
             }
@@ -86,7 +86,7 @@ class ProductHelper
      * Language_id as response array key.
      *
      * @param Collection $product
-     * @param null       $old_description
+     * @param null $old_description
      *
      * @return array
      */
@@ -99,25 +99,25 @@ class ProductHelper
         $spec = static::setDescription($product['specifikacija']);
 
         if ($old_description) {
-            if ( ! $old_description['update_name']) {
+            if (!$old_description['update_name']) {
                 $naziv = $old_description['name'];
             }
-            if ( ! $old_description['update_description']) {
+            if (!$old_description['update_description']) {
                 $description = $old_description['description'];
             }
         }
 
         $response[agconf('import.default_language')] = [
-            'name'              => $naziv,
-            'update_name'       => $old_description ? $old_description['update_name'] : 1,
-            'description'       => $description,
-            'update_description'=> $old_description ? $old_description['update_description'] : 1,
-            'spec_description'  => $spec ?: '',
+            'name' => $naziv,
+            'update_name' => $old_description ? $old_description['update_name'] : 1,
+            'description' => $description,
+            'update_description' => $old_description ? $old_description['update_description'] : 1,
+            'spec_description' => $spec ?: '',
             'short_description' => $description,
-            'tag'               => $naziv,
-            'meta_title'        => $naziv,
-            'meta_description'  => strip_tags($description),
-            'meta_keyword'      => $naziv,
+            'tag' => $naziv,
+            'meta_title' => $naziv,
+            'meta_description' => strip_tags($description),
+            'meta_keyword' => $naziv,
         ];
 
         return $response;
@@ -129,7 +129,7 @@ class ProductHelper
      */
     public static function getAttributes(Collection $product): array
     {
-        $response   = [];
+        $response = [];
         $attributes = collect($product['atributi']);
 
         foreach ($attributes as $attribute) {
@@ -178,7 +178,7 @@ class ProductHelper
      * return the full path string.
      *
      * @param Collection $product
-     * @param int        $key
+     * @param int $key
      *
      * @return string
      */
@@ -188,7 +188,7 @@ class ProductHelper
             $image_path = agconf('import.image_path') . $uid . '/';
             // Check if the image path exist.
             // Create it if not.
-            if ( ! is_dir(DIR_IMAGE . $image_path)) {
+            if (!is_dir(DIR_IMAGE . $image_path)) {
                 mkdir(DIR_IMAGE . $image_path, 0777, true);
             }
 
@@ -205,22 +205,38 @@ class ProductHelper
             }
 
             // Setup and create the image with GD library.
-            $bin   = base64_decode(static::getImageString($product));
+            $bin = base64_decode(static::getImageString($product));
 
             if ($bin) {
-                $errorlevel=error_reporting();
+                $errorlevel = error_reporting();
                 error_reporting(0);
                 $image = imagecreatefromstring($bin);
-                imagealphablending($image, true); // setting alpha blending on
+                imagealphablending($image, false); // setting alpha blending on
                 imagesavealpha($image, true); // save alphablending setting (important)
                 error_reporting($errorlevel);
 
                 if ($image !== false) {
                     if (in_array($newstring, ['png', 'PNG'])) {
+                        $bg = imagecreatetruecolor(imagesx($image), imagesy($image));
 
+                        // Allocate the color
+                        $color = imagecolorallocate($bg, 255, 255, 255);
+
+                        // Fill the background with white
+                        imagefill($bg, 0, 0, $color);
+
+                        // Alpha blending must be enabled on the background!
+                        imagealphablending($bg, TRUE);
+
+                        // Copy the current image onto the opaque background
+                        if (imagecopy($bg, $image, 0, 0, 0, 0, imagesx($image), imagesy($image)))
+                        {
+                            // Replace the image with the background copy
+                            imagedestroy($image);
+                            $image = $bg;
+                        }
                         imagepng($image, DIR_IMAGE . $image_path . $name, 8);
-                    }else{
-
+                    } else {
                         imagejpeg($image, DIR_IMAGE . $image_path . $name, 90);
                     }
 
@@ -242,7 +258,7 @@ class ProductHelper
     public static function getImages(Collection $product): array
     {
         $response = [];
-        $docs  = collect($product['dokumenti']);
+        $docs = collect($product['dokumenti']);
 
         if ($docs->count()) {
             foreach ($docs as $doc) {
@@ -256,9 +272,9 @@ class ProductHelper
                     }
 
                     $response[] = [
-                        'uid'        => $uid,
-                        'md5'        => $doc['md5'],
-                        'image'      => static::getImagePath($doc, $product['naziv'], $product['artikl_uid']),
+                        'uid' => $uid,
+                        'md5' => $doc['md5'],
+                        'image' => static::getImagePath($doc, $product['naziv'], $product['artikl_uid']),
                         'sort_order' => isset($doc['redoslijed']) ? $doc['redoslijed'] : 0
                     ];
                 }
@@ -279,7 +295,7 @@ class ProductHelper
         $atributi = [];
         $dokumenti = [];
 
-        if ( ! empty($product->atributi)) {
+        if (!empty($product->atributi)) {
             foreach ($product->atributi as $atr) {
                 $atributi[] = [
                     'atribut_uid' => $atr->atribut_uid,
@@ -291,7 +307,7 @@ class ProductHelper
             }
         }
 
-        if ( ! empty($product->dokumenti)) {
+        if (!empty($product->dokumenti)) {
             foreach ($product->dokumenti as $dok) {
                 $dokumenti[] = [
                     'file_uid' => $dok->file_uid,
@@ -344,9 +360,9 @@ class ProductHelper
 
 
     /*******************************************************************************
-    *                                Copyright : AGmedia                           *
-    *                              email: filip@agmedia.hr                         *
-    *******************************************************************************/
+     *                                Copyright : AGmedia                           *
+     *                              email: filip@agmedia.hr                         *
+     *******************************************************************************/
 
     /**
      * @param string|null $text
@@ -377,8 +393,7 @@ class ProductHelper
         if ($attribute['aktivan'] == 'D' &&
             $attribute['vidljiv'] == 'D' &&
             $attribute['atribut_uid'] != '' &&
-            $attribute['naziv'] != '')
-        {
+            $attribute['naziv'] != '') {
             return true;
         }
 
