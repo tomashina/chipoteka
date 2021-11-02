@@ -1398,7 +1398,7 @@ class ControllerCatalogProduct extends Controller {
 
        // $output = fopen("php://output", "w"); //Opens and clears the contents of file; or creates a new file if it doesn't exist
 
-        $output = fopen ('../image/googleadsfix.csv', "w");
+        $output = fopen ('../image/chiporekagw.csv', "w");
 
         fputcsv($output, explode(',', $headers));
 
@@ -1430,7 +1430,6 @@ class ControllerCatalogProduct extends Controller {
                 'product_id' =>$data2['product_id'],
                 'model' =>$data2['model'],
                 'name' =>$data2['name'],
-                'quantity' =>$data2['quantity'],
                 'url' => $this->url->link('product/product', 'product_id=' . $data2['product_id']),
                 'image' => $this->model_tool_image->resize($data2['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')),
                 'subtitle' => '',
