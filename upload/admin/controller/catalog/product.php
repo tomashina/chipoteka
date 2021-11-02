@@ -1398,7 +1398,7 @@ class ControllerCatalogProduct extends Controller {
 
        // $output = fopen("php://output", "w"); //Opens and clears the contents of file; or creates a new file if it doesn't exist
 
-        $output = fopen ('../image/chiporekagw.csv', "w");
+        $output = fopen ('../image/chipotekagw.csv', "w");
 
         fputcsv($output, explode(',', $headers));
 
@@ -1430,7 +1430,7 @@ class ControllerCatalogProduct extends Controller {
                 'product_id' =>$data2['product_id'],
                 'model' =>$data2['model'],
                 'name' =>$data2['name'],
-                'url' => $this->url->link('product/product', 'product_id=' . $data2['product_id']),
+                'url' => 'https://www.chipoteka.hr/index.php?route=product/product&product_id=' . $data2['product_id'],
                 'image' => $this->model_tool_image->resize($data2['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')),
                 'subtitle' => '',
                 'description' => utf8_substr(trim(strip_tags(html_entity_decode($data2['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
