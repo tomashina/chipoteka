@@ -1398,7 +1398,7 @@ class ControllerCatalogProduct extends Controller {
 
        // $output = fopen("php://output", "w"); //Opens and clears the contents of file; or creates a new file if it doesn't exist
 
-        $output = fopen ('../image/googleadshrk.csv', "w");
+        $output = fopen ('../image/googleadsfix.csv', "w");
 
         fputcsv($output, explode(',', $headers));
 
@@ -1417,7 +1417,7 @@ class ControllerCatalogProduct extends Controller {
 
             foreach ($product_specials  as $product_special) {
                 if (($product_special['date_start'] == '0000-00-00' || strtotime($product_special['date_start']) < time()) && ($product_special['date_end'] == '0000-00-00' || strtotime($product_special['date_end']) > time())) {
-                    $special = number_format($product_special['price'], '2', '.', '').'HRK';
+                    $special = number_format($product_special['price'], '2', '.', '').' HRK';
 
                     break;
                 }
@@ -1436,7 +1436,7 @@ class ControllerCatalogProduct extends Controller {
                 'subtitle' => '',
                 'description' => utf8_substr(trim(strip_tags(html_entity_decode($data2['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
                 'category' => $category,
-                'price' => number_format($data2['price'], '2', '.', '').'HRK',
+                'price' => number_format($data2['price'], '2', '.', '').' HRK',
                 'special' => $special,
                 'keywords'=>'',
                 'itemaddress'=>'',
