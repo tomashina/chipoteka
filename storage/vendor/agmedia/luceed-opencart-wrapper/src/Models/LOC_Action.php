@@ -312,7 +312,7 @@ class LOC_Action
                 $temp_product = '';
 
                 foreach ($this->prices_to_update as $sifra => $price) {
-                    $temp_product .= '("' . $sifra . '", 0, ' . $price . '),';
+                    $temp_product .= '("' . $sifra . '", 0, ' . number_format($price, 2) . '),';
                 }
 
                 $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($temp_product, 0, -1) . ";");
