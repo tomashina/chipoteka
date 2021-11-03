@@ -67,7 +67,8 @@ class ControllerExtensionFeedFacebookstore extends Controller {
 
 
 
-                $output .= '</item>'.PHP_EOL;
+                $output .= '</item>';
+
 
             
 
@@ -76,8 +77,21 @@ class ControllerExtensionFeedFacebookstore extends Controller {
         $output .= '</channel>';
         $output .= '</rss>';
 
-        $this->response->addHeader('Content-Type: application/xml');
-        $this->response->setOutput($output);
+
+        $dom = new DOMDocument;
+        $dom->preserveWhiteSpace = false;
+        $dom->loadXml($output);
+        $xpath = new DOMXPath($dom);
+        foreach ($xpath->query('//text()') as $domText) {
+            $domText->data = trim($domText->nodeValue);
+        }
+        $dom->formatOutput = true;
+        echo $dom->saveXml();
+
+
+       // $this->response->addHeader('Content-Type: application/xml');
+
+       // $this->response->setOutput($output);
 
 
     }
