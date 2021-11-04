@@ -316,6 +316,8 @@ class LOC_Action
                     $temp_product .= '("' . $sifra . '", 0, ' . number_format($price, 2) . '),';
                 }
 
+                Log::store($temp_product, 'import_prices_query');
+
                 $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($temp_product, 0, -1) . ";");
                 $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.price = pt.price");
 
