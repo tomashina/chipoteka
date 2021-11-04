@@ -313,7 +313,7 @@ class LOC_Action
                 $temp_product = '';
 
                 foreach ($this->prices_to_update as $sifra => $price) {
-                    $temp_product .= '("' . $sifra . '", 0, ' . number_format($price, 2) . '),';
+                    $temp_product .= '("' . $sifra . '", 0, ' . number_format($price, 2, '.','') . '),';
                 }
 
                 Log::store($temp_product, 'import_prices_query');
