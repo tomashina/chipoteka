@@ -351,7 +351,7 @@ class LOC_Action
                         ->all();
 
         foreach ($products as $product) {
-            $this->prices_to_update->put($product['artikl'], $product['mpc']);
+            $this->prices_to_update->put($product->artikl, $product->mpc);
         }
 
         Log::store($this->prices_to_update->count());
