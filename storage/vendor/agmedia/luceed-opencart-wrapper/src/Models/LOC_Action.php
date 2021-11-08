@@ -4,6 +4,7 @@ namespace Agmedia\LuceedOpencartWrapper\Models;
 
 use Agmedia\Helpers\Database;
 use Agmedia\Helpers\Log;
+use Agmedia\Luceed\Facade\LuceedProduct;
 use Agmedia\Models\Category\Category;
 use Agmedia\Models\Category\CategoryDescription;
 use Agmedia\Models\Category\CategoryPath;
