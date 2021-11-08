@@ -103,6 +103,8 @@ class LOC_Action
         $categories = collect();
         $manufacturers = collect();
 
+        $this->collectProductsRegularPrices();
+
         foreach ($action->stavke as $item) {
             if ($item->grupa_artikla && ! is_null($item->mpc_rabat)) {
 
@@ -326,6 +328,23 @@ class LOC_Action
         }
 
         return 0;
+    }
+
+    /*******************************************************************************
+    *                                Copyright : AGmedia                           *
+    *                              email: filip@agmedia.hr                         *
+    *******************************************************************************/
+
+    /**
+     *
+     */
+    private function collectProductsRegularPrices(): void
+    {
+        $loc = new LOC_Product(LuceedProduct::all());
+
+        foreach ($loc->getProducts() as $product) {
+            $this->prices_to_update->put($product['artikl'], $product['mpc']);
+        }
     }
 
 
