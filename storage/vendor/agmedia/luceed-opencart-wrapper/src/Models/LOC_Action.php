@@ -343,9 +343,18 @@ class LOC_Action
     {
         $loc = new LOC_Product(LuceedProduct::all());
 
-        foreach ($loc->getProducts() as $product) {
+        $products = $loc->getProducts()
+                        ->where('artikl', '!=', '')
+                        ->where('naziv', '!=', '')
+                        ->where('enabled', '!=', 'N')
+                        ->where('webshop', '!=', 'N')
+                        ->all();
+
+        foreach ($products as $product) {
             $this->prices_to_update->put($product['artikl'], $product['mpc']);
         }
+
+        Log::store($this->prices_to_update->count());
     }
 
 
