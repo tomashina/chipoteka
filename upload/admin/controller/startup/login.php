@@ -14,6 +14,7 @@ class ControllerStartupLogin extends Controller {
             'extension/module/luceed_sync/checkOrderStatusDuration',
             'extension/module/luceed_sync/importActions',
             'extension/module/luceed_sync/importProducts',
+            'extension/module/luceed_sync/updateProducts',
             'extension/module/luceed_sync/checkRevision',
 		);
 
@@ -39,6 +40,7 @@ class ControllerStartupLogin extends Controller {
                 'extension/module/luceed_sync/checkOrderStatusDuration',
                 'extension/module/luceed_sync/importActions',
                 'extension/module/luceed_sync/importProducts',
+                'extension/module/luceed_sync/updateProducts',
                 'extension/module/luceed_sync/checkRevision',
 			);
 
