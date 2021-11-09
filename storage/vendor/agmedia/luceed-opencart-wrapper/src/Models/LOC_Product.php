@@ -6,19 +6,12 @@ use Agmedia\Helpers\Database;
 use Agmedia\Helpers\Log;
 use Agmedia\Kaonekad\AttributeHelper;
 use Agmedia\Kaonekad\ScaleHelper;
-use Agmedia\Luceed\Facade\LuceedProduct;
 use Agmedia\Luceed\Models\LuceedProductForRevision;
 use Agmedia\LuceedOpencartWrapper\Helpers\ProductHelper;
-use Agmedia\Models\Attribute\Attribute;
-use Agmedia\Models\Attribute\AttributeDescription;
-use Agmedia\Models\Category\Category;
-use Agmedia\Models\Manufacturer\Manufacturer;
-use Agmedia\Models\Option\OptionValueDescription;
 use Agmedia\Models\Product\Product;
 use Agmedia\Models\Product\ProductDescription;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 /**
  * Class LOC_Product

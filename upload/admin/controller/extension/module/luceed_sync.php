@@ -234,13 +234,46 @@ class ControllerExtensionModuleLuceedSync extends Controller
      * @return mixed
      * @throws Exception
      */
+    public function updateProducts()
+    {
+        $this->importLuceedProducts();
+
+        $_loc_ps = new LOC_ProductSingle();
+        $count = 0;
+
+        if ($_loc_ps->hasForUpdate()) {
+            if ( ! isset($_loc_ps->product['naziv'])) {
+                return $this->output($_loc_ps->finishUpdateError());
+            }
+
+            $product = $this->resolveOldProductData($_loc_ps->product_to_update);
+            // first check known errors
+            $product_for_update = $_loc_ps->makeForUpdate($product);
+
+            if ($product_for_update['sku'] == '6129256300') {
+                return $this->output($_loc_ps->finishUpdate());
+            }
+
+            $this->model_catalog_product->editProduct(
+                $_loc_ps->product_to_update['product_id'],
+                $product_for_update
+            );
+
+            LuceedProductForUpdate::where('uid', $_loc_ps->product_to_update['luceed_uid'])->delete();
+
+            $count++;
+        }
+
+        return $this->response($count, 'products');
+    }
+
+
+    /**
+     * @return mixed
+     * @throws Exception
+     */
     public function importLuceedProducts()
     {
-        /*Product::where('updated', 1)->update([
-            'updated'  => 0,
-            'hash' => '_'
-        ]);*/
-
         $_loc = new LOC_Product(LuceedProduct::all());
 
         return $this->output($_loc->populateLuceedData());

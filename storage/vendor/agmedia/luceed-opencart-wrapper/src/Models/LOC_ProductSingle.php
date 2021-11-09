@@ -2,7 +2,6 @@
 
 namespace Agmedia\LuceedOpencartWrapper\Models;
 
-use Agmedia\Helpers\Database;
 use Agmedia\Helpers\Log;
 use Agmedia\Kaonekad\AttributeHelper;
 use Agmedia\Kaonekad\ScaleHelper;
