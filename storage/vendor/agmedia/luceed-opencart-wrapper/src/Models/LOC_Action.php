@@ -261,7 +261,7 @@ class LOC_Action
 
                 //$end = date('Y-m-d', strtotime("+1 day", strtotime($end)));
 
-                $this->insert_query .= '(' . $product->product_id . ', 1, 0, ' . $mpc . ', "' . $start . '", "' . $end . '"),';
+                $this->insert_query .= '(' . $product->product_id . ', 1, 0, ' . number_format($mpc, 2, '.','') . ', "' . $start . '", "' . $end . '"),';
                 $this->insert_query_category .= '(' . $product->product_id . ',' . $item->first()->category . '),';
 
                 $this->count++;
@@ -353,8 +353,6 @@ class LOC_Action
         foreach ($products as $product) {
             $this->prices_to_update->put($product->artikl, $product->mpc);
         }
-
-        Log::store($this->prices_to_update->count());
     }
 
 

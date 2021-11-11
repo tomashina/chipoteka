@@ -16,6 +16,7 @@ use Agmedia\LuceedOpencartWrapper\Models\LOC_Customer;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Manufacturer;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Order;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Payment;
+use Agmedia\LuceedOpencartWrapper\Models\LOC_Price;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Product;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Stock;
@@ -238,30 +239,37 @@ class ControllerExtensionModuleLuceedSync extends Controller
     {
         $this->importLuceedProducts();
 
-        $_loc_ps = new LOC_ProductSingle();
         $count = 0;
+        $_loc_ps = new LOC_ProductSingle();
+        $for_update = LuceedProductForUpdate::all();
 
-        if ($_loc_ps->hasForUpdate()) {
-            if ( ! isset($_loc_ps->product['naziv'])) {
-                return $this->output($_loc_ps->finishUpdateError());
+        if ($for_update->count()) {
+            foreach ($for_update as $item) {
+                if ($_loc_ps->hasForUpdate()) {
+                    if ( ! isset($_loc_ps->product['naziv'])) {
+                        return $this->output($_loc_ps->finishUpdateError());
+                    }
+
+                    $product = $this->resolveOldProductData($_loc_ps->product_to_update);
+                    // first check known errors
+                    $product_for_update = $_loc_ps->makeForUpdate($product);
+
+                    if ($product_for_update['sku'] == '6129256300') {
+                        return $this->output($_loc_ps->finishUpdate());
+                    }
+
+                    $this->model_catalog_product->editProduct(
+                        $_loc_ps->product_to_update['product_id'],
+                        $product_for_update
+                    );
+
+                    $_loc_ps->finishUpdate();
+
+                    LuceedProductForUpdate::where('uid', $_loc_ps->product_to_update['luceed_uid'])->delete();
+
+                    $count++;
+                }
             }
-
-            $product = $this->resolveOldProductData($_loc_ps->product_to_update);
-            // first check known errors
-            $product_for_update = $_loc_ps->makeForUpdate($product);
-
-            if ($product_for_update['sku'] == '6129256300') {
-                return $this->output($_loc_ps->finishUpdate());
-            }
-
-            $this->model_catalog_product->editProduct(
-                $_loc_ps->product_to_update['product_id'],
-                $product_for_update
-            );
-
-            LuceedProductForUpdate::where('uid', $_loc_ps->product_to_update['luceed_uid'])->delete();
-
-            $count++;
         }
 
         return $this->response($count, 'products');
@@ -507,6 +515,30 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
         $updated = $_loc->collectWebPrices()
                         ->update();
+
+        return $this->response($updated, 'update');
+    }
+
+
+    /**
+     * @return mixed
+     * @throws Exception
+     */
+    public function updateB2BPrices()
+    {
+        $updated = 0;
+        $lp = new LOC_Price();
+
+        $lp->deleteProductDiscountDB();
+
+        foreach ($lp->getGroups() as $group) {
+            $_loc = new LOC_Price(
+                LuceedProduct::getB2BPrices($group['url']),
+                $group['id']
+            );
+
+            $updated += $_loc->collectB2B()->update('b2b');
+        }
 
         return $this->response($updated, 'update');
     }
