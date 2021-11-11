@@ -546,6 +546,20 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
     /**
      * @return mixed
+     */
+    public function updateVpcPrices()
+    {
+        $_loc = new LOC_Product(LuceedProduct::all());
+        $lp = new LOC_Price();
+
+        $updated = $lp->collectAndStore($_loc->getProducts(), 'vpc');
+
+        return $this->response($updated, 'update');
+    }
+
+
+    /**
+     * @return mixed
      * @throws Exception
      */
     public function updateQuantities()

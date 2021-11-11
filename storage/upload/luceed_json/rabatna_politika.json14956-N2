@@ -1,0 +1,2224 @@
+{
+    "result": [
+        {
+            "partneri": [
+                {
+                    "partner_uid": "239211-1063",
+                    "partner": "14956-N2",
+                    "nivo_partnera_uid": "6-1063",
+                    "nivo_partnera": "N2",
+                    "rabati": [
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "11-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "67-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "319-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "25-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "13-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "27-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "19-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 18,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "304-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "326-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "305-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "21-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 10,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "390-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "331-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "293-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "511-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "628-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "559-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "28-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "28-1063",
+                            "robna_marka_uid": "27-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "28-1063",
+                            "robna_marka_uid": "19-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 18,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "17-1063",
+                            "robna_marka_uid": "11-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "538-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "533-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "401-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "431-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "431-1063",
+                            "robna_marka_uid": "304-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "431-1063",
+                            "robna_marka_uid": "326-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "431-1063",
+                            "robna_marka_uid": "305-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "614-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "363-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "676-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "72-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "17-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "456-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "213-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "302-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "302-1063",
+                            "robna_marka_uid": "21-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "302-1063",
+                            "robna_marka_uid": "390-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "182-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "182-1063",
+                            "robna_marka_uid": "21-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "182-1063",
+                            "robna_marka_uid": "390-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "649-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "649-1063",
+                            "robna_marka_uid": "21-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "649-1063",
+                            "robna_marka_uid": "390-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "237-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "529-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "195-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "242-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "531-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "357-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "599-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "654-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "148-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "631-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "264-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "532-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "33-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "174-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "52-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "247-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "561-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "387-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "546-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "243-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "146-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "479-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "407-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "197-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "198-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "572-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "547-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "7-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "276-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "548-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "233-1063",
+                            "robna_marka_uid": "105-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "402-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 23,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "399-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "838-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "98-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "20-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "344-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "62-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "438-1063",
+                            "robna_marka_uid": "28-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "551-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "97536-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "488-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "126936-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "405-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "128050-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "16438-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "144-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "130458-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "130462-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "130526-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "130455-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "130532-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "130531-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "130454-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "810-1063",
+                            "robna_marka_uid": "378-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 10,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "516-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "132279-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "130154-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "131446-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "869-1063",
+                            "robna_marka_uid": "321-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 23,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "870-1063",
+                            "robna_marka_uid": "321-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 23,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "467-1063",
+                            "robna_marka_uid": "321-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "810-1063",
+                            "robna_marka_uid": "321-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "233-1063",
+                            "robna_marka_uid": "321-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 22,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "565-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "411-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "135963-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "211-1063",
+                            "robna_marka_uid": "321-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 23,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "810-1063",
+                            "robna_marka_uid": "590-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 8,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "885-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "846-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "60-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "794-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "794-1063",
+                            "robna_marka_uid": "20-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "60-1063",
+                            "robna_marka_uid": "20-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "60-1063",
+                            "robna_marka_uid": "344-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "878-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "878-1063",
+                            "robna_marka_uid": "93-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "878-1063",
+                            "robna_marka_uid": "471-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "861-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "861-1063",
+                            "robna_marka_uid": "499-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 12,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "867-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "867-1063",
+                            "robna_marka_uid": "22-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "868-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "868-1063",
+                            "robna_marka_uid": "22-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "868-1063",
+                            "robna_marka_uid": "499-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 12,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "868-1063",
+                            "robna_marka_uid": "18-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "879-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "879-1063",
+                            "robna_marka_uid": "471-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "879-1063",
+                            "robna_marka_uid": "93-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "623-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "623-1063",
+                            "robna_marka_uid": "411-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "874-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "412-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "69-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "69-1063",
+                            "robna_marka_uid": "290-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 22,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "30-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "30-1063",
+                            "robna_marka_uid": "549-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "301-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "301-1063",
+                            "robna_marka_uid": "413-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "144-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "25-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "881-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "881-1063",
+                            "robna_marka_uid": "93-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "271-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "435-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "435-1063",
+                            "robna_marka_uid": "451-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "66-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "66-1063",
+                            "robna_marka_uid": "448-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "52-1063",
+                            "robna_marka_uid": "21-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 10,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "55-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "547-1063",
+                            "robna_marka_uid": "493-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "887-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 22,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "842-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "889-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "20-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "406-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "22-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "888-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "890-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "350-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "350-1063",
+                            "robna_marka_uid": "524-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 10,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "350-1063",
+                            "robna_marka_uid": "27-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "350-1063",
+                            "robna_marka_uid": "143-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 10,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "593-1063",
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "593-1063",
+                            "robna_marka_uid": "592-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "345-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "875-1063",
+                            "robna_marka_uid": "362-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "233-1063",
+                            "robna_marka_uid": "607-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "195-1063",
+                            "robna_marka_uid": "597-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "136954-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 35,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "136947-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 35,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "136948-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 35,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "136949-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 35,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "136958-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 35,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "136952-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 35,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "536-1063",
+                            "robna_marka_uid": "321-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 12,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "135315-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "134607-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 5,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "140713-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "140711-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "140344-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "140519-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "140819-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 35,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "618-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 35,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "142919-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "137845-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "846-1063",
+                            "robna_marka_uid": "623-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 10,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "149710-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 10,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "149708-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 10,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "136253-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "136728-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 7,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "114349-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 7,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "143430-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "631-1063",
+                            "robna_marka_uid": "591-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 15,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "921-1063",
+                            "robna_marka_uid": "650-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "150675-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 20,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "499-1063",
+                            "robna_marka_uid": "46-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "469-1063",
+                            "robna_marka_uid": "46-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "478-1063",
+                            "robna_marka_uid": "46-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "660-1063",
+                            "robna_marka_uid": "46-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": "33-1063",
+                            "robna_marka_uid": "46-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 30,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "107-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 5,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": null,
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": "106-1063",
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 5,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "143101-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "143099-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 25,
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "154515-1063",
+                            "grupa_artikla_uid": null,
+                            "robna_marka_uid": null,
+                            "dobavljac__partner_uid": null,
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": 28,
+                            "nivo": "D"
+                        }
+                    ],
+                    "cijene": [
+                        {
+                            "artikl_uid": "34917-1063",
+                            "valuta_uid": "1-1063",
+                            "cijena": 53,
+                            "od_kolicine": 0,
+                            "do_kolicine": 9999999,
+                            "cassa": "N",
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": "D",
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "124326-1063",
+                            "valuta_uid": "1-1063",
+                            "cijena": 10,
+                            "od_kolicine": 0,
+                            "do_kolicine": 9999999,
+                            "cassa": "N",
+                            "od_datuma": "13.1.2016",
+                            "do_datuma": null,
+                            "rabat": "N",
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "133684-1063",
+                            "valuta_uid": "1-1063",
+                            "cijena": 12,
+                            "od_kolicine": 0,
+                            "do_kolicine": 9999999,
+                            "cassa": "N",
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": "N",
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "134949-1063",
+                            "valuta_uid": "1-1063",
+                            "cijena": 12,
+                            "od_kolicine": 0,
+                            "do_kolicine": 9999999,
+                            "cassa": "N",
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": "N",
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "153325-1063",
+                            "valuta_uid": "1-1063",
+                            "cijena": 127,
+                            "od_kolicine": 0,
+                            "do_kolicine": 9999999,
+                            "cassa": "N",
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": "N",
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "153449-1063",
+                            "valuta_uid": "1-1063",
+                            "cijena": 810,
+                            "od_kolicine": 0,
+                            "do_kolicine": 9999999,
+                            "cassa": "N",
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": "N",
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "149771-1063",
+                            "valuta_uid": "1-1063",
+                            "cijena": 1330,
+                            "od_kolicine": 0,
+                            "do_kolicine": 9999999,
+                            "cassa": "N",
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": "N",
+                            "nivo": "D"
+                        },
+                        {
+                            "artikl_uid": "149770-1063",
+                            "valuta_uid": "1-1063",
+                            "cijena": 920,
+                            "od_kolicine": 0,
+                            "do_kolicine": 9999999,
+                            "cassa": "N",
+                            "od_datuma": null,
+                            "do_datuma": null,
+                            "rabat": "N",
+                            "nivo": "D"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

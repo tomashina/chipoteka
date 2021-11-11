@@ -57,16 +57,27 @@ class LuceedProduct extends Facade
         
         return $luceed->getManufacturerProducts($manufacturer_id);
     }
-    
-    
+
+
     /**
      * @return mixed
      */
     public static function getActions()
     {
         $luceed = new Luceed();
-        
+
         return $luceed->getProductsActions();
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public static function getB2BPrices(string $b2b_group)
+    {
+        $luceed = new Luceed();
+
+        return $luceed->getProductsB2BPrices($b2b_group);
     }
 
 

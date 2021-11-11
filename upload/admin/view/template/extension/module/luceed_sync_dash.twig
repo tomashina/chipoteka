@@ -142,6 +142,13 @@
 
                                 <div class="form-group">
                                     <div class="col-sm-4 text-center">
+                                        <a href="javascript:void(0)" id="update-b2b-prices" data-toggle="tooltip" title="Update B2B cijena" class="btn btn-info btn-block">Update B2B cijena</a>
+                                    </div>
+                                    <p class="col-sm-8" style="margin-top: 9px;">TEST. NE DIRATI.<br>Update cijena se vrši za B2B kupce.<a href="javascript:void(0)" id="update-vpc-prices">..</a></p>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="update-quantities" data-toggle="tooltip" title="{{ btn_products_update_q }}" class="btn btn-info btn-block">{{ btn_products_update_q }}</a>
                                     </div>
                                     <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_q }}</p>
@@ -351,6 +358,8 @@
             $('#categories-active-min')     .on('click', e => { callApi(e, 'checkMinQtyOfCategories'); });
             $('#update-prices-quantities')  .on('click', e => { callApi(e, 'updatePricesAndQuantities'); });
             $('#update-prices')             .on('click', e => { callApi(e, 'updatePrices'); });
+            $('#update-b2b-prices')         .on('click', e => { callApi(e, 'updateB2BPrices'); });
+            $('#update-vpc-prices')         .on('click', e => { callApi(e, 'updateVpcPrices'); });
             $('#update-quantities')         .on('click', e => { callApi(e, 'updateQuantities'); });
 
             $('#update-order-statuses')     .on('click', e => { callApi(e, 'updateOrderStatuses'); });

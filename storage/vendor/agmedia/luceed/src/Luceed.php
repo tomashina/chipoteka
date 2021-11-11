@@ -189,6 +189,17 @@ class Luceed
 
 
     /**
+     * @param array|null $query
+     *
+     * @return mixed
+     */
+    public function getProductsB2BPrices(string $query = null)
+    {
+        return $this->service->get($this->end_points['b2b_prices'] . ($query ?: ''));
+    }
+
+
+    /**
      * @param string $uid
      *
      * @return mixed

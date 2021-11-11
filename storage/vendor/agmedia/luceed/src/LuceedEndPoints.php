@@ -31,6 +31,7 @@ class LuceedEndPoints
             'raspis'            => 'raspis.url',
             'mjesta'            => 'mjesta.json',
             'vrste_placanja'    => 'vrste_placanja.json',
+            'b2b_prices'        => 'rabatna_politika.json',
             //
             'stock_skladista'   => 'stock_skladista.json',
             'stock_dobavljaca'  => 'stock_dobavljaca.json',
@@ -66,6 +67,7 @@ class LuceedEndPoints
             'raspis'            => 'NaloziProdaje/raspis/poslovnica/',
             'mjesta'            => 'mjesta/naziv/',
             'vrste_placanja'    => 'vrsteplacanja/list',
+            'b2b_prices'        => 'prodajniuvjeti/partneri/',
             //
             'stock_skladista'   => 'StanjeZalihe/Skladiste/',
             'stock_dobavljaca'  => 'StanjeZaliheDobavljaci/Lista',
