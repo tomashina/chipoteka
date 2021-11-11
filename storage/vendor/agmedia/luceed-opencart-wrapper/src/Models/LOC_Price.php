@@ -61,7 +61,7 @@ class LOC_Price
     {
         return [
             [
-                'id' => '2',
+                'id' => '3',
                 'title' => 'N1',
                 'url' => '14956-N2'
             ]
