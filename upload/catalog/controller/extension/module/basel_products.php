@@ -4,7 +4,14 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 
     	$this->load->model('catalog/product');
 		$this->load->model('extension/basel/basel');
-		$this->load->language('basel/basel_theme');	
+		$this->load->language('basel/basel_theme');
+
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
   		
 		$data['basel_button_quickview'] = $this->language->get('basel_button_quickview');
 		$data['basel_text_new'] = $this->language->get('basel_text_new');
@@ -271,7 +278,12 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 
   		if ( $tabInfo['sort'] == 'rating' || $tabInfo['sort'] == 'p.date_added') {
   			$order = 'DESC';
-  		}else{
+  		}
+  		else if($tabInfo['sort'] == 'p.cijena'){
+            $order = 'DESC';
+            $tabInfo['sort'] = 'p.price';
+        }
+  		else{
   			$order = 'ASC';
   		}
 

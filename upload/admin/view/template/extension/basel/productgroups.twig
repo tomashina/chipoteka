@@ -133,6 +133,7 @@
                                           <option value="rating" {% if tab.sort is defined and tab.sort == 'rating' %} selected="selected"{% endif %} >{{ text_sort_rating }}</option>
                                           <option value="sort_order" {% if tab.sort is defined and tab.sort == 'sort_order' %} selected="selected"{% endif %} >{{ text_sort_sort_order }}</option>
                                           <option value="p.price" {% if tab.sort is defined and tab.sort == 'p.price' %} selected="selected"{% endif %} >{{ text_sort_price }}</option>
+                                          <option value="p.cijena" {% if tab.sort is defined and tab.sort == 'p.cijena' %} selected="selected"{% endif %} >Cijena (prvo najviša)</option>
                                           <option value="p.date_added" {% if tab.sort is defined and tab.sort == 'p.date_added' %} selected="selected"{% endif %} >{{ text_sort_added }}</option>  
                                       </select>
                                    </div>
@@ -218,6 +219,7 @@ function addTab(){
   html += '<option value="rating" >{{ text_sort_rating }}</option>';
   html += '<option value="sort_order" >{{ text_sort_sort_order }}</option>';
   html += '<option value="p.price" >{{ text_sort_price }}</option>';
+    html += '<option value="p.cijena" >Cijena (prvo najviša)</cijena>';
   html += '<option value="p.date_added" >{{ text_sort_added }}</option>';  
   html += '</select></div></fieldset>';
   html += '</div>';
