@@ -166,13 +166,15 @@ class LOC_Price
                              ->where('enabled', '!=', 'N')
                              ->where('webshop', '!=', 'N');
 
+        Log::store('collectAndStore(count) ::: ' . $products->count());
+
         $temp_product = '';
 
         foreach ($products->all() as $product) {
             $temp_product .= '("' . $product->artikl . '", 0, ' . ($type == 'mpc' ? $this->resolvePrice($product->mpc) : $this->resolvePrice($product->vpc)) . '),';
         }
 
-        Log::store($temp_product);
+        Log::store('collectAndStore(sql) ::: ' . $temp_product);
 
         $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($temp_product, 0, -1) . ";");
 
