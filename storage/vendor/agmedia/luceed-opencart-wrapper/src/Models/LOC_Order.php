@@ -153,11 +153,15 @@ class LOC_Order
             $this->log($this->oc_order['order_id']);
             $this->log($this->response->result[0]);
 
-            $updated = Order::where('order_id', $this->oc_order['order_id'])->update([
+            /*$updated = Order::where('order_id', $this->oc_order['order_id'])->update([
                 'luceed_uid' => $this->response->result[0]
-            ]);
+            ]);*/
+
+            $this->db = new Database(DB_DATABASE);
+            $updated = $this->db->query("UPDATE " . DB_PREFIX . "order o SET o.luceed_uid = '" . $this->db->escape($this->response->result[0]) . "' WHERE o.order_id = " . $this->oc_order['order_id'] . ";");
 
             if ($updated) {
+                $this->log('Luceed UID updated in DB...');
                 return $this->response->result[0];
             }
         }
