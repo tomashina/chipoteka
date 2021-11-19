@@ -97,9 +97,10 @@ class LOC_Price
 
         $categories    = collect();
         $manufacturers = collect();
+        $cat_man = collect();
 
         foreach ($prices->rabati as $item) {
-            if ($item->grupa_artikla_uid && ! is_null($item->rabat)) {
+            if ($item->grupa_artikla_uid && is_null($item->robna_marka_uid) && ! is_null($item->rabat)) {
                 if ($categories->has($item->grupa_artikla_uid)) {
                     if ($item->grupa_artikla_uid > $categories[$item->grupa_artikla_uid]) {
                         $categories->put($item->grupa_artikla_uid, $item->rabat);
@@ -109,7 +110,7 @@ class LOC_Price
                 }
             }
 
-            if ($item->robna_marka_uid && ! is_null($item->rabat)) {
+            if ($item->robna_marka_uid && is_null($item->grupa_artikla_uid) && ! is_null($item->rabat)) {
                 if ($manufacturers->has($item->robna_marka_uid)) {
                     if ($item->robna_marka_uid > $manufacturers[$item->robna_marka_uid]) {
                         $manufacturers->put($item->robna_marka_uid, $item->rabat);
@@ -117,6 +118,13 @@ class LOC_Price
                 } else {
                     $manufacturers->put($item->robna_marka_uid, $item->rabat);
                 }
+            }
+
+            if ($item->grupa_artikla_uid && $item->robna_marka_uid && ! is_null($item->rabat)) {
+                $cat_man->put($item->grupa_artikla_uid, [
+                    'manufacturer' => $item->robna_marka_uid,
+                    'discount' => $item->rabat
+                ]);
             }
         }
 
@@ -139,6 +147,19 @@ class LOC_Price
             if ($manufacturer) {
                 foreach ($manufacturer->products as $product) {
                     $this->addForUpdate($product, $discount);
+                }
+            }
+        }
+
+        foreach ($cat_man as $sifra => $item) {
+            $category = Category::where('lc_uid', $sifra)->first();
+
+            if ($category) {
+                $ids      = ProductCategory::where('category_id', $category->category_id)->pluck('product_id');
+                $products = Product::whereIn('product_id', $ids)->where('lc_uid', $item['manufacturer'])->get();
+
+                foreach ($products as $product) {
+                    $this->addForUpdate($product, $item['discount']);
                 }
             }
         }
@@ -225,7 +246,7 @@ class LOC_Price
      */
     public function deleteProductDiscountDB(): void
     {
-        $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_discount`");
+        $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_discount");
     }
 
 
@@ -249,13 +270,29 @@ class LOC_Price
      * @param      $product
      * @param      $discount
      * @param null $price
+     *
+     * @return mixed
      */
-    private function addForUpdate($product, $discount, $price = null): void
+    private function addForUpdate($product, $discount, $price = null)
     {
-        $this->prices_to_update->push([
+        $price = $price ?: $this->calculateDiscountPrice($product->vpc, $discount);
+
+        if ($this->prices_to_update->has($product->luceed_uid)) {
+            Log::store($product->luceed_uid . ' / ' . $product->product_id . ' ::: stara: ' . $this->prices_to_update['price'] . ' ::: nova: ' . $price);
+
+            if ($this->prices_to_update['price'] > $price) {
+                return $this->prices_to_update->put($product->luceed_uid, [
+                    'id'    => $product->product_id,
+                    'price' => $price,
+                ]);
+            }
+
+            return false;
+        }
+
+        return $this->prices_to_update->put($product->luceed_uid, [
             'id'    => $product->product_id,
-            'uid'   => $product->luceed_uid,
-            'price' => $price ?: $this->calculateDiscountPrice($product->vpc, $discount),
+            'price' => $price,
         ]);
     }
 
