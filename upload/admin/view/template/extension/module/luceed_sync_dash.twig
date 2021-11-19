@@ -50,7 +50,7 @@
                                     <div class="col-sm-5 text-center">
                                         <a href="javascript:void(0)" id="update-categories" data-toggle="tooltip" title="Update Kategorija" class="btn btn-info btn-block">Update Kategorija</a>
                                     </div>
-                                    <p class="col-sm-7">Vrši se update svih naziva kategorija.</p>
+                                    <p class="col-sm-7">Vrši se update svih naziva kategorija.<a href="javascript:void(0)" id="update-category-uids">..</a></p></p>
                                 </div>
                             </div>
                         </div>
@@ -64,7 +64,7 @@
                                     <div class="col-sm-5 text-center">
                                         <a href="javascript:void(0)" id="import-new-manufacturer" data-toggle="tooltip" title="{{ btn_manufacturer_import }}" class="btn btn-info btn-block">{{ btn_manufacturer_import }}</a>
                                     </div>
-                                    <p class="col-sm-7">{{ help_manufacturer_import }}</p>
+                                    <p class="col-sm-7">{{ help_manufacturer_import }}<a href="javascript:void(0)" id="update-manufacturer-uids">..</a></p></p>
                                 </div>
 
                                 {#<div class="form-group">
@@ -347,7 +347,9 @@
             //
             $('#import-new-categories')     .on('click', e => { callApi(e, 'importCategories'); });
             $('#update-categories')         .on('click', e => { callApi(e, 'updateCategories'); });
+            $('#update-category-uids')      .on('click', e => { callApi(e, 'updateCategoriesUids'); });
             $('#import-new-manufacturer')   .on('click', e => { callApi(e, 'importManufacturers'); });
+            $('#update-manufacturer-uids')  .on('click', e => { callApi(e, 'updateManufacturersUids'); });
             $('#import-new-warehouse')      .on('click', e => { callApi(e, 'importWarehouses'); });
             $('#import-new-payments')       .on('click', e => { callApi(e, 'importPayments'); });
             $('#import-new-products')       .on('click', e => { callApi(e, 'importProducts'); });

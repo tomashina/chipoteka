@@ -130,6 +130,37 @@ class LOC_Category
     /**
      * @return $this
      */
+    public function updateUids()
+    {
+        $this->db = new Database(DB_DATABASE);
+        $this->deleteCategoryTempDB();
+
+        $categories = Category::select('category_id', 'luceed_uid')->get();
+        $new = $this->getList()
+                    ->where('grupa_artikla', '!=', '')
+                    ->where('naziv', '!=', '')
+                    ->all();
+
+        foreach ($new as $item) {
+            $old = $categories->where('luceed_uid', $item->grupa_artikla)->first();
+
+            if ($old) {
+                $this->query_update .= '("' . $old->category_id . '", "' . $item->grupa_artikla_uid . '", "", "", "", ""),';
+            }
+        }
+
+        $this->query_update = substr($this->query_update, 0, -1);
+
+        $this->db->query("INSERT INTO " . DB_PREFIX . "category_temp (id, naziv, opis, seo, data_1, data_2) VALUES " . $this->query_update . ";");
+        $this->db->query("UPDATE " . DB_PREFIX . "category c INNER JOIN " . DB_PREFIX . "category_temp ct ON c.category_id = ct.id SET c.lc_uid = ct.naziv");
+
+        return 1;
+    }
+
+
+    /**
+     * @return $this
+     */
     public function joinByUid()
     {
         $categories = Category::select('category_id', 'luceed_uid')->get();

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Agmedia\LuceedOpencartWrapper\Models;
-
 
 use Agmedia\Helpers\Log;
 use Agmedia\Models\Manufacturer\Manufacturer;
@@ -27,8 +25,8 @@ class LOC_Manufacturer
      * @var null
      */
     private $manufacturers_to_add = null;
-    
-    
+
+
     /**
      * LOC_Manufacturer constructor.
      *
@@ -38,8 +36,8 @@ class LOC_Manufacturer
     {
         $this->manufacturers = $manufacturers ? $this->setManufacturers($manufacturers) : null;
     }
-    
-    
+
+
     /**
      * @return Collection|null
      */
@@ -47,8 +45,8 @@ class LOC_Manufacturer
     {
         return $this->manufacturers ? collect($this->manufacturers) : [];
     }
-    
-    
+
+
     /**
      * @return Collection|null
      */
@@ -56,8 +54,8 @@ class LOC_Manufacturer
     {
         return $this->manufacturers_to_add ? collect($this->manufacturers_to_add) : [];
     }
-    
-    
+
+
     /**
      * @param $products
      *
@@ -66,35 +64,57 @@ class LOC_Manufacturer
     public function getFromProducts($products)
     {
         $list = json_decode($products)->result[0]->artikli;
-        
+
         $this->manufacturers = collect($list)->unique('robna_marka')->toArray();
-        
+
         return $this;
     }
-    
-    
+
+
     /**
      * @return $this
      */
     public function checkDiff()
     {
         if ($this->manufacturers) {
-            $existing = Manufacturer::pluck('luceed_uid');
+            $existing  = Manufacturer::pluck('luceed_uid');
             $list_diff = $this->getManufacturers()
-                ->where('enabled', 'D')
-                ->where('robna_marka', '!=', '')
-                ->where('naziv', '!=', '')
-                ->pluck('robna_marka')
-                ->diff($existing)
-                ->flatten();
-    
+                              ->where('enabled', 'D')
+                              ->where('robna_marka', '!=', '')
+                              ->where('naziv', '!=', '')
+                              ->pluck('robna_marka')
+                              ->diff($existing)
+                              ->flatten();
+
             $this->manufacturers_to_add = $this->getManufacturers()->whereIn('robna_marka', $list_diff);
         }
-        
+
         return $this;
     }
-    
-    
+
+
+    /**
+     * @return int
+     */
+    public function updateByUids()
+    {
+        $manufacturers = Manufacturer::select('manufacturer_id', 'luceed_uid')->get();
+        $new           = $this->getManufacturers()
+                              ->where('enabled', 'D')
+                              ->where('robna_marka', '!=', '')
+                              ->where('naziv', '!=', '')
+                              ->all();
+
+        foreach ($new as $item) {
+            Manufacturer::where('luceed_uid', $item->robna_marka)->update([
+                'lc_uid' => $item->robna_marka_uid
+            ]);
+        }
+
+        return 1;
+    }
+
+
     /**
      * @return int
      */
@@ -116,7 +136,7 @@ class LOC_Manufacturer
      */
     public function initialImport()
     {
-        $list = $this->load();
+        $list  = $this->load();
         $count = 0;
 
         if ( ! empty($list)) {
@@ -128,17 +148,13 @@ class LOC_Manufacturer
 
                     $newstring = substr($item['logo'], -3);
 
-                    if($newstring=='png'  ){
+                    if ($newstring == 'png') {
                         $img = 'catalog/brands/' . Str::slug($item['name'] ?: $item['robna_marka_naziv']) . '.png';
-                    }
-                    elseif ($newstring=='PNG'){
+                    } elseif ($newstring == 'PNG') {
                         $img = 'catalog/brands/' . Str::slug($item['name'] ?: $item['robna_marka_naziv']) . '.PNG';
-                    }
-                    else{
+                    } else {
                         $img = 'catalog/brands/' . Str::slug($item['name'] ?: $item['robna_marka_naziv']) . '.jpg';
                     }
-
-
 
                     file_put_contents(DIR_IMAGE . $img, file_get_contents($url));
 
@@ -147,12 +163,12 @@ class LOC_Manufacturer
                     ]);
 
                     ManufacturerDescription::insert([
-                        'manufacturer_id' => $manufacturer->manufacturer_id,
-                        'language_id' => 2,
-                        'description' => $item['description'],
-                        'meta_title' => $item['meta_title'],
+                        'manufacturer_id'  => $manufacturer->manufacturer_id,
+                        'language_id'      => 2,
+                        'description'      => $item['description'],
+                        'meta_title'       => $item['meta_title'],
                         'meta_description' => $item['meta_description'] ? Str::limit($item['meta_description'], 150) : Str::limit($item['description'], 150),
-                        'meta_keyword' => $item['name'],
+                        'meta_keyword'     => $item['name'],
                     ]);
 
                     $count++;
@@ -169,7 +185,7 @@ class LOC_Manufacturer
      */
     public function load()
     {
-        $file = json_decode(file_get_contents(DIR_STORAGE . 'upload/assets/brands.json'),TRUE);
+        $file = json_decode(file_get_contents(DIR_STORAGE . 'upload/assets/brands.json'), true);
 
         if ($file) {
             return collect($file);
@@ -177,8 +193,8 @@ class LOC_Manufacturer
 
         return [];
     }
-    
-    
+
+
     /**
      * @param $manufacturer
      *
@@ -188,20 +204,20 @@ class LOC_Manufacturer
     {
         $id = Manufacturer::insertGetId([
             'luceed_uid' => $manufacturer->robna_marka,
-            'name' => $manufacturer->naziv,
-            'image' => '',
+            'name'       => $manufacturer->naziv,
+            'image'      => '',
             'sort_order' => 0
         ]);
-        
+
         ManufacturerToStore::insert([
             'manufacturer_id' => $id,
-            'store_id' => 0
+            'store_id'        => 0
         ]);
-        
+
         return $id;
     }
-    
-    
+
+
     /**
      * @param $categories
      *
@@ -210,7 +226,7 @@ class LOC_Manufacturer
     public function setManufacturers($manufacturers): array
     {
         $man = json_decode($manufacturers);
-        
+
         return $man->result[0]->robne_marke;
     }
 }

@@ -121,7 +121,7 @@ class LOC_Price
         }
 
         foreach ($categories as $sifra => $discount) {
-            $category = Category::where('luceed_uid', $sifra)->first();
+            $category = Category::where('lc_uid', $sifra)->first();
 
             if ($category) {
                 $ids      = ProductCategory::where('category_id', $category->category_id)->pluck('product_id');
@@ -134,7 +134,7 @@ class LOC_Price
         }
 
         foreach ($manufacturers as $sifra => $discount) {
-            $manufacturer = Manufacturer::where('luceed_uid', $sifra)->with('products')->first();
+            $manufacturer = Manufacturer::where('lc_uid', $sifra)->with('products')->first();
 
             if ($manufacturer) {
                 foreach ($manufacturer->products as $product) {
@@ -168,25 +168,29 @@ class LOC_Price
 
         Log::store('collectAndStore(count) ::: ' . $products->count());
 
-        $temp_product = '';
+        if ($products->count()) {
+            $temp_product = '';
 
-        foreach ($products->all() as $product) {
-            $temp_product .= '("' . $product->artikl . '", 0, ' . ($type == 'mpc' ? $this->resolvePrice($product->mpc) : $this->resolvePrice($product->vpc)) . '),';
+            foreach ($products->all() as $product) {
+                $temp_product .= '("' . $product->artikl . '", 0, ' . ($type == 'mpc' ? $this->resolvePrice($product->mpc) : $this->resolvePrice($product->vpc)) . '),';
+            }
+
+            Log::store('collectAndStore(sql) ::: ' . $temp_product);
+
+            $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($temp_product, 0, -1) . ";");
+
+            if ($type == 'mpc') {
+                $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.price_2 = pt.price");
+            } else {
+                $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.vpc = pt.price");
+            }
+
+            //$this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_temp`");
+
+            return 1;
         }
 
-        Log::store('collectAndStore(sql) ::: ' . $temp_product);
-
-        $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($temp_product, 0, -1) . ";");
-
-        if ($type == 'mpc') {
-            $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.price_2 = pt.price");
-        } else {
-            $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.vpc = pt.price");
-        }
-
-        //$this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_temp`");
-
-        return 1;
+        return 0;
     }
 
 

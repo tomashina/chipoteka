@@ -141,6 +141,19 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
 
     /**
+     * @return object
+     */
+    public function updateCategoriesUids()
+    {
+        $_loc = new LOC_Category(LuceedGroup::all());
+
+        $updated = $_loc->updateUids();
+
+        return $this->response($updated, 'categories');
+    }
+
+
+    /**
      * @return mixed
      */
     public function importManufacturers()
@@ -150,6 +163,19 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $imported = $_loc->checkDiff()->import();
 
         return $this->response($imported, 'manufacturers');
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function updateManufacturersUids()
+    {
+        $_loc = new LOC_Manufacturer(LuceedManufacturer::all());
+
+        $updated = $_loc->updateByUids();
+
+        return $this->response($updated, 'manufacturers');
     }
 
 
