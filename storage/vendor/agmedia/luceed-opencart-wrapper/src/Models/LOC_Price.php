@@ -246,7 +246,7 @@ class LOC_Price
      */
     public function deleteProductDiscountDB(): void
     {
-        $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_discount");
+        $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "product_discount`");
     }
 
 
