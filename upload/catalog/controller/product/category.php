@@ -9,6 +9,13 @@ class ControllerProductCategory extends Controller {
 
 		$this->load->model('tool/image');
 
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
         $data['shopping_cart'] = $this->url->link('checkout/cart');
 
 		if (isset($this->request->get['filter'])) {
