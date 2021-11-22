@@ -155,11 +155,15 @@ class LOC_Price
             $category = Category::where('lc_uid', $sifra)->first();
 
             if ($category) {
-                $ids      = ProductCategory::where('category_id', $category->category_id)->pluck('product_id');
-                $products = Product::whereIn('product_id', $ids)->where('lc_uid', $item['manufacturer'])->get();
+                $manufacturer = Manufacturer::where('lc_uid', $item['manufacturer'])->first();
 
-                foreach ($products as $product) {
-                    $this->addForUpdate($product, $item['discount']);
+                if ($manufacturer) {
+                    $ids      = ProductCategory::where('category_id', $category->category_id)->pluck('product_id');
+                    $products = Product::whereIn('product_id', $ids)->where('manufacturer_id', $manufacturer->manufacturer_id)->get();
+
+                    foreach ($products as $product) {
+                        $this->addForUpdate($product, $item['discount']);
+                    }
                 }
             }
         }
