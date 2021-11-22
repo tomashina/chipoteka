@@ -282,9 +282,13 @@ class LOC_Price
         $price = $price ?: $this->calculateDiscountPrice($product->vpc, $discount);
 
         if ($this->prices_to_update->has($product->luceed_uid)) {
-            Log::store($product->luceed_uid . ' / ' . $product->product_id . ' ::: stara: ' . $this->prices_to_update['price'] . ' ::: nova: ' . $price);
+            $old_price = $this->prices_to_update->filter(function($item) use ($product) {
+                return $item->id == $product->product_id;
+            })->first();
 
-            if ($this->prices_to_update['price'] > $price) {
+            Log::store($product->luceed_uid . ' / ' . $product->product_id . ' ::: stara: ' . $old_price['price'] . ' ::: nova: ' . $price);
+
+            if ($old_price['price'] > $price) {
                 return $this->prices_to_update->put($product->luceed_uid, [
                     'id'    => $product->product_id,
                     'price' => $price,
