@@ -347,6 +347,8 @@ class ControllerProductProduct extends Controller {
 				$data['price'] = false;
 			}
 
+            $data['vpc'] = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+
             //price_2 agmedia
 
             if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
@@ -570,6 +572,8 @@ class ControllerProductProduct extends Controller {
 
                 $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + $rokisporuke, date('Y')));
 
+                $vpc = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,
@@ -577,6 +581,7 @@ class ControllerProductProduct extends Controller {
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 					'price'       => $price,
                     'price_2'       => $price_2,
+                    'vpc'       => $vpc,
 					'special'     => $special,
 					'freeshipping' => $freeshipping,
                     'saljemodo'     => $saljemodo,

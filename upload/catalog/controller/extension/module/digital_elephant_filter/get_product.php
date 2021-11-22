@@ -126,6 +126,8 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
     }
 
     private function getProducts($data_filter) {
+
+
 		
         $results = $this->model_extension_module_digitalElephantFilter->getProducts($data_filter);
 
@@ -235,6 +237,8 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 
             $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + 5, date('Y')));
 
+            $vpc = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+
             $products[] = array(
                 'product_id'  => $result['product_id'],
                 'thumb'       => $image,
@@ -245,6 +249,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                 'description' => $description,
                 'price'       => $price,
                 'price_2'       => $price_2,
+                'vpc'       => $vpc,
                 'saljemodo'     => $saljemodo,
                 'freeshipping' => $freeshipping,
 				'sale_badge'  => $sale_badge,
@@ -295,6 +300,13 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 		$data['basel_text_secs'] = $this->language->get('basel_text_secs');
 		$data['basel_text_out_of_stock'] = $this->language->get('basel_text_out_of_stock');
 		$data['default_button_cart'] = $this->language->get('button_cart');
+
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
 
         return $data;
     }
