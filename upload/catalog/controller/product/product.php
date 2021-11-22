@@ -11,7 +11,12 @@ class ControllerProductProduct extends Controller {
         $this->document->addScript('catalog/view/dist/vendor/lg-fullscreen.js/dist/lg-fullscreen.min.js', 'footer');
         $this->document->addScript('catalog/view/dist/vendor/lg-zoom.js/dist/lg-zoom.min.js', 'footer');
 
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
 
+        } else {
+            $data['groupId'] ='0';
+        }
 
 		$data['breadcrumbs'] = array();
 

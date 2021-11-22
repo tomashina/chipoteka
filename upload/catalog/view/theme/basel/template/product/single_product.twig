@@ -6,7 +6,7 @@
             <button class="btn btn-primary btn-basket "  type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
             {% endif %}
             <div class="card-img-top d-block overflow-hidden" ><img loading="lazy" src="{{ product.thumb }}" alt="{{ product.name }}"></div>
-            {% if product.freeshipping %}
+            {% if product.freeshipping and groupId < 2 %}
             <div class="product-badge-cpta product-badge-cpta__free-shipping">
                 <span> Besplatna dostava</span>
                 <i class="fas fa-shipping-fast"></i>
@@ -15,36 +15,55 @@
         </div>
       <a class="stretched-link"  href="{{ product.href }}">
         <div class="card-body">
-            <h3 class="product-title">{{ product.name }}</h3>
+            <h3 class="product-title">{{ product.name }} {{ groupId }}</h3>
+            {% if groupId < 2 %}
                 {% if product.price %}
                     <div class="product-price">
                         {% if product.special %}
-
                             <span><del>{{ product.price_2 }}</del></span>
-
                         {% else %}
                             <span> {{ product.price_2 }}</span>
                         {% endif %}
                     </div><!-- .price -->
                 {% endif %}
-            {% if product.price and product.special  %}
-                <div class="product-badge-cpta product-badge-cpta__discount">
-                    <span> AKCIJA</span>
-                    <span> Uštedi <strong>{{ product.sale_badge }}</strong></span>
+                {% if product.price and product.special  %}
+                    <div class="product-badge-cpta product-badge-cpta__discount">
+                        <span> AKCIJA</span>
+                        <span> Uštedi <strong>{{ product.sale_badge }}</strong></span>
+                    </div>
+                {% endif %}
+                <div class="product-price--web">
+                    <span>
+                         {% if  product.special  %} Akcija:    {% else %}  {% if product.price_2 != product.price %}   Web cijena: {% endif %} {% endif %}
+                    </span>
+                    <span>
+                              {% if  product.special  %}
+                        {{ product.special }}
+                              {% else %}
+                        {% if product.price_2 != product.price %}   {{ product.price }} {% endif %}
+                        {% endif %}
+                    </span>
                 </div>
+            {% else %}
+
+                {% if product.price %}
+                    <div class="product-price--web">
+                        <span style="font-weight:300;color: #828282;"> Preporučena MPC </span>
+                        <span> {{ product.price_2 }}</span>
+                    </div><!-- .price -->
+                {% endif %}
+
+
+                <div class="product-price">
+                    <span>  {{ product.price }} + PDV </span>
+                </div>
+
+
+
             {% endif %}
-            <div class="product-price--web">
-                <span>
-                     {% if  product.special  %} Akcija:    {% else %}  {% if product.price_2 != product.price %}   Web cijena: {% endif %} {% endif %}
-                </span>
-                <span>
-                          {% if  product.special  %}
-                    {{ product.special }}
-                          {% else %}
-                    {% if product.price_2 != product.price %}   {{ product.price }} {% endif %}
-                    {% endif %}
-                </span>
-            </div>
+
+
+
         </div>
 
     </a>
