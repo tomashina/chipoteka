@@ -282,9 +282,7 @@ class LOC_Price
         $price = $price ?: $this->calculateDiscountPrice($product->vpc, $discount);
 
         if ($this->prices_to_update->has($product->luceed_uid)) {
-            $old_price = $this->prices_to_update->filter(function($item) use ($product) {
-                return $item->id == $product->product_id;
-            })->first();
+            $old_price = $this->prices_to_update->get($product->luceed_uid);
 
             Log::store($product->luceed_uid . ' / ' . $product->product_id . ' ::: stara: ' . $old_price['price'] . ' ::: nova: ' . $price);
 
