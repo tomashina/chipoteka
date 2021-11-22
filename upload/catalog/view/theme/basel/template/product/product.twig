@@ -113,6 +113,9 @@
                                                     {% for discount in discounts %}
                                                         <span>{{ discount.price }} + PDV</span>
                                                     {% endfor %}
+
+                                                {% else %}
+                                                <span> {{ vpc }} + PDV</span>
                                                 {% endif %}
 
 
