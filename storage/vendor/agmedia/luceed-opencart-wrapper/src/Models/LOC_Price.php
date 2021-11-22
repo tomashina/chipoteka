@@ -322,7 +322,7 @@ class LOC_Price
      *
      * @return float
      */
-    private function resolvePrice(float $price): int
+    private function resolvePrice($price)
     {
         return number_format($price, 2, '.', '');
     }
