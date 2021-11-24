@@ -16,6 +16,8 @@ class ControllerCommonHome extends Controller {
             $data['groupId'] ='0';
         }
 
+        $data['text_logged'] = $this->customer->getFirstName().' '.$this->customer->getLastName();
+
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
 		$data['content_top'] = $this->load->controller('common/content_top');

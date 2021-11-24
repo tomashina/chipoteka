@@ -6,6 +6,61 @@
                 {% if groupId < 2 %}
                 {{ content_top }}
                 {% else %}
+
+
+                    <section class="pt-4 ">
+                        <div class="section-title section-title--discount"><h2 class="title"> Bok  {{ text_logged }}
+                            </h2>
+                        </div>
+                        <div class="row g-0  mt-3">
+
+                            <div class="col-lg-3 col-sm-6 p-2">
+                                <div class="card border-0 shadow ">
+                                    <div class="card-body text-center ">
+                                        <i class="fal fa-shopping-basket fa-3x h2 mt-2 mb-4 text-primary"></i>
+                                        <h6>Moje narudžbe</h6>
+                                        <p class="fs-sm text-muted pb-2">Prikaz dosadašnjih narudžbi</p>
+                                        <a class="btn btn-outline-primary stretched-link mb-2" href="index.php?route=account/order">Pogledaj</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-sm-6 p-2">
+                                <div class="card border-0 shadow ">
+                                    <div class="card-body text-center">
+                                        <i class="fal fa-eye fa-3x h2 mt-2 mb-4 text-primary"></i>
+                                        <h6>Zadnje pregledano</h6>
+                                        <p class="fs-sm text-muted pb-2">Posljednje pregledani proizvodi</p>
+                                        <a class="btn btn-outline-primary stretched-link mb-2" href="index.php?route=account/order">Pogledaj</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-sm-6 p-2">
+                                <div class="card border-0 shadow ">
+                                    <div class="card-body text-center">
+                                        <i class="fal fa-user-circle fa-3x h2 mt-2 mb-4 text-primary"></i>
+                                        <h6>Moji podaci</h6>
+                                        <p class="fs-sm text-muted pb-2">Informacije o korisničkom računu</p>
+                                        <a class="btn btn-outline-primary stretched-link mb-2" href="index.php?route=account/accountr">Pogledaj</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-sm-6 p-2">
+                                <div class="card border-0 shadow ">
+                                    <div class="card-body text-center">
+                                        <i class="fal fa-store fa-3x h2 mt-2 mb-4 text-primary"></i>
+                                        <h6>Naši dućani</h6>
+                                        <p class="fs-sm text-muted pb-2">Informacije o poslovnicama</p>
+                                        <a class="btn btn-outline-primary stretched-link mb-2" href="poslovnice">Pogledaj</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </section>
+
+
                 {{ content_bottom }}
                 {% endif %}
             </div>
