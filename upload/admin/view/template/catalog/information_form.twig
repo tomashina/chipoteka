@@ -119,18 +119,32 @@
                 </div>
               </div>
               <div class="form-group">
-                <label class="col-sm-2 control-label" for="input-bottom"><span data-toggle="tooltip" title="{{ help_bottom }}">{{ entry_bottom }}</span></label>
+                <label class="col-sm-2 control-label" for="input-group_id"><span data-toggle="tooltip" title="B2B page">B2B page</span></label>
                 <div class="col-sm-10">
                   <div class="checkbox">
-                    <label>{% if bottom %}
-                      <input type="checkbox" name="bottom" value="1" checked="checked" id="input-bottom" />
+                    <label>{% if group_id %}
+                      <input type="checkbox" name="group_id" value="1" checked="checked" id="input-group_id" />
                       {% else %}
-                      <input type="checkbox" name="bottom" value="1" id="input-bottom" />
+                      <input type="checkbox" name="group_id" value="1" id="input-group_id" />
                       {% endif %}
                       &nbsp;</label>
                   </div>
                 </div>
               </div>
+              <div class="form-group">
+                <label class="col-sm-2 control-label" for="input-bottom"><span data-toggle="tooltip" title="{{ help_bottom }}">{{ entry_bottom }}</span></label>
+                <div class="col-sm-10">
+                  <div class="checkbox">
+                    <label>{% if bottom %}
+                        <input type="checkbox" name="bottom" value="1" checked="checked" id="input-bottom" />
+                      {% else %}
+                        <input type="checkbox" name="bottom" value="1" id="input-bottom" />
+                      {% endif %}
+                      &nbsp;</label>
+                  </div>
+                </div>
+              </div>
+
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
                 <div class="col-sm-10">

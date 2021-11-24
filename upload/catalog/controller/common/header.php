@@ -6,6 +6,13 @@ class ControllerCommonHeader extends Controller {
 
 		$data['analytics'] = array();
 
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
 		$analytics = $this->model_setting_extension->getExtensions('analytics');
 
 		foreach ($analytics as $analytic) {
@@ -34,6 +41,7 @@ class ControllerCommonHeader extends Controller {
             foreach ($this->model_extension_information_parent->getInformations($result['information_id']) as $child_result) {
                 $data['informations_children'][] = array(
                     'title' => $child_result['title'],
+                    'group_id' => $child_result['group_id'],
                     'href'  => $this->url->link('information/information', 'information_id=' . $child_result['information_id'])
                 );
             }
