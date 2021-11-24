@@ -172,6 +172,26 @@ class ControllerProductProduct extends Controller {
 		$product_info = $this->model_catalog_product->getProduct($product_id);
 
 		if ($product_info) {
+            $this->load->model('extension/module/recently_viewed');
+            if($this->model_extension_module_recently_viewed->isEnabled()){
+                if ($this->customer->isLogged()) {
+                    $this->model_extension_module_recently_viewed->setRecentlyViewedProducts($this->customer->getId(), $product_info['product_id']);
+                } else {
+
+                    if(isset($this->request->cookie['recently_viewed']) && !empty($this->request->cookie['recently_viewed'])) {
+                        $recently_viewed = unserialize(base64_decode($this->request->cookie['recently_viewed']));
+                        $recently_viewed[$product_info['product_id']] = date("Y-m-d H:i:s");
+                        // sort by in recent viewed order
+                        uasort($recently_viewed, function($a, $b){ return strtotime($a) > strtotime($b); });
+                        array_unique($recently_viewed); // remove duplicates
+                    } else {
+                        $recently_viewed[$product_info['product_id']] = date("Y-m-d H:i:s");
+                    }
+
+                    $recently_viewed = base64_encode(serialize($recently_viewed));
+                    setcookie('recently_viewed', $recently_viewed, 0, '/', $this->request->server['HTTP_HOST']);
+                }
+            }
 			$url = '';
 
 			if (isset($this->request->get['path'])) {

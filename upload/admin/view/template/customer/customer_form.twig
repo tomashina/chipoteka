@@ -26,11 +26,11 @@
         <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-customer" class="form-horizontal">
           <ul class="nav nav-tabs">
             <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
-            <li><a href="#tab-affiliate" data-toggle="tab">{{ tab_affiliate }}</a></li>
+            <li class="hidden"><a href="#tab-affiliate" data-toggle="tab">{{ tab_affiliate }}</a></li>
             {% if customer_id %}
-            <li><a href="#tab-history" data-toggle="tab">{{ tab_history }}</a></li>
-            <li><a href="#tab-transaction" data-toggle="tab">{{ tab_transaction }}</a></li>
-            <li><a href="#tab-reward" data-toggle="tab">{{ tab_reward }}</a></li>
+            <li class="hidden"><a href="#tab-history" data-toggle="tab">{{ tab_history }}</a></li>
+            <li class="hidden"><a href="#tab-transaction" data-toggle="tab">{{ tab_transaction }}</a></li>
+            <li class="hidden"><a href="#tab-reward" data-toggle="tab">{{ tab_reward }}</a></li>
             <li><a href="#tab-ip" data-toggle="tab">{{ tab_ip }}</a></li>
             {% endif %}
           </ul>
