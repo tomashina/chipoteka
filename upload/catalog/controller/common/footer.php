@@ -3,6 +3,13 @@ class ControllerCommonFooter extends Controller {
 	public function index() {
 		$this->load->language('common/footer');
 
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
         $mssConfig = $this->config->get( 'msmart_search_s' );
         $mssConfigLf = (array) $this->config->get( 'msmart_search_lf' );
         $mssVer = ! empty( $mssConfig['minify_support'] ) ? '' : '?v' .$this->config->get( 'msmart_search_version' );
