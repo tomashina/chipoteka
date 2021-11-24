@@ -8,6 +8,13 @@ class ControllerCommonMenu extends Controller {
 
 		$this->load->model('catalog/product');
 
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
 		$data['categories'] = array();
 
 		$categories = $this->model_catalog_category->getCategories(0);
