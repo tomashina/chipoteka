@@ -145,7 +145,9 @@ class ControllerCheckoutConfirm extends Controller {
 				$order_data['lastname'] = $customer_info['lastname'];
 				$order_data['email'] = $customer_info['email'];
 				$order_data['telephone'] = $customer_info['telephone'];
+
 				$order_data['custom_field'] = json_decode($customer_info['custom_field'], true);
+                $order_data['oib'] = isset($order_data['custom_field'][1]) ? $order_data['custom_field'][1] : null;
 			} elseif (isset($this->session->data['guest'])) {
 				$order_data['customer_id'] = 0;
 				$order_data['customer_group_id'] = $this->session->data['guest']['customer_group_id'];
@@ -154,6 +156,7 @@ class ControllerCheckoutConfirm extends Controller {
 				$order_data['email'] = $this->session->data['guest']['email'];
 				$order_data['telephone'] = $this->session->data['guest']['telephone'];
 				$order_data['custom_field'] = $this->session->data['guest']['custom_field'];
+                $order_data['oib'] = isset($this->session->data['guest']['custom_field'][1]) ? $this->session->data['guest']['custom_field'][1] : null;
 			}
 
 			$order_data['payment_firstname'] = $this->session->data['payment_address']['firstname'];
