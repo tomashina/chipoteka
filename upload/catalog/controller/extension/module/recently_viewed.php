@@ -16,6 +16,13 @@ class ControllerExtensionModuleRecentlyViewed extends Controller {
 		$this->load->model('catalog/product');
 
 		$this->load->model('tool/image');
+
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
 		
 		$current_product_id = false;
 		if(isset($this->request->get['product_id'])) {
@@ -92,6 +99,12 @@ class ControllerExtensionModuleRecentlyViewed extends Controller {
 					$price = false;
 				}
 
+                if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+                    $price_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                } else {
+                    $price_2 = false;
+                }
+
 				if ((float)$result['special']) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				} else {
@@ -103,6 +116,8 @@ class ControllerExtensionModuleRecentlyViewed extends Controller {
 				} else {
 					$tax = false;
 				}
+
+                $vpc = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
 				if ($this->config->get('config_review_status')) {
 					$rating = $result['rating'];
@@ -116,6 +131,8 @@ class ControllerExtensionModuleRecentlyViewed extends Controller {
 					'name'        => $result['name'],
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 					'price'       => $price,
+                    'price_2'       => $price_2,
+                    'vpc'       => $vpc,
 					'special'     => $special,
 					'tax'         => $tax,
 					'rating'      => $rating,
