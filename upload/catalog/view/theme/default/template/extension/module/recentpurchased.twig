@@ -1,0 +1,111 @@
+{% if module_recentpurchased_name %}
+
+
+
+
+
+<section class="pt-3 pt-md-5" style="margin-bottom: 30px"}>
+
+        <div class="section-title section-title--discount">
+             <h2 class="title"> {{ module_recentpurchased_name }}</h2>
+        </div>
+
+    <div class="tns-carousel tns-controls-static tns-controls-inside tns-nav-enabled tns-carousel-product product-holder py-3">
+        <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 2, &quot;gutter&quot;: 16, &quot;controls&quot;:true, &quot;autoHeight&quot;: false, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1}, &quot;480&quot;:{&quot;items&quot;:2}, &quot;720&quot;:{&quot;items&quot;:3}, &quot;991&quot;:{&quot;items&quot;:3}, &quot;1140&quot;:{&quot;items&quot;:3}, &quot;1300&quot;:{&quot;items&quot;:4}, &quot;1500&quot;:{&quot;items&quot;:5}}}">
+
+                {% for product in recent_orders %}
+                    <div>
+                        <div class="card product-card">
+                            <div class="position-relative">
+                                {% if (product.quantity > 0)  %}
+                                    <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only"> {{ button_cart }}</span></button>
+                                {% endif %}
+                                <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img loading="lazy" src="{{ product.thumb }}" alt="{{ product.name }}"></div>
+                                {% if product.freeshipping and groupId < 2 %}
+                                    <div class="product-badge-cpta product-badge-cpta__free-shipping">
+                                        <span> Besplatna dostava</span>
+                                        <i class="fas fa-shipping-fast"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <a class="stretched-link" href="{{ product.href }}">
+                                <div class="card-body">
+                                    <h3 class="product-title">{{ product.name }}</h3>
+                                    {% if groupId < 2 %}
+                                        {% if product.price %}
+                                            <div class="product-price">
+                                                {% if product.special %}
+                                                    <span><del>{{ product.price_2 }}</del></span>
+                                                {% else %}
+                                                    <span> {{ product.price_2 }}</span>
+                                                {% endif %}
+                                            </div><!-- .price -->
+                                        {% endif %}
+                                        {% if product.price and product.special  %}
+                                            <div class="product-badge-cpta product-badge-cpta__discount">
+                                                <span> AKCIJA</span>
+                                                <span> Uštedi <strong>{{ product.sale_badge }}</strong></span>
+                                            </div>
+                                        {% endif %}
+
+                                        <div class="product-price--web">
+                                            <span>
+                                                  {% if  product.special  %} Akcija: {% else %} {% if product.price_2 != product.price %} Web cijena: {% endif %} {% endif %}
+                                            </span>
+                                            <span>
+                                                      {% if  product.special  %}
+                                                          {{ product.special }}
+                                                      {% else %}
+                                                          {% if product.price_2 != product.price %}   {{ product.price }} {% endif %}
+                                                      {% endif %}
+                                            </span>
+                                        </div>
+
+                                    {% else %}
+
+                                        {% if product.price %}
+                                            <div class="product-price--web">
+                                                <span style="font-weight:300;color: #828282;"> Preporučena MPC </span>
+                                                <span> {{ product.price_2 }}</span>
+                                            </div><!-- .price -->
+                                        {% endif %}
+
+
+                                        <div class="product-price">
+                                            <span>  {{ product.price }} + PDV </span>
+                                        </div>
+
+
+
+                                    {% endif %}
+
+
+
+
+
+                                </div>
+
+                            </a>
+                        </div>
+                    </div>
+
+                {% endfor %}
+
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body" id="note">
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Nastavite kupnju</button>
+                <a href="{{ shopping_cart }}" class="btn btn-primary ">Na plaćanje</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endif %}
