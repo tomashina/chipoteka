@@ -3,9 +3,16 @@ class ControllerAccountSubaccount extends Controller {
 	private $error = array();
 
 	public function index() {
-		//if ($this->customer->isLogged()) {
-		//	$this->response->redirect($this->url->link('account/subaccount', '', true));
-		//}
+		if (!$this->customer->isLogged()) {
+			$this->response->redirect($this->url->link('common/home', '', true));
+		}
+
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
 
 		$this->load->language('account/subaccount');
 
@@ -122,7 +129,7 @@ class ControllerAccountSubaccount extends Controller {
 			$data['customer_group_id'] = $this->config->get('config_customer_group_id');
 		}*/
 
-        $data['customer_group_id'] = '3';
+        $data['customer_group_id'] = $data['groupId'];
 
 		if (isset($this->request->post['firstname'])) {
 			$data['firstname'] = $this->request->post['firstname'];
