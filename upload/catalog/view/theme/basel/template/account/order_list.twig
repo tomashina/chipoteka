@@ -44,7 +44,7 @@
             <thead>
             <tr>
               <th>{{ column_order_id }}</th>
-
+              <th>Kupac</th>
               <th>{{ column_product }}</th>
               <th>{{ column_status }}</th>
               <th>{{ column_total }}</th>
@@ -57,7 +57,7 @@
             {% for order in orders %}
               <tr>
                 <td class="py-3">{{ order.order_id }}</td>
-
+                <td class="py-3">{{ order.name }}</td>
                 <td class="py-3">{{ order.products }}</td>
                 <td class="py-3">{{ order.status }}</td>
                 <td class="py-3">{{ order.total }}</td>
