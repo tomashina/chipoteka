@@ -13,6 +13,15 @@ class ControllerAccountOrder extends Controller {
         $data['reorder_status'] = $this->config->get('module_reorder_status');
 
 		$this->document->setTitle($this->language->get('heading_title'));
+
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+            $data['master'] = $this->customer->getMaster();
+
+        } else {
+            $data['groupId'] ='0';
+            $data['master'] = '0';
+        }
 		
 		$url = '';
 
@@ -46,32 +55,73 @@ class ControllerAccountOrder extends Controller {
 		$data['orders'] = array();
 
 		$this->load->model('account/order');
+        if($data['master']=='1'){
 
-		$order_total = $this->model_account_order->getTotalOrders();
+            $order_total = $this->model_account_order->getTotalOrdersMaster();
 
-		$results = $this->model_account_order->getOrders(($page - 1) * 10, 10);
+            $results = $this->model_account_order->getOrdersMaster(($page - 1) * 10, 10);
 
-		foreach ($results as $result) {
-			$product_total = $this->model_account_order->getTotalOrderProductsByOrderId($result['order_id']);
-			$voucher_total = $this->model_account_order->getTotalOrderVouchersByOrderId($result['order_id']);
+            foreach ($results as $result) {
+                $product_total = $this->model_account_order->getTotalOrderProductsByOrderId($result['order_id']);
+                $voucher_total = $this->model_account_order->getTotalOrderVouchersByOrderId($result['order_id']);
 
-			$data['orders'][] = array(
-                'reorder' => $this->url->link('extension/module/reorder', 'order_id=' . $result['order_id'], true),
-				'order_id'   => $result['order_id'],
-				'name'       => $result['firstname'] . ' ' . $result['lastname'],
-				'status'     => $result['status'],
-				'date_added' => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
-				'products'   => ($product_total + $voucher_total),
-				'total'      => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value']),
-				'view'       => $this->url->link('account/order/info', 'order_id=' . $result['order_id'], true),
-			);
-		}
+                $data['orders'][] = array(
+                    'reorder' => $this->url->link('extension/module/reorder', 'order_id=' . $result['order_id'], true),
+                    'order_id'   => $result['order_id'],
+                    'name'       => $result['firstname'] . ' ' . $result['lastname'],
+                    'status'     => $result['status'],
+                    'date_added' => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
+                    'products'   => ($product_total + $voucher_total),
+                    'total'      => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value']),
+                    'view'       => $this->url->link('account/order/info', 'order_id=' . $result['order_id'], true),
+                );
+            }
 
-		$pagination = new Pagination();
-		$pagination->total = $order_total;
-		$pagination->page = $page;
-		$pagination->limit = 10;
-		$pagination->url = $this->url->link('account/order', 'page={page}', true);
+            $pagination = new Pagination();
+            $pagination->total = $order_total;
+            $pagination->page = $page;
+            $pagination->limit = 10;
+            $pagination->url = $this->url->link('account/order', 'page={page}', true);
+
+
+        }
+
+        else{
+
+            $order_total = $this->model_account_order->getTotalOrders();
+
+            $results = $this->model_account_order->getOrders(($page - 1) * 10, 10);
+
+            foreach ($results as $result) {
+                $product_total = $this->model_account_order->getTotalOrderProductsByOrderId($result['order_id']);
+                $voucher_total = $this->model_account_order->getTotalOrderVouchersByOrderId($result['order_id']);
+
+                $data['orders'][] = array(
+                    'reorder' => $this->url->link('extension/module/reorder', 'order_id=' . $result['order_id'], true),
+                    'order_id'   => $result['order_id'],
+                    'name'       => $result['firstname'] . ' ' . $result['lastname'],
+                    'status'     => $result['status'],
+                    'date_added' => date($this->language->get('date_format_short'), strtotime($result['date_added'])),
+                    'products'   => ($product_total + $voucher_total),
+                    'total'      => $this->currency->format($result['total'], $result['currency_code'], $result['currency_value']),
+                    'view'       => $this->url->link('account/order/info', 'order_id=' . $result['order_id'], true),
+                );
+            }
+
+            $pagination = new Pagination();
+            $pagination->total = $order_total;
+            $pagination->page = $page;
+            $pagination->limit = 10;
+            $pagination->url = $this->url->link('account/order', 'page={page}', true);
+
+
+
+        }
+
+
+
+
+
 
 		$data['pagination'] = $pagination->render();
 
@@ -93,6 +143,8 @@ class ControllerAccountOrder extends Controller {
 		$this->load->language('account/order');
         $this->load->language('extension/module/reorder');
 
+
+
         $data['reorder_status'] = $this->config->get('module_reorder_status');
 
 		if (isset($this->request->get['order_id'])) {
@@ -109,7 +161,14 @@ class ControllerAccountOrder extends Controller {
 
 		$this->load->model('account/order');
 
-		$order_info = $this->model_account_order->getOrder($order_id);
+		if($this->customer->getMaster() =='1'){
+            $order_info = $this->model_account_order->getOrderMaster($order_id);
+        }
+		else{
+            $order_info = $this->model_account_order->getOrder($order_id);
+        }
+
+        $order_info = $this->model_account_order->getOrderMaster($order_id);
 
 		if ($order_info) {
 			$this->document->setTitle($this->language->get('text_order'));

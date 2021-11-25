@@ -5,7 +5,17 @@ class ControllerExtensionModuleReorder extends Controller {
 			if (isset($this->request->get['order_id'])) {
 				$this->load->model('account/order');
 
-				$order_info = $this->model_account_order->getOrder($this->request->get['order_id']);
+                $data['master'] = $this->customer->getMaster();
+
+                if($data['master']=='1'){
+
+                    $order_info = $this->model_account_order->getOrderMaster($this->request->get['order_id']);
+                }
+                else{
+                    $order_info = $this->model_account_order->getOrder($this->request->get['order_id']);
+                }
+
+
 
 				if ($order_info) {
 					$this->load->language('extension/module/reorder');
