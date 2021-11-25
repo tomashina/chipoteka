@@ -14,6 +14,7 @@
       <ul class="list-unstyled mb-0">
         <li class="border-bottom mb-0"><a class="nav-link-style d-flex align-items-center px-4 py-3" href="{{ edit }}"><i class="fal fa-user opacity-60 me-2"></i>{{ text_edit }}</a></li>
         {% if groupId >= '2' %}
+          <li class="border-bottom mb-0"><a class="nav-link-style d-flex align-items-center px-4 py-3" href="{{ subaccountlist }}"><i class="fal fa-user opacity-60 me-2"></i>{{ text_subaccountlist }}</a></li>
         <li class="border-bottom mb-0"><a class="nav-link-style d-flex align-items-center px-4 py-3" href="{{ subaccount }}"><i class="fal fa-user opacity-60 me-2"></i>{{ text_subaccount }}</a></li>
         {% endif %}
         <li class="border-bottom mb-0"><a class="nav-link-style d-flex align-items-center px-4 py-3" href="{{ password }}"><i class="fal fa-shield-check opacity-60 me-2"></i> {{ text_password }}</a></li>

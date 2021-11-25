@@ -48,6 +48,12 @@ class ModelAccountCustomer extends Model {
 		return $query->row;
 	}
 
+    public function getCustomersByOib($oib) {
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE custom_field LIKE '%" . $oib . "%'");
+
+        return $query->rows;
+    }
+
 	public function getCustomerByEmail($email) {
 		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "customer WHERE LOWER(email) = '" . $this->db->escape(utf8_strtolower($email)) . "'");
 

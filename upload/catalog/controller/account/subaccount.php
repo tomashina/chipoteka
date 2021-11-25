@@ -55,7 +55,7 @@ class ControllerAccountSubaccount extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_register'),
-			'href' => $this->url->link('account/register', '', true)
+			'href' => $this->url->link('account/subaccount', '', true)
 		);
 		$data['text_account_already'] = sprintf($this->language->get('text_account_already'), $this->url->link('account/login', '', true));
 

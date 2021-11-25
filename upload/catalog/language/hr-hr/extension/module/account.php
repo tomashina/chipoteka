@@ -11,6 +11,7 @@ $_['text_forgotten']   = 'Zaboravljena lozinka';
 $_['text_account']     = 'Moj korisnički račun';
 $_['text_edit']        = 'Izmjeni korisnički račun';
 $_['text_subaccount']        = 'Dodaj korisnički računi';
+$_['text_subaccountlist']        = 'Pregled svih računa';
 $_['text_password']    = 'Lozinka';
 $_['text_address']     = 'Adresar';
 $_['text_wishlist']    = 'Lista želja';
