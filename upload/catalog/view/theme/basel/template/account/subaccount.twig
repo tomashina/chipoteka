@@ -1,11 +1,14 @@
 {{ header }}
+
 <main  class="offcanvas-enabled">
+
+
     <!-- Page Title-->
-    <div class=" pt-4 ps-lg-4 pe-lg-3 ">
+    <div class="page-title-overlap bg-dark pt-4 ps-lg-4 pe-lg-3">
         <div class="container d-lg-flex justify-content-between py-2 py-lg-3 ">
             <div class="order-lg-2 mb-3 mb-lg-0 pt-lg-2">
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb breadcrumb-dark flex-lg-nowrap justify-content-center justify-content-lg-start">
+                    <ol class="breadcrumb breadcrumb-light flex-lg-nowrap justify-content-center justify-content-lg-start">
                         {% for breadcrumb in breadcrumbs %}
                             <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
                         {% endfor %}
@@ -13,15 +16,27 @@
                 </nav>
             </div>
             <div class="order-lg-1 pe-lg-4 text-center text-lg-start">
-                <h1 class="category-page-title" id="page-title">{{ heading_title }}</h1>
-                <p class="fs-md">{{ text_account_already }}</p>
+                <h1 class="h2 text-light mb-0">{{ text_address }}</h1>
             </div>
         </div>
     </div>
 
-    <div class="container pb-5 mb-2 mb-md-4 ps-lg-2 pe-lg-3 justify-content-between" id="account-register">
 
-            <section class="col-lg-8 col-md-10 px-3 ">
+    <div id="content" class="container pb-5 mb-2 mb-md-4 ps-lg-4 pe-lg-3">
+        <div class="row">
+            <!-- Sidebar-->
+
+            {{ column_left }}
+
+            <!-- Content  -->
+            <section class="col-lg-8" id="account-address">
+
+                <!-- Toolbar-->
+                <div class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-4 pb-lg-5 mb-lg-3">
+                    <h6 class="fs-base text-light mb-0">{{ text_edit_address }}</h6><a class="btn btn-primary " href="{{ logout }}"><i class="fal fa-sign-out me-2"></i>{{ text_logout }}</a>
+                </div>
+
+
                 {% if error_warning %}
                     <div class="alert alert-primary alert-dismissible fade show" role="alert">
                         {{ error_warning }}
@@ -38,25 +53,9 @@
                       <div class="row" id="account" >
 
                           <h2 class="h6 pt-1 pb-3 mb-3 mx-3 ps-0 border-bottom">{{ text_your_details }}</h2>
-                          <div class="col-sm-12">
-                              <div class="form-group mb-3 required" style="display: {% if customer_groups|length > 1 %} block {% else %} none {% endif %};">
-                                  {% for customer_group in customer_groups %}
-                                      {% if customer_group.customer_group_id == customer_group_id %}
-                                          <div class="form-check form-check-inline">
-                                              <label class="form-check-label" for="customer_group_id">
-                                              <input class="form-check-input" type="radio" name="customer_group_id" value="{{ customer_group.customer_group_id }}" id="cg{{ customer_group.customer_group_id }}"  checked="checked">
-                                            {{ customer_group.name }}</label>
-                                          </div>
-                                          {% else %}
-                                          <div class="form-check form-check-inline">
-                                              <label class="form-check-label" for="customer_group_id">
-                                              <input class="form-check-input" type="radio" name="customer_group_id" value="{{ customer_group.customer_group_id }}" id="cg{{ customer_group.customer_group_id }}">
-                                            {{ customer_group.name }}</label>
-                                          </div>
-                                      {% endif %}
-                                  {% endfor %}
-                              </div>
-                          </div>
+
+
+                          <input  type="hidden" name="customer_group_id" value="3" id="cg3"  ">
 
                         <div class="col-sm-6">
 
@@ -109,7 +108,18 @@
                                               <div id="custom-field{{ custom_field.custom_field_id }}" class="form-group custom-field mb-3" data-sort="{{ custom_field.sort_order }}">
                                                 <label class="form-label" for="input-custom-field{{ custom_field.custom_field_id }}">{{ custom_field.name }}<span class="text-danger">*</span></label>
 
-                                                  <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{% if register_custom_field[custom_field.custom_field_id] %}{{ register_custom_field[custom_field.custom_field_id] }}{% else %}{{ custom_field.value }}{% endif %}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control" />
+
+
+                                                  {% if custom_field.custom_field_id == '1' %}
+
+                                                  <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{{ oib }}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control" />
+
+                                                  {% else %}
+
+                                                      <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{{ tvrtka }}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control" />
+
+                                                  {% endif %}
+
                                                   {% if error_custom_field[custom_field.custom_field_id] %}
                                                   <div class="text-danger">{{ error_custom_field[custom_field.custom_field_id] }}</div>
                                                   {% endif %}
@@ -230,6 +240,7 @@
             </section>
 
 
+        </div>
     </div>
 
 
@@ -254,53 +265,15 @@
 
 
     $(document).ready(function(){
-        $('.pravna').hide();
-        $('input:radio[name="customer_group_id"]').change(function(){
-            if($(this).val()>="2")
-            {
-                $('.pravna').show();
-            }
-            else if($(this).val()=="1")
-            {
-                $(".pravna").hide();
-            }
-        });
 
+        $('.pravna').show();
 
     });
 
 
 
-    $('input[name=\'customer_group_id\']').on('change', function() {
-        //$(".pravna").show();
-	$.ajax({
-		url: 'index.php?route=account/register/customfield&customer_group_id=' + this.value,
-		dataType: 'json',
-		success: function(json) {
-			$('.custom-field').hide();
-			$('.custom-field').removeClass('required');
-
-			for (i = 0; i < json.length; i++) {
-				custom_field = json[i];
-
-				$('#custom-field' + custom_field['custom_field_id']).show();
 
 
-
-				if (custom_field['required']) {
-					$('#custom-field' + custom_field['custom_field_id']).addClass('required');
-
-
-				}
-			}
-		},
-		error: function(xhr, ajaxOptions, thrownError) {
-			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-		}
-	});
-});
-
-$('input[name=\'customer_group_id\']:checked').trigger('change');
 //--></script> 
 <script><!--
 $('button[id^=\'button-custom-field\']').on('click', function() {

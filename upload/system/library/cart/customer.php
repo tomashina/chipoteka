@@ -11,6 +11,7 @@ class Customer {
 	private $address_id;
     private $master;
     private $oib;
+    private $tvrtka;
 
 	public function __construct($registry) {
 		$this->config = $registry->get('config');
@@ -33,6 +34,7 @@ class Customer {
                 $this->master = $customer_query->row['master'];
                 $tempoib = json_decode($customer_query->row['custom_field'], true);
                 $this->oib = isset($tempoib[1]) ? $tempoib[1] : null;
+                $this->tvrtka = isset($tempoib[2]) ? $tempoib[2] : null;
 
 				$this->db->query("UPDATE " . DB_PREFIX . "customer SET language_id = '" . (int)$this->config->get('config_language_id') . "', ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "' WHERE customer_id = '" . (int)$this->customer_id . "'");
 
@@ -68,6 +70,7 @@ class Customer {
             $this->master = $customer_query->row['master'];
             $tempoib = json_decode($customer_query->row['custom_field'], true);
             $this->oib = isset($tempoib[1]) ? $tempoib[1] : null;
+            $this->tvrtka = isset($tempoib[2]) ? $tempoib[2] : null;
 		
 			$this->db->query("UPDATE " . DB_PREFIX . "customer SET language_id = '" . (int)$this->config->get('config_language_id') . "', ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "' WHERE customer_id = '" . (int)$this->customer_id . "'");
 
@@ -90,6 +93,7 @@ class Customer {
 		$this->address_id = '';
         $this->master = '';
         $this->oib = '';
+        $this->tvrtka = '';
 	}
 
 	public function isLogged() {
@@ -118,6 +122,10 @@ class Customer {
 
     public function getOib() {
         return $this->oib;
+    }
+
+    public function getTvrtka() {
+        return $this->tvrtka;
     }
 
 	public function getEmail() {
