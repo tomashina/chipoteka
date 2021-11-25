@@ -547,6 +547,8 @@ class ControllerCustomerCustomer extends Controller {
 			$data['customer_id'] = 0;
 		}
 
+
+
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
 		} else {
@@ -736,6 +738,14 @@ class ControllerCustomerCustomer extends Controller {
 		} else {
 			$data['telephone'] = '';
 		}
+
+        if (isset($this->request->post['master'])) {
+            $data['master'] = $this->request->post['master'];
+        } elseif (!empty($customer_info)) {
+            $data['master'] = $customer_info['master'];
+        } else {
+            $data['master'] = 0;
+        }
 
 		// Custom Fields
 		$this->load->model('customer/custom_field');
