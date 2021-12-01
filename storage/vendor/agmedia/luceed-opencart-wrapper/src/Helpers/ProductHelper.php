@@ -204,10 +204,14 @@ class ProductHelper
                 $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.' . $newstring;
             }
 
+            Log::store($name);
+            Log::store($product['filename']);
+
             // Setup and create the image with GD library.
             $bin = base64_decode(static::getImageString($product));
 
             if ($bin) {
+                Log::store('$bin OK...');
                 $errorlevel = error_reporting();
                 error_reporting(0);
                 $image = imagecreatefromstring($bin);
