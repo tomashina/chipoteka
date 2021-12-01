@@ -378,7 +378,7 @@ class LOC_ProductSingle
             'product_category'    => ProductHelper::getCategories($this->product),
             'product_seo_url'     => [0 => ProductHelper::getSeoUrl($this->product)],
         ];
-
+        Log::store($prod);
         return $prod;
     }
 
