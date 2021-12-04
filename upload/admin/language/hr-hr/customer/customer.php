@@ -53,6 +53,7 @@ $_['entry_points']          = 'Bodovi';
 $_['entry_name']            = 'Naziv kupca';
 $_['entry_ip']              = 'IP';
 $_['entry_date_added']      = 'Datum dodavanja';
+$_['entry_partner_uid']      = 'Partner UID';
 
 // Help
 $_['help_safe']             = 'Uključite ovu opciju da biste izbjegli da taj kupac bude uhvaćen od strane anti-prijevara (anti-fraud) sustava';

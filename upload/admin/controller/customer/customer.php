@@ -547,8 +547,6 @@ class ControllerCustomerCustomer extends Controller {
 			$data['customer_id'] = 0;
 		}
 
-
-
 		if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
 		} else {
@@ -745,6 +743,14 @@ class ControllerCustomerCustomer extends Controller {
             $data['master'] = $customer_info['master'];
         } else {
             $data['master'] = 0;
+        }
+
+        if (isset($this->request->post['partner_uid'])) {
+            $data['partner_uid'] = $this->request->post['partner_uid'];
+        } elseif (!empty($customer_info)) {
+            $data['partner_uid'] = $customer_info['partner_uid'];
+        } else {
+            $data['partner_uid'] = '';
         }
 
 		// Custom Fields
