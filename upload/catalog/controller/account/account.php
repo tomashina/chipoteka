@@ -35,6 +35,13 @@ class ControllerAccountAccount extends Controller {
 		$data['password'] = $this->url->link('account/password', '', true);
 		$data['address'] = $this->url->link('account/address', '', true);
         $data['logout'] = $this->url->link('account/logout', '', true);
+
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
 		
 		$data['credit_cards'] = array();
 		

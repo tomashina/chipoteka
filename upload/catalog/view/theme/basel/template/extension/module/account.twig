@@ -3,7 +3,10 @@
     <div class="d-md-flex justify-content-between align-items-center text-center text-md-start p-4">
       <div class="d-md-flex align-items-left">
         <div class="ps-md-0">
-          <h3 class="fs-base mb-0">{{ firstname }} {{ lastname }}</h3><span class="text-accent fs-sm">{{ email }}</span>
+
+          {% if tvrtka %}<h4 class="mb-3">{{ tvrtka }}</h4> {% endif %}
+
+          <h3 class="fs-base mb-0">  {{ firstname }} {{ lastname }}</h3><span class="text-accent fs-sm">{{ email }}</span>
         </div>
       </div><a class="btn btn-primary d-lg-none mb-2 mt-3 mt-md-0" href="#account-menu" data-bs-toggle="collapse" aria-expanded="false"><i class="fal fa-bars me-2"></i>Navigacija</a>
     </div>
@@ -21,9 +24,9 @@
         <li class="border-bottom mb-0"><a class="nav-link-style d-flex align-items-center px-4 py-3" href="{{ address }}"><i class="fal fa-map-marker-alt opacity-60 me-2"></i>{{ text_address }}</a></li>
         <li class="border-bottom mb-0"><a class="nav-link-style d-flex align-items-center px-4 py-3" href="{{ wishlist }}"><i class="fal fa-heart opacity-60 me-2"></i>{{ text_wishlist }}</a></li>
         <li class=" border-bottom mb-0"><a class="nav-link-style d-flex align-items-center px-4 py-3" href="{{ order }}"><i class="fal fa-shopping-basket opacity-60 me-2"></i>{{ text_order }}</a></li>
-
+        {% if groupId < '2' %}
         <li class="border-bottom mb-"><a class="nav-link-style d-flex align-items-center px-4 py-3" href="{{ newsletter }}"><i class="fal fa-envelope opacity-60 me-2"></i>{{ text_newsletter }}</a></li>
-
+        {% endif %}
         <li class="pb-3"><a class="nav-link-style d-flex align-items-center px-4 py-3" href="{{ logout }}"><i class="fal fa-sign-out opacity-60 me-2"></i>{{ text_logout }}</a></li>
       </ul>
     </div>

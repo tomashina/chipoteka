@@ -30,6 +30,9 @@ class ControllerExtensionModuleAccount extends Controller {
             $data['groupId'] ='0';
         }
 
+        $data['oib'] = $this->customer->getOib();
+        $data['tvrtka'] = $this->customer->getTvrtka();
+
         $this->load->model('account/customer');
         if ($this->request->server['REQUEST_METHOD'] != 'POST') {
             $customer_info = $this->model_account_customer->getCustomer($this->customer->getId());
@@ -50,6 +53,16 @@ class ControllerExtensionModuleAccount extends Controller {
         } else {
             $data['lastname'] = '';
         }
+
+        if (isset($this->request->post['master'])) {
+            $data['master'] = $this->request->post['master'];
+        } elseif (!empty($customer_info)) {
+            $data['master'] = $customer_info['master'];
+        } else {
+            $data['master'] = 0;
+        }
+
+
 
         if (isset($this->request->post['email'])) {
             $data['email'] = $this->request->post['email'];
