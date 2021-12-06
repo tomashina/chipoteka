@@ -16,7 +16,7 @@
                 </nav>
             </div>
             <div class="order-lg-1 pe-lg-4 text-center text-lg-start">
-                <h1 class="h2 text-light mb-0">{{ text_address }}</h1>
+                <h1 class="h2 text-light mb-0">{{ heading_title }}</h1>
             </div>
         </div>
     </div>
@@ -44,154 +44,154 @@
                     </div>
                 {% endif %}
                 <div class="row g-0  mb-4">
-                <div id="content" class="{{ class }}">
+                    <div id="content" class="{{ class }}">
 
 
-                  <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-horizontal">
+                        <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-horizontal">
 
+                            <div class="row" id="account" >
 
-                      <div class="row" id="account" >
-
-                          <h2 class="h6 pt-1 pb-3 mb-3 mx-3 ps-0 border-bottom">{{ text_your_details }}</h2>
-
-
-                          <input  type="hidden" name="customer_group_id" value="{{ groupId }}" >
-                          <input  type="hidden" name="customer_id" value="{{ customer_id }}" >
-                        <div class="col-sm-6">
-
-                            <div class="form-group mb-3 required">
-                                <label class="form-label" for="input-firstname">{{ entry_firstname }}<span class="text-danger">*</span></label>
-                                <input type="text" name="firstname" value="{{ firstname }}" placeholder="{{ entry_firstname }}" id="input-firstname" class="form-control" />
-
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="form-group mb-3 required">
-                                <label class="form-label" for="input-lastname">{{ entry_lastname }} <span class="text-danger">*</span></label>
-
-                                 <input type="text" name="lastname" value="{{ lastname }}" placeholder="{{ entry_lastname }}" id="input-lastname" class="form-control" />
-
-                            </div>
-                        </div>
-
-                          <div class="col-sm-6">
-                              <div class="form-group mb-3  required">
-                                <label class="form-label" for="input-email">{{ entry_email }} <span class="text-danger">*</span></label>
-
-                                  <input type="email" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-email" class="form-control" />
-
-                              </div>
-                          </div>
-
-
-                          <div class="col-sm-6">
-                              <div class="form-group mb-3  required">
-                                    <label class="form-label" for="input-telephone">{{ entry_telephone }} <span class="text-danger">*</span></label>
-
-                                      <input type="tel" name="telephone" value="{{ telephone }}" placeholder="{{ entry_telephone }}" id="input-telephone" class="form-control" />
+                                <div class="col-12">
+                                    <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">Dodaj novi korisnički račun</h2>
 
                                 </div>
-                          </div>
-                                  {% for custom_field in custom_fields %}
-                                      <div class="col-sm-6 pravna">
 
-                                          {% if custom_field.type == 'text' %}
-                                              <div id="custom-field{{ custom_field.custom_field_id }}" class="form-group custom-field mb-3" data-sort="{{ custom_field.sort_order }}">
+                                <div class="col-sm-12">
+
+                                    <div class="form-group mb-3 required">
+
+                                        <label class="form-label" for="input-custommeradd">Odaberite korisnika iz baze<span class='text-danger'>*</span></label>
+
+                                        <select name="customeradd" id="input-customer" class="form-select">
+                                            <option value="">{{ text_select }}</option>
+
+                                            {% for customer in customers %}
+
+                                                {% if customer.partner_uid == customeradd %}
+
+
+                                                    <option value="{{ customer.partner_uid }}" selected="selected">{{ customer.naziv }} -  {{ customer.adresa }} -  {{ customer.naziv_mjesta }} -  {{ customer.e_mail }}</option>
+
+                                                {% else %}
+
+
+                                                    <option value="{{ customer.partner_uid }}">{{ customer.naziv }} -  {{ customer.adresa }} -  {{ customer.naziv_mjesta }} -  {{ customer.e_mail }}</option>
+
+                                                {% endif %}
+
+
+                                            {% endfor %}
+
+                                        </select>
+                                        {% if error_customer %}
+                                            <div class="text-danger">{{ error_customer }}</div>
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+
+
+                                {% for custom_field in custom_fields %}
+                                    <div class="col-sm-6 pravna">
+
+                                        {% if custom_field.type == 'text' %}
+                                            <div id="custom-field{{ custom_field.custom_field_id }}" class="form-group custom-field mb-3" data-sort="{{ custom_field.sort_order }}">
                                                 <label class="form-label" for="input-custom-field{{ custom_field.custom_field_id }}">{{ custom_field.name }}<span class="text-danger">*</span></label>
 
 
 
-                                                  {% if custom_field.custom_field_id == '1' %}
+                                                {% if custom_field.custom_field_id == '1' %}
 
-                                                  <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{{ oib }}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control" />
+                                                    <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{{ oib }}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control" />
 
-                                                  {% else %}
+                                                {% else %}
 
-                                                      <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{{ tvrtka }}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control" />
+                                                    <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{{ tvrtka }}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control" />
 
-                                                  {% endif %}
-
-
-                                              </div>
+                                                {% endif %}
 
 
-                                          {% endif %}
-                                      </div>
-
-                                  {% endfor %}
+                                            </div>
 
 
-                          <div class="col-12">
-                          <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">{{ text_your_password }}</h2>
+                                        {% endif %}
+                                    </div>
 
-                          </div>
-
-                          <div class="col-sm-6">
-                              <div class="form-group mb-3 required">
-
-                                <label class="form-label" for="input-password">{{ entry_password }}</label>
-                                  <div class="password-toggle w-100">
-                                  <input type="password" name="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" class="form-control" />
-                                  <label class="password-toggle-btn" aria-label="Show/hide password">
-                                      <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
-                                  </label>
-                                  </div>
-                                  {% if error_password %}
-                                  <div class="text-danger">{{ error_password }}</div>
-                                  {% endif %}
-                              </div>
-                          </div>
-                          <div class="col-sm-6">
-                              <div class="form-group mb-3 required">
-                                <label class="form-label" for="input-confirm">{{ entry_confirm }}</label>
-                                  <div class="password-toggle w-100">
-                                  <input type="password" name="confirm" value="{{ confirm }}" placeholder="{{ entry_confirm }}" id="input-confirm" class="form-control" />
-                                  <label class="password-toggle-btn" aria-label="Show/hide password">
-                                      <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
-                                  </label>
-                                  </div>
-                                  {% if error_confirm %}
-                                  <div class="text-danger">{{ error_confirm }}</div>
-                                  {% endif %}
-                              </div>
-                          </div>
+                                {% endfor %}
 
 
 
+                                <div class="col-12">
+                                    <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">{{ text_your_password }}</h2>
 
-                    {{ captcha }}
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <input  type="hidden" name="customer_group_id" value="{{ groupId }}" >
+                                    <div class="form-group mb-3 required">
+
+                                        <label class="form-label" for="input-password">{{ entry_password }}</label>
+                                        <div class="password-toggle w-100">
+                                            <input type="password" name="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" class="form-control"  autocomplete="new-password"/>
+                                            <label class="password-toggle-btn" aria-label="Show/hide password">
+                                                <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
+                                            </label>
+                                        </div>
+                                        {% if error_password %}
+                                            <div class="text-danger">{{ error_password }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group mb-3 required">
+                                        <label class="form-label" for="input-confirm">{{ entry_confirm }}</label>
+                                        <div class="password-toggle w-100">
+                                            <input type="password" name="confirm" value="{{ confirm }}" placeholder="{{ entry_confirm }}" id="input-confirm" class="form-control" />
+                                            <label class="password-toggle-btn" aria-label="Show/hide password">
+                                                <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
+                                            </label>
+                                        </div>
+                                        {% if error_confirm %}
+                                            <div class="text-danger">{{ error_confirm }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+
+
+
+                                {{ captcha }}
 
                                 {% if text_agree %}
 
-                                      <div class="col-sm-12 mt-3">
-                                            <div class="form-check form-check-inline">
-                                                <label class="form-check-label" >
+                                    <div class="col-sm-12 mt-3">
+                                        <div class="form-check form-check-inline">
+                                            <label class="form-check-label" >
 
-                                                    {% if agree %}
-                                                        <input type="checkbox" class="form-check-input" name="agree" value="1" checked="checked" />
-                                                    {% else %}
-                                                        <input type="checkbox" class="form-check-input" name="agree" value="1" />
-                                                    {% endif %}
+                                                {% if agree %}
+                                                    <input type="checkbox" class="form-check-input" name="agree" value="1" checked="checked" />
+                                                {% else %}
+                                                    <input type="checkbox" class="form-check-input" name="agree" value="1" />
+                                                {% endif %}
 
-                                                    {{ text_agree }}</label>
-                                            </div>
+                                                {{ text_agree }}</label>
+                                        </div>
 
-                                      </div>
+                                    </div>
 
 
                                     <div class="col-sm-12 mt-4 mb-5">
-                                    <input type="submit" value="{{ text_register }}" class="btn btn-primary  mt-3 mt-sm-0 " />
-                                      </div>
+                                        <input type="submit" value="{{ text_register }}" class="btn btn-primary  mt-3 mt-sm-0 " />
+                                    </div>
                                 {% else %}
                                     <div class="col-sm-12 mt-4 mb-5">
-                                    <input type="submit" value="{{ text_register }}" class="btn btn-primary mt-3 mt-sm-0 " />
-                                      </div>
+                                        <input type="submit" value="{{ text_register }}" class="btn btn-primary mt-3 mt-sm-0 " />
+                                    </div>
                                 {% endif %}
-                      </div>
+                            </div>
 
-                  </form>
-                  </div>
+                        </form>
+                    </div>
 
                 </div>
 
@@ -217,74 +217,74 @@
     </script>
 
 
-<script><!--
-// Sort the custom fields
+    <script><!--
+        // Sort the custom fields
 
 
 
-    $(document).ready(function(){
+        $(document).ready(function(){
 
-        $('.pravna').show();
+            $('.pravna').show();
 
-    });
-
-
+        });
 
 
 
-//--></script> 
-<script><!--
-$('button[id^=\'button-custom-field\']').on('click', function() {
-	var element = this;
 
-	$('#form-upload').remove();
 
-	$('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" /></form>');
+        //--></script>
+    <script><!--
+        $('button[id^=\'button-custom-field\']').on('click', function() {
+            var element = this;
 
-	$('#form-upload input[name=\'file\']').trigger('click');
+            $('#form-upload').remove();
 
-	if (typeof timer != 'undefined') {
-    	clearInterval(timer);
-	}
+            $('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" /></form>');
 
-	timer = setInterval(function() {
-		if ($('#form-upload input[name=\'file\']').val() != '') {
-			clearInterval(timer);
+            $('#form-upload input[name=\'file\']').trigger('click');
 
-			$.ajax({
-				url: 'index.php?route=tool/upload',
-				type: 'post',
-				dataType: 'json',
-				data: new FormData($('#form-upload')[0]),
-				cache: false,
-				contentType: false,
-				processData: false,
-				beforeSend: function() {
-					$(element).button('loading');
-				},
-				complete: function() {
-					$(element).button('reset');
-				},
-				success: function(json) {
-					$(element).parent().find('.text-danger').remove();
+            if (typeof timer != 'undefined') {
+                clearInterval(timer);
+            }
 
-					if (json['error']) {
-						$(node).parent().find('input').after('<div class="text-danger">' + json['error'] + '</div>');
-					}
+            timer = setInterval(function() {
+                if ($('#form-upload input[name=\'file\']').val() != '') {
+                    clearInterval(timer);
 
-					if (json['success']) {
-						alert(json['success']);
+                    $.ajax({
+                        url: 'index.php?route=tool/upload',
+                        type: 'post',
+                        dataType: 'json',
+                        data: new FormData($('#form-upload')[0]),
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        beforeSend: function() {
+                            $(element).button('loading');
+                        },
+                        complete: function() {
+                            $(element).button('reset');
+                        },
+                        success: function(json) {
+                            $(element).parent().find('.text-danger').remove();
 
-						$(element).parent().find('input').val(json['code']);
-					}
-				},
-				error: function(xhr, ajaxOptions, thrownError) {
-					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-				}
-			});
-		}
-	}, 500);
-});
-//--></script> 
+                            if (json['error']) {
+                                $(node).parent().find('input').after('<div class="text-danger">' + json['error'] + '</div>');
+                            }
 
-{{ footer }} 
+                            if (json['success']) {
+                                alert(json['success']);
+
+                                $(element).parent().find('input').val(json['code']);
+                            }
+                        },
+                        error: function(xhr, ajaxOptions, thrownError) {
+                            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                        }
+                    });
+                }
+            }, 500);
+        });
+        //--></script>
+
+    {{ footer }}

@@ -47,3 +47,4 @@ $_['error_custom_field']   = '%s je obavezan podatak!';
 $_['error_password']       = 'Lozinka mora sadržavati između 4 i 20 znaka!';
 $_['error_confirm']        = 'Unosi u polja Lozinka i Potvrda lozinke nisu identični!';
 $_['error_agree']          = 'Upozorenje: Morate prihvatiti %s!';
+$_['text_success']   = 'Lozinka je uspješno izmjenjena.';

@@ -35,35 +35,40 @@
       </div>
       <!-- Profile form-->
 
+      <p>Promjeni lozinku za račun: {{ customer_info.firstname }} {{ customer_info.lastname }} - {{ customer_info.email }}</p>
+
 
       <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-horizontal">
 
         <input type="hidden" name="customer_id" value="{{ customer_id }}"  />
+        <input type="hidden" name="not" value="2"  />
         <div class="row gx-4 gy-3">
             <div class="col-sm-6">
               <label class="form-label" for="account-pass">{{ entry_password }}</label>
               <div class="password-toggle">
                 <input type="password" name="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" class="form-control"  autocomplete="new-password" />
-                {% if error_password %}
-                  <div class="text-danger">{{ error_password }}</div>
-                {% endif %}
+
 
                 <label class="password-toggle-btn" aria-label="Show/hide password">
                   <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
                 </label>
               </div>
+              {% if error_password and val == ''%}
+                <div class="text-danger">{{ error_password }}</div>
+              {% endif %}
             </div>
             <div class="col-sm-6">
               <label class="form-label" for="account-confirm-pass">{{ entry_confirm }}</label>
               <div class="password-toggle">
                 <input type="password" name="confirm" value="{{ confirm }}" placeholder="{{ entry_confirm }}" id="input-confirm" class="form-control" />
-                {% if error_confirm %}
-                  <div class="text-danger">{{ error_confirm }}</div>
-                {% endif %}
+
                 <label class="password-toggle-btn" aria-label="Show/hide password">
                   <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
                 </label>
               </div>
+              {% if error_confirm %}
+                <div class="text-danger">{{ error_confirm }}</div>
+              {% endif %}
             </div>
             <div class="col-12">
               <hr class="mt-2 mb-3">
@@ -73,10 +78,6 @@
               </div>
             </div>
         </div>
-
-
-
-
 
 
   </form>

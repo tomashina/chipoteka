@@ -66,7 +66,13 @@
                 <td class="py-3">{{ customer.telephone }}</td>
                 <td class="py-3">{{ customer.date_added }}</td>
 
-                <td class="py-3"> <a class="nav-link-style me-2" href="{{ customer.edit }}" data-bs-toggle="tooltip" title="{{ button_edit }}"><i class="fal fa-edit"></i></a></td>
+                <td class="py-3">
+                  <form action="{{ customer.edit }}" method="post">
+                    <button style="background: unset;border: unset;"><i class="fal fa-edit"></i></button>
+                    <input type="hidden" name="customer_id" value="{{ customer.customer_id }}" />
+                    <input type="hidden" name="not" value="{{ customer.not }}" />
+                  </form>
+                </td>
 
               </tr>
             {% endfor %}
@@ -74,6 +80,14 @@
             </tbody>
           </table>
         </div>
+
+          <div class="col-12">
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center">
+
+              <a class="btn btn-primary mt-3 mt-sm-0" href="{{ subaccount }}" >Dodaj novi račun</a>
+            </div>
+          </div>
         {% else %}
           <p>{{ text_empty }}</p>
         {% endif %}

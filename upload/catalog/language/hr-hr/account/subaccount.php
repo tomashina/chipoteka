@@ -1,7 +1,7 @@
 <?php
 // Croatian   v.2.x.x     Datum: 01.10.2014		Author: Gigo (Igor Ilić - igor@iligsoft.hr)
 // Heading
-$_['heading_title']        = 'Lista korisničkih računa';
+$_['heading_title']        = 'Dodaj korisnički račun';
 
 // Text
 $_['text_account']         = 'Korisnički račun';
@@ -41,6 +41,7 @@ $_['error_address_1']      = 'Adresa 1 mora sadržavati između 3 i 128 znakova!
 $_['error_city']           = 'Grad mora sadržavati između 2 i 128 znakova!';
 $_['error_postcode']       = 'Poštanski broj mora sadržavati 5 znakova!';
 $_['error_country']        = 'Molim odaberite državu!';
+$_['error_customer']        = 'Molim odaberite korisnika!';
 $_['error_zone']           = 'Molim odaberite županiju (regiju)!';
 $_['error_custom_field']   = '%s je obavezan podatak!';
 // $_['error_custom_field_validate'] = '%s je neispravan podatak!'; // postojalo u verziji OC 2.2.0.0

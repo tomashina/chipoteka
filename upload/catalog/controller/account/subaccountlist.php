@@ -16,6 +16,8 @@ class ControllerAccountSubaccountList extends Controller {
 
 		$this->load->language('account/subaccountlist');
 
+        $data['logout'] = $this->url->link('account/logout', '', true);
+
          $data['oib'] = $this->customer->getOib();
         $data['tvrtka'] = $this->customer->getTvrtka();
 
@@ -40,14 +42,16 @@ class ControllerAccountSubaccountList extends Controller {
                 'lastname' => $result['lastname'],
                 'email' => $result['email'],
                 'telephone' => $result['telephone'],
+                'customer_id' => $result['customer_id'],
+                'not' => '1',
                 'date_added' => $result['date_added'],
-                'edit'     => $this->url->link('account/subaccountchangepass', 'customer_id=' . $result['customer_id'], true)
+                'edit'     => $this->url->link('account/subaccountchangepass&val=0', '', true)
             );
 
 
         }
 
-
+        $data['subaccount'] = $this->url->link('account/subaccount', '', true);
 
 		$data['breadcrumbs'] = array();
 

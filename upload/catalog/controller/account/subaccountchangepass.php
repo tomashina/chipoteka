@@ -14,11 +14,17 @@ class ControllerAccountSubaccountchangepass extends Controller {
 
         $this->load->model('account/customer');
 
-        $data['customer_id'] = $this->request->get['customer_id'];
+       $data['customer_id'] = $this->request->post['customer_id'];
 
-        $customer_info = $this->model_account_customer->getCustomer($this->request->get['customer_id']);
+        $data['val'] = $this->request->get['val'];
 
-        if ($customer_info) {
+       $customer_info = $this->model_account_customer->getCustomer($this->request->post['customer_id']);
+
+        $data['logout'] = $this->url->link('account/logout', '', true);
+
+        $data['customer_info'] = $customer_info;
+
+        if ($customer_info ) {
 
         $this->load->language('account/password');
 
@@ -63,7 +69,7 @@ class ControllerAccountSubaccountchangepass extends Controller {
             $data['error_confirm'] = '';
         }
 
-        $data['action'] = $this->url->link('account/subaccountchangepass', 'customer_id=' . $data['customer_id'], true);
+        $data['action'] = $this->url->link('account/subaccountchangepass', '', true);
 
         if (isset($this->request->post['password'])) {
             $data['password'] = $this->request->post['password'];
@@ -89,23 +95,28 @@ class ControllerAccountSubaccountchangepass extends Controller {
         $this->response->setOutput($this->load->view('account/subaccountchangepass', $data));
 
         } else {
-           /* $this->load->language('account/reset');
-
-            $this->session->data['error'] = $this->language->get('error_code');
-
-            return new Action('account/login'); */
+            $this->response->setOutput($this->load->view('account/subaccountchangepass', $data));
         }
     }
 
     protected function validate() {
-        if ((utf8_strlen(html_entity_decode($this->request->post['password'], ENT_QUOTES, 'UTF-8')) < 4) || (utf8_strlen(html_entity_decode($this->request->post['password'], ENT_QUOTES, 'UTF-8')) > 40)) {
-            $this->error['password'] = $this->language->get('error_password');
-        }
 
-        if ($this->request->post['confirm'] != $this->request->post['password']) {
-            $this->error['confirm'] = $this->language->get('error_confirm');
-        }
 
-        return !$this->error;
+                if ((utf8_strlen(html_entity_decode($this->request->post['password'], ENT_QUOTES, 'UTF-8')) < 4) || (utf8_strlen(html_entity_decode($this->request->post['password'], ENT_QUOTES, 'UTF-8')) > 40) ) {
+
+                        $this->error['password'] = $this->language->get('error_password');
+
+                }
+
+
+                if ($this->request->post['confirm'] != $this->request->post['password']) {
+                    $this->error['confirm'] = $this->language->get('error_confirm');
+                }
+
+
+
+                return !$this->error;
+
+
     }
 }
