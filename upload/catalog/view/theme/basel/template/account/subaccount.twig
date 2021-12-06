@@ -67,15 +67,15 @@
 
                                             {% for customer in customers %}
 
-                                                {% if customer.partner_uid == customeradd %}
+                                                {% if customer.grupa_partnera == customeradd %}
 
 
-                                                    <option value="{{ customer.partner_uid }}" selected="selected">{{ customer.naziv }} -  {{ customer.adresa }} -  {{ customer.naziv_mjesta }} -  {{ customer.e_mail }}</option>
+                                                    <option value="{{ customer.grupa_partnera }}" selected="selected">{{ customer.naziv }} -  {{ customer.adresa }} -  {{ customer.naziv_mjesta }} -  {{ customer.e_mail }}</option>
 
                                                 {% else %}
 
 
-                                                    <option value="{{ customer.partner_uid }}">{{ customer.naziv }} -  {{ customer.adresa }} -  {{ customer.naziv_mjesta }} -  {{ customer.e_mail }}</option>
+                                                    <option value="{{ customer.grupa_partnera }}">{{ customer.naziv }} -  {{ customer.adresa }} -  {{ customer.naziv_mjesta }} -  {{ customer.e_mail }}</option>
 
                                                 {% endif %}
 

@@ -113,6 +113,7 @@ class ControllerAccountSubaccount extends Controller {
              "naziv_mjesta" => "DARUVAR",
              "postanski_broj" => "43500",
              "e_mail"=> "daruvar@va.com.hr",
+             "grupa_partnera"=> "00225431"
         )
         );
 

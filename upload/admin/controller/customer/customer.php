@@ -745,12 +745,12 @@ class ControllerCustomerCustomer extends Controller {
             $data['master'] = 0;
         }
 
-        if (isset($this->request->post['partner_uid'])) {
-            $data['partner_uid'] = $this->request->post['partner_uid'];
+        if (isset($this->request->post['grupapartnera'])) {
+            $data['grupapartnera'] = $this->request->post['grupapartnera'];
         } elseif (!empty($customer_info)) {
-            $data['partner_uid'] = $customer_info['partner_uid'];
+            $data['grupapartnera'] = $customer_info['grupapartnera'];
         } else {
-            $data['partner_uid'] = '';
+            $data['grupapartnera'] = '';
         }
 
 		// Custom Fields
