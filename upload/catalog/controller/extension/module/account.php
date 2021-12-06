@@ -3,6 +3,9 @@ class ControllerExtensionModuleAccount extends Controller {
 	public function index() {
 		$this->load->language('extension/module/account');
 
+
+        $data['master'] = $this->customer->getMaster();
+
 		$data['logged'] = $this->customer->isLogged();
 		$data['register'] = $this->url->link('account/register', '', true);
         $data['subaccount'] = $this->url->link('account/subaccount', '', true);
@@ -32,6 +35,8 @@ class ControllerExtensionModuleAccount extends Controller {
 
         $data['oib'] = $this->customer->getOib();
         $data['tvrtka'] = $this->customer->getTvrtka();
+
+
 
         $this->load->model('account/customer');
         if ($this->request->server['REQUEST_METHOD'] != 'POST') {

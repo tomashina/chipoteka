@@ -29,7 +29,23 @@ class ControllerAccountSubaccountList extends Controller {
 		$this->load->model('account/customer');
         $this->load->model('account/address');
 
-        $data['customers'] = $this->model_account_customer->getCustomersByOib($data['oib']);
+        $data['customers'] = array();
+
+        $results = $this->model_account_customer->getCustomersByOib($data['oib']);
+
+        foreach ($results as $result) {
+
+            $data['customers'][] = array(
+                'firstname' => $result['firstname'],
+                'lastname' => $result['lastname'],
+                'email' => $result['email'],
+                'telephone' => $result['telephone'],
+                'date_added' => $result['date_added'],
+                'edit'     => $this->url->link('account/subaccountchangepass', 'customer_id=' . $result['customer_id'], true)
+            );
+
+
+        }
 
 
 
@@ -50,16 +66,24 @@ class ControllerAccountSubaccountList extends Controller {
 			'href' => $this->url->link('account/subaccountlist', '', true)
 		);
 
-		$data['column_left'] = $this->load->controller('common/column_left');
+        if (isset($this->session->data['success'])) {
+            $data['success'] = $this->session->data['success'];
+
+            unset($this->session->data['success']);
+        } else {
+            $data['success'] = '';
+        }
+
+        $data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
 		$data['content_top'] = $this->load->controller('common/content_top');
 		$data['content_bottom'] = $this->load->controller('common/content_bottom');
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
 
+
 		$this->response->setOutput($this->load->view('account/subaccountlist', $data));
 	}
-
 
 
 

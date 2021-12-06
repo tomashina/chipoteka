@@ -56,15 +56,13 @@
 
 
                           <input  type="hidden" name="customer_group_id" value="{{ groupId }}" >
-
+                          <input  type="hidden" name="customer_id" value="{{ customer_id }}" >
                         <div class="col-sm-6">
 
                             <div class="form-group mb-3 required">
                                 <label class="form-label" for="input-firstname">{{ entry_firstname }}<span class="text-danger">*</span></label>
                                 <input type="text" name="firstname" value="{{ firstname }}" placeholder="{{ entry_firstname }}" id="input-firstname" class="form-control" />
-                                {% if error_firstname %}
-                                    <div class="text-danger">{{ error_firstname }}</div>
-                                {% endif %}
+
                             </div>
                         </div>
 
@@ -73,9 +71,7 @@
                                 <label class="form-label" for="input-lastname">{{ entry_lastname }} <span class="text-danger">*</span></label>
 
                                  <input type="text" name="lastname" value="{{ lastname }}" placeholder="{{ entry_lastname }}" id="input-lastname" class="form-control" />
-                                  {% if error_lastname %}
-                                  <div class="text-danger">{{ error_lastname }}</div>
-                                  {% endif %}
+
                             </div>
                         </div>
 
@@ -84,9 +80,7 @@
                                 <label class="form-label" for="input-email">{{ entry_email }} <span class="text-danger">*</span></label>
 
                                   <input type="email" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-email" class="form-control" />
-                                  {% if error_email %}
-                                  <div class="text-danger">{{ error_email }}</div>
-                                  {% endif %}
+
                               </div>
                           </div>
 
@@ -96,9 +90,7 @@
                                     <label class="form-label" for="input-telephone">{{ entry_telephone }} <span class="text-danger">*</span></label>
 
                                       <input type="tel" name="telephone" value="{{ telephone }}" placeholder="{{ entry_telephone }}" id="input-telephone" class="form-control" />
-                                      {% if error_telephone %}
-                                      <div class="text-danger">{{ error_telephone }}</div>
-                                      {% endif %}
+
                                 </div>
                           </div>
                                   {% for custom_field in custom_fields %}
@@ -120,9 +112,7 @@
 
                                                   {% endif %}
 
-                                                  {% if error_custom_field[custom_field.custom_field_id] %}
-                                                  <div class="text-danger">{{ error_custom_field[custom_field.custom_field_id] }}</div>
-                                                  {% endif %}
+
                                               </div>
 
 
@@ -167,37 +157,7 @@
                               </div>
                           </div>
 
-                          <div class="col-12 d-none">
-                          <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">{{ text_newsletter }}</h2>
-                          </div>
-                          <div class="col-sm-12 d-none">
-                              <div class="form-group mb-3 required">
-                                  <label class="form-label me-3">{{ entry_newsletter }}</label>
-                                          {% if newsletter %}
 
-                                              <div class="form-check form-check-inline">
-                                                  <input class="form-check-input" type="radio" name="newsletter" value="1" checked="checked">
-                                                  <label class="form-check-label" for="ex-radio-4">{{ text_yes }}</label>
-                                              </div>
-                                              <div class="form-check form-check-inline">
-                                                  <input class="form-check-input" type="radio" name="newsletter" value="0">
-                                                  <label class="form-check-label" for="ex-radio-5">{{ text_no }}</label>
-                                              </div>
-
-                                              {% else %}
-                                                  <div class="form-check form-check-inline">
-                                                      <input class="form-check-input" type="radio" name="newsletter" value="1">
-                                                      <label class="form-check-label" for="ex-radio-4">{{ text_yes }}</label>
-                                                  </div>
-                                                  <div class="form-check form-check-inline">
-                                                      <input class="form-check-input" type="radio" name="newsletter" value="0"  checked="checked">
-                                                      <label class="form-check-label" for="ex-radio-5">{{ text_no }}</label>
-                                                  </div>
-                                              {% endif %}
-
-
-                                 </div>
-                         </div>
 
 
                     {{ captcha }}
@@ -218,8 +178,6 @@
                                             </div>
 
                                       </div>
-
-
 
 
                                     <div class="col-sm-12 mt-4 mb-5">

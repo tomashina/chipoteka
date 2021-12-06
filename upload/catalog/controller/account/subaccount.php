@@ -28,7 +28,7 @@ class ControllerAccountSubaccount extends Controller {
 
 		$this->load->model('account/customer');
 
-		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+        if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$customer_id = $this->model_account_customer->addCustomer($this->request->post);
 
 			// Clear any previous login attempts for unregistered accounts.
@@ -107,7 +107,7 @@ class ControllerAccountSubaccount extends Controller {
 			$data['error_confirm'] = '';
 		}
 
-		$data['action'] = $this->url->link('account/subaccount', '', true);
+		$data['action'] = $this->url->link('account/subaccount/edit', '', true);
 
 		$data['customer_groups'] = array();
 
@@ -123,11 +123,6 @@ class ControllerAccountSubaccount extends Controller {
 			}
 		}
 
-	/*	if (isset($this->request->post['customer_group_id'])) {
-			$data['customer_group_id'] = $this->request->post['customer_group_id'];
-		} else {
-			$data['customer_group_id'] = $this->config->get('config_customer_group_id');
-		}*/
 
         $data['customer_group_id'] = $data['groupId'];
 
@@ -229,6 +224,9 @@ class ControllerAccountSubaccount extends Controller {
 		$this->response->setOutput($this->load->view('account/subaccount', $data));
 	}
 
+
+
+
 	private function validate() {
 		if ((utf8_strlen(trim($this->request->post['firstname'])) < 1) || (utf8_strlen(trim($this->request->post['firstname'])) > 32)) {
 			$this->error['firstname'] = $this->language->get('error_firstname');
@@ -306,6 +304,8 @@ class ControllerAccountSubaccount extends Controller {
 		
 		return !$this->error;
 	}
+
+
 
 	public function customfield() {
 		$json = array();
