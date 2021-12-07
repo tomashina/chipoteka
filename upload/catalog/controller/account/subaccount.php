@@ -35,7 +35,7 @@ class ControllerAccountSubaccount extends Controller {
             $data['customeradd'] = '';
         }
 
-
+        // pozvati iz luceeda
         $data['customers'] = array (
             0  => array (
                 "partner_uid" => "51916-1063",
@@ -58,7 +58,7 @@ class ControllerAccountSubaccount extends Controller {
                 "grupa_partnera"=> "00225431"
             )
         );
-
+        /// end luceed
 
         foreach($data['customers'] as $entry) {
             if($entry['partner_uid'] == $data['customeradd'])
@@ -66,29 +66,37 @@ class ControllerAccountSubaccount extends Controller {
         }
 
 
-
         $this->request->post['email'] = $newArr[0]['e_mail'];
         $this->request->post['telephone'] = $newArr[0]['telefon'];
         $this->request->post['firstname'] = $newArr[0]['naziv'];
         $this->request->post['lastname'] = $newArr[0]['naziv_mjesta'];
 
+        $this->request->post['address_1'] = $newArr[0]['adresa'];
+        $this->request->post['city'] = $newArr[0]['naziv_mjesta'];
+        $this->request->post['postcode'] = $newArr[0]['postanski_broj'];
+        $this->request->post['country_id'] = '53';
+        $this->request->post['zone_id'] = '0';
 
+
+        $this->load->model('account/address');
 
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-            $data['add_customer'] = $this->model_account_customer->addCustomer($this->request->post);
+           $data['add_customer'] = $this->model_account_customer->addCustomer($this->request->post);
 
+            sleep(2);
+            $customer = $this->model_account_customer->getCustomerByEmail($this->request->post['email']);
 
-
-            $this->model_account_address->addAddress($this->customer->getId(), $this->request->post);
+            
+            $this->model_account_address->addAddress($customer['customer_id'], $this->request->post);
 
             // Clear any previous login attempts for unregistered accounts.
-            $this->model_account_customer->deleteLoginAttempts($this->request->post['email']);
+          //  $this->model_account_customer->deleteLoginAttempts($this->request->post['email']);
 
-            $this->customer->login($this->request->post['email'], $this->request->post['password']);
+          //  $this->customer->login($this->request->post['email'], $this->request->post['password']);
 
             unset($this->session->data['guest']);
 
-            $this->response->redirect($this->url->link('account/success'));
+           $this->response->redirect($this->url->link('account/success'));
         }
 
         $data['breadcrumbs'] = array();
@@ -151,11 +159,7 @@ class ControllerAccountSubaccount extends Controller {
 
         $data['customer_group_id'] = $data['groupId'];
 
-
-
         if (isset($this->request->post['customeradd'])) {
-
-
             $data['firstname'] = $newArr[0]['naziv'];
         } else {
             $data['firstname'] = '';
@@ -263,8 +267,6 @@ class ControllerAccountSubaccount extends Controller {
         if ($this->model_account_customer->getTotalCustomersByEmail($this->request->post['email'])) {
             $this->error['warning'] = $this->language->get('error_exists');
         }
-
-
 
 
         // Customer Group
