@@ -83,6 +83,9 @@
                                             {% endfor %}
 
                                         </select>
+                                        <div id="passwordconfirmHelpBlock" class="form-text">
+                                            Odaberite korisnika iz baze partnera.
+                                        </div>
                                         {% if error_customer %}
                                             <div class="text-danger">{{ error_customer }}</div>
                                         {% endif %}
@@ -104,11 +107,11 @@
 
                                                 {% if custom_field.custom_field_id == '1' %}
 
-                                                    <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{{ oib }}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control" />
+                                                    <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{{ oib }}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control" readonly />
 
                                                 {% else %}
 
-                                                    <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{{ tvrtka }}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control" />
+                                                    <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{{ tvrtka }}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control"  readonly/>
 
                                                 {% endif %}
 
@@ -126,6 +129,8 @@
                                 <div class="col-12">
                                     <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">{{ text_your_password }}</h2>
 
+
+
                                 </div>
 
                                 <div class="col-sm-6">
@@ -138,6 +143,9 @@
                                             <label class="password-toggle-btn" aria-label="Show/hide password">
                                                 <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
                                             </label>
+                                        </div>
+                                        <div id="passwordHelpBlock" class="form-text">
+                                           Kreirajte lozinku za odabrani račun.
                                         </div>
                                         {% if error_password %}
                                             <div class="text-danger">{{ error_password }}</div>
@@ -152,6 +160,9 @@
                                             <label class="password-toggle-btn" aria-label="Show/hide password">
                                                 <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
                                             </label>
+                                        </div>
+                                        <div id="passwordconfirmHelpBlock" class="form-text">
+                                            Potvrdite lozinku za odabrani račun.
                                         </div>
                                         {% if error_confirm %}
                                             <div class="text-danger">{{ error_confirm }}</div>

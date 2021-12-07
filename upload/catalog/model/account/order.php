@@ -102,7 +102,7 @@ class ModelAccountOrder extends Model {
 
 
     public function getOrderMaster($order_id) {
-        $order_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = '" . (int)$order_id . "' AND oib = '" . (int)$this->customer->getOib() . "' AND customer_id != '0' AND order_status_id > '0'");
+        $order_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = '" . (int)$order_id . "' AND grupa_partnera = '" . $this->customer->getGrupapartnera() . "' AND customer_id != '0' AND order_status_id > '0'");
 
         if ($order_query->num_rows) {
             $country_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "country` WHERE country_id = '" . (int)$order_query->row['payment_country_id'] . "'");
@@ -236,7 +236,7 @@ class ModelAccountOrder extends Model {
             $limit = 1;
         }
 
-        $query = $this->db->query("SELECT o.order_id, o.firstname, o.customer_id, o.oib, o.lastname, os.name as status, o.date_added, o.total, o.currency_code, o.currency_value FROM `" . DB_PREFIX . "order` o LEFT JOIN " . DB_PREFIX . "order_status os ON (o.order_status_id = os.order_status_id) WHERE o.oib = '" . (int)$this->customer->getOib() . "' AND o.order_status_id > '0' AND customer_id != '0' AND o.store_id = '" . (int)$this->config->get('config_store_id') . "' AND os.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY o.order_id DESC LIMIT " . (int)$start . "," . (int)$limit);
+        $query = $this->db->query("SELECT o.order_id, o.firstname, o.customer_id, o.oib, o.grupa_partnera, o.lastname, os.name as status, o.date_added, o.total, o.currency_code, o.currency_value FROM `" . DB_PREFIX . "order` o LEFT JOIN " . DB_PREFIX . "order_status os ON (o.order_status_id = os.order_status_id) WHERE o.grupa_partnera = '" . $this->customer->getGrupapartnera() . "' AND o.order_status_id > '0' AND customer_id != '0' AND o.store_id = '" . (int)$this->config->get('config_store_id') . "' AND os.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY o.order_id DESC LIMIT " . (int)$start . "," . (int)$limit);
 
         return $query->rows;
     }
@@ -284,7 +284,7 @@ class ModelAccountOrder extends Model {
 	}
 
     public function getTotalOrdersMaster() {
-        $query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` o WHERE oib = '" . (int)$this->customer->getOib() . "'  AND o.customer_id != '0' AND o.order_status_id > '0' AND o.store_id = '" . (int)$this->config->get('config_store_id') . "'");
+        $query = $this->db->query("SELECT COUNT(*) AS total FROM `" . DB_PREFIX . "order` o WHERE grupa_partnera = '" . $this->customer->getGrupapartnera() . "'  AND o.customer_id != '0' AND o.order_status_id > '0' AND o.store_id = '" . (int)$this->config->get('config_store_id') . "'");
 
         return $query->row['total'];
     }

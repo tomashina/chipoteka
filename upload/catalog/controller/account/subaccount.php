@@ -65,7 +65,7 @@ class ControllerAccountSubaccount extends Controller {
 
         $this->request->post['email'] = $newArr[0]['e_mail'];
         $this->request->post['telephone'] = $newArr[0]['telefon'];
-        $this->request->post['firstname'] = $newArr[0]['naziv'];
+        $this->request->post['firstname'] = $newArr[0]['naziv_grupacije'];
         $this->request->post['lastname'] = $newArr[0]['naziv_mjesta'];
 
         $this->request->post['grupa_partnera'] = $newArr[0]['grupa_partnera'];
@@ -160,7 +160,7 @@ class ControllerAccountSubaccount extends Controller {
         $data['customer_group_id'] = $data['groupId'];
 
         if (isset($this->request->post['customeradd'])) {
-            $data['firstname'] = $newArr[0]['naziv'];
+            $data['firstname'] = $newArr[0]['naziv_grupacije'];
         } else {
             $data['firstname'] = '';
         }

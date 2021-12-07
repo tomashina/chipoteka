@@ -11,6 +11,7 @@ class Customer {
 	private $address_id;
     private $master;
     private $oib;
+    private $grupa_partnera;
     private $tvrtka;
 
 	public function __construct($registry) {
@@ -35,6 +36,7 @@ class Customer {
                 $tempoib = json_decode($customer_query->row['custom_field'], true);
                 $this->oib = isset($tempoib[1]) ? $tempoib[1] : null;
                 $this->tvrtka = isset($tempoib[2]) ? $tempoib[2] : null;
+                $this->grupa_partnera = $customer_query->row['grupa_partnera'];
 
 				$this->db->query("UPDATE " . DB_PREFIX . "customer SET language_id = '" . (int)$this->config->get('config_language_id') . "', ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "' WHERE customer_id = '" . (int)$this->customer_id . "'");
 
@@ -71,6 +73,7 @@ class Customer {
             $tempoib = json_decode($customer_query->row['custom_field'], true);
             $this->oib = isset($tempoib[1]) ? $tempoib[1] : null;
             $this->tvrtka = isset($tempoib[2]) ? $tempoib[2] : null;
+            $this->grupa_partnera = $customer_query->row['grupa_partnera'];
 		
 			$this->db->query("UPDATE " . DB_PREFIX . "customer SET language_id = '" . (int)$this->config->get('config_language_id') . "', ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "' WHERE customer_id = '" . (int)$this->customer_id . "'");
 
@@ -93,6 +96,7 @@ class Customer {
 		$this->address_id = '';
         $this->master = '';
         $this->oib = '';
+        $this->grupa_partnera = '';
         $this->tvrtka = '';
 	}
 
@@ -122,6 +126,10 @@ class Customer {
 
     public function getOib() {
         return $this->oib;
+    }
+
+    public function getGrupapartnera() {
+        return $this->grupa_partnera;
     }
 
     public function getTvrtka() {
