@@ -9,7 +9,7 @@ class ControllerAccountOrder extends Controller {
 
 		$this->load->language('account/order');
         $this->load->language('extension/module/reorder');
-
+        $data['logout'] = $this->url->link('account/logout', '', true);
         $data['reorder_status'] = $this->config->get('module_reorder_status');
 
 		$this->document->setTitle($this->language->get('heading_title'));

@@ -48,7 +48,7 @@
                         {% endif %}
 
                         <div class="row gx-4 gy-3">
-                            {% if master =='1' %}
+                            {% if master =='1' or groupId >= 2 %}
                                  {% set readonly = 'readonly' %}
                             {% endif %}
                             <div class="col-sm-6  required">

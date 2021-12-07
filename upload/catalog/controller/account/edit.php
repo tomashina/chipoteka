@@ -137,6 +137,14 @@ class ControllerAccountEdit extends Controller {
             $data['master'] = 0;
         }
 
+
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
 		// Custom Fields
 		$data['custom_fields'] = array();
 		
