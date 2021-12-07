@@ -60,6 +60,13 @@ class ControllerAccountSubaccount extends Controller {
         );
         /// end luceed
 
+        $loc_customer = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Customer();
+        $luceed = new \Agmedia\Luceed\Connection\LuceedService();
+        $result = $luceed->get('partneri/grupapartnera/', '00225431');
+        $result = $loc_customer->setResponseData($result);
+
+        \Agmedia\Helpers\Log::store($result);
+
         foreach($data['customers'] as $entry) {
             if($entry['partner_uid'] == $data['customeradd'])
                 $newArr[] = $entry;

@@ -509,7 +509,7 @@ class LOC_Customer
      *
      * @return array
      */
-    private function setResponseData($response): array
+    public function setResponseData($response): array
     {
         $data = json_decode($response);
 
