@@ -33,21 +33,25 @@ class ControllerAccountSubaccountList extends Controller {
 
         $data['customers'] = array();
 
-        $results = $this->model_account_customer->getCustomersByOib($data['oib']);
+        $customergrupa = $this->model_account_customer->getCustomer($this->customer->getId());
+
+        $results = $this->model_account_customer->getCustomersByGrupapartnera($customergrupa['grupa_partnera']);
 
         foreach ($results as $result) {
+            if($result['master'] !='1'){
 
-            $data['customers'][] = array(
-                'firstname' => $result['firstname'],
-                'lastname' => $result['lastname'],
-                'email' => $result['email'],
-                'telephone' => $result['telephone'],
-                'customer_id' => $result['customer_id'],
-                'not' => '1',
-                'date_added' => $result['date_added'],
-                'edit'     => $this->url->link('account/subaccountchangepass&val=0', '', true)
-            );
+                $data['customers'][] = array(
+                    'firstname' => $result['firstname'],
+                    'lastname' => $result['lastname'],
+                    'email' => $result['email'],
+                    'telephone' => $result['telephone'],
+                    'customer_id' => $result['customer_id'],
+                    'not' => '1',
+                    'date_added' => $result['date_added'],
+                    'edit'     => $this->url->link('account/subaccountchangepass&val=0', '', true)
+                );
 
+            }
 
         }
 

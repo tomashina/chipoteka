@@ -35,48 +35,41 @@ class ControllerAccountSubaccount extends Controller {
             $data['customeradd'] = '';
         }
 
-        // pozvati iz luceeda
-        $data['customers'] = array (
-            0  => array (
-                "partner_uid" => "51916-1063",
-                "naziv" => "VACOM - Daruvar",
-                "adresa" => "Petra Svačića 20",
-                "naziv_mjesta" => "DARUVAR",
-                "postanski_broj" => "43500",
-                "e_mail" => "daruvar@va.com.hr",
-                "telefon" => "043/445-446",
-                "grupa_partnera"=> "00225431"
-            ),
-            1  => array (
-                "partner_uid" => "56706-1063",
-                "naziv" => "VACOM - Sisak",
-                "adresa" => "Rimska 8",
-                "naziv_mjesta" => "SISAK",
-                "postanski_broj" => "44000",
-                "e_mail"=> "sisak@va.com.hr",
-                "telefon" => "044 540388",
-                "grupa_partnera"=> "00225431"
-            )
-        );
-        /// end luceed
+        $customergrupa = $this->model_account_customer->getCustomer($this->customer->getId());
 
         $loc_customer = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Customer();
         $luceed = new \Agmedia\Luceed\Connection\LuceedService();
-        $result = $luceed->get('partneri/grupapartnera/', '00225431');
+        $result = $luceed->get('partneri/grupapartnera/', $customergrupa['grupa_partnera']);
         $result = $loc_customer->setResponseData($result);
+        $data['customerss'] = collect($result)->toArray();
 
-        \Agmedia\Helpers\Log::store($result);
 
-        foreach($data['customers'] as $entry) {
-            if($entry['partner_uid'] == $data['customeradd'])
-                $newArr[] = $entry;
+        foreach($data['customerss'] as $cust) {
+            $customeremail = $this->model_account_customer->getCustomerByEmail($cust->e_mail);
+        $email = $customeremail['email'];
+            if($cust->e_mail != $email){
+                $data['customers'][] = $cust;
+            }
+
         }
 
+
+        foreach($data['customers'] as $entry) {
+            if($entry->partner_uid == $data['customeradd'])
+                $newArr[] = $entry;
+        }
+        $newArr = json_decode(json_encode($newArr), true);
+       /* echo '<pre>';
+        print_r($newArr);
+        echo '</pre>';*/
 
         $this->request->post['email'] = $newArr[0]['e_mail'];
         $this->request->post['telephone'] = $newArr[0]['telefon'];
         $this->request->post['firstname'] = $newArr[0]['naziv'];
         $this->request->post['lastname'] = $newArr[0]['naziv_mjesta'];
+
+        $this->request->post['grupa_partnera'] = $newArr[0]['grupa_partnera'];
+        $this->request->post['partner_uid'] = $newArr[0]['partner_uid'];
 
         $this->request->post['address_1'] = $newArr[0]['adresa'];
         $this->request->post['city'] = $newArr[0]['naziv_mjesta'];
