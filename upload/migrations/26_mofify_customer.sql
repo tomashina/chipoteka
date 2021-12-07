@@ -1,4 +1,4 @@
-ALTER TABLE `oc_cusyomer`
+ALTER TABLE `oc_customer`
     ADD COLUMN `luceed_uid` varchar(255) DEFAULT NULL;
 
 
