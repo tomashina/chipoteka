@@ -249,6 +249,15 @@
                                     </div>
                                     <div>Za zamjenu ovih podataka obratite se vašem product manageru u Chipoteci.</div>
                                 </div>
+
+                                {% elseif master !='1' and groupId >= 2 %}
+                                <div class="alert alert-primary d-flex" role="alert">
+                                    <div class="alert-icon">
+                                        <i class="fas fa-info"></i>
+                                    </div>
+                                    <div>Za zamjenu ovih podataka obratite se vašem manageru.</div>
+                                </div>
+
                                 {% else %}
                                     <div class="d-flex flex-wrap justify-content-between align-items-center">
                                         <button type="submit"  class="btn btn-primary mt-3 mt-sm-0" >{{ button_save }} </div>

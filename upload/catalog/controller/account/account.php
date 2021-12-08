@@ -37,6 +37,8 @@ class ControllerAccountAccount extends Controller {
 		$data['address'] = $this->url->link('account/address', '', true);
         $data['logout'] = $this->url->link('account/logout', '', true);
 
+        $data['master'] = $this->customer->getMaster();
+
         if ($this->customer->isLogged()) {
             $data['groupId'] = $this->customer->getGroupId();
 
