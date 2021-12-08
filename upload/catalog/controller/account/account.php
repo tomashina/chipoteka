@@ -31,7 +31,8 @@ class ControllerAccountAccount extends Controller {
 			$data['success'] = '';
 		} 
 		
-		$data['edit'] = $this->url->link('account/edit', '', true);
+		$data['editall'] = $this->url->link('account/subaccountlist', '', true);
+        $data['edit'] = $this->url->link('account/edit', '', true);
 		$data['password'] = $this->url->link('account/password', '', true);
 		$data['address'] = $this->url->link('account/address', '', true);
         $data['logout'] = $this->url->link('account/logout', '', true);
