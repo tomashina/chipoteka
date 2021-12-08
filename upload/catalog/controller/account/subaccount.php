@@ -63,7 +63,7 @@ class ControllerAccountSubaccount extends Controller {
         print_r($newArr);
         echo '</pre>';*/
 
-        $mail = substr($variable, 0, strpos($newArr[0]['e_mail'], ","));
+        $mail = substr($newArr[0]['e_mail'], 0, strpos($newArr[0]['e_mail'], ","));
 
         $mail = str_replace(' ', '', $mail);
 
