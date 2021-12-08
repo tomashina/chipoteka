@@ -63,7 +63,11 @@ class ControllerAccountSubaccount extends Controller {
         print_r($newArr);
         echo '</pre>';*/
 
-        $this->request->post['email'] = $newArr[0]['e_mail'];
+        $mail = substr($variable, 0, strpos($newArr[0]['e_mail'], ","));
+
+        $mail = str_replace(' ', '', $mail);
+
+        $this->request->post['email'] = $mail;
         $this->request->post['telephone'] = $newArr[0]['telefon'];
         $this->request->post['firstname'] = $newArr[0]['naziv_grupacije'];
         $this->request->post['lastname'] = $newArr[0]['naziv_mjesta'];
