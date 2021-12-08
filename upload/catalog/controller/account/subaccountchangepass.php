@@ -11,6 +11,53 @@ class ControllerAccountSubaccountchangepass extends Controller {
         } else {
             $data['groupId'] ='0';
         }
+        $this->load->model('account/address');
+        $data['addresses'] = array();
+        $results = $this->model_account_address->getAddresses();
+
+        foreach ($results as $result) {
+                if ($result['address_format']) {
+                    $format = $result['address_format'];
+                } else {
+                    $format = '{firstname}' . ", " . '{address_1}' . ", " . '{city}' . ", " .'{postcode}' . ", " . '{country}';
+                }
+
+                $find = array(
+                    '{firstname}',
+                    '{company}',
+                    '{address_1}',
+                    '{address_2}',
+                    '{city}',
+                    '{postcode}',
+                    '{zone}',
+                    '{zone_code}',
+                    '{country}'
+                );
+
+                $replace = array(
+                    'firstname' => $result['firstname'],
+                    'company'   => $result['company'],
+                    'address_1' => $result['address_1'],
+                    'address_2' => $result['address_2'],
+                    'city'      => $result['city'],
+                    'postcode'  => $result['postcode'],
+                    'zone'      => $result['zone'],
+                    'zone_code' => $result['zone_code'],
+                    'country'   => $result['country']
+                );
+
+
+
+
+
+
+            $data['addresses'][] = array(
+                'address_id' => $result['address_id'],
+                'address'    => str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace($find, $replace, $format)))),
+                'update'     => $this->url->link('account/address/edit', 'address_id=' . $result['address_id'], true),
+                'delete'     => $this->url->link('account/address/delete', 'address_id=' . $result['address_id'], true)
+            );
+        }
 
         $this->load->model('account/customer');
 

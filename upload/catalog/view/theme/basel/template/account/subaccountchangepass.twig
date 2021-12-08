@@ -35,7 +35,22 @@
       </div>
       <!-- Profile form-->
 
-      <p>Promjeni lozinku za račun: {{ customer_info.firstname }} {{ customer_info.lastname }} - {{ customer_info.email }}</p>
+      <h4>Promjeni lozinku za račun: </h4>
+
+
+
+      {% if addresses %}
+
+            {% for result in addresses %}
+             <p>{{ result.address }}</p>
+
+            {% endfor %}
+
+      {% else %}
+        <p>{{ text_empty }}</p>
+      {% endif %}
+
+      <p>{{ customer_info.email }} - {{ customer_info.telephone }}</p>
 
 
       <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-horizontal">
