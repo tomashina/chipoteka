@@ -326,7 +326,7 @@
                     <div class="tab-pane" id="tab-address{{ address_row }}">
                       <input type="hidden" name="address[{{ address_row }}][address_id]" value="{{ address.address_id }}" />
                       <div class="form-group required">
-                        <label class="col-sm-2 control-label" for="input-firstname{{ address_row }}">{{ entry_firstname }}</label>
+                        <label class="col-sm-2 control-label" for="input-firstname{{ address_row }}" id="fnamea">{% if customer_group_id >= 2 %} Naziv {% else %} {{ entry_firstname }}  {% endif %}</label>
                         <div class="col-sm-10">
                           <input type="text" name="address[{{ address_row }}][firstname]" value="{{ address.firstname }}" placeholder="{{ entry_firstname }}" id="input-firstname{{ address_row }}" class="form-control" />
                           {% if error_address[address_row].firstname %}
@@ -334,14 +334,14 @@
                           {% endif %}</div>
                       </div>
                       <div class="form-group required">
-                        <label class="col-sm-2 control-label" for="input-lastname{{ address_row }}">{{ entry_lastname }}</label>
+                        <label class="col-sm-2 control-label" for="input-lastname{{ address_row }}" id="lnamea">{{ entry_lastname }}</label>
                         <div class="col-sm-10">
                           <input type="text" name="address[{{ address_row }}][lastname]" value="{{ address.lastname }}" placeholder="{{ entry_lastname }}" id="input-lastname{{ address_row }}" class="form-control" />
                           {% if error_address[address_row].lastname %}
                           <div class="text-danger">{{ error_address[address_row].lastname }}</div>
                           {% endif %}</div>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group hidden">
                         <label class="col-sm-2 control-label" for="input-company{{ address_row }}">{{ entry_company }}</label>
                         <div class="col-sm-10">
                           <input type="text" name="address[{{ address_row }}][company]" value="{{ address.company }}" placeholder="{{ entry_company }}" id="input-company{{ address_row }}" class="form-control" />
@@ -355,7 +355,7 @@
                           <div class="text-danger">{{ error_address[address_row].address_1 }}</div>
                           {% endif %}</div>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group hidden">
                         <label class="col-sm-2 control-label" for="input-address-2{{ address_row }}">{{ entry_address_2 }}</label>
                         <div class="col-sm-10">
                           <input type="text" name="address[{{ address_row }}][address_2]" value="{{ address.address_2 }}" placeholder="{{ entry_address_2 }}" id="input-address-2{{ address_row }}" class="form-control" />
@@ -394,7 +394,7 @@
                           <div class="text-danger">{{ error_address[address_row].country }}</div>
                           {% endif %}</div>
                       </div>
-                      <div class="form-group required">
+                      <div class="form-group hidden">
                         <label class="col-sm-2 control-label" for="input-zone{{ address_row }}">{{ entry_zone }}</label>
                         <div class="col-sm-10">
                           <select name="address[{{ address_row }}][zone_id]" id="input-zone{{ address_row }}" class="form-control">
@@ -945,6 +945,9 @@
 
           $("#fname").html("Naziv");
           $("#lname").html("Mjesto");
+
+          $("#fnamea").html("Naziv");
+          $("#lnamea").html("Mjesto");
 
           if (custom_field['required']) {
             $('.custom-field' + custom_field['custom_field_id']).addClass('required');
