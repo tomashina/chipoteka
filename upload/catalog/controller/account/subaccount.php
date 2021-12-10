@@ -53,19 +53,20 @@ class ControllerAccountSubaccount extends Controller {
 
         }
 
-
         foreach($data['customers'] as $entry) {
             if($entry->partner_uid == $data['customeradd'])
                 $newArr[] = $entry;
         }
         $newArr = json_decode(json_encode($newArr), true);
-       /* echo '<pre>';
-        print_r($newArr);
-        echo '</pre>';*/
 
         $mail = substr($newArr[0]['e_mail'], 0, strpos($newArr[0]['e_mail'], ","));
 
-        $mail = str_replace(' ', '', $mail);
+        if($mail){
+            $mail = str_replace(' ', '', $mail);
+        }
+        else{
+            $mail = $newArr[0]['e_mail'];
+        }
 
         $this->request->post['email'] = $mail;
         $this->request->post['telephone'] = $newArr[0]['telefon'];
@@ -90,13 +91,7 @@ class ControllerAccountSubaccount extends Controller {
             sleep(2);
             $customer = $this->model_account_customer->getCustomerByEmail($this->request->post['email']);
 
-            
             $this->model_account_address->addAddress($customer['customer_id'], $this->request->post);
-
-            // Clear any previous login attempts for unregistered accounts.
-          //  $this->model_account_customer->deleteLoginAttempts($this->request->post['email']);
-
-          //  $this->customer->login($this->request->post['email'], $this->request->post['password']);
 
             unset($this->session->data['guest']);
 
