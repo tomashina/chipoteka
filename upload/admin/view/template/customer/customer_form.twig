@@ -81,6 +81,18 @@
                             </div>
                           </div>
                         </div>
+
+
+
+
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label" for="input-partner"><span data-toggle="tooltip" title="Enter partner number (partner)">Partner</span></label>
+                          <div class="col-sm-10">
+                            <input type="text" name="partner" value="{{ partner }}" placeholder="{{ entry_partner }}" id="input-partner" class="form-control" />
+                          </div>
+                        </div>
+                      <div id="masterdisable">
+
                         <div class="form-group">
                           <label class="col-sm-2 control-label" for="input-grupa_partnera">{{ entry_grupa_partnera }}</label>
                           <div class="col-sm-10">
@@ -255,6 +267,9 @@
                         {% endif %}
                         {% endif %}
                         {% endfor %}
+
+                    </div>
+
                       </fieldset>
                       <fieldset>
                         <legend>{{ text_password }}</legend>
@@ -275,7 +290,7 @@
                             {% endif %}</div>
                         </div>
                       </fieldset>
-                      <fieldset>
+                      <fieldset id ="master2disable">
                         <legend>{{ text_other }}</legend>
                         <div class="form-group">
                           <label class="col-sm-2 control-label" for="input-newsletter">{{ entry_newsletter }}</label>
@@ -925,9 +940,71 @@
   }); 
 
   $('input[name=\'affiliate\']:checked').trigger('change');
-  //--></script> 
+  //--></script>
+
+  <script type="text/javascript"><!--
+
+    $("#masterdisable").show();
+    $('input[name="master"]').click(function() {
+
+      if($(this).is(":checked")) {
+        $("#masterdisable").hide(300);
+        $("#master2disable").hide(300);
+      } else {
+        $("#masterdisable").show(200);
+        $("#master2disable").show(200);
+      }
+    });
+
+    // Manufacturer
+    $('input[name=\'partner\']').autocomplete({
+      'source': function(request, response) {
+        $.ajax({
+          url: 'index.php?route=customer/customer/autocompletep&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+          dataType: 'json',
+          success: function(json) {
+            json.unshift({
+              partner: 0,
+              naziv: '{{ text_none }}'
+            });
+
+            response($.map(json, function(item) {
+              return {
+                label: item['naziv'],
+                value: item['partner']
+              }
+            }));
+          }
+        });
+      },
+      'select': function(item) {
+        $('input[name=\'naziv\']').val(item['label']);
+        $('input[name=\'partner\']').val(item['value']);
+      }
+    });
+
+
+    //--></script>
   <script type="text/javascript"><!--
   $('select[name=\'customer_group_id\']').on('change', function() {
+
+    if(this.value > 2){
+
+      $("#fname").html("Naziv");
+      $("#lname").html("Mjesto");
+
+      $("#fnamea").html("Naziv");
+      $("#lnamea").html("Mjesto");
+
+    }
+    else{
+
+      $("#fname").html("Ime");
+      $("#lname").html("Prezime");
+
+      $("#fnamea").html("Ime");
+      $("#lnamea").html("Prezime");
+    }
     $.ajax({
       url: 'index.php?route=customer/customer/customfield&user_token={{ user_token }}&customer_group_id=' + this.value,
       dataType: 'json',
@@ -936,18 +1013,13 @@
         $('.custom-field').removeClass('required');
 
 
+
+
+
         for (i = 0; i < json.length; i++) {
           custom_field = json[i];
 
           $('.custom-field' + custom_field['custom_field_id']).show();
-
-
-
-          $("#fname").html("Naziv");
-          $("#lname").html("Mjesto");
-
-          $("#fnamea").html("Naziv");
-          $("#lnamea").html("Mjesto");
 
           if (custom_field['required']) {
             $('.custom-field' + custom_field['custom_field_id']).addClass('required');
@@ -970,12 +1042,12 @@
     html += '  <input type="hidden" name="address[' + address_row + '][address_id]" value="" />';
 
     html += '  <div class="form-group required">';
-    html += '    <label class="col-sm-2 control-label" for="input-firstname' + address_row + '">{{ entry_firstname }}</label>';
+    html += '    <label class="col-sm-2 control-label" for="input-firstname' + address_row + '" id="fnamea">{{ entry_firstname }}</label>';
     html += '    <div class="col-sm-10"><input type="text" name="address[' + address_row + '][firstname]" value="" placeholder="{{ entry_firstname }}" id="input-firstname' + address_row + '" class="form-control" /></div>';
     html += '  </div>';
 
     html += '  <div class="form-group required">';
-    html += '    <label class="col-sm-2 control-label" for="input-lastname' + address_row + '">{{ entry_lastname }}</label>';
+    html += '    <label class="col-sm-2 control-label" for="input-lastname' + address_row + '" id="lnamea">{{ entry_lastname }}</label>';
     html += '    <div class="col-sm-10"><input type="text" name="address[' + address_row + '][lastname]" value="" placeholder="{{ entry_lastname }}" id="input-lastname' + address_row + '" class="form-control" /></div>';
     html += '  </div>';
 
