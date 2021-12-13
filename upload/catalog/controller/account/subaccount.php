@@ -45,6 +45,17 @@ class ControllerAccountSubaccount extends Controller {
 
 
         foreach($data['customerss'] as $cust) {
+
+            $mail = substr($cust->e_mail, 0, strpos($cust->e_mail, ","));
+            $mail = str_replace(' ', '', $mail);
+            if($mail){
+                $cust->e_mail = str_replace(' ', '', $mail);
+            }
+            else{
+                $cust->e_mail = $cust->e_mail;
+            }
+
+
             $customeremail = $this->model_account_customer->getCustomerByEmail($cust->e_mail);
         $email = $customeremail['email'];
             if($cust->e_mail != $email){
