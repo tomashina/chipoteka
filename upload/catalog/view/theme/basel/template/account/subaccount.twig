@@ -63,7 +63,13 @@
                                         <label class="form-label" for="input-custommeradd">Odaberite korisnika iz baze<span class='text-danger'>*</span></label>
 
                                         <select name="customeradd" id="input-customer" class="form-select">
+
+                                            {% if customers %}
                                             <option value="">{{ text_select }}</option>
+
+                                            {% else %}
+                                                <option value="">-- Trenutno nemate dodatnih korisnika --</option>
+                                            {% endif %}
 
                                             {% for customer in customers %}
 
