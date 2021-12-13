@@ -1089,7 +1089,7 @@ class ControllerCustomerCustomer extends Controller {
                 $this->error['warning'] = $this->language->get('error_permission');
             }
 
-            if ((utf8_strlen($this->request->post['firstname']) < 1) || (utf8_strlen(trim($this->request->post['firstname'])) > 32)) {
+            if ((utf8_strlen($this->request->post['firstname']) < 1) || (utf8_strlen(trim($this->request->post['firstname'])) > 128)) {
                 $this->error['firstname'] = $this->language->get('error_firstname');
             }
 
@@ -1142,7 +1142,7 @@ class ControllerCustomerCustomer extends Controller {
 
             if (isset($this->request->post['address'])) {
                 foreach ($this->request->post['address'] as $key => $value) {
-                    if ((utf8_strlen($value['firstname']) < 1) || (utf8_strlen($value['firstname']) > 32)) {
+                    if ((utf8_strlen($value['firstname']) < 1) || (utf8_strlen($value['firstname']) > 128)) {
                         $this->error['address'][$key]['firstname'] = $this->language->get('error_firstname');
                     }
 
