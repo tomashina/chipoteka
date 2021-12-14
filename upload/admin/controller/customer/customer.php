@@ -50,6 +50,11 @@ class ControllerCustomerCustomer extends Controller {
 
             $this->request->post['grupa_partnera'] = $this->request->post['partner'];
 
+
+            $this->request->post['customer_group_id'] = preg_replace('/[^0-9]/', '', $customer_data[0]->nivo_partnera);
+
+            $this->request->post['customer_group_id'] = (int)$this->request->post['customer_group_id'] + 2;
+
             if($this->request->post['password']){
                 $this->request->post['password'] = $this->request->post['password'];
 
