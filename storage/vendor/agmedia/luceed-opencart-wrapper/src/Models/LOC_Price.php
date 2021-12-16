@@ -291,14 +291,12 @@ class LOC_Price
 
             Log::store($product->luceed_uid . ' / ' . $product->product_id . ' ::: stara: ' . $old_price['price'] . ' ::: nova: ' . $price);
 
-            if ($old_price['price'] > $price) {
+            if ($old_price['price'] != $price) {
                 return $this->prices_to_update->put($product->luceed_uid, [
                     'id'    => $product->product_id,
                     'price' => $price,
                 ]);
             }
-
-            return false;
         }
 
         return $this->prices_to_update->put($product->luceed_uid, [
