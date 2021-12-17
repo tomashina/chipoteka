@@ -334,7 +334,6 @@ class ControllerMailOrder extends Controller {
             $order_info['mail'] = '1';
 
         }
-
         $this->sendMail($order_info);
 	}
 	
