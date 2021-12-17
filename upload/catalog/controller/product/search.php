@@ -15,6 +15,13 @@ class ControllerProductSearch extends Controller {
 			$search = '';
 		}
 
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
 		if (isset($this->request->get['tag'])) {
 			$tag = $this->request->get['tag'];
 		} elseif (isset($this->request->get['search'])) {
