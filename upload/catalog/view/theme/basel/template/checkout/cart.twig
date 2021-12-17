@@ -81,7 +81,12 @@
                                 <div class="pt-2">
                                     <h3 class="product-title fs-base mb-2"><a href="{{ product.href }}">{{ product.name }}</a></h3>
                                     {% if not product.stock %}
+                                    {% if groupId > 2  %}
+                                        <div class="fs-sm">  <span class="text-danger">***</span><span class="text-muted me-2"> Odmah dostupno: {{ product.kolicina }} kom</span></div>
+                                    {% else %}
                                         <span class="text-danger">***</span>
+                                    {% endif %}
+
                                     {% endif %}
                                     {% if product.option %}
                                         {% for option in product.option %}

@@ -32,10 +32,17 @@ class ControllerCheckoutConfirm extends Controller {
 		}
 
         // Validate cart has products and has stock.
-		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout') && $this->customer->getGroupId() < '3')) {
 			$redirect = $this->url->link('checkout/cart');
 		}
 
+
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
 
 
 
@@ -264,6 +271,7 @@ class ControllerCheckoutConfirm extends Controller {
 					'model'      => $product['model'],
 					'option'     => $option_data,
 					'download'   => $product['download'],
+                    'kolicina'     => $product['kolicina'],
 					'quantity'   => $product['quantity'],
 					'subtract'   => $product['subtract'],
 					'price'      => $product['price'],
@@ -420,6 +428,7 @@ class ControllerCheckoutConfirm extends Controller {
 					'model'      => $product['model'],
 					'option'     => $option_data,
 					'recurring'  => $recurring,
+                    'kolicina'     => $product['kolicina'],
 					'quantity'   => $product['quantity'],
 					'subtract'   => $product['subtract'],
 					'price'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),
