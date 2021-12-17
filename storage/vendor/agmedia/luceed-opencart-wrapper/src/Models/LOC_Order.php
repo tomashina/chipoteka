@@ -216,6 +216,14 @@ class LOC_Order
             $this->order['skl_dokument']  = 'MS';
         }
 
+        if ($this->hasOIB()) {
+            $this->order['sa__skladiste'] = '101';
+            $this->order['na__skladiste'] = '101';
+            $this->order['skl_dokument']  = 'OT';
+            $this->order['vrsta_isporuke']  = 'O7';
+            $this->order['iznos']  = number_format($this->oc_order['sub_total'], 2, '.', '');
+        }
+
         $this->log('Order create method: $this->>order - LOC_Order #156', $this->order);
     }
 
@@ -226,6 +234,10 @@ class LOC_Order
     private function getReservation()
     {
         $date = Carbon::now();
+
+        if ($this->hasOIB()) {
+            $date = $date->addDay(7);
+        }
 
         if (in_array($this->oc_order['payment_code'], ['cod', 'wspay'])) {
             $date = $date->addDay(10);
@@ -240,10 +252,23 @@ class LOC_Order
 
 
     /**
+     * @return bool
+     */
+    private function hasOIB(): bool
+    {
+        return ($this->oc_order['oib'] != '') ? true : false;
+    }
+
+
+    /**
      * @return string
      */
     private function getStatus()
     {
+        if ($this->hasOIB()) {
+            return '13';
+        }
+
         if ($this->oc_order['payment_code'] == 'cod') {
             return '02';
         }
@@ -492,6 +517,10 @@ class LOC_Order
      */
     private function getPaymentType()
     {
+        if ($this->hasOIB()) {
+            return '96';
+        }
+
         if (in_array($this->oc_order['payment_code'], ['cod', 'bank_transfer'])) {
             $loc_p = (new LOC_Payment())->getList(agconf('luceed.payment.' . $this->oc_order['payment_code']))->first();
         }
