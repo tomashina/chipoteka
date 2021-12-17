@@ -177,6 +177,10 @@ class LOC_Order
     {
         $iznos = number_format($this->oc_order['total'], 2, '.', '');
 
+        if ($this->hasOIB()) {
+            $iznos = $this->getSubTotal();
+        }
+
         $this->items_available = false;//$this->setAvailability();
 
         $this->order = [
@@ -217,11 +221,10 @@ class LOC_Order
         }
 
         if ($this->hasOIB()) {
+            $this->order['skladiste'] = '101';
             $this->order['sa__skladiste'] = '101';
-            $this->order['na__skladiste'] = '101';
             $this->order['skl_dokument']  = 'OT';
             $this->order['vrsta_isporuke']  = 'O7';
-            $this->order['iznos']  = number_format($this->oc_order['sub_total'], 2, '.', '');
         }
 
         $this->log('Order create method: $this->>order - LOC_Order #156', $this->order);
@@ -615,6 +618,23 @@ class LOC_Order
             'cijena'   => (float) $shipping_amount,
             'rabat'    => (int) 0,
         ];
+    }
+
+
+    /**
+     * @return int|string
+     */
+    private function getSubTotal()
+    {
+        $order_total = OrderTotal::where('order_id', $this->oc_order['order_id'])->get();
+
+        foreach ($order_total as $item) {
+            if ($item->code == 'sub_total') {
+                return number_format($item->value, 2, '.', '');
+            }
+        }
+
+        return 0;
     }
 
 
