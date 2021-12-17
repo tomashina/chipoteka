@@ -4,8 +4,11 @@
         "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">zahvaljujemo Vam na Va&scaron;oj narudžbi. Uplatu kao i narudžbu smo uredno zaprimili i na&scaron; tim u webshopu će je obraditi u najbržem mogućem roku.</p>",
         "data": "1"
     },
-
-
+    "2": {
+        "subject": "Chipoteka.hr - Ponuda broj %s",
+        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">zahvaljujemo Vam na Va&scaron;oj narudžbi, molimo vas da izvr&scaron;ite uplatu po sljedećim uputama za plaćanje. Rok za uplatu je maksimalno 48h tijekom koga robu koju ste naručili držimo rezerviranu za vas. Ukoliko u tom roku ne zaprimimo uplatu, nažalost moramo poni&scaron;titi ovu narudžbu.</p>",
+        "data": "1"
+    },
     "3": {
         "subject": "Chipoteka.hr  - Vaša narudžba broj %s se obrađuje",
         "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">roba iz va&scaron;e narudžbe <strong>%s</strong> se obrađuje na na&scaron;em skladi&scaron;tu.</p>\n\n<p>Čim je predamo dostavnoj službi, poslat ćemo Vam informaciju na mail.</p>",
@@ -50,6 +53,11 @@
         "subject": "Chipoteka.hr - I dalje Vas molimo za strpljenje za narudžbu broj %s",
         "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">znamo da ste nestrpljivi, ali imamo neuobičajeno veliki broj narudžbi. A s obzirom da je dodatno i dio Va&scaron;e naručene robe (ili sva) na vanjskom skladi&scaron;tu, dolazi do malog ka&scaron;njenja.</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Hvala Vam puno na strpljenju i razumijevanju.</p>",
         "data": "0"
+    },
+    "13": {
+        "subject": "Chipoteka.hr - Ponuda broj %s",
+        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">zahvaljujemo Vam na Va&scaron;oj narudžbi, molimo vas da izvr&scaron;ite uplatu po sljedećim uputama za plaćanje. Rok za uplatu je maksimalno 48h tijekom koga robu koju ste naručili držimo rezerviranu za vas. Ukoliko u tom roku ne zaprimimo uplatu, nažalost moramo poni&scaron;titi ovu narudžbu.</p>",
+        "data": "1"
     },
     "301": {
         "subject": "Chipoteka.hr  - Vaša narudžba broj %s se obrađuje",
