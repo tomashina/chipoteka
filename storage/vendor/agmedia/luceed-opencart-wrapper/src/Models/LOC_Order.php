@@ -217,6 +217,7 @@ class LOC_Order
         }
 
         if ($this->hasOIB()) {
+            $this->order['nalog_prodaje_b2b'] = $this->oc_order['order_id']. '-' . Carbon::now()->year.'-b2b',
             $this->order['sa__skladiste'] = '101';
             $this->order['na__skladiste'] = '101';
             $this->order['skl_dokument']  = 'OT';

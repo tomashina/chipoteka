@@ -25,7 +25,7 @@ class ControllerCheckoutCart extends Controller {
         }
 
 		if ($this->cart->hasProducts() || !empty($this->session->data['vouchers'])) {
-			if (!$this->cart->hasStock() && (!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning'))) {
+			if (!$this->cart->hasStock() && (!$this->config->get('config_stock_checkout')  && $this->customer->getGroupId() < '3' || $this->config->get('config_stock_warning'))) {
 				$data['error_warning'] = $this->language->get('error_stock');
 			} elseif (isset($this->session->data['error'])) {
 				$data['error_warning'] = $this->session->data['error'];
@@ -136,6 +136,13 @@ class ControllerCheckoutCart extends Controller {
 						$recurring .= sprintf($this->language->get('text_payment_cancel'), $this->currency->format($this->tax->calculate($product['recurring']['price'] * $product['quantity'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']), $product['recurring']['cycle'], $frequencies[$product['recurring']['frequency']], $product['recurring']['duration']);
 					}
 				}
+
+                if($this->customer->getGroupId() > '2'){
+
+                    $this->config->get('config_stock_checkout') == '1';
+
+                }
+
 
 				$data['products'][] = array(
 					'cart_id'   => $product['cart_id'],
