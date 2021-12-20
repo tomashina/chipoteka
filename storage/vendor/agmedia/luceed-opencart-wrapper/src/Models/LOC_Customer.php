@@ -239,13 +239,23 @@ class LOC_Customer
             }
         }
 
-        if ( ! $this->customer['uid'] && $this->customer['has_oib']) {
-            $alter = Customer::where('customer_id', $this->customer['id'])->with('address')->first();
+        Log::store('EXIST 1()::::::::::::::::::::::::::::::::::::::');
+        Log::store('$this->customer');
+        Log::store($this->customer);
+
+        if (empty($this->customer['uid']) && $this->customer['has_oib']) {
+            $alter = Customer::where('email', $this->customer['e_mail'])->first();
+
+            Log::store('enter');
+            Log::store($alter);
 
             if ($alter) {
                 // Namjesti kupca koji kupuje kao Alter Customer
                 foreach ($exist as $l_customer) {
                     if ($l_customer->grupacija && $l_customer->adresa == $alter->address->address_1) {
+                        Log::store($l_customer);
+
+                        $this->alter_customer = $this->populateCustomerForLuceed(collect($l_customer), true);
                         $this->alter_customer['uid'] = $l_customer->partner_uid;
                         $this->alter_customer['mjesto_uid'] = $l_customer->mjesto_uid;
                     }
@@ -460,6 +470,7 @@ class LOC_Customer
             'e_mail'              => $collection['email'],
             'postanski_broj'      => $collection['zip'],
             'mjesto_uid'          => $this->setCityUid($collection['zip'], $collection['city']),
+            'has_oib'             => $collection['has_oib']
         ];
 
         return $data;
