@@ -104,6 +104,12 @@ class ControllerAccountSubaccount extends Controller {
 
             $this->model_account_address->addAddress($customer['customer_id'], $this->request->post);
 
+            $address_id = $this->model_account_address->getSingleAddressID($customer['customer_id']);
+
+            $address_id =  $address_id['address_id'];
+
+            $this->model_account_customer->editAddressId($customer['customer_id'], $address_id);
+
             unset($this->session->data['guest']);
 
            $this->response->redirect($this->url->link('account/success'));

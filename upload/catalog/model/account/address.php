@@ -28,6 +28,13 @@ class ModelAccountAddress extends Model {
 		}
 	}
 
+
+    public function getSingleAddressID($customer_id) {
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "address WHERE customer_id = '" . (int)$customer_id . "'");
+
+        return $query->row;
+    }
+
 	public function getAddress($address_id) {
 		$address_query = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "address WHERE address_id = '" . (int)$address_id . "' AND customer_id = '" . (int)$this->customer->getId() . "'");
 
