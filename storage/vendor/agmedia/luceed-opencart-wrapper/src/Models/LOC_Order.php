@@ -522,7 +522,7 @@ class LOC_Order
     private function getPaymentType()
     {
         if ($this->hasOIB()) {
-            return '96';
+            return '96-1063';
         }
 
         if (in_array($this->oc_order['payment_code'], ['cod', 'bank_transfer'])) {
