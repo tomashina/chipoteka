@@ -239,6 +239,40 @@ class LOC_Customer
             }
         }
 
+        if ( ! $this->customer['uid'] && $this->customer['has_oib']) {
+            $alter = Customer::where('customer_id', $this->customer['id'])->with('address')->first();
+
+            if ($alter) {
+                // Namjesti kupca koji kupuje kao Alter Customer
+                foreach ($exist as $l_customer) {
+                    if ($l_customer->grupacija && $l_customer->adresa == $alter->address->address_1) {
+                        $this->alter_customer['uid'] = $l_customer->partner_uid;
+                        $this->alter_customer['mjesto_uid'] = $l_customer->mjesto_uid;
+                    }
+                }
+
+                $main = Customer::where('grupa_partnera', $alter->grupa_partnera)->where('master', 1)->first();
+
+                if ($main) {
+                    $main_exist = $this->setResponseData(
+                        $this->service->getCustomerByEmail($main->email)
+                    );
+
+                    if ( ! empty($main_exist)) {
+                        foreach ($main_exist as $l_customer) {
+                            if ($l_customer->enabled == 'D') {
+                                if ( ! $l_customer->grupacija) {
+                                    $this->customer['uid'] = $l_customer->partner_uid;
+                                    $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
         Log::store('EXIST()::::::::::::::::::::::::::::::::::::::');
         Log::store('$this->customer');
         Log::store($this->customer);

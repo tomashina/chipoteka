@@ -314,7 +314,8 @@ class LOC_Order
             'shipping_zip'     => $this->oc_order['shipping_postcode'],
             'shipping_city'    => $this->oc_order['shipping_city'],
             'shipping_country' => $this->oc_order['shipping_country'],
-            'should_update'    => $update
+            'should_update'    => $update,
+            'has_oib'          => $this->hasOIB()
         ];
     }
 
