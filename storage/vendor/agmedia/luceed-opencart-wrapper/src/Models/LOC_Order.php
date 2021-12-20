@@ -628,14 +628,15 @@ class LOC_Order
     private function getSubTotal()
     {
         $order_total = OrderTotal::where('order_id', $this->oc_order['order_id'])->get();
+        $total = 0;
 
         foreach ($order_total as $item) {
-            if ($item->code == 'sub_total') {
-                return number_format($item->value, 2, '.', '');
+            if ($item->code == 'sub_total' || $item->code == 'shipping') {
+                $total += $item->value;
             }
         }
 
-        return 0;
+        return number_format($total, 2, '.', '');
     }
 
 
