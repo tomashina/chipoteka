@@ -226,6 +226,9 @@ class LOC_Order
             $this->order['sa__skladiste'] = '101';
             $this->order['skl_dokument']  = 'OT';
             $this->order['vrsta_isporuke']  = '07';
+            $this->order['cijene_s_porezom']  = 'N';
+            $this->order['vrsta_placanja']  = '96-1063';
+
         }
 
         $this->log('Order create method: $this->>order - LOC_Order #156', $this->order);
