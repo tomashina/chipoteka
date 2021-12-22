@@ -614,7 +614,7 @@ class LOC_Order
         foreach ($order_total as $item) {
             if ($item->code == 'shipping') {
                 if ($this->hasOIB()) {
-                    $shipping_amount = 31.2;
+                    $shipping_amount = $item->value / 1.25;
                 } else {
                     $shipping_amount = $item->value;
                 }
