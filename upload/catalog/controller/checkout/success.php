@@ -7,6 +7,13 @@ class ControllerCheckoutSuccess extends Controller {
 	public function index() {
 		$this->load->language('checkout/success');
 
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
 		if (isset($this->session->data['order_id'])) {
             $this->load->model('checkout/order');
             $order_id = $this->session->data['order_id'];
@@ -39,7 +46,7 @@ class ControllerCheckoutSuccess extends Controller {
             $nhs_no = $order_id . date("ym");
             $poziv_nb = $nhs_no . $this->mod11INI($nhs_no);
 
-           $this->load->model('checkout/order');
+            $this->load->model('checkout/order');
             $oc_order = $this->model_checkout_order->getOrder($order_id);
             $oc_order['poziv_na_broj'] = $poziv_nb;
             $order    = new LOC_Order($oc_order);
