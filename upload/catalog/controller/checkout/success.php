@@ -7,12 +7,7 @@ class ControllerCheckoutSuccess extends Controller {
 	public function index() {
 		$this->load->language('checkout/success');
 
-        if ($this->customer->isLogged()) {
-            $data['groupId'] = $this->customer->getGroupId();
 
-        } else {
-            $data['groupId'] ='0';
-        }
 
 		if (isset($this->session->data['order_id'])) {
             $this->load->model('checkout/order');
@@ -173,6 +168,16 @@ class ControllerCheckoutSuccess extends Controller {
 
         $this->load->model('catalog/product');
         $this->load->model('tool/upload');
+
+
+            if ($this->customer->isLogged()) {
+                $data['groupId'] = $this->customer->getGroupId();
+
+            } else {
+                $data['groupId'] ='0';
+            }
+
+
 
         // Products
         $data['products'] = array();
