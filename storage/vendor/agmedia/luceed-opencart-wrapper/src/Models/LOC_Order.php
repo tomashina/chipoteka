@@ -635,7 +635,7 @@ class LOC_Order
         $total = 0;
 
         foreach ($order_total as $item) {
-            if ($item->code == 'sub_total' || $item->code == 'shipping') {
+            if ($item->code == 'total' || $item->code == 'shipping') {
                 $total += $item->value;
             }
         }
