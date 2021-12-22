@@ -613,7 +613,11 @@ class LOC_Order
 
         foreach ($order_total as $item) {
             if ($item->code == 'shipping') {
-                $shipping_amount = $item->value;
+                if ($this->hasOIB()) {
+                    $shipping_amount = 31.2;
+                } else {
+                    $shipping_amount = $item->value;
+                }
             }
         }
 
