@@ -9,6 +9,13 @@ class ControllerCheckoutShippingAddress extends Controller {
 			$data['address_id'] = $this->customer->getAddressId();
 		}
 
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
 		$this->load->model('account/address');
         $data['cart'] = $this->url->link('checkout/cart', '', true);
 

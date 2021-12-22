@@ -17,11 +17,12 @@
       {% endfor %}
     </select>
   </div>
+  {% if groupId < 3  %}
     <div class="radio form-check">
-
       <input type="radio" class="form-check-input"  name="shipping_address" value="new" />
       <label class="form-check-label"> {{ text_address_new }}</label>
   </div>
+  {% endif %}
   {% endif %}
   <br />
   <div id="shipping-new" class="row"   style="display: {% if addresses %}none{% else %}block{% endif %};">

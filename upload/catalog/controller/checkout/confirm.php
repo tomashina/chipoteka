@@ -431,6 +431,7 @@ class ControllerCheckoutConfirm extends Controller {
                     'kolicina'     => $product['kolicina'],
 					'quantity'   => $product['quantity'],
 					'subtract'   => $product['subtract'],
+                    'stock'     => $product['stock'] ? true : !(!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning')),
 					'price'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),
 					'total'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity'], $this->session->data['currency']),
 					'href'       => $this->url->link('product/product', 'product_id=' . $product['product_id'])
