@@ -124,7 +124,7 @@ class ControllerCheckoutConfirm extends Controller {
                     $razlika = FREESHIPPINGB2B - $this->cart->getTotal();
 
                     $razlika = number_format($razlika, 2, ',', '');
-                    $data['freeshipppingnotification'] =   sprintf($this->language->get('b2bfreeshipppingnotification'), $razlika);
+                    $data['freeshipppingnotification'] =   sprintf($this->language->get('freeshipppingnotificationb2b'), $razlika);
 
                 } else {
                     $data['freeshipppingnotification'] = '';
