@@ -117,14 +117,30 @@ class ControllerCheckoutConfirm extends Controller {
 
 			$this->load->language('checkout/checkout');
 
-            if ($this->cart->getTotal() < FREESHIPPING ) {
-                $razlika = FREESHIPPING - $this->cart->getTotal();
+            if($data['groupId']>=2){
 
-                $razlika = number_format($razlika, 2, ',', '');
-                $data['freeshipppingnotification'] =   sprintf($this->language->get('freeshipppingnotification'), $razlika);
+                if ($this->cart->getTotal() < FREESHIPPINGB2B ) {
 
-            } else {
-                $data['freeshipppingnotification'] = '';
+                    $razlika = FREESHIPPINGB2B - $this->cart->getTotal();
+
+                    $razlika = number_format($razlika, 2, ',', '');
+                    $data['freeshipppingnotification'] =   sprintf($this->language->get('b2bfreeshipppingnotification'), $razlika);
+
+                } else {
+                    $data['freeshipppingnotification'] = '';
+                }
+            }
+            else {
+
+                if ($this->cart->getTotal() < FREESHIPPING) {
+                    $razlika = FREESHIPPING - $this->cart->getTotal();
+
+                    $razlika = number_format($razlika, 2, ',', '');
+                    $data['freeshipppingnotification'] = sprintf($this->language->get('freeshipppingnotification'), $razlika);
+
+                } else {
+                    $data['freeshipppingnotification'] = '';
+                }
             }
 
 			$order_data['invoice_prefix'] = $this->config->get('config_invoice_prefix');
