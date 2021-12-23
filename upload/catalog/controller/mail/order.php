@@ -317,6 +317,15 @@ class ControllerMailOrder extends Controller {
 		$mail->setHtml($this->load->view('mail/order_add', $data));
 		//$mail->send();
 
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
+
+
         if ($order_info['payment_code'] == 'cod') {
 
             $order_info['mail'] = '7';
@@ -326,6 +335,12 @@ class ControllerMailOrder extends Controller {
         else if ($order_info['payment_code'] == 'bank_transfer') {
 
             $order_info['mail'] = '2';
+
+        }
+
+        else if ($order_info['payment_code'] == 'bank_transfer' &&  $data['groupId'] >= 2) {
+
+            $order_info['mail'] = '13';
 
         }
 
@@ -558,6 +573,9 @@ class ControllerMailOrder extends Controller {
             $nhs_no = $order['order_id'].date("ym");
 
             $data['mail_poziv_na_broj'] = $nhs_no.$this->mod11INI($nhs_no);
+
+
+            $data['b2b'] = $order['mail'];
 
            // \Agmedia\Helpers\Log::store($data);
 

@@ -56,7 +56,7 @@
     },
     "13": {
         "subject": "Chipoteka.hr - Ponuda broj %s",
-        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">zahvaljujemo Vam na Va&scaron;oj narudžbi, molimo vas da izvr&scaron;ite uplatu po sljedećim uputama za plaćanje. Rok za uplatu je maksimalno 48h tijekom koga robu koju ste naručili držimo rezerviranu za vas. Ukoliko u tom roku ne zaprimimo uplatu, nažalost moramo poni&scaron;titi ovu narudžbu.</p>",
+        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">zahvaljujemo Vam na Va&scaron;oj narudžbi.</p>",
         "data": "1"
     },
     "301": {
