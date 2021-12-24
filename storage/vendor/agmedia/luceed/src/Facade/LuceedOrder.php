@@ -26,4 +26,12 @@ class LuceedOrder extends Facade
         return $luceed->getOrders($statuses);
     }
 
+
+    public static function document(string $document_uid)
+    {
+        $luceed = new Luceed();
+
+        return $luceed->getOrderDocument($document_uid);
+    }
+
 }

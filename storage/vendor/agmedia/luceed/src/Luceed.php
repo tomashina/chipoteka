@@ -332,4 +332,15 @@ class Luceed
         return $this->service->get($this->end_points['orders_get'], $query);
     }
 
+
+    /**
+     * @param string $uid
+     *
+     * @return false|mixed
+     */
+    public function getOrderDocument(string $uid)
+    {
+        return $this->service->get($this->end_points['order_document'], $uid);
+    }
+
 }

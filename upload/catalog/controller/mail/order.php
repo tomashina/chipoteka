@@ -565,22 +565,21 @@ class ControllerMailOrder extends Controller {
             for ($i = 0; $i < count($data['products']); $i++) {
                 $data['products'][$i]['image'] = HTTPS_SERVER.'image/'.Product::where('product_id', $data['products'][$i]['product_id'])->pluck('image')->first();
             }
+
             $data['mail_logo'] = HTTPS_SERVER.'image/chipoteka-hd.png';
             $data['mail_title'] = sprintf($email['subject'], $order['order_id']);
-
             $data['mail_data'] = $email['data'];
 
             $nhs_no = $order['order_id'].date("ym");
-
             $data['mail_poziv_na_broj'] = $nhs_no.$this->mod11INI($nhs_no);
-
 
             $data['b2b'] = $order['mail'];
 
-           // \Agmedia\Helpers\Log::store($data);
+            $lc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Document();
+            $data['b2b_products'] = $lc->setDocument($order['luceed_uid'])->sortProducts($data['products']);
 
 
-            // $html = $this->load->view('mail/mail', $data);
+                // $html = $this->load->view('mail/mail', $data);
 
             $mail = new Mail($this->config->get('config_mail_engine'));
             $mail->parameter = $this->config->get('config_mail_parameter');
