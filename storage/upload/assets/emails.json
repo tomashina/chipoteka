@@ -59,6 +59,11 @@
         "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">zahvaljujemo Vam na Va&scaron;oj narudžbi.</p>",
         "data": "1"
     },
+    "100": {
+        "subject": "Chipoteka.hr - Informacije o dolasku robe",
+        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">šaljemo Vam spisak proizvoda koji su dostupni, spakirani i čekaju dostavnu službu za preuzimanje.</p>",
+        "data": "2"
+    },
     "301": {
         "subject": "Chipoteka.hr  - Vaša narudžba broj %s se obrađuje",
         "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">roba iz va&scaron;e narudžbe <strong>%s</strong> se obrađuje na na&scaron;em skladi&scaron;tu.</p>\n\n<p>Čim je predamo dostavnoj službi, poslat ćemo Vam informaciju na mail.</p>",
