@@ -305,9 +305,11 @@ class Luceed
      *
      * @return mixed
      */
-    public function createOrder(array $order, bool $b2b)
+    public function createOrder(array $order, bool $b2b = false)
     {
-        $this->service = new LuceedService($b2b);
+        if ($b2b) {
+            $this->service = new LuceedService($b2b);
+        }
 
         return $this->service->post($this->end_points['order_create'], $order);
     }
