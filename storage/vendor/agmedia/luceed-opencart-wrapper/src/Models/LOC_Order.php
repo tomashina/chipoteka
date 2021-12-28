@@ -228,6 +228,7 @@ class LOC_Order
             $this->order['vrsta_isporuke']  = '07';
             $this->order['cijene_s_porezom']  = 'N';
             $this->order['vrsta_placanja']  = '96-1063';
+            $this->order['komercijalist__radnik_uid'] = '';
 
         }
 
