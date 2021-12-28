@@ -134,7 +134,7 @@ class LOC_Order
 
         // Send order to luceed service.
         $this->response = json_decode(
-            $this->service->createOrder(['nalozi_prodaje' => [$this->order]])
+            $this->service->createOrder(['nalozi_prodaje' => [$this->order]], $this->hasOIB())
         );
 
         $this->log('Store order response: $this->response - LOC_Order #98.', $this->response);

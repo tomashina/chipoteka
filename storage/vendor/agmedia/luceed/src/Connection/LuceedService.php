@@ -35,12 +35,17 @@ class LuceedService
     /**
      * LuceedService constructor.
      */
-    public function __construct()
+    public function __construct(bool $b2b)
     {
         $this->base_url = agconf('service.base_url');
         $this->username = agconf('service.username');
         $this->password = agconf('service.password');
         $this->env      = agconf('env');
+
+        if ($b2b) {
+            $this->username = 'b2bweb';
+            $this->password = 'DJi2L7CNqa';
+        }
     }
 
 
