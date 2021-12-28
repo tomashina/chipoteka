@@ -391,7 +391,7 @@ class ModelCatalogProduct extends Model {
 	}
 
 
-    public function getProductRelated($product_id, $price) {
+    public function getProductRelated($product_id) {
 
         $product_data = array();
 
