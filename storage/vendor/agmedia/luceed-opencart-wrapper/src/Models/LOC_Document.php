@@ -57,11 +57,13 @@ class LOC_Document
      */
     public function setDocument($document)
     {
-        $json = json_decode(
-            LuceedOrder::document($document)
-        );
+        if ($document) {
+            $json = json_decode(
+                LuceedOrder::document($document)
+            );
 
-        $this->document = collect($json->result[0]->dokumenti)->where('dokument', 'OT');
+            $this->document = collect($json->result[0]->dokumenti)->where('dokument', 'OT');
+        }
 
         return $this;
     }
