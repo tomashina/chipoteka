@@ -332,7 +332,7 @@ class ControllerMailOrder extends Controller {
 
         }
 
-        else if ($order_info['payment_code'] == 'bank_transfer') {
+        else if ($order_info['payment_code'] == 'bank_transfer' &&  $data['groupId'] < 2) {
 
             $order_info['mail'] = '2';
 
