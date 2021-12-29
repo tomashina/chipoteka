@@ -349,6 +349,8 @@ class ControllerMailOrder extends Controller {
             $order_info['mail'] = '1';
 
         }
+
+        Log::info($order_info);
         $this->sendMail($order_info);
 	}
 	
