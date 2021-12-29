@@ -1368,6 +1368,8 @@
     </table>
 
     {% for product in b2b_products %}
+
+    {% if product.kolicina > 0  %}
         <!-- order_row -->
         <table class="email_section" role="presentation" align="center" width="100%" cellspacing="0" cellpadding="0" border="0">
             <tbody>
@@ -1475,7 +1477,7 @@
             </tr>
             </tbody>
         </table>
-
+    {% endif %}
     {% endfor %}
 
     <!-- order_total -->
