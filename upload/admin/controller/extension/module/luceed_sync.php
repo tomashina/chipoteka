@@ -626,7 +626,34 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $this->sendMail($order);
         }
 
+        $updated += $this->updateB2BOrderStatuses();
+
         return $this->response($updated, 'orders');
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function updateB2BOrderStatuses()
+    {
+        $loc = new LOC_Order();
+
+        $loc->setOrders(
+            LuceedOrder::get(
+                $loc->collectStatuses(),
+                agconf('import.orders.from_date'),
+                true
+            )
+        );
+
+        $updated = $loc->sort()->updateStatuses();
+
+        foreach ($loc->collection as $order) {
+            $this->sendMail($order);
+        }
+
+        return $updated;
     }
 
 

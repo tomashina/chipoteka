@@ -48,18 +48,16 @@ class LOC_Document
 
 
     /**
-     * Return the corrected response from luceed service.
-     * Without unnecessary tags.
-     *
-     * @param $dobavljaci
+     * @param string $document
+     * @param bool   $b2b
      *
      * @return $this
      */
-    public function setDocument($document)
+    public function setDocument(string $document, bool $b2b = false): LOC_Document
     {
         if ($document) {
             $json = json_decode(
-                LuceedOrder::document($document)
+                LuceedOrder::document($document, $b2b)
             );
 
             $this->document = collect($json->result[0]->dokumenti)->where('dokument', 'OT');
