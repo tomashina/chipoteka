@@ -387,6 +387,8 @@ class LOC_Order
             }
         }
 
+        Log::info($this->collection);
+
         if ( ! empty($this->collection)) {
             // Get the apropriate mail.
             for ($i = 0; $i < count($this->collection); $i++) {
