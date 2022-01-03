@@ -387,8 +387,6 @@ class LOC_Order
             }
         }
 
-        Log::info($this->collection);
-
         if ( ! empty($this->collection)) {
             // Get the apropriate mail.
             for ($i = 0; $i < count($this->collection); $i++) {
@@ -515,7 +513,7 @@ class LOC_Order
      */
     private function checkInstallments(): void
     {
-        if ($this->oc_order['installment'] != '0000') {
+        if ($this->oc_order && $this->oc_order['installment'] != '0000') {
             $this->installments = (int) substr($this->oc_order['installment'], 0, 2);
         }
     }
