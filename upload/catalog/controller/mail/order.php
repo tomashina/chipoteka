@@ -579,8 +579,11 @@ class ControllerMailOrder extends Controller {
 
             $lc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Document();
             $is_b2b = ($data['oib'] != '') ? true : false;
-            $is_b2b = $is_b2b ? false : true;
-            $data['b2b_products'] = $lc->setDocument($order['luceed_uid'], $is_b2b)->sortProducts($data['products']);
+            $data['b2b_products'] = [];
+
+            if ($order['luceed_uid']) {
+                $data['b2b_products'] = $lc->setDocument($order['luceed_uid'], $is_b2b)->sortProducts($data['products']);
+            }
 
             // $html = $this->load->view('mail/mail', $data);
 

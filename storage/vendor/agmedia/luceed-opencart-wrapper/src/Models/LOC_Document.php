@@ -57,7 +57,7 @@ class LOC_Document
     {
         if ($document) {
             $json = json_decode(
-                LuceedOrder::document($document, $b2b ?: false)
+                LuceedOrder::document($document, $b2b)
             );
 
             $this->document = collect($json->result[0]->dokumenti)->where('dokument', 'OT');
