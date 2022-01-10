@@ -722,6 +722,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 $data['b2b_products'] = $lc->setDocument($order['luceed_uid'], $is_b2b)->sortProducts($data['products']);
             }
 
+
+            \Agmedia\Helpers\Log::store($data);
+
             $mail                = new Mail($this->config->get('config_mail_engine'));
             $mail->parameter     = $this->config->get('config_mail_parameter');
             $mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
