@@ -709,7 +709,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $nhs_no                     = $order['order_id'] . date("ym");
             $data['mail_poziv_na_broj'] = $nhs_no . $this->mod11INI($nhs_no);
 
-
             $data['b2b'] = $order['mail'];
 
             $lc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Document();
@@ -718,12 +717,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $data['is_b2b'] = $is_b2b;
             $data['b2b_products'] = [];
 
-            if ($data['luceed_uid']) {
+            if (isset($data['luceed_uid']) && $data['luceed_uid']) {
                 $data['b2b_products'] = $lc->setDocument($data['luceed_uid'], $is_b2b)->sortProducts($data['products']);
             }
-
-
-            \Agmedia\Helpers\Log::store($data);
 
             $mail                = new Mail($this->config->get('config_mail_engine'));
             $mail->parameter     = $this->config->get('config_mail_parameter');

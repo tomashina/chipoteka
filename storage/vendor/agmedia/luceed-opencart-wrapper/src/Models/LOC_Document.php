@@ -28,7 +28,7 @@ class LOC_Document
     public function sortProducts(array $products): array
     {
         for ($i = 0; $i < count($products); $i++) {
-            foreach ($this->document->stavke as $document_item) {
+            foreach ($this->document->first()->stavke as $document_item) {
                 if ($document_item->artikl == $products[$i]['model']) {
                     $products[$i]['kolicina'] = $document_item->kolicina;
                     $products[$i]['dostupno'] = 1;
