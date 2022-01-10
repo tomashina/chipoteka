@@ -718,8 +718,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $data['is_b2b'] = $is_b2b;
             $data['b2b_products'] = [];
 
-            if ($order['luceed_uid']) {
-                $data['b2b_products'] = $lc->setDocument($order['luceed_uid'], $is_b2b)->sortProducts($data['products']);
+            if ($data['luceed_uid']) {
+                $data['b2b_products'] = $lc->setDocument($data['luceed_uid'], $is_b2b)->sortProducts($data['products']);
             }
 
 
