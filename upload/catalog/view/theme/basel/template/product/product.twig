@@ -63,8 +63,8 @@
                             <!-- Product details-->
                             <div class="col-md-7 col-xxxl-7" style="min-width: 1px;">
                                 <div class="product-features" id="product">
-                                    <div class="badges-wrapper {% if freeshipping == false and special == '' %} mt-2 {% endif %}">
-                                        {% if freeshipping %}
+                                    <div class="badges-wrapper {% if freeshipping == false and special == '' %} mt-2 {% endif %} {% if groupId > 1 %}mt-2 {% endif %}">
+                                        {% if freeshipping and groupId < 2 %}
                                             <div class="product-badge-cpta product-badge-cpta__free-shipping me-3">
                                                 <span> Besplatna dostava</span>
                                                 <i class="fas fa-shipping-fast"></i>
@@ -77,31 +77,61 @@
                                             </div>
                                         {% endif %}
                                     </div>
-                                    <div class="description-short  ">
+                                    <div class="description-short   ">
                                         {% if short_description %}
                                             <h5 class="title">{{ text_short_description }}</h5>
                                             {{ short_description }}
                                         {% endif %}
                                     </div>
-                                    <div class="price-wrapper">
-                                        <div class="product-price">
-                                            {% if not special %}
+
+                                    {% if groupId < 2 %}
+                                        <div class="price-wrapper">
+                                            <div class="product-price">
+                                                {% if not special %}
+                                                    <span>{{ price_2 }}</span>
+                                                {% else %}
+
+                                                    <span><del>{{ price_2 }}</del></span>
+
+                                                    <span id="special_countdown"></span>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="product-price--web">
+                                                <span>{% if  special %} Akcija:{% else %}   {% if price_2 != price %} Web cijena:  {% endif %}{% endif %}</span>
+                                                <span> {% if  special %}{{ special }} {% else %} {% if price_2 != price %} {{ price }} {% endif %} {% endif %}</span>
+                                            </div>
+
+                                        </div>
+                                    {% else %}
+
+                                        <div class="price-wrapper">
+                                            <div class="product-price">
+
+
+                                                {% if discounts %}
+                                                    {% for discount in discounts %}
+                                                        <span>{{ discount.price }} + PDV</span>
+                                                    {% endfor %}
+
+                                                {% else %}
+                                                    <span> {{ price }} + PDV</span>
+                                                {% endif %}
+
+
+                                            </div>
+
+                                            <div class="product-price--web">
+
+                                                <span>Preporučena MPC</span>
                                                 <span>{{ price_2 }}</span>
-                                            {% else %}
 
-                                                <span><del>{{ price_2 }}</del></span>
+                                            </div>
 
-                                                <span id="special_countdown"></span>
-                                            {% endif %}
                                         </div>
 
-                                        <div class="product-price--web">
-                                            <span>{% if  special %} Akcija:{% else %}   {% if price_2 != price %} Web cijena:  {% endif %}{% endif %}</span>
-                                            <span> {% if  special %}{{ special }} {% else %} {% if price_2 != price %} {{ price }} {% endif %} {% endif %}</span>
-                                        </div>
-
-                                    </div>
-                                    {% if prikazrata %}
+                                    {% endif %}
+                                    {% if prikazrata  and groupId < 2 %}
                                         <div class="buying-choices mb-1 mt-n1 mt-md-n3">
                                             <div class="choices-wrapper">
                                                 <i class="fas fa-badge-percent"></i>
@@ -110,12 +140,18 @@
                                             </div>
                                         </div>
                                     {% endif %}
-                                    {% if jamstvo %}
+                                    {% if jamstvo and groupId < 2 %}
                                         <div class="warranty-time mb-4"><i class="fas fa-clock"></i> <span>Jamstvo: <strong>{{ jamstvo }} </strong></span></div>
                                     {% endif %}
                                     <div class="product-quantity-button">
                                         <div class="input-group me-0 me-sm-3 quantity">
-                                            <input type="text" step="1" min="{{ minimum }}" max="{{ qty }}" name="quantity" value="{{ minimum }}" id="input-quantity"  class="form-control input-quantity"  />
+                                            {% if groupId > 2  %}
+
+                                                {% set qty = 5000  %}
+                                                <input type="text" step="1" min="{{ minimum }}" max="{{ qty }}" name="quantity" value="{{ minimum }}" id="input-quantity"  class="form-control input-quantity"  />
+                                            {% else %}
+                                                <input type="text" step="1" min="{{ minimum }}" max="{{ qty }}" name="quantity" value="{{ minimum }}" id="input-quantity"  class="form-control input-quantity"  />
+                                            {% endif %}
                                             <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
                                                 <i class="fas fa-minus"></i>
                                             </button>
@@ -125,116 +161,99 @@
                                         </div>
                                         <input type="hidden" name="product_id" value="{{ product_id }}" />
                                         <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100 me-3">{% if ((qty < 1) and (stock_badge_status)) %} {{ basel_text_out_of_stock }} {% else %} {{ button_cart }} {% endif %}</button>
-
                                         <button class="btn btn-outline-secondary btn-wishlist-v2" onclick="wishlist.add('{{ product_id }}');" type="button"><i class="fal fa-heart fs-lg "></i></button>
-
-
-
                                     </div>
-
                                     <div class="text-danger porukareach mb-3 d-none" >Dosegli ste maksimum raspoloživosti - {{ qty }}</div>
-
                                     {% if minimum > 1 %}
                                         <div class="alert alert-sm alert-info"><i class="fa fa-info-circle"></i> {{ text_minimum }}</div>
                                     {% endif %}
-                                    <div class="accordion product-accordion mb-4" id="productPanels">
-                                        <div class="accordion-item">
-                                            <h4 class="accordion-header"><a class="accordion-button collapsed" href="#shippingOptions" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="shippingOptions"><i class="fal fa-map-marker-minus text-muted lead align-middle mt-n1 me-3"></i>Dostupnost proizvoda po poslovnicama</a></h4>
-                                            <div class="accordion-collapse collapse" id="shippingOptions" data-bs-parent="#productPanels">
-                                                <div class="accordion-body" id="availability-view">
+                                    {% if groupId < 2 %}
+                                        <div class="accordion product-accordion mb-4" id="productPanels">
+                                            <div class="accordion-item">
+                                                <h4 class="accordion-header"><a class="accordion-button collapsed" href="#shippingOptions" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="shippingOptions"><i class="fal fa-map-marker-minus text-muted lead align-middle mt-n1 me-3"></i>Dostupnost proizvoda po poslovnicama</a></h4>
+                                                <div class="accordion-collapse collapse" id="shippingOptions" data-bs-parent="#productPanels">
+                                                    <div class="accordion-body" id="availability-view">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="accordion-item">
+                                                <h4 class="accordion-header"><a class="accordion-button collapsed" href="#localStore" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="localStore"><i class="fal fa-tags text-muted fs-lg align-middle mt-n1 me-3"></i>Način plaćanja na web shopu</a></h4>
+                                                <div class="accordion-collapse collapse" id="localStore" data-bs-parent="#productPanels">
+                                                    <div class="accordion-body">
+                                                        <h6 class="mt-2">Jednokratno plaćanje:</h6>
+                                                        <ul>
+                                                            <li> Internet bankarstvo (virman)</li>
+                                                            <li> Pouzećem - plaćanje gotovinom dostavljaču kod isporuke paketa</li>
+                                                            <li>Maestro, MasterCard, Visa, Visa Premium</li>
+                                                        </ul>
+
+                                                        <h6 class="mt-3">Obročno plaćanje:</h6>
+                                                        <ul class="mb-2">
+                                                            <li>MasterCard ZABA do 24 rate</li>
+                                                            <li> Visa Premium do 10 rata</li>
+                                                        </ul>
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="accordion-item">
-                                            <h4 class="accordion-header"><a class="accordion-button collapsed" href="#localStore" role="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="localStore"><i class="fal fa-tags text-muted fs-lg align-middle mt-n1 me-3"></i>Način plaćanja na web shopu</a></h4>
-                                            <div class="accordion-collapse collapse" id="localStore" data-bs-parent="#productPanels">
-                                                <div class="accordion-body">
-                                                    <h6 class="mt-2">Jednokratno plaćanje:</h6>
-                                                    <ul>
-                                                        <li> Internet bankarstvo (virman)</li>
-                                                        <li> Pouzećem - plaćanje gotovinom dostavljaču kod isporuke paketa</li>
-                                                        <li>Maestro, MasterCard, Visa, Visa Premium</li>
-                                                    </ul>
-
-                                                    <h6 class="mt-3">Obročno plaćanje:</h6>
-                                                    <ul class="mb-2">
-                                                        <li>MasterCard ZABA do 24 rate</li>
-                                                        <li> Visa Premium do 10 rata</li>
-                                                    </ul>
-
-                                                </div>
+                                        <div class="product-delivery-time">
+                                            <i class="fas fa-shipping-timed" id="availability-icon"></i>
+                                            <div class="d-flex flex-column">
+                                                <span id="availability-title"></span>
+                                                <span id="availability-subtitle"></span>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="product-delivery-time">
-                                        <i class="fas fa-shipping-timed" id="availability-icon"></i>
-                                        <div class="d-flex flex-column">
-                                            <span id="availability-title"></span>
-                                            <span id="availability-subtitle"></span>
-                                            {#<span>
-                                                {% if ((qty < 1) and (stock_badge_status)) %}
-                                                    Nedostupno na web shopu
-                                                {% else %}
-                                                    Imamo proizvod
-                                                {% endif %}
-                                             </span>
-                                            {% if qty > 1 %}
-                                                <span>
-                                              Stiže Vam do {{ saljemodo }}
-                                              </span>
-                                            {% endif %}#}
-                                        </div>
-                                    </div>
-                                    <p class="product-id"><strong>{{ text_model }}</strong> {{ model }}</p>
+                                        <p class="product-id"><strong>{{ text_model }}</strong> {{ model }}</p>
+                                    {% else %}
+                                        <p ><strong>{{ text_model }}</strong> {{ model }}</p>
+
+                                    {% endif %}
+
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!-- Tech specs tab-->
                     <div class="tab-pane fade" id="description" role="tabpanel">
-                        <div class="d-md-flex justify-content-between pb-4 mt-3 mb-4 border-bottom product-features flex-column flex-lg-row">
-                            <div class="d-flex align-items-center flex-column flex-sm-row mt-3 mb-3 mt-lg-0 mb-lg-0">
-                                {% if thumb or images %}
-                                    {% if thumb %}
-                                        <img  src="{{ thumb_sm }}"  style="width: 90px;height:90px" data-zoom="{{ popup }}" loading="lazy" alt="{{ heading_title }}"  width="90" class="me-2" />
-                                    {% endif %}
-                                {% endif %}
-                                <div class="price-wrapper mb-0">
-                                    <div class="product-price">
-                                        {% if not special %}
-                                            <span>{{ price_2 }}</span>
-                                        {% else %}
-
-                                            <del>{{ price_2 }}</del>
+                        {% if groupId < 2 %}
+                            <div class="d-md-flex justify-content-between pb-4 mt-3 mb-4 border-bottom product-features flex-column flex-lg-row">
+                                <div class="d-flex align-items-center flex-column flex-sm-row mt-3 mb-3 mt-lg-0 mb-lg-0">
+                                    {% if thumb or images %}
+                                        {% if thumb %}
+                                            <img  src="{{ thumb_sm }}"  style="width: 90px;height:90px" data-zoom="{{ popup }}" loading="lazy" alt="{{ heading_title }}"  width="90" class="me-2" />
                                         {% endif %}
-                                    </div>
+                                    {% endif %}
+                                    <div class="price-wrapper mb-0">
+                                        <div class="product-price">
+                                            {% if not special %}
+                                                <span>{{ price_2 }}</span>
+                                            {% else %}
 
-                                    <div class="product-price--web">
-                                        <span>{% if  special %}Akcija:{% else %} {% if price_2 != price %} Web cijena:{% endif %} {% endif %}</span>
-                                        <span> {% if  special %} {{ special }} {% else %}  {% if price_2 != price %} {{ price }} {% endif %} {% endif %}</span>
+                                                <del>{{ price_2 }}</del>
+                                            {% endif %}
+                                        </div>
+                                        <div class="product-price--web">
+                                            <span>{% if  special %}Akcija:{% else %} {% if price_2 != price %} Web cijena:{% endif %} {% endif %}</span>
+                                            <span> {% if  special %} {{ special }} {% else %}  {% if price_2 != price %} {{ price }} {% endif %} {% endif %}</span>
+                                        </div>
                                     </div>
-
+                                </div>
+                                <div class="product-quantity-button mb-0">
+                                    <div class="input-group me-0 me-sm-3 quantity">
+                                        <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}" max="{{ qty }}"   id="input-quantitydva" class="form-control input-quantity" />
+                                        <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <button class="btn btn-white border btn-icon ddd" data-multi="1" type="button">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="product_id" value="{{ product_id }}" />
+                                    <button type="button" id="button-cart2" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
                                 </div>
                             </div>
-                            <div class="product-quantity-button mb-0">
-                                <div class="input-group me-0 me-sm-3 quantity">
-                                    <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}" max="{{ qty }}"   id="input-quantitydva" class="form-control input-quantity" />
-                                    <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    <button class="btn btn-white border btn-icon ddd" data-multi="1" type="button">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-
-                                </div>
-
-                                <input type="hidden" name="product_id" value="{{ product_id }}" />
-                                <button type="button" id="button-cart2" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
-
-                            </div>
-
-
-                        </div>
+                        {% endif %}
                         <!-- Specs table-->
                         <div class="row pt-2">
                             <div class="col-lg-7 mb-3">
@@ -260,44 +279,47 @@
                     </div>
                     <!-- Reviews tab-->
                     <div class="tab-pane fade" id="specs" role="tabpanel">
-                        <div class="d-md-flex justify-content-between pb-4 mt-3 mb-4 border-bottom product-features flex-column flex-lg-row">
-                            <div class="d-flex align-items-center flex-column flex-sm-row mt-3 mb-3 mt-lg-0 mb-lg-0">
-                                {% if thumb or images %}
-                                    {% if thumb %}
-                                        <img  src="{{ thumb_sm }}"  style="width: 90px;height:90px" loading="lazy" data-zoom="{{ popup }}" alt="{{ heading_title }}"  width="90" class="me-2" />
-                                    {% endif %}
-                                {% endif %}
-                                <div class="price-wrapper mb-0">
-                                    <div class="product-price">
-                                        {% if not special %}
-                                            <span>{{ price_2 }}</span>
-                                        {% else %}
-
-                                            <del>{{ price_2 }}</del>
+                        {% if groupId < 2 %}
+                            <div class="d-md-flex justify-content-between pb-4 mt-3 mb-4 border-bottom product-features flex-column flex-lg-row">
+                                <div class="d-flex align-items-center flex-column flex-sm-row mt-3 mb-3 mt-lg-0 mb-lg-0">
+                                    {% if thumb or images %}
+                                        {% if thumb %}
+                                            <img  src="{{ thumb_sm }}"  style="width: 90px;height:90px" loading="lazy" data-zoom="{{ popup }}" alt="{{ heading_title }}"  width="90" class="me-2" />
                                         {% endif %}
-                                    </div>
+                                    {% endif %}
+                                    <div class="price-wrapper mb-0">
+                                        <div class="product-price">
+                                            {% if not special %}
+                                                <span>{{ price_2 }}</span>
+                                            {% else %}
 
-                                    <div class="product-price--web">
-                                        <span>{% if  special %}Akcija:{% else %}  {% if price_2 != price %} Web cijena:{% endif %} {% endif %}</span>
-                                        <span> {% if  special %} {{ special }} {% else %} {% if price_2 != price %} {{ price }} {% endif %} {% endif %}</span>
-                                    </div>
+                                                <del>{{ price_2 }}</del>
+                                            {% endif %}
+                                        </div>
 
+                                        <div class="product-price--web">
+                                            <span>{% if  special %}Akcija:{% else %}  {% if price_2 != price %} Web cijena:{% endif %} {% endif %}</span>
+                                            <span> {% if  special %} {{ special }} {% else %} {% if price_2 != price %} {{ price }} {% endif %} {% endif %}</span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="product-quantity-button mb-0">
+                                    <div class="input-group me-0 me-sm-3 quantity">
+                                        <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}"  max="{{ qty }}"   id="input-quantitydva" class="form-control input-quantity" />
+                                        <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <button class="btn btn-white border btn-icon ddd" data-multi="1" type="button">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="product_id" value="{{ product_id }}" />
+                                    <button type="button" id="button-cart3" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
                                 </div>
                             </div>
-                            <div class="product-quantity-button mb-0">
-                                <div class="input-group me-0 me-sm-3 quantity">
-                                    <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}"  max="{{ qty }}"   id="input-quantitydva" class="form-control input-quantity" />
-                                    <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
-                                        <i class="fas fa-minus"></i>
-                                    </button>
-                                    <button class="btn btn-white border btn-icon ddd" data-multi="1" type="button">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </div>
-                                <input type="hidden" name="product_id" value="{{ product_id }}" />
-                                <button type="button" id="button-cart3" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
-                            </div>
-                        </div>
+                        {% endif %}
+
                         <!-- Reviews-->
                         <!-- Specs table-->
                         <div class="row pt-2">
@@ -349,15 +371,17 @@
             </div>
             <div class="tns-carousel tns-controls-static tns-controls-inside tns-nav-enabled tns-carousel-product product-holder py-3">
                 <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 2, &quot;gutter&quot;: 16, &quot;controls&quot;:true, &quot;autoHeight&quot;: true, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1}, &quot;480&quot;:{&quot;items&quot;:2}, &quot;720&quot;:{&quot;items&quot;:3}, &quot;991&quot;:{&quot;items&quot;:3}, &quot;1140&quot;:{&quot;items&quot;:3}, &quot;1300&quot;:{&quot;items&quot;:4}, &quot;1500&quot;:{&quot;items&quot;:5}}}">
-                    {% for product in products %}
+                    {% for product in products|slice(0, 10) %}
                         <div>
                             <div class="card product-card">
+                                {# <button class="btn-wishlist btn-sm" type="button"  onclick="wishlist.add('{{ product.product_id }}');" ><i class="fal fa-heart"></i></button> #}
                                 <div class="position-relative">
                                     {% if (product.quantity > 0)  %}
                                         <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
                                     {% endif %}
-                                    <div class="card-img-top d-block overflow-hidden" ><img src="{{ product.thumb }}" loading="lazy" alt="{{ product.name }}"></div>
-                                    {% if product.freeshipping %}
+                                    <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" loading="lazy" alt="{{ product.name }}"></div>
+                                    {% if product.freeshipping and groupId < 2 %}
+
                                         <div class="product-badge-cpta product-badge-cpta__free-shipping">
                                             <span> Besplatna dostava</span>
                                             <i class="fas fa-shipping-fast"></i>
@@ -367,32 +391,57 @@
                                 <a class="stretched-link" href="{{ product.href }}">
                                     <div class="card-body">
                                         <h3 class="product-title">{{ product.name }}</h3>
-                                        {% if product.price %}
-                                            <div class="product-price">
-                                                {% if product.special %}
 
-                                                    <span><del>{{ product.price_2 }}</del></span>
-                                                {% else %}
+                                        {% if groupId < 2 %}
+                                            {% if product.price %}
+                                                <div class="product-price">
+                                                    {% if product.special %}
+
+                                                        <span><del>{{ product.price_2 }}</del></span>
+                                                    {% else %}
+                                                        <span> {{ product.price_2 }}</span>
+                                                    {% endif %}
+
+                                                </div><!-- .price -->
+                                            {% endif %}
+                                            {% if product.rating %}
+                                                <div class="star-rating {{ product.rating }}"><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fal fa-star"></i>
+                                                </div>
+                                            {% endif %}
+                                            {% if product.price and product.special %}
+                                                <div class="product-badge-cpta product-badge-cpta__discount">
+                                                    <span> Akcija</span>
+                                                    <span> Uštedi <strong>{{ product.sale_badge }}</strong></span>
+                                                </div>
+                                            {% endif %}
+
+                                            <div class="product-price--web">
+                                                <span>{% if  product.special %} Akcija: {% else %} {% if product.price_2 != product.price %} Web cijena: {% endif %} {% endif %}</span>
+                                                <span> {% if  product.special %} {{ product.special }} {% else %} {% if product.price_2 != product.price %} {{ product.price }} {% endif %} {% endif %}</span>
+                                            </div>
+                                        {% else %}
+
+                                            {% if product.price %}
+                                                <div class="product-price--web">
+                                                    <span style="font-weight:300;color: #828282;"> Preporučena MPC </span>
                                                     <span> {{ product.price_2 }}</span>
-                                                {% endif %}
+                                                </div><!-- .price -->
+                                            {% endif %}
 
-                                            </div><!-- .price -->
-                                        {% endif %}
-                                        {% if product.rating %}
-                                            <div class="star-rating {{ product.rating }}"><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fal fa-star"></i>
+
+                                            <div class="product-price">
+                                                <span>  {{ product.price }} + PDV </span>
                                             </div>
-                                        {% endif %}
-                                        {% if product.price and product.special %}
-                                            <div class="product-badge-cpta product-badge-cpta__discount">
-                                                <span> Akcija</span>
-                                                <span> Uštedi <strong>{{ product.sale_badge }}</strong></span>
-                                            </div>
+
+
+
                                         {% endif %}
 
-                                        <div class="product-price--web">
-                                            <span>{% if  product.special %} Akcija: {% else %} {% if product.price_2 != product.price %} Web cijena: {% endif %} {% endif %}</span>
-                                            <span> {% if  product.special %} {{ product.special }} {% else %} {% if product.price_2 != product.price %} {{ product.price }} {% endif %} {% endif %}</span>
-                                        </div>
+
+
+
+
+
 
                                     </div>
 
@@ -540,12 +589,12 @@
                 $('.porukareach').addClass('d-none');
 
             }
-           if (newVal > {{ qty }} ) {
+            if (newVal > {{ qty }} ) {
                 $('.porukareach').removeClass('d-none');
             }
-           else{
-               $('.porukareach').addClass('d-none');
-           }
+            else{
+                $('.porukareach').addClass('d-none');
+            }
 
 
 
