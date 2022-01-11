@@ -3,8 +3,13 @@ class ControllerExtensionModuleAccount extends Controller {
 	public function index() {
 		$this->load->language('extension/module/account');
 
+
+        $data['master'] = $this->customer->getMaster();
+
 		$data['logged'] = $this->customer->isLogged();
 		$data['register'] = $this->url->link('account/register', '', true);
+        $data['subaccount'] = $this->url->link('account/subaccount', '', true);
+        $data['subaccountlist'] = $this->url->link('account/subaccountlist', '', true);
 		$data['login'] = $this->url->link('account/login', '', true);
 		$data['logout'] = $this->url->link('account/logout', '', true);
 		$data['forgotten'] = $this->url->link('account/forgotten', '', true);
@@ -20,6 +25,18 @@ class ControllerExtensionModuleAccount extends Controller {
 		$data['transaction'] = $this->url->link('account/transaction', '', true);
 		$data['newsletter'] = $this->url->link('account/newsletter', '', true);
 		$data['recurring'] = $this->url->link('account/recurring', '', true);
+
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
+        $data['oib'] = $this->customer->getOib();
+        $data['tvrtka'] = $this->customer->getTvrtka();
+
+
 
         $this->load->model('account/customer');
         if ($this->request->server['REQUEST_METHOD'] != 'POST') {
@@ -41,6 +58,10 @@ class ControllerExtensionModuleAccount extends Controller {
         } else {
             $data['lastname'] = '';
         }
+
+
+
+
 
         if (isset($this->request->post['email'])) {
             $data['email'] = $this->request->post['email'];

@@ -31,8 +31,28 @@
       <div class="col-lg-4 col-sm-6 mb-grid-gutter">
         <div class="card border-0 shadow">
           <div class="card-body text-center"><i class="fal fa-user-circle h2 mt-2 mb-4 text-primary"></i>
-            <h6>{{ text_my_account }}</h6>
+            <h6>Izmjeni podatke</h6>
             <p class="fs-sm text-muted pb-2">{{ text_edit }}</p><a class="btn btn-outline-primary stretched-link mb-2" href="{{ edit }}">Uredi</a>
+          </div>
+        </div>
+      </div>
+
+      {% if master == '1' %}
+        <div class="col-lg-4 col-sm-6 mb-grid-gutter">
+          <div class="card border-0 shadow">
+            <div class="card-body text-center"><i class="fal fa-users h2 mt-2 mb-4 text-primary"></i>
+              <h6>Pregled svih računa</h6>
+              <p class="fs-sm text-muted pb-2">Informacije o svim računima.</p><a class="btn btn-outline-primary stretched-link mb-2" href="{{ editall }}">Uredi</a>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      <div class="col-lg-4 col-sm-6 mb-grid-gutter">
+        <div class="card border-0 shadow">
+          <div class="card-body text-center"><i class="fal fa-shopping-basket h2 mt-2 mb-4 text-primary"></i>
+            <h6>{{ text_my_orders }}</h6>
+            <p class="fs-sm text-muted pb-2">{{ text_order }}</p><a class="btn btn-outline-primary stretched-link mb-2" href="{{ order }}">Uredi</a>
           </div>
         </div>
       </div>
@@ -64,15 +84,8 @@
         </div>
       </div>
 
-      <div class="col-lg-4 col-sm-6 mb-grid-gutter">
-        <div class="card border-0 shadow">
-          <div class="card-body text-center"><i class="fal fa-shopping-basket h2 mt-2 mb-4 text-primary"></i>
-            <h6>{{ text_my_orders }}</h6>
-            <p class="fs-sm text-muted pb-2">{{ text_order }}</p><a class="btn btn-outline-primary stretched-link mb-2" href="{{ order }}">Uredi</a>
-          </div>
-        </div>
-      </div>
 
+      {% if groupId < '2' %}
       <div class="col-lg-4 col-sm-6 mb-grid-gutter">
         <div class="card border-0 shadow">
           <div class="card-body text-center"><i class="fal fa-envelope h2 mt-2 mb-4 text-primary"></i>
@@ -81,6 +94,11 @@
           </div>
         </div>
       </div>
+      {% endif %}
+
+
+
+
       <div class="col-lg-12 d-flex justify-content-center mt-3 mb-5">
       <a class="btn btn-primary btn-shadow" href="{{ logout }}"><i class="fal fa-sign-out mt-n1 me-2"></i>{{ text_logout }}</a>
       </div>

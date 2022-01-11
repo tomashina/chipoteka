@@ -3,29 +3,64 @@
     <section class="container-fluid pt-4">
         <div class="pt-2">
             <div id="content" class="{{ class }}">
-
+                {% if groupId < 2 %}
                 {{ content_top }}
-              <!--  <section class="pt-2 pb-0 mt-3">
-                    <div class="row">
-                        <div class="col-md-6 mb-4">
-                            <div class="d-sm-flex justify-content-between align-items-center y overflow-hidden rounded-3" style="background-color:#F5F5F5">
-                                <div class="py-4 my-2 my-md-0 py-md-5 px-4 ms-md-3 text-center text-sm-start">
-                                    <h4 class="fs-lg fw-light mb-2">TJEDNA AKCIJA</h4>
-                                    <h3 class="mb-4">Pametni sat GARMIN VENU RoseGold Light sand remen</h3><a class="btn btn-primary btn-shadow" href="#">Kupi odmah i uštedi</a>
-                                </div><img class="d-block ms-auto" src="image/venu-rose-gold-image-01.png" width="350px" alt="Shop Converse">
-                            </div>
+                {% else %}
+                    <section class="pt-4 ">
+                        <div class="section-title section-title--discount"><h2 class="title"> Bok  {{ text_logged }}
+                            </h2>
                         </div>
-                        <div class="col-md-6 mb-4">
-                            <div class="d-sm-flex justify-content-between align-items-center  overflow-hidden rounded-3" style="background-color:#F5F5F5">
-                                <div class="py-4 my-2 my-md-0 py-md-5 px-4 ms-md-3 text-center text-sm-start">
-                                    <h4 class="fs-lg fw-light mb-2">TJEDNA AKCIJA</h4>
-                                    <h3 class="mb-4">Pametni sat GARMIN VENU RoseGold Light sand remen</h3><a class="btn btn-primary btn-shadow" href="#">Kupi odmah i uštedi</a>
-                                </div><img class="d-block ms-auto" src="image/venu-rose-gold-image-01.png" width="350px" alt="Shop Converse">
+                        <div class="row g-0  mt-3">
+
+                            <div class="col-lg-3 col-sm-6 p-2">
+                                <div class="card border-0 shadow ">
+                                    <div class="card-body text-center ">
+                                        <i class="fal fa-shopping-basket fa-3x h2 mt-2 mb-4 text-primary"></i>
+                                        <h6>Moje narudžbe</h6>
+                                        <p class="fs-sm text-muted pb-2">Prikaz dosadašnjih narudžbi</p>
+                                        <a class="btn btn-outline-primary stretched-link mb-2" href="index.php?route=account/order">Pogledaj</a>
+                                    </div>
+                                </div>
                             </div>
+                            <div class="col-lg-3 col-sm-6 p-2">
+                                <div class="card border-0 shadow ">
+                                    <div class="card-body text-center">
+                                        <i class="fal fa-eye fa-3x h2 mt-2 mb-4 text-primary"></i>
+                                        <h6>Zadnje pregledano</h6>
+                                        <p class="fs-sm text-muted pb-2">Posljednje pregledani proizvodi</p>
+                                        <a class="btn btn-outline-primary stretched-link mb-2" href="zadnje-pogledano">Pogledaj</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-sm-6 p-2">
+                                <div class="card border-0 shadow ">
+                                    <div class="card-body text-center">
+                                        <i class="fal fa-user-circle fa-3x h2 mt-2 mb-4 text-primary"></i>
+                                        <h6>Moj korisnički račun</h6>
+                                        <p class="fs-sm text-muted pb-2">Korisničke informacije</p>
+                                        <a class="btn btn-outline-primary stretched-link mb-2" href="index.php?route=account/account">Pogledaj</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-3 col-sm-6 p-2">
+                                <div class="card border-0 shadow ">
+                                    <div class="card-body text-center">
+                                        <i class="fal fa-store fa-3x h2 mt-2 mb-4 text-primary"></i>
+                                        <h6>Naši dućani</h6>
+                                        <p class="fs-sm text-muted pb-2">Informacije o poslovnicama</p>
+                                        <a class="btn btn-outline-primary stretched-link mb-2" href="poslovnice">Pogledaj</a>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
-                </section> -->
+                    </section>
+
+
                 {{ content_bottom }}
+                {% endif %}
             </div>
         </div>
     </section>

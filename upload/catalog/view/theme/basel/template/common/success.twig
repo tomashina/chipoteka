@@ -5,16 +5,21 @@
     <div class="card py-3 mt-sm-3">
       <div class="card-body text-center">
         <h2 class="h4 pb-3">{{ text_tnx }}</h2>
-        {{ text_message }}
-       <div class="mb-3">
-         {% if paymethod=='bank_transfer'%}
-         {% if uplatnica =='error' %}
-        <p> Došlo je do greške prilikom generiranje 2D koda.</p>
-         {% else %}
-           <img src="data:image/png;base64,{{ uplatnica }}" class="img-responsive" style="max-width:500px"/>
-         {% endif %}
-         {% endif %}
-       </div>
+
+        {% if groupId < 3  %}
+              {{ text_message }}
+             <div class="mb-3">
+               {% if paymethod=='bank_transfer'%}
+               {% if uplatnica =='error' %}
+              <p> Došlo je do greške prilikom generiranje 2D koda.</p>
+               {% else %}
+                 <img src="data:image/png;base64,{{ uplatnica }}" class="img-responsive" style="max-width:500px"/>
+               {% endif %}
+               {% endif %}
+             </div>
+        {% else %}
+          {{ text_message_b2b }}
+        {% endif %}
 
         {% if order_id %}
         <table class="table table-bordered table-striped">

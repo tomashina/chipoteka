@@ -317,15 +317,30 @@ class ControllerMailOrder extends Controller {
 		$mail->setHtml($this->load->view('mail/order_add', $data));
 		//$mail->send();
 
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
+
+
         if ($order_info['payment_code'] == 'cod') {
 
             $order_info['mail'] = '7';
 
         }
 
-        else if ($order_info['payment_code'] == 'bank_transfer') {
+        else if ($order_info['payment_code'] == 'bank_transfer' &&  $data['groupId'] < 2) {
 
             $order_info['mail'] = '2';
+
+        }
+
+        else if ($order_info['payment_code'] == 'bank_transfer' &&  $data['groupId'] >= 2) {
+
+            $order_info['mail'] = '13';
 
         }
 
@@ -335,6 +350,7 @@ class ControllerMailOrder extends Controller {
 
         }
 
+        Log::info($order_info);
         $this->sendMail($order_info);
 	}
 	
@@ -551,17 +567,25 @@ class ControllerMailOrder extends Controller {
             for ($i = 0; $i < count($data['products']); $i++) {
                 $data['products'][$i]['image'] = HTTPS_SERVER.'image/'.Product::where('product_id', $data['products'][$i]['product_id'])->pluck('image')->first();
             }
+
             $data['mail_logo'] = HTTPS_SERVER.'image/chipoteka-hd.png';
             $data['mail_title'] = sprintf($email['subject'], $order['order_id']);
-
             $data['mail_data'] = $email['data'];
 
             $nhs_no = $order['order_id'].date("ym");
-
             $data['mail_poziv_na_broj'] = $nhs_no.$this->mod11INI($nhs_no);
 
-           // \Agmedia\Helpers\Log::store($data);
+            $data['b2b'] = $order['mail'];
 
+            $lc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Document();
+            $is_b2b = ($data['oib'] != '') ? true : false;
+
+            $data['is_b2b'] = $is_b2b;
+            $data['b2b_products'] = [];
+
+            if ($order['luceed_uid']) {
+                $data['b2b_products'] = $lc->setDocument($order['luceed_uid'], $is_b2b)->sortProducts($data['products']);
+            }
 
             // $html = $this->load->view('mail/mail', $data);
 

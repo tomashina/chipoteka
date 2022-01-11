@@ -11,6 +11,15 @@ class ControllerAccountAddress extends Controller {
 
 		$this->load->language('account/address');
 
+        $data['logout'] = $this->url->link('account/logout', '', true);
+
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
 		$this->document->setTitle($this->language->get('heading_title'));
 
 		$this->load->model('account/address');
@@ -160,42 +169,91 @@ class ControllerAccountAddress extends Controller {
 			$data['success'] = '';
 		}
 
+        $data['logout'] = $this->url->link('account/logout', '', true);
+
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
 		$data['addresses'] = array();
 
 		$results = $this->model_account_address->getAddresses();
 
 		foreach ($results as $result) {
-			if ($result['address_format']) {
-				$format = $result['address_format'];
-			} else {
-				$format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
-			}
 
-			$find = array(
-				'{firstname}',
-				'{lastname}',
-				'{company}',
-				'{address_1}',
-				'{address_2}',
-				'{city}',
-				'{postcode}',
-				'{zone}',
-				'{zone_code}',
-				'{country}'
-			);
 
-			$replace = array(
-				'firstname' => $result['firstname'],
-				'lastname'  => $result['lastname'],
-				'company'   => $result['company'],
-				'address_1' => $result['address_1'],
-				'address_2' => $result['address_2'],
-				'city'      => $result['city'],
-				'postcode'  => $result['postcode'],
-				'zone'      => $result['zone'],
-				'zone_code' => $result['zone_code'],
-				'country'   => $result['country']
-			);
+			if($data['groupId'] >= 2 ){
+
+                if ($result['address_format']) {
+                    $format = $result['address_format'];
+                } else {
+                    $format = '{firstname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n"  . '{country}';
+                }
+
+                $find = array(
+                    '{firstname}',
+                    '{company}',
+                    '{address_1}',
+                    '{address_2}',
+                    '{city}',
+                    '{postcode}',
+                    '{zone}',
+                    '{zone_code}',
+                    '{country}'
+                );
+
+                $replace = array(
+                    'firstname' => $result['firstname'],
+                    'company'   => $result['company'],
+                    'address_1' => $result['address_1'],
+                    'address_2' => $result['address_2'],
+                    'city'      => $result['city'],
+                    'postcode'  => $result['postcode'],
+                    'zone'      => $result['zone'],
+                    'zone_code' => $result['zone_code'],
+                    'country'   => $result['country']
+                );
+
+            }
+			else{
+
+                if ($result['address_format']) {
+                    $format = $result['address_format'];
+                } else {
+                    $format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
+                }
+
+                $find = array(
+                    '{firstname}',
+                    '{lastname}',
+                    '{company}',
+                    '{address_1}',
+                    '{address_2}',
+                    '{city}',
+                    '{postcode}',
+                    '{zone}',
+                    '{zone_code}',
+                    '{country}'
+                );
+
+                $replace = array(
+                    'firstname' => $result['firstname'],
+                    'lastname'  => $result['lastname'],
+                    'company'   => $result['company'],
+                    'address_1' => $result['address_1'],
+                    'address_2' => $result['address_2'],
+                    'city'      => $result['city'],
+                    'postcode'  => $result['postcode'],
+                    'zone'      => $result['zone'],
+                    'zone_code' => $result['zone_code'],
+                    'country'   => $result['country']
+                );
+            }
+
+
 
 			$data['addresses'][] = array(
 				'address_id' => $result['address_id'],

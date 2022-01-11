@@ -17,8 +17,15 @@ class ControllerCheckoutCart extends Controller {
 			'text' => $this->language->get('heading_title')
 		);
 
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
 		if ($this->cart->hasProducts() || !empty($this->session->data['vouchers'])) {
-			if (!$this->cart->hasStock() && (!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning'))) {
+			if (!$this->cart->hasStock() && (!$this->config->get('config_stock_checkout')  && $this->customer->getGroupId() < '3' || $this->config->get('config_stock_warning'))) {
 				$data['error_warning'] = $this->language->get('error_stock');
 			} elseif (isset($this->session->data['error'])) {
 				$data['error_warning'] = $this->session->data['error'];
@@ -130,6 +137,13 @@ class ControllerCheckoutCart extends Controller {
 					}
 				}
 
+                if($this->customer->getGroupId() > '2'){
+
+                    $this->config->get('config_stock_checkout') == '1';
+
+                }
+
+
 				$data['products'][] = array(
 					'cart_id'   => $product['cart_id'],
 					'thumb'     => $image,
@@ -214,18 +228,38 @@ class ControllerCheckoutCart extends Controller {
 				);
 			}
 
-            if ($this->cart->getTotal() < FREESHIPPING ) {
 
-                $razlika = FREESHIPPING - $this->cart->getTotal();
+			if($data['groupId']>=2){
 
-                $razlika = number_format($razlika, 2, ',', '');
-                $data['freeshipppingnotification'] =   sprintf($this->language->get('freeshipppingnotification'), $razlika);
+                if ($this->cart->getTotal() < FREESHIPPINGB2B ) {
+
+                    $razlika = FREESHIPPINGB2B - $this->cart->getTotal();
+
+                    $razlika = number_format($razlika, 2, ',', '');
+                    $data['freeshipppingnotification'] =   sprintf($this->language->get('freeshipppingnotificationb2b'), $razlika);
 
 
 
-            } else {
-                $data['freeshipppingnotification'] = '';
+                } else {
+                    $data['freeshipppingnotification'] = '';
+                }
             }
+			else{
+                if ($this->cart->getTotal() < FREESHIPPING ) {
+
+                    $razlika = FREESHIPPING - $this->cart->getTotal();
+
+                    $razlika = number_format($razlika, 2, ',', '');
+                    $data['freeshipppingnotification'] =   sprintf($this->language->get('freeshipppingnotification'), $razlika);
+
+
+
+                } else {
+                    $data['freeshipppingnotification'] = '';
+                }
+            }
+
+
 
 
 

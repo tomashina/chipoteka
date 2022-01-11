@@ -9,6 +9,13 @@ class ControllerProductCategory extends Controller {
 
 		$this->load->model('tool/image');
 
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
         $data['shopping_cart'] = $this->url->link('checkout/cart');
 
 		if (isset($this->request->get['filter'])) {
@@ -178,6 +185,8 @@ class ControllerProductCategory extends Controller {
 					$price = false;
 				}
 
+                $vpc = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+
 				//price_2 agmedia
 
                 if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
@@ -228,6 +237,7 @@ class ControllerProductCategory extends Controller {
 					'name'        => $result['name'],
 					'price'       => $price,
                     'price_2'       => $price_2,
+                    'vpc'       => $vpc,
 					'special'     => $special,
                     'freeshipping' => $freeshipping,
 					'tax'         => $tax,

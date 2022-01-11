@@ -19,6 +19,8 @@ MODEL: 05 POZIV NA BROJ: %s<br> PRIMATELJ: Z-EL D.O.O.</p>
 
 <p>ILI JEDNOSTAVNO POSKENIRAJTE 2D BARKOD</p>';
 
+$_['text_bank_b2b']           = '<p>Uredno smo zaprimili Vašu narudžbu broj %s i zahvaljujemo Vam.</p>';
+
 $_['text_wspay']           = '<p>Uredno smo zaprimili Vašu narudžbu kao i uplatu za narudžbu broj  %s</p><p>Naš tim u webshopu će je obraditi u najbržem mogućem roku.</p>';
 
 

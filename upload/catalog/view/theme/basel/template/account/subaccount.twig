@@ -1,0 +1,309 @@
+{{ header }}
+
+<main  class="offcanvas-enabled">
+
+
+    <!-- Page Title-->
+    <div class="page-title-overlap bg-dark pt-4 ps-lg-4 pe-lg-3">
+        <div class="container d-lg-flex justify-content-between py-2 py-lg-3 ">
+            <div class="order-lg-2 mb-3 mb-lg-0 pt-lg-2">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb breadcrumb-light flex-lg-nowrap justify-content-center justify-content-lg-start">
+                        {% for breadcrumb in breadcrumbs %}
+                            <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                        {% endfor %}
+                    </ol>
+                </nav>
+            </div>
+            <div class="order-lg-1 pe-lg-4 text-center text-lg-start">
+                <h1 class="h2 text-light mb-0">{{ heading_title }}</h1>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="content" class="container pb-5 mb-2 mb-md-4 ps-lg-4 pe-lg-3">
+        <div class="row">
+            <!-- Sidebar-->
+
+            {{ column_left }}
+
+            <!-- Content  -->
+            <section class="col-lg-8" id="account-address">
+
+                <!-- Toolbar-->
+                <div class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-4 pb-lg-5 mb-lg-3">
+                    <h6 class="fs-base text-light mb-0">{{ text_edit_address }}</h6><a class="btn btn-primary " href="{{ logout }}"><i class="fal fa-sign-out me-2"></i>{{ text_logout }}</a>
+                </div>
+
+
+                {% if error_warning %}
+                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                        {{ error_warning }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+                <div class="row g-0  mb-4">
+                    <div id="content" class="{{ class }}">
+
+
+                        <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-horizontal">
+
+                            <div class="row" id="account" >
+
+                                <div class="col-12">
+                                    <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">Dodaj novi korisnički račun</h2>
+
+                                </div>
+
+                                <div class="col-sm-12">
+
+                                    <div class="form-group mb-3 required">
+
+                                        <label class="form-label" for="input-custommeradd">Odaberite korisnika iz baze<span class='text-danger'>*</span></label>
+
+                                        <select name="customeradd" id="input-customer" class="form-select">
+
+                                            {% if customers %}
+                                            <option value="">{{ text_select }}</option>
+
+                                            {% else %}
+                                                <option value="">-- Trenutno nemate dodatnih korisnika --</option>
+                                            {% endif %}
+
+                                            {% for customer in customers %}
+
+                                                {% if customer.partner_uid == customeradd %}
+
+
+                                                    <option value="{{ customer.partner_uid }}" selected="selected">{{ customer.naziv }} -  {{ customer.adresa }} -  {{ customer.naziv_mjesta }} -  {{ customer.e_mail }}</option>
+
+                                                {% else %}
+
+
+                                                    <option value="{{ customer.partner_uid }}">{{ customer.naziv }} -  {{ customer.adresa }} -  {{ customer.naziv_mjesta }} -  {{ customer.e_mail }}</option>
+
+                                                {% endif %}
+
+
+                                            {% endfor %}
+
+                                        </select>
+                                        <div id="passwordconfirmHelpBlock" class="form-text">
+                                            Odaberite korisnika iz baze partnera.
+                                        </div>
+                                        {% if error_customer %}
+                                            <div class="text-danger">{{ error_customer }}</div>
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+
+
+
+
+                                {% for custom_field in custom_fields %}
+                                    <div class="col-sm-6 pravna">
+
+                                        {% if custom_field.type == 'text' %}
+                                            <div id="custom-field{{ custom_field.custom_field_id }}" class="form-group custom-field mb-3" data-sort="{{ custom_field.sort_order }}">
+                                                <label class="form-label" for="input-custom-field{{ custom_field.custom_field_id }}">{{ custom_field.name }}<span class="text-danger">*</span></label>
+
+
+
+                                                {% if custom_field.custom_field_id == '1' %}
+
+                                                    <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{{ oib }}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control" readonly />
+
+                                                {% else %}
+
+                                                    <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{{ tvrtka }}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control"  readonly/>
+
+                                                {% endif %}
+
+
+                                            </div>
+
+
+                                        {% endif %}
+                                    </div>
+
+                                {% endfor %}
+
+
+
+                                <div class="col-12">
+                                    <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">{{ text_your_password }}</h2>
+
+
+
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <input  type="hidden" name="customer_group_id" value="{{ groupId }}" >
+                                    <div class="form-group mb-3 required">
+
+                                        <label class="form-label" for="input-password">{{ entry_password }}</label>
+                                        <div class="password-toggle w-100">
+                                            <input type="password" name="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" class="form-control"  autocomplete="new-password"/>
+                                            <label class="password-toggle-btn" aria-label="Show/hide password">
+                                                <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
+                                            </label>
+                                        </div>
+                                        <div id="passwordHelpBlock" class="form-text">
+                                           Kreirajte lozinku za odabrani račun.
+                                        </div>
+                                        {% if error_password %}
+                                            <div class="text-danger">{{ error_password }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group mb-3 required">
+                                        <label class="form-label" for="input-confirm">{{ entry_confirm }}</label>
+                                        <div class="password-toggle w-100">
+                                            <input type="password" name="confirm" value="{{ confirm }}" placeholder="{{ entry_confirm }}" id="input-confirm" class="form-control" />
+                                            <label class="password-toggle-btn" aria-label="Show/hide password">
+                                                <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
+                                            </label>
+                                        </div>
+                                        <div id="passwordconfirmHelpBlock" class="form-text">
+                                            Potvrdite lozinku za odabrani račun.
+                                        </div>
+                                        {% if error_confirm %}
+                                            <div class="text-danger">{{ error_confirm }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+
+
+
+                                {{ captcha }}
+
+                                {% if text_agree %}
+
+                                    <div class="col-sm-12 mt-3">
+                                        <div class="form-check form-check-inline">
+                                            <label class="form-check-label" >
+
+                                                {% if agree %}
+                                                    <input type="checkbox" class="form-check-input" name="agree" value="1" checked="checked" />
+                                                {% else %}
+                                                    <input type="checkbox" class="form-check-input" name="agree" value="1" />
+                                                {% endif %}
+
+                                                {{ text_agree }}</label>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="col-sm-12 mt-4 mb-5">
+                                        <input type="submit" value="{{ text_register }}" class="btn btn-primary  mt-3 mt-sm-0 " />
+                                    </div>
+                                {% else %}
+                                    <div class="col-sm-12 mt-4 mb-5">
+                                        <input type="submit" value="{{ text_register }}" class="btn btn-primary mt-3 mt-sm-0 " />
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </div>
+    </div>
+
+
+    <script>
+        $(function(){
+            $("input#input-email").on({
+                keydown: function(e) {
+                    if (e.which === 32)
+                        return false;
+                },
+                change: function() {
+                    this.value = this.value.replace(/\s/g, "");
+                }
+            });
+        })
+    </script>
+
+
+    <script><!--
+        // Sort the custom fields
+
+
+
+        $(document).ready(function(){
+
+            $('.pravna').show();
+
+        });
+
+
+
+
+
+        //--></script>
+    <script><!--
+        $('button[id^=\'button-custom-field\']').on('click', function() {
+            var element = this;
+
+            $('#form-upload').remove();
+
+            $('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" /></form>');
+
+            $('#form-upload input[name=\'file\']').trigger('click');
+
+            if (typeof timer != 'undefined') {
+                clearInterval(timer);
+            }
+
+            timer = setInterval(function() {
+                if ($('#form-upload input[name=\'file\']').val() != '') {
+                    clearInterval(timer);
+
+                    $.ajax({
+                        url: 'index.php?route=tool/upload',
+                        type: 'post',
+                        dataType: 'json',
+                        data: new FormData($('#form-upload')[0]),
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        beforeSend: function() {
+                            $(element).button('loading');
+                        },
+                        complete: function() {
+                            $(element).button('reset');
+                        },
+                        success: function(json) {
+                            $(element).parent().find('.text-danger').remove();
+
+                            if (json['error']) {
+                                $(node).parent().find('input').after('<div class="text-danger">' + json['error'] + '</div>');
+                            }
+
+                            if (json['success']) {
+                                alert(json['success']);
+
+                                $(element).parent().find('input').val(json['code']);
+                            }
+                        },
+                        error: function(xhr, ajaxOptions, thrownError) {
+                            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                        }
+                    });
+                }
+            }, 500);
+        });
+        //--></script>
+
+    {{ footer }}

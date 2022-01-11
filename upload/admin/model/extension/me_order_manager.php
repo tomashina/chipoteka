@@ -257,7 +257,14 @@ class ModelExtensionMeordermanager extends Model {
 		}
 		
 		if (!empty($data['filter_customer_group'])) {
-			$sql .= " AND o.customer_group_id = '" . (int)$data['filter_customer_group'] . "'";
+
+		    if($data['filter_customer_group']=='b2b'){
+                $sql .= " AND o.customer_group_id > 2";
+            }
+		    else{
+                $sql .= " AND o.customer_group_id = '" . (int)$data['filter_customer_group'] . "'";
+            }
+
 		}
 		
 		if (!empty($data['filter_store'])) {

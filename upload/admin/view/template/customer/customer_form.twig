@@ -26,11 +26,11 @@
         <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-customer" class="form-horizontal">
           <ul class="nav nav-tabs">
             <li class="active"><a href="#tab-general" data-toggle="tab">{{ tab_general }}</a></li>
-            <li><a href="#tab-affiliate" data-toggle="tab">{{ tab_affiliate }}</a></li>
+            <li class="hidden"><a href="#tab-affiliate" data-toggle="tab">{{ tab_affiliate }}</a></li>
             {% if customer_id %}
-            <li><a href="#tab-history" data-toggle="tab">{{ tab_history }}</a></li>
-            <li><a href="#tab-transaction" data-toggle="tab">{{ tab_transaction }}</a></li>
-            <li><a href="#tab-reward" data-toggle="tab">{{ tab_reward }}</a></li>
+            <li class="hidden"><a href="#tab-history" data-toggle="tab">{{ tab_history }}</a></li>
+            <li class="hidden"><a href="#tab-transaction" data-toggle="tab">{{ tab_transaction }}</a></li>
+            <li class="hidden"><a href="#tab-reward" data-toggle="tab">{{ tab_reward }}</a></li>
             <li><a href="#tab-ip" data-toggle="tab">{{ tab_ip }}</a></li>
             {% endif %}
           </ul>
@@ -53,7 +53,7 @@
                     <div class="tab-pane active" id="tab-customer">
                       <fieldset>
                         <legend>{{ text_account }}</legend>
-                        <div class="form-group">
+                        <div class="form-group" id="master3disable">
                           <label class="col-sm-2 control-label" for="input-customer-group">{{ entry_customer_group }}</label>
                           <div class="col-sm-10">
                             <select name="customer_group_id" id="input-customer-group" class="form-control">
@@ -67,8 +67,40 @@
                             </select>
                           </div>
                         </div>
+
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label" for="input-master"><span data-toggle="tooltip" title="Set as master B2B user">Master B2B user</span></label>
+                          <div class="col-sm-10">
+                            <div class="checkbox">
+                              <label>{% if master %}
+                                  <input type="checkbox" name="master" value="1" checked="checked" id="input-master" />
+                                {% else %}
+                                  <input type="checkbox" name="master" value="1" id="input-master" />
+                                {% endif %}
+                                &nbsp;</label>
+                            </div>
+                          </div>
+                        </div>
+
+
+
+
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label" for="input-partner"><span data-toggle="tooltip" title="Enter partner number (partner)">Partner</span></label>
+                          <div class="col-sm-10">
+                            <input type="text" name="partner" value="{{ partner }}" placeholder="{{ entry_partner }}" id="input-partner" class="form-control" />
+                          </div>
+                        </div>
+                      <div id="masterdisable">
+
+                        <div class="form-group">
+                          <label class="col-sm-2 control-label" for="input-grupa_partnera">{{ entry_grupa_partnera }}</label>
+                          <div class="col-sm-10">
+                            <input type="text" name="grupa_partnera" value="{{ grupa_partnera }}" placeholder="{{ entry_grupa_partnera }}" id="input-grupa_partnera" class="form-control" />
+                           </div>
+                        </div>
                         <div class="form-group required">
-                          <label class="col-sm-2 control-label" for="input-firstname">{{ entry_firstname }}</label>
+                          <label class="col-sm-2 control-label" for="input-firstname" id="fname">{% if customer_group_id >= 2 %} Naziv {% else %} {{ entry_firstname }}  {% endif %} </label>
                           <div class="col-sm-10">
                             <input type="text" name="firstname" value="{{ firstname }}" placeholder="{{ entry_firstname }}" id="input-firstname" class="form-control" />
                             {% if error_firstname %}
@@ -76,7 +108,7 @@
                             {% endif %}</div>
                         </div>
                         <div class="form-group required">
-                          <label class="col-sm-2 control-label" for="input-lastname">{{ entry_lastname }}</label>
+                          <label class="col-sm-2 control-label" for="input-lastname" id="lname">{% if customer_group_id >= 2 %} Mjesto {% else %} {{ entry_lastname }}  {% endif %}</label>
                           <div class="col-sm-10">
                             <input type="text" name="lastname" value="{{ lastname }}" placeholder="{{ entry_lastname }}" id="input-lastname" class="form-control" />
                             {% if error_lastname %}
@@ -235,13 +267,17 @@
                         {% endif %}
                         {% endif %}
                         {% endfor %}
+
+                    </div>
+
                       </fieldset>
                       <fieldset>
                         <legend>{{ text_password }}</legend>
+                        <div id="passnote"></div>
                         <div class="form-group required">
                           <label class="col-sm-2 control-label" for="input-password">{{ entry_password }}</label>
                           <div class="col-sm-10">
-                            <input type="password" name="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" class="form-control" autocomplete="off" />
+                            <input type="password" name="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" class="form-control"  autocomplete="new-password" />
                             {% if error_password %}
                             <div class="text-danger">{{ error_password }}</div>
                             {% endif %}</div>
@@ -255,7 +291,7 @@
                             {% endif %}</div>
                         </div>
                       </fieldset>
-                      <fieldset>
+                      <fieldset id ="master2disable">
                         <legend>{{ text_other }}</legend>
                         <div class="form-group">
                           <label class="col-sm-2 control-label" for="input-newsletter">{{ entry_newsletter }}</label>
@@ -306,7 +342,7 @@
                     <div class="tab-pane" id="tab-address{{ address_row }}">
                       <input type="hidden" name="address[{{ address_row }}][address_id]" value="{{ address.address_id }}" />
                       <div class="form-group required">
-                        <label class="col-sm-2 control-label" for="input-firstname{{ address_row }}">{{ entry_firstname }}</label>
+                        <label class="col-sm-2 control-label" for="input-firstname{{ address_row }}" id="fnamea">{% if customer_group_id >= 2 %} Naziv {% else %} {{ entry_firstname }}  {% endif %}</label>
                         <div class="col-sm-10">
                           <input type="text" name="address[{{ address_row }}][firstname]" value="{{ address.firstname }}" placeholder="{{ entry_firstname }}" id="input-firstname{{ address_row }}" class="form-control" />
                           {% if error_address[address_row].firstname %}
@@ -314,14 +350,14 @@
                           {% endif %}</div>
                       </div>
                       <div class="form-group required">
-                        <label class="col-sm-2 control-label" for="input-lastname{{ address_row }}">{{ entry_lastname }}</label>
+                        <label class="col-sm-2 control-label" for="input-lastname{{ address_row }}" id="lnamea">{{ entry_lastname }}</label>
                         <div class="col-sm-10">
                           <input type="text" name="address[{{ address_row }}][lastname]" value="{{ address.lastname }}" placeholder="{{ entry_lastname }}" id="input-lastname{{ address_row }}" class="form-control" />
                           {% if error_address[address_row].lastname %}
                           <div class="text-danger">{{ error_address[address_row].lastname }}</div>
                           {% endif %}</div>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group hidden">
                         <label class="col-sm-2 control-label" for="input-company{{ address_row }}">{{ entry_company }}</label>
                         <div class="col-sm-10">
                           <input type="text" name="address[{{ address_row }}][company]" value="{{ address.company }}" placeholder="{{ entry_company }}" id="input-company{{ address_row }}" class="form-control" />
@@ -335,7 +371,7 @@
                           <div class="text-danger">{{ error_address[address_row].address_1 }}</div>
                           {% endif %}</div>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group hidden">
                         <label class="col-sm-2 control-label" for="input-address-2{{ address_row }}">{{ entry_address_2 }}</label>
                         <div class="col-sm-10">
                           <input type="text" name="address[{{ address_row }}][address_2]" value="{{ address.address_2 }}" placeholder="{{ entry_address_2 }}" id="input-address-2{{ address_row }}" class="form-control" />
@@ -374,7 +410,7 @@
                           <div class="text-danger">{{ error_address[address_row].country }}</div>
                           {% endif %}</div>
                       </div>
-                      <div class="form-group required">
+                      <div class="form-group hidden">
                         <label class="col-sm-2 control-label" for="input-zone{{ address_row }}">{{ entry_zone }}</label>
                         <div class="col-sm-10">
                           <select name="address[{{ address_row }}][zone_id]" id="input-zone{{ address_row }}" class="form-control">
@@ -905,15 +941,88 @@
   }); 
 
   $('input[name=\'affiliate\']:checked').trigger('change');
-  //--></script> 
+  //--></script>
+
+  <script type="text/javascript"><!--
+
+    $("#masterdisable").show();
+    $('input[name="master"]').click(function() {
+
+      if($(this).is(":checked")) {
+        $("#masterdisable").hide(300);
+        $("#master2disable").hide(300);
+        $("#master3disable").hide(300);
+        $("#passnote").html("<p>If not entered password for master account is auto generated, and will be showed on the success note. </p>");
+      } else {
+        $("#masterdisable").show(200);
+        $("#master2disable").show(200);
+        $("#master3disable").show(200);
+        $("#passnote").html("");
+      }
+    });
+
+    // Manufacturer
+    $('input[name=\'partner\']').autocomplete({
+      'source': function(request, response) {
+        $.ajax({
+          url: 'index.php?route=customer/customer/autocompletep&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+          dataType: 'json',
+          success: function(json) {
+            json.unshift({
+              partner: 0,
+              naziv: '{{ text_none }}'
+            });
+
+            response($.map(json, function(item) {
+              return {
+                label: item['naziv'],
+                value: item['partner']
+              }
+            }));
+          }
+        });
+      },
+      'select': function(item) {
+        $('input[name=\'naziv\']').val(item['label']);
+        $('input[name=\'partner\']').val(item['value']);
+      }
+    });
+
+
+    //--></script>
   <script type="text/javascript"><!--
   $('select[name=\'customer_group_id\']').on('change', function() {
+
+    if(this.value > 2){
+
+      $("#fname").html("Naziv");
+      $("#lname").html("Mjesto");
+
+      $("#fnamea").html("Naziv");
+      $("#lnamea").html("Mjesto");
+
+
+
+    }
+    else{
+
+      $("#fname").html("Ime");
+      $("#lname").html("Prezime");
+
+      $("#fnamea").html("Ime");
+      $("#lnamea").html("Prezime");
+
+    }
     $.ajax({
       url: 'index.php?route=customer/customer/customfield&user_token={{ user_token }}&customer_group_id=' + this.value,
       dataType: 'json',
       success: function(json) {
         $('.custom-field').hide();
         $('.custom-field').removeClass('required');
+
+
+
+
 
         for (i = 0; i < json.length; i++) {
           custom_field = json[i];
@@ -941,12 +1050,12 @@
     html += '  <input type="hidden" name="address[' + address_row + '][address_id]" value="" />';
 
     html += '  <div class="form-group required">';
-    html += '    <label class="col-sm-2 control-label" for="input-firstname' + address_row + '">{{ entry_firstname }}</label>';
+    html += '    <label class="col-sm-2 control-label" for="input-firstname' + address_row + '" id="fnamea">{{ entry_firstname }}</label>';
     html += '    <div class="col-sm-10"><input type="text" name="address[' + address_row + '][firstname]" value="" placeholder="{{ entry_firstname }}" id="input-firstname' + address_row + '" class="form-control" /></div>';
     html += '  </div>';
 
     html += '  <div class="form-group required">';
-    html += '    <label class="col-sm-2 control-label" for="input-lastname' + address_row + '">{{ entry_lastname }}</label>';
+    html += '    <label class="col-sm-2 control-label" for="input-lastname' + address_row + '" id="lnamea">{{ entry_lastname }}</label>';
     html += '    <div class="col-sm-10"><input type="text" name="address[' + address_row + '][lastname]" value="" placeholder="{{ entry_lastname }}" id="input-lastname' + address_row + '" class="form-control" /></div>';
     html += '  </div>';
 

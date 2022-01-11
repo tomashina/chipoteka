@@ -9,6 +9,10 @@ class Customer {
 	private $telephone;
 	private $newsletter;
 	private $address_id;
+    private $master;
+    private $oib;
+    private $grupa_partnera;
+    private $tvrtka;
 
 	public function __construct($registry) {
 		$this->config = $registry->get('config');
@@ -28,6 +32,11 @@ class Customer {
 				$this->telephone = $customer_query->row['telephone'];
 				$this->newsletter = $customer_query->row['newsletter'];
 				$this->address_id = $customer_query->row['address_id'];
+                $this->master = $customer_query->row['master'];
+                $tempoib = json_decode($customer_query->row['custom_field'], true);
+                $this->oib = isset($tempoib[1]) ? $tempoib[1] : null;
+                $this->tvrtka = isset($tempoib[2]) ? $tempoib[2] : null;
+                $this->grupa_partnera = $customer_query->row['grupa_partnera'];
 
 				$this->db->query("UPDATE " . DB_PREFIX . "customer SET language_id = '" . (int)$this->config->get('config_language_id') . "', ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "' WHERE customer_id = '" . (int)$this->customer_id . "'");
 
@@ -60,6 +69,11 @@ class Customer {
 			$this->telephone = $customer_query->row['telephone'];
 			$this->newsletter = $customer_query->row['newsletter'];
 			$this->address_id = $customer_query->row['address_id'];
+            $this->master = $customer_query->row['master'];
+            $tempoib = json_decode($customer_query->row['custom_field'], true);
+            $this->oib = isset($tempoib[1]) ? $tempoib[1] : null;
+            $this->tvrtka = isset($tempoib[2]) ? $tempoib[2] : null;
+            $this->grupa_partnera = $customer_query->row['grupa_partnera'];
 		
 			$this->db->query("UPDATE " . DB_PREFIX . "customer SET language_id = '" . (int)$this->config->get('config_language_id') . "', ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "' WHERE customer_id = '" . (int)$this->customer_id . "'");
 
@@ -80,6 +94,10 @@ class Customer {
 		$this->telephone = '';
 		$this->newsletter = '';
 		$this->address_id = '';
+        $this->master = '';
+        $this->oib = '';
+        $this->grupa_partnera = '';
+        $this->tvrtka = '';
 	}
 
 	public function isLogged() {
@@ -101,6 +119,22 @@ class Customer {
 	public function getGroupId() {
 		return $this->customer_group_id;
 	}
+
+    public function getMaster() {
+        return $this->master;
+    }
+
+    public function getOib() {
+        return $this->oib;
+    }
+
+    public function getGrupapartnera() {
+        return $this->grupa_partnera;
+    }
+
+    public function getTvrtka() {
+        return $this->tvrtka;
+    }
 
 	public function getEmail() {
 		return $this->email;

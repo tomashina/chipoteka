@@ -305,8 +305,10 @@ class Luceed
      *
      * @return mixed
      */
-    public function createOrder(array $order)
+    public function createOrder(array $order, bool $b2b = false)
     {
+        $this->checkOrderService($b2b);
+
         return $this->service->post($this->end_points['order_create'], $order);
     }
 
@@ -327,9 +329,39 @@ class Luceed
      *
      * @return false|mixed
      */
-    public function getOrders(string $query)
+    public function getOrders(string $query, bool $b2b = false)
     {
+        $this->checkOrderService($b2b);
+
         return $this->service->get($this->end_points['orders_get'], $query);
+    }
+
+
+    /**
+     * @param string $uid
+     *
+     * @return false|mixed
+     */
+    public function getOrderDocument(string $uid, bool $b2b = false)
+    {
+        $this->checkOrderService($b2b);
+
+        return $this->service->get($this->end_points['order_document'], $uid);
+    }
+
+    /*******************************************************************************
+    *                                Copyright : AGmedia                           *
+    *                              email: filip@agmedia.hr                         *
+    *******************************************************************************/
+
+    /**
+     * @param bool $b2b
+     */
+    private function checkOrderService(bool $b2b): void
+    {
+        if ($b2b) {
+            $this->service = new LuceedService($b2b);
+        }
     }
 
 }

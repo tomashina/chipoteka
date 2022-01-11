@@ -1,5 +1,10 @@
 {% if categories %}
 {% for category in categories %}
+
+ {% if groupId >= 2 and category.name=='AKCIJE' %}
+
+{% else %}
+
     {% if category.children %}
         <div class="accordion-item border-bottom">
 
@@ -58,6 +63,9 @@
             <h3 class="accordion-header"><a class="nav-link-style d-block fs-md fw-normal py-3" href="{{ category.href }}"><span class="d-flex align-items-center">{{ category.name }}</span></a></h3>
         </div>
     {% endif %}
+
+            {% endif %}
+
 {% endfor %}
 {% endif %}
 

@@ -19,10 +19,80 @@ class ControllerCustomerCustomer extends Controller {
 
 		$this->load->model('customer/customer');
 
+        if(isset($this->request->post['partner'])){
+
+            $loc_customer = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Customer();
+            $luceed = new \Agmedia\Luceed\Connection\LuceedService();
+            $result = $luceed->get('partneri/sifra/', $this->request->post['partner']);
+            $result = $loc_customer->setResponseData($result);
+            $customer_data = collect($result)->toArray();
+
+            $this->request->post['firstname'] = $customer_data[0]->naziv;
+            $this->request->post['lastname'] = $customer_data[0]->naziv_mjesta;
+
+            $mail = substr($customer_data[0]->e_mail, 0, strpos($customer_data[0]->e_mail, ","));
+
+            if($mail){
+                $mail = str_replace(' ', '', $mail);
+            }
+            else{
+                $mail = $customer_data[0]->e_mail;
+            }
+
+            $this->request->post['email'] = $mail;
+
+            $this->request->post['city'] = $customer_data[0]->naziv_mjesta;
+
+            $this->request->post['telephone'] = $customer_data[0]->telefon;
+
+            $this->request->post['custom_field'][1] = $customer_data[0]->oib;
+            $this->request->post['custom_field'][2] = $customer_data[0]->naziv;
+
+            $this->request->post['grupa_partnera'] = $this->request->post['partner'];
+
+
+            $this->request->post['customer_group_id'] = preg_replace('/[^0-9]/', '', $customer_data[0]->nivo_partnera);
+
+            $this->request->post['customer_group_id'] = (int)$this->request->post['customer_group_id'] + 2;
+
+            if($this->request->post['password']){
+                $this->request->post['password'] = $this->request->post['password'];
+
+            }
+            else{
+                $this->request->post['password'] = $this->randomPassword();
+            }
+
+
+            $this->request->post['confirm'] = $this->request->post['password'];
+
+            $this->request->post['confirm'] = $this->request->post['password'];
+
+
+            $this->request->post['address_1'] = $customer_data[0]->adresa;
+            $this->request->post['city'] = $customer_data[0]->naziv_mjesta;
+            $this->request->post['postcode'] = $customer_data[0]->postanski_broj;
+            $this->request->post['country_id'] = '53';
+            $this->request->post['zone_id'] = '0';
+            $this->request->post['default'] = '1';
+
+
+
+
+        }
+
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
 			$this->model_customer_customer->addCustomer($this->request->post);
 
-			$this->session->data['success'] = $this->language->get('text_success');
+			if($this->request->post['master']=='1' && $this->request->post['password'] !='' ){
+
+                $this->session->data['success'] = $this->language->get('text_success'). ' Lozinka usera: '. $this->request->post['password'] ;
+            }
+			else{
+                $this->session->data['success'] = $this->language->get('text_success');
+            }
+
+
 
 			$url = '';
 
@@ -737,6 +807,31 @@ class ControllerCustomerCustomer extends Controller {
 			$data['telephone'] = '';
 		}
 
+        if (isset($this->request->post['master'])) {
+            $data['master'] = $this->request->post['master'];
+        } elseif (!empty($customer_info)) {
+            $data['master'] = $customer_info['master'];
+        } else {
+            $data['master'] = 0;
+        }
+
+        if (isset($this->request->post['grupa_partnera'])) {
+            $data['grupa_partnera'] = $this->request->post['grupa_partnera'];
+        } elseif (!empty($customer_info)) {
+            $data['grupa_partnera'] = $customer_info['grupa_partnera'];
+        } else {
+            $data['grupa_partnera'] = '';
+        }
+
+        if (isset($this->request->post['partner'])) {
+            $data['partner'] = $this->request->post['partner'];
+        } elseif (!empty($customer_info)) {
+            $data['partner'] = $customer_info['grupa_partnera'];
+
+        } else {
+            $data['partner'] = '';
+        }
+
 		// Custom Fields
 		$this->load->model('customer/custom_field');
 
@@ -957,155 +1052,197 @@ class ControllerCustomerCustomer extends Controller {
 		$this->response->setOutput($this->load->view('customer/customer_form', $data));
 	}
 
+    public function autocompletep() {
+        $json = array();
+
+        if (isset($this->request->get['filter_name'])) {
+            $loc_customer = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Customer();
+            $luceed = new \Agmedia\Luceed\Connection\LuceedService();
+            $result = $luceed->get('partneri/sifra/', $this->request->get['filter_name']);
+            $result = $loc_customer->setResponseData($result);
+            $customer_data = collect($result)->toArray();
+
+
+
+
+            $resultss = json_decode(json_encode($customer_data), true);
+
+
+            foreach ($resultss as $result) {
+                $json[] = array(
+                    'partner' => $result['partner'],
+                    'naziv'            => strip_tags(html_entity_decode($result['naziv'], ENT_QUOTES, 'UTF-8'))
+                );
+            }
+        }
+
+        $sort_order = array();
+
+        foreach ($json as $key => $value) {
+            $sort_order[$key] = $value['name'];
+        }
+
+        array_multisort($sort_order, SORT_ASC, $json);
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json));
+    }
+
 	protected function validateForm() {
-		if (!$this->user->hasPermission('modify', 'customer/customer')) {
-			$this->error['warning'] = $this->language->get('error_permission');
-		}
 
-		if ((utf8_strlen($this->request->post['firstname']) < 1) || (utf8_strlen(trim($this->request->post['firstname'])) > 32)) {
-			$this->error['firstname'] = $this->language->get('error_firstname');
-		}
+            if (!$this->user->hasPermission('modify', 'customer/customer')) {
+                $this->error['warning'] = $this->language->get('error_permission');
+            }
 
-		if ((utf8_strlen($this->request->post['lastname']) < 1) || (utf8_strlen(trim($this->request->post['lastname'])) > 32)) {
-			$this->error['lastname'] = $this->language->get('error_lastname');
-		}
+            if ((utf8_strlen($this->request->post['firstname']) < 1) || (utf8_strlen(trim($this->request->post['firstname'])) > 128)) {
+                $this->error['firstname'] = $this->language->get('error_firstname');
+            }
 
-		if ((utf8_strlen($this->request->post['email']) > 96) || !filter_var($this->request->post['email'], FILTER_VALIDATE_EMAIL)) {
-			$this->error['email'] = $this->language->get('error_email');
-		}
+            if ((utf8_strlen($this->request->post['lastname']) < 1) || (utf8_strlen(trim($this->request->post['lastname'])) > 32)) {
+                $this->error['lastname'] = $this->language->get('error_lastname');
+            }
 
-		$customer_info = $this->model_customer_customer->getCustomerByEmail($this->request->post['email']);
+            if ((utf8_strlen($this->request->post['email']) > 96) || !filter_var($this->request->post['email'], FILTER_VALIDATE_EMAIL)) {
+                $this->error['email'] = $this->language->get('error_email');
+            }
 
-		if (!isset($this->request->get['customer_id'])) {
-			if ($customer_info) {
-				$this->error['warning'] = $this->language->get('error_exists');
-			}
-		} else {
-			if ($customer_info && ($this->request->get['customer_id'] != $customer_info['customer_id'])) {
-				$this->error['warning'] = $this->language->get('error_exists');
-			}
-		}
+            $customer_info = $this->model_customer_customer->getCustomerByEmail($this->request->post['email']);
 
-		if ((utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
-			$this->error['telephone'] = $this->language->get('error_telephone');
-		}
+            if (!isset($this->request->get['customer_id'])) {
+                if ($customer_info) {
+                    $this->error['warning'] = $this->language->get('error_exists');
+                }
+            } else {
+                if ($customer_info && ($this->request->get['customer_id'] != $customer_info['customer_id'])) {
+                    $this->error['warning'] = $this->language->get('error_exists');
+                }
+            }
 
-		// Custom field validation
-		$this->load->model('customer/custom_field');
+            if ((utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
+                $this->error['telephone'] = $this->language->get('error_telephone');
+            }
 
-		$custom_fields = $this->model_customer_custom_field->getCustomFields(array('filter_customer_group_id' => $this->request->post['customer_group_id']));
+            // Custom field validation
+            $this->load->model('customer/custom_field');
 
-		foreach ($custom_fields as $custom_field) {
-			if (($custom_field['location'] == 'account') && $custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['custom_field_id']])) {
-				$this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
-			} elseif (($custom_field['location'] == 'account') && ($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !filter_var($this->request->post['custom_field'][$custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $custom_field['validation'])))) {
-				$this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
-			}
-		}
+            $custom_fields = $this->model_customer_custom_field->getCustomFields(array('filter_customer_group_id' => $this->request->post['customer_group_id']));
 
-		if ($this->request->post['password'] || (!isset($this->request->get['customer_id']))) {
-			if ((utf8_strlen(html_entity_decode($this->request->post['password'], ENT_QUOTES, 'UTF-8')) < 4) || (utf8_strlen(html_entity_decode($this->request->post['password'], ENT_QUOTES, 'UTF-8')) > 40)) {
-				$this->error['password'] = $this->language->get('error_password');
-			}
+            foreach ($custom_fields as $custom_field) {
+                if (($custom_field['location'] == 'account') && $custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['custom_field_id']])) {
+                    $this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+                } elseif (($custom_field['location'] == 'account') && ($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !filter_var($this->request->post['custom_field'][$custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $custom_field['validation'])))) {
+                    $this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+                }
+            }
 
-			if ($this->request->post['password'] != $this->request->post['confirm']) {
-				$this->error['confirm'] = $this->language->get('error_confirm');
-			}
-		}
+            if ($this->request->post['password'] || (!isset($this->request->get['customer_id']))) {
+                if ((utf8_strlen(html_entity_decode($this->request->post['password'], ENT_QUOTES, 'UTF-8')) < 4) || (utf8_strlen(html_entity_decode($this->request->post['password'], ENT_QUOTES, 'UTF-8')) > 40)) {
+                    $this->error['password'] = $this->language->get('error_password');
+                }
 
-		if (isset($this->request->post['address'])) {
-			foreach ($this->request->post['address'] as $key => $value) {
-				if ((utf8_strlen($value['firstname']) < 1) || (utf8_strlen($value['firstname']) > 32)) {
-					$this->error['address'][$key]['firstname'] = $this->language->get('error_firstname');
-				}
+                if ($this->request->post['password'] != $this->request->post['confirm']) {
+                    $this->error['confirm'] = $this->language->get('error_confirm');
+                }
+            }
 
-				if ((utf8_strlen($value['lastname']) < 1) || (utf8_strlen($value['lastname']) > 32)) {
-					$this->error['address'][$key]['lastname'] = $this->language->get('error_lastname');
-				}
-
-				if ((utf8_strlen($value['address_1']) < 3) || (utf8_strlen($value['address_1']) > 128)) {
-					$this->error['address'][$key]['address_1'] = $this->language->get('error_address_1');
-				}
-
-				if ((utf8_strlen($value['city']) < 2) || (utf8_strlen($value['city']) > 128)) {
-					$this->error['address'][$key]['city'] = $this->language->get('error_city');
-				}
-
-				$this->load->model('localisation/country');
-
-				$country_info = $this->model_localisation_country->getCountry($value['country_id']);
-
-				if ($country_info && $country_info['postcode_required'] && (utf8_strlen($value['postcode']) < 2 || utf8_strlen($value['postcode']) > 10)) {
-					$this->error['address'][$key]['postcode'] = $this->language->get('error_postcode');
-				}
-
-				if ($value['country_id'] == '') {
-					$this->error['address'][$key]['country'] = $this->language->get('error_country');
-				}
-
-				/*if (!isset($value['zone_id']) || $value['zone_id'] == '') {
-					$this->error['address'][$key]['zone'] = $this->language->get('error_zone');
-				}*/
-
-				foreach ($custom_fields as $custom_field) {
-					if (($custom_field['location'] == 'address') && $custom_field['required'] && empty($value['custom_field'][$custom_field['custom_field_id']])) {
-						$this->error['address'][$key]['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
-					} elseif (($custom_field['location'] == 'address') && ($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !filter_var($value['custom_field'][$custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $custom_field['validation'])))) {
-						$this->error['address'][$key]['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+            if (isset($this->request->post['address'])) {
+                foreach ($this->request->post['address'] as $key => $value) {
+                    if ((utf8_strlen($value['firstname']) < 1) || (utf8_strlen($value['firstname']) > 128)) {
+                        $this->error['address'][$key]['firstname'] = $this->language->get('error_firstname');
                     }
-				}
-			}
-		}
 
-		if ($this->request->post['affiliate']) {
-			if ($this->request->post['payment'] == 'cheque') {
-				if ($this->request->post['cheque'] == '') {
-					$this->error['cheque'] = $this->language->get('error_cheque');
-				}
-			} elseif ($this->request->post['payment'] == 'paypal') {
-				if ((utf8_strlen($this->request->post['paypal']) > 96) || !filter_var($this->request->post['paypal'], FILTER_VALIDATE_EMAIL)) {
-					$this->error['paypal'] = $this->language->get('error_paypal');
-				}
-			} elseif ($this->request->post['payment'] == 'bank') {
-				if ($this->request->post['bank_account_name'] == '') {
-					$this->error['bank_account_name'] = $this->language->get('error_bank_account_name');
-				}
+                    if ((utf8_strlen($value['lastname']) < 1) || (utf8_strlen($value['lastname']) > 32)) {
+                        $this->error['address'][$key]['lastname'] = $this->language->get('error_lastname');
+                    }
 
-				if ($this->request->post['bank_account_number'] == '') {
-					$this->error['bank_account_number'] = $this->language->get('error_bank_account_number');
-				}
-			}
+                    if ((utf8_strlen($value['address_1']) < 3) || (utf8_strlen($value['address_1']) > 128)) {
+                        $this->error['address'][$key]['address_1'] = $this->language->get('error_address_1');
+                    }
 
-			if (!$this->request->post['tracking']) {
-				$this->error['tracking'] = $this->language->get('error_tracking');
-			}
+                    if ((utf8_strlen($value['city']) < 2) || (utf8_strlen($value['city']) > 128)) {
+                        $this->error['address'][$key]['city'] = $this->language->get('error_city');
+                    }
 
-			$affiliate_info = $this->model_customer_customer->getAffliateByTracking($this->request->post['tracking']);
+                    $this->load->model('localisation/country');
 
-			if (!isset($this->request->get['customer_id'])) {
-				if ($affiliate_info) {
-					$this->error['tracking'] = $this->language->get('error_tracking_exists');
-				}
-			} else {
-				if ($affiliate_info && ($this->request->get['customer_id'] != $affiliate_info['customer_id'])) {
-					$this->error['tracking'] = $this->language->get('error_tracking_exists');
-				}
-			}
+                    $country_info = $this->model_localisation_country->getCountry($value['country_id']);
 
-			foreach ($custom_fields as $custom_field) {
-				if (($custom_field['location'] == 'affiliate') && $custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['custom_field_id']])) {
-					$this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
-				} elseif (($custom_field['location'] == 'affiliate') && ($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !filter_var($this->request->post['custom_field'][$custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $custom_field['validation'])))) {
-					$this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
-				}
-			}
-		}
+                    if ($country_info && $country_info['postcode_required'] && (utf8_strlen($value['postcode']) < 2 || utf8_strlen($value['postcode']) > 10)) {
+                        $this->error['address'][$key]['postcode'] = $this->language->get('error_postcode');
+                    }
 
-		if ($this->error && !isset($this->error['warning'])) {
-			$this->error['warning'] = $this->language->get('error_warning');
-		}
+                    if ($value['country_id'] == '') {
+                        $this->error['address'][$key]['country'] = $this->language->get('error_country');
+                    }
 
-		return !$this->error;
+                    /*if (!isset($value['zone_id']) || $value['zone_id'] == '') {
+                        $this->error['address'][$key]['zone'] = $this->language->get('error_zone');
+                    }*/
+
+                    foreach ($custom_fields as $custom_field) {
+                        if (($custom_field['location'] == 'address') && $custom_field['required'] && empty($value['custom_field'][$custom_field['custom_field_id']])) {
+                            $this->error['address'][$key]['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+                        } elseif (($custom_field['location'] == 'address') && ($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !filter_var($value['custom_field'][$custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $custom_field['validation'])))) {
+                            $this->error['address'][$key]['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+                        }
+                    }
+                }
+            }
+
+            if ($this->request->post['affiliate']) {
+                if ($this->request->post['payment'] == 'cheque') {
+                    if ($this->request->post['cheque'] == '') {
+                        $this->error['cheque'] = $this->language->get('error_cheque');
+                    }
+                } elseif ($this->request->post['payment'] == 'paypal') {
+                    if ((utf8_strlen($this->request->post['paypal']) > 96) || !filter_var($this->request->post['paypal'], FILTER_VALIDATE_EMAIL)) {
+                        $this->error['paypal'] = $this->language->get('error_paypal');
+                    }
+                } elseif ($this->request->post['payment'] == 'bank') {
+                    if ($this->request->post['bank_account_name'] == '') {
+                        $this->error['bank_account_name'] = $this->language->get('error_bank_account_name');
+                    }
+
+                    if ($this->request->post['bank_account_number'] == '') {
+                        $this->error['bank_account_number'] = $this->language->get('error_bank_account_number');
+                    }
+                }
+
+                if (!$this->request->post['tracking']) {
+                    $this->error['tracking'] = $this->language->get('error_tracking');
+                }
+
+                $affiliate_info = $this->model_customer_customer->getAffliateByTracking($this->request->post['tracking']);
+
+                if (!isset($this->request->get['customer_id'])) {
+                    if ($affiliate_info) {
+                        $this->error['tracking'] = $this->language->get('error_tracking_exists');
+                    }
+                } else {
+                    if ($affiliate_info && ($this->request->get['customer_id'] != $affiliate_info['customer_id'])) {
+                        $this->error['tracking'] = $this->language->get('error_tracking_exists');
+                    }
+                }
+
+                foreach ($custom_fields as $custom_field) {
+                    if (($custom_field['location'] == 'affiliate') && $custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['custom_field_id']])) {
+                        $this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+                    } elseif (($custom_field['location'] == 'affiliate') && ($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !filter_var($this->request->post['custom_field'][$custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $custom_field['validation'])))) {
+                        $this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+                    }
+                }
+            }
+
+            if ($this->error && !isset($this->error['warning'])) {
+                $this->error['warning'] = $this->language->get('error_warning');
+            }
+
+            return !$this->error;
+
+
+
+
+
 	}
 
 	protected function validateDelete() {
@@ -1501,4 +1638,15 @@ class ControllerCustomerCustomer extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+
+    public function randomPassword() {
+        $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        $pass = array(); //remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        for ($i = 0; $i < 8; $i++) {
+            $n = rand(0, $alphaLength);
+            $pass[] = $alphabet[$n];
+        }
+        return implode($pass); //turn the array into a string
+    }
 }

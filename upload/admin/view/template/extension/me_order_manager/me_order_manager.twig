@@ -207,6 +207,8 @@
 								{% for customer_group in customer_groups %}
 								<option value="{{ customer_group.customer_group_id }}" {% if customer_group.customer_group_id == filter_customer_group %}selected="selected"{% endif %}>{{ customer_group.name }}</option>
 								{% endfor %}
+
+								<option value="b2b" {% if 'b2b' == filter_customer_group %}selected="selected"{% endif %}>Sve B2B grupe kupaca</option>
 							</select>
 						</div>
 					</div>

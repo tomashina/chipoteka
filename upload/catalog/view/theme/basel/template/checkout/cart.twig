@@ -81,7 +81,12 @@
                                 <div class="pt-2">
                                     <h3 class="product-title fs-base mb-2"><a href="{{ product.href }}">{{ product.name }}</a></h3>
                                     {% if not product.stock %}
+                                    {% if groupId > 2  %}
+                                        <div class="fs-sm">  <span class="text-danger">***</span><span class="text-muted me-2"> Odmah dostupno: {{ product.kolicina }} kom</span></div>
+                                    {% else %}
                                         <span class="text-danger">***</span>
+                                    {% endif %}
+
                                     {% endif %}
                                     {% if product.option %}
                                         {% for option in product.option %}
@@ -93,10 +98,16 @@
                                     <div class="fs-lg text-accent pt-2">{{ product.price }} </div>
                                 </div>
                             </div>
+
+
                             <div class="pt-2 pt-sm-0 ps-sm-3 mx-auto mx-sm-0 text-center text-sm-start" style="max-width: 9rem;">
                                 <label class="form-label" for="quantity1">{{ column_quantity }}</label>
-                                <input type="number" min="1" step="1" id="qty" max="{{ product.kolicina }}" name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" class="form-control qty-form" onKeyDown="return false"/>
 
+                                {% if groupId > 2  %}
+                                    <input type="number" min="1" step="1" id="qty" max="" name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" class="form-control qty-form" onKeyDown="return false"/>
+                                {% else %}
+                                    <input type="number" min="1" step="1" id="qty" max="{{ product.kolicina }}" name="quantity[{{ product.cart_id }}]" value="{{ product.quantity }}" class="form-control qty-form" onKeyDown="return false"/>
+                                {% endif %}
                                 <i></i>
                                 <button class="btn btn-link px-0 text-danger" type="button" onclick="cart.remove('{{ product.cart_id }}');" ><i class="fal fa-times-circle me-2"></i><span class="fs-sm">{{ button_remove }}</span>
                                 </button>

@@ -49,6 +49,8 @@ class ControllerAccountLogin extends Controller {
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
+
+
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			// Unset guest
 			unset($this->session->data['guest']);
@@ -79,7 +81,13 @@ class ControllerAccountLogin extends Controller {
 			if (isset($this->request->post['redirect']) && $this->request->post['redirect'] != $this->url->link('account/logout', '', true) && (strpos($this->request->post['redirect'], $this->config->get('config_url')) !== false || strpos($this->request->post['redirect'], $this->config->get('config_ssl')) !== false)) {
 				$this->response->redirect(str_replace('&amp;', '&', $this->request->post['redirect']));
 			} else {
-				$this->response->redirect($this->url->link('account/account', '', true));
+                $data['groupId'] = $this->customer->getGroupId();
+			    if($data['groupId'] > 2){
+                    $this->response->redirect($this->url->link('common/home', '', true));
+                }else{
+                    $this->response->redirect($this->url->link('account/account', '', true));
+                }
+
 			}
 		}
 

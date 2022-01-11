@@ -34,7 +34,7 @@
       <section class="col-lg-8" id="account-edit">
         <!-- Toolbar-->
         <div class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-4 pb-lg-5 mb-lg-3">
-          <h6 class="fs-base text-light mb-0">{{ text_address_book }}</h6><a class="btn btn-primary " href="{{ logout }}"><i class="fal fa-sign-out me-2"></i>{{ text_logout }}</a>
+          <h6 class="fs-base text-light mb-0">{% if groupId < '2' %} {{ text_address_book }} {% else %} Adresa dostave {% endif %}</h6><a class="btn btn-primary " href="{{ logout }}"><i class="fal fa-sign-out me-2"></i>{{ text_logout }}</a>
         </div>
         <!-- Profile form-->
 
@@ -54,8 +54,8 @@
           <table class="table table-hover mb-0">
             <thead>
             <tr>
-              <th>Adrese</th>
-              <th>Uredi</th>
+              <th>{% if groupId < '2' %}  Adrese {% else %} Adresa dostave {% endif %}</th>
+              {% if groupId < '2' %}  <th>Uredi</th> {% endif %}
             </tr>
             </thead>
             <tbody>
@@ -63,11 +63,11 @@
 
             {% for result in addresses %}
             <tr>
-              <td class="py-3 align-middle">{{ result.address }}</td>
-              <td class="py-3 align-middle">
+              <td class="py-3 align-middle">   {{ result.address }}</td>
+              {% if groupId < '2' %}   <td class="py-3 align-middle">
                 <a class="nav-link-style me-2" href="{{ result.update }}" data-bs-toggle="tooltip" title="{{ button_edit }}"><i class="fal fa-edit"></i></a>
                 <a class="nav-link-style text-danger" href="{{ result.delete }}" data-bs-toggle="tooltip" title="{{ button_delete }}"><div class="fal fa-trash-alt"></div></a>
-              </td>
+              </td>{% endif %}
             </tr>
 
             {% endfor %}
@@ -80,7 +80,7 @@
         {% else %}
           <p>{{ text_empty }}</p>
         {% endif %}
-        <div class="text-sm-start pt-4"><a class="btn btn-primary" href="{{ add }}" data-bs-toggle="modal">{{ button_new_address }}</a></div>
+        {% if groupId < '2' %}    <div class="text-sm-start pt-4"><a class="btn btn-primary" href="{{ add }}" data-bs-toggle="modal">{{ button_new_address }}</a></div> {% endif %}
 
 
 

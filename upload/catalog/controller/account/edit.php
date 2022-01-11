@@ -129,6 +129,22 @@ class ControllerAccountEdit extends Controller {
 			$data['telephone'] = '';
 		}
 
+        if (isset($this->request->post['master'])) {
+            $data['master'] = $this->request->post['master'];
+        } elseif (!empty($customer_info)) {
+            $data['master'] = $customer_info['master'];
+        } else {
+            $data['master'] = 0;
+        }
+
+
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
 		// Custom Fields
 		$data['custom_fields'] = array();
 		

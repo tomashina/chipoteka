@@ -52,15 +52,24 @@
                 </div>
                 <div class="col-xl-3 col-sm-6 mb-4">
                     <div class="d-flex">
-                    <img src="catalog/view/dist/img/icon-free-shipping.svg" alt="Besplatna dostava iznad" />
-                        <div class="ps-3 d-flex align-items-center">
-                            <h6 class="mb-0">
-                                Besplatna dostava iznad
-                                <span class="text-nowrap">
-                                    500 kn
-                                </span>
-                            </h6>
-                        </div>
+                        {% if groupId < 2 %}
+                            <img src="catalog/view/dist/img/icon-free-shipping.svg" alt="Besplatna dostava iznad" />
+                                <div class="ps-3 d-flex align-items-center">
+                                    <h6 class="mb-0">
+                                        Besplatna dostava iznad
+                                        <span class="text-nowrap">
+                                            500 kn
+                                        </span>
+                                    </h6>
+                                    </div>
+                        {% else %}
+                            <img src="catalog/view/dist/img/icon-partner.svg" alt="Vaš veleprodajni partner" />
+                            <div class="ps-3 d-flex align-items-center">
+                                <h6 class="mb-0">
+                                   Vaš veleprodajni partner
+                                </h6>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="col-xl-3 col-sm-6 mb-4">
@@ -94,6 +103,10 @@
                 <hr class="hr-light mb-5">
                     <div class="row pb-2 ps-lg-4 pe-lg-3">
                         <div class="col mb-4 page-footer__links">
+
+                            {% if groupId < 2 %}
+
+
                             <a class="mb-3" href="index.php?route=information/information&information_id=3">
                                 Uvjeti kupovine                       
                                                             
@@ -106,6 +119,27 @@
                                 Zaštita privatnosti i podataka                      
                                                             
                             </a>
+
+                            {% else %}
+                                <a class="mb-3" href="#">
+                                    Uvjeti kupovine B2B
+
+                                </a>
+                                <a class="mb-3" href="index.php?route=information/information&information_id=5">
+                                    Uvjeti korištenja
+
+                                </a>
+                                <a class="mb-3" href="#">
+                                    Načini plaćanja B2B
+
+                                </a>
+                                <a class="mb-3" href="mailto:info@chipoteka.hr">
+                                    Kontakt
+
+                                </a>
+                            {% endif %}
+
+
                         </div>
                     </div>
                     <div class="row pb-2 ps-lg-4 pe-lg-3">

@@ -32,10 +32,17 @@ class ControllerCheckoutConfirm extends Controller {
 		}
 
         // Validate cart has products and has stock.
-		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout') && $this->customer->getGroupId() < '3')) {
 			$redirect = $this->url->link('checkout/cart');
 		}
 
+
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
 
 
 
@@ -110,14 +117,30 @@ class ControllerCheckoutConfirm extends Controller {
 
 			$this->load->language('checkout/checkout');
 
-            if ($this->cart->getTotal() < FREESHIPPING ) {
-                $razlika = FREESHIPPING - $this->cart->getTotal();
+            if($data['groupId']>=2){
 
-                $razlika = number_format($razlika, 2, ',', '');
-                $data['freeshipppingnotification'] =   sprintf($this->language->get('freeshipppingnotification'), $razlika);
+                if ($this->cart->getTotal() < FREESHIPPINGB2B ) {
 
-            } else {
-                $data['freeshipppingnotification'] = '';
+                    $razlika = FREESHIPPINGB2B - $this->cart->getTotal();
+
+                    $razlika = number_format($razlika, 2, ',', '');
+                    $data['freeshipppingnotification'] =   sprintf($this->language->get('freeshipppingnotificationb2b'), $razlika);
+
+                } else {
+                    $data['freeshipppingnotification'] = '';
+                }
+            }
+            else {
+
+                if ($this->cart->getTotal() < FREESHIPPING) {
+                    $razlika = FREESHIPPING - $this->cart->getTotal();
+
+                    $razlika = number_format($razlika, 2, ',', '');
+                    $data['freeshipppingnotification'] = sprintf($this->language->get('freeshipppingnotification'), $razlika);
+
+                } else {
+                    $data['freeshipppingnotification'] = '';
+                }
             }
 
 			$order_data['invoice_prefix'] = $this->config->get('config_invoice_prefix');
@@ -145,7 +168,10 @@ class ControllerCheckoutConfirm extends Controller {
 				$order_data['lastname'] = $customer_info['lastname'];
 				$order_data['email'] = $customer_info['email'];
 				$order_data['telephone'] = $customer_info['telephone'];
+
 				$order_data['custom_field'] = json_decode($customer_info['custom_field'], true);
+                $order_data['oib'] = isset($order_data['custom_field'][1]) ? $order_data['custom_field'][1] : null;
+                $order_data['grupa_partnera'] = $customer_info['grupa_partnera'];
 			} elseif (isset($this->session->data['guest'])) {
 				$order_data['customer_id'] = 0;
 				$order_data['customer_group_id'] = $this->session->data['guest']['customer_group_id'];
@@ -261,6 +287,7 @@ class ControllerCheckoutConfirm extends Controller {
 					'model'      => $product['model'],
 					'option'     => $option_data,
 					'download'   => $product['download'],
+                    'kolicina'     => $product['kolicina'],
 					'quantity'   => $product['quantity'],
 					'subtract'   => $product['subtract'],
 					'price'      => $product['price'],
@@ -417,8 +444,10 @@ class ControllerCheckoutConfirm extends Controller {
 					'model'      => $product['model'],
 					'option'     => $option_data,
 					'recurring'  => $recurring,
+                    'kolicina'     => $product['kolicina'],
 					'quantity'   => $product['quantity'],
 					'subtract'   => $product['subtract'],
+                    'stock'     => $product['stock'] ? true : !(!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning')),
 					'price'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),
 					'total'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity'], $this->session->data['currency']),
 					'href'       => $this->url->link('product/product', 'product_id=' . $product['product_id'])

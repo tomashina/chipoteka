@@ -239,6 +239,50 @@ class LOC_Customer
             }
         }
 
+        Log::store('EXIST 1()::::::::::::::::::::::::::::::::::::::');
+        Log::store('$this->customer');
+        Log::store($this->customer);
+
+        if (empty($this->customer['uid']) && $this->customer['has_oib']) {
+            $alter = Customer::where('email', $this->customer['e_mail'])->first();
+
+            Log::store('enter');
+            Log::store($alter);
+
+            if ($alter) {
+                // Namjesti kupca koji kupuje kao Alter Customer
+                foreach ($exist as $l_customer) {
+                    if ($l_customer->grupacija && $l_customer->adresa == $alter->address->address_1) {
+                        Log::store($l_customer);
+
+                        $this->alter_customer = $this->populateCustomerForLuceed(collect($l_customer), true);
+                        $this->alter_customer['uid'] = $l_customer->partner_uid;
+                        $this->alter_customer['mjesto_uid'] = $l_customer->mjesto_uid;
+                    }
+                }
+
+                $main = Customer::where('grupa_partnera', $alter->grupa_partnera)->where('master', 1)->first();
+
+                if ($main) {
+                    $main_exist = $this->setResponseData(
+                        $this->service->getCustomerByEmail($main->email)
+                    );
+
+                    if ( ! empty($main_exist)) {
+                        foreach ($main_exist as $l_customer) {
+                            if ($l_customer->enabled == 'D') {
+                                if ( ! $l_customer->grupacija) {
+                                    $this->customer['uid'] = $l_customer->partner_uid;
+                                    $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+
         Log::store('EXIST()::::::::::::::::::::::::::::::::::::::');
         Log::store('$this->customer');
         Log::store($this->customer);
@@ -426,6 +470,7 @@ class LOC_Customer
             'e_mail'              => $collection['email'],
             'postanski_broj'      => $collection['zip'],
             'mjesto_uid'          => $this->setCityUid($collection['zip'], $collection['city']),
+            'has_oib'             => $collection['has_oib']
         ];
 
         return $data;
@@ -509,7 +554,7 @@ class LOC_Customer
      *
      * @return array
      */
-    private function setResponseData($response): array
+    public function setResponseData($response): array
     {
         $data = json_decode($response);
 

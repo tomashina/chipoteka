@@ -9,6 +9,13 @@ class ControllerCheckoutShippingAddress extends Controller {
 			$data['address_id'] = $this->customer->getAddressId();
 		}
 
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
 		$this->load->model('account/address');
         $data['cart'] = $this->url->link('checkout/cart', '', true);
 
@@ -74,7 +81,7 @@ class ControllerCheckoutShippingAddress extends Controller {
 		}
 
 		// Validate cart has products and has stock.
-		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
+		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout') && $this->customer->getGroupId() < '3')) {
 			$json['redirect'] = $this->url->link('checkout/cart');
 		}
 

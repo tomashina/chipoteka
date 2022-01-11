@@ -373,6 +373,14 @@ class ControllerCatalogInformation extends Controller {
 			$data['bottom'] = 0;
 		}
 
+        if (isset($this->request->post['group_id'])) {
+            $data['group_id'] = $this->request->post['group_id'];
+        } elseif (!empty($information_info)) {
+            $data['group_id'] = $information_info['group_id'];
+        } else {
+            $data['group_id'] = 0;
+        }
+
 		if (isset($this->request->post['status'])) {
 			$data['status'] = $this->request->post['status'];
 		} elseif (!empty($information_info)) {

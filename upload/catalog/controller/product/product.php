@@ -11,7 +11,12 @@ class ControllerProductProduct extends Controller {
         $this->document->addScript('catalog/view/dist/vendor/lg-fullscreen.js/dist/lg-fullscreen.min.js', 'footer');
         $this->document->addScript('catalog/view/dist/vendor/lg-zoom.js/dist/lg-zoom.min.js', 'footer');
 
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
 
+        } else {
+            $data['groupId'] ='0';
+        }
 
 		$data['breadcrumbs'] = array();
 
@@ -167,6 +172,26 @@ class ControllerProductProduct extends Controller {
 		$product_info = $this->model_catalog_product->getProduct($product_id);
 
 		if ($product_info) {
+            $this->load->model('extension/module/recently_viewed');
+            if($this->model_extension_module_recently_viewed->isEnabled()){
+                if ($this->customer->isLogged()) {
+                    $this->model_extension_module_recently_viewed->setRecentlyViewedProducts($this->customer->getId(), $product_info['product_id']);
+                } else {
+
+                    if(isset($this->request->cookie['recently_viewed']) && !empty($this->request->cookie['recently_viewed'])) {
+                        $recently_viewed = unserialize(base64_decode($this->request->cookie['recently_viewed']));
+                        $recently_viewed[$product_info['product_id']] = date("Y-m-d H:i:s");
+                        // sort by in recent viewed order
+                        uasort($recently_viewed, function($a, $b){ return strtotime($a) > strtotime($b); });
+                        array_unique($recently_viewed); // remove duplicates
+                    } else {
+                        $recently_viewed[$product_info['product_id']] = date("Y-m-d H:i:s");
+                    }
+
+                    $recently_viewed = base64_encode(serialize($recently_viewed));
+                    setcookie('recently_viewed', $recently_viewed, 0, '/', $this->request->server['HTTP_HOST']);
+                }
+            }
 			$url = '';
 
 			if (isset($this->request->get['path'])) {
@@ -341,6 +366,8 @@ class ControllerProductProduct extends Controller {
 			} else {
 				$data['price'] = false;
 			}
+
+            $data['vpc'] = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
             //price_2 agmedia
 
@@ -565,6 +592,8 @@ class ControllerProductProduct extends Controller {
 
                 $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + $rokisporuke, date('Y')));
 
+                $vpc = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,
@@ -572,6 +601,7 @@ class ControllerProductProduct extends Controller {
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 					'price'       => $price,
                     'price_2'       => $price_2,
+                    'vpc'       => $vpc,
 					'special'     => $special,
 					'freeshipping' => $freeshipping,
                     'saljemodo'     => $saljemodo,

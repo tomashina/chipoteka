@@ -180,7 +180,12 @@ class Cart {
 					$price = $product_discount_query->row['price'];
 				}
 
-				// Product Specials
+                if ( !$product_discount_query->num_rows && $this->customer->getGroupId() > 2) {
+                    $price = $product_query->row['vpc'];
+                }
+
+
+                // Product Specials
 				$product_special_query = $this->db->query("SELECT price FROM " . DB_PREFIX . "product_special WHERE product_id = '" . (int)$cart['product_id'] . "' AND customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((date_start = '0000-00-00 00:00:00' OR date_start < NOW()) AND (date_end = '0000-00-00 00:00:00' OR date_end > NOW())) ORDER BY priority ASC, price ASC LIMIT 1");
 
 				if ($product_special_query->num_rows) {

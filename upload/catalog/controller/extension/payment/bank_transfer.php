@@ -1,6 +1,15 @@
 <?php
 class ControllerExtensionPaymentBankTransfer extends Controller {
 	public function index() {
+
+        if ($this->customer->isLogged()) {
+            $data['groupId'] = $this->customer->getGroupId();
+
+        } else {
+            $data['groupId'] ='0';
+        }
+
+
 		$this->load->language('extension/payment/bank_transfer');
 
 		$data['bank'] = nl2br($this->config->get('payment_bank_transfer_bank' . $this->config->get('config_language_id')));
@@ -20,8 +29,22 @@ class ControllerExtensionPaymentBankTransfer extends Controller {
 
 			$comment  = '';
 
+            if ($this->customer->isLogged()) {
+                $data['groupId'] = $this->customer->getGroupId();
 
-			$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_bank_transfer_order_status_id'), $comment, true);
+            } else {
+                $data['groupId'] ='0';
+            }
+
+            if($data['groupId'] >= 2){
+                $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], 27, $comment, true);
+            }
+            else{
+                $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_bank_transfer_order_status_id'), $comment, true);
+            }
+
+
+
 		
 			$json['redirect'] = $this->url->link('checkout/success');
 		}

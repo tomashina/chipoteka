@@ -137,6 +137,8 @@ class ControllerExtensionModuleBaselProducts extends Controller {
                     } else {
                         $price_2 = false;
                     }
+
+                    $vpc = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 							
 					if ((float)$result['special']) {
 						$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
@@ -194,6 +196,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
                     $rokisporuke = $result['isbn'];
 
                     $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + $rokisporuke, date('Y')));
+
 					
 					$products[] = array(
 						'product_id' => $result['product_id'],
@@ -204,6 +207,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 						'name'    	 => $result['name'],
 						'price'   	 => $price,
                         'price_2'       => $price_2,
+                        'vpc'       => $vpc,
 						'new_label'  => $is_new,
 						'sale_badge' => $sale_badge,
                         'saljemodo'     => $saljemodo,

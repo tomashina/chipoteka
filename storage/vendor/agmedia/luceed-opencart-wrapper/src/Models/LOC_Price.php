@@ -63,6 +63,11 @@ class LOC_Price
             [
                 'id' => '3',
                 'title' => 'N1',
+                'url' => '14956-N1'
+            ],
+            [
+                'id' => '4',
+                'title' => 'N2',
                 'url' => '14956-N2'
             ]
         ];
@@ -98,8 +103,10 @@ class LOC_Price
         $categories    = collect();
         $manufacturers = collect();
         $cat_man = collect();
+        $arts = collect();
 
         foreach ($prices->rabati as $item) {
+            // If only Grupa artikala
             if ($item->grupa_artikla_uid && is_null($item->robna_marka_uid) && ! is_null($item->rabat)) {
                 if ($categories->has($item->grupa_artikla_uid)) {
                     if ($item->grupa_artikla_uid > $categories[$item->grupa_artikla_uid]) {
@@ -110,6 +117,7 @@ class LOC_Price
                 }
             }
 
+            // If only Rpbna Marka artikala
             if ($item->robna_marka_uid && is_null($item->grupa_artikla_uid) && ! is_null($item->rabat)) {
                 if ($manufacturers->has($item->robna_marka_uid)) {
                     if ($item->robna_marka_uid > $manufacturers[$item->robna_marka_uid]) {
@@ -120,11 +128,23 @@ class LOC_Price
                 }
             }
 
+            // If Grupa artikala and Robna marka
             if ($item->grupa_artikla_uid && $item->robna_marka_uid && ! is_null($item->rabat)) {
                 $cat_man->put($item->grupa_artikla_uid, [
                     'manufacturer' => $item->robna_marka_uid,
                     'discount' => $item->rabat
                 ]);
+            }
+
+            // If only Artikl
+            if ($item->artikl_uid && is_null($item->robna_marka_uid) && is_null($item->grupa_artikla_uid) && ! is_null($item->rabat)) {
+                if ($arts->has($item->artikl_uid)) {
+                    if ($item->rabat > $arts[$item->artikl_uid]) {
+                        $arts->put($item->artikl_uid, $item->rabat);
+                    }
+                } else {
+                    $arts->put($item->artikl_uid, $item->rabat);
+                }
             }
         }
 
@@ -168,7 +188,15 @@ class LOC_Price
             }
         }
 
-        foreach ($prices->cijene as $item) {
+        foreach ($arts as $sifra => $discount) {
+            $product = Product::where('luceed_uid', $sifra)->first();
+
+            if ($product) {
+                $this->addForUpdate($product, $item['discount'], true);
+            }
+        }
+
+        /*foreach ($prices->cijene as $item) {
             if ($item->cijena) {
                 $product = Product::where('luceed_uid', $item->artikl_uid)->first();
 
@@ -176,7 +204,7 @@ class LOC_Price
                     $this->addForUpdate($product, 0, $item->cijena);
                 }
             }
-        }
+        }*/
 
         return $this;
     }
@@ -279,9 +307,10 @@ class LOC_Price
      */
     private function addForUpdate($product, $discount, $price = null)
     {
-        $price = $price ?: $this->calculateDiscountPrice($product->vpc, $discount);
+        //$price = $price ?: $this->calculateDiscountPrice($product->vpc, $discount);
 
-        if ($this->prices_to_update->has($product->luceed_uid)) {
+        if ( ! $price && $this->prices_to_update->has($product->luceed_uid)) {
+            $price = $this->calculateDiscountPrice($product->vpc, $discount);
             $old_price = $this->prices_to_update->get($product->luceed_uid);
 
             Log::store($product->luceed_uid . ' / ' . $product->product_id . ' ::: stara: ' . $old_price['price'] . ' ::: nova: ' . $price);
@@ -293,6 +322,8 @@ class LOC_Price
                 ]);
             }
         }
+
+        $price = $this->calculateDiscountPrice($product->vpc, $discount);
 
         return $this->prices_to_update->put($product->luceed_uid, [
             'id'    => $product->product_id,

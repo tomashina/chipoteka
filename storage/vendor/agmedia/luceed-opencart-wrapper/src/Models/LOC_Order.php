@@ -134,7 +134,7 @@ class LOC_Order
 
         // Send order to luceed service.
         $this->response = json_decode(
-            $this->service->createOrder(['nalozi_prodaje' => [$this->order]])
+            $this->service->createOrder(['nalozi_prodaje' => [$this->order]], $this->hasOIB())
         );
 
         $this->log('Store order response: $this->response - LOC_Order #98.', $this->response);
@@ -177,6 +177,10 @@ class LOC_Order
     {
         $iznos = number_format($this->oc_order['total'], 2, '.', '');
 
+        if ($this->hasOIB()) {
+            $iznos = $this->getSubTotal();
+        }
+
         $this->items_available = false;//$this->setAvailability();
 
         $this->order = [
@@ -216,6 +220,18 @@ class LOC_Order
             $this->order['skl_dokument']  = 'MS';
         }
 
+        if ($this->hasOIB()) {
+            $this->order['nalog_prodaje_b2b'] = $this->oc_order['order_id']. '-' . Carbon::now()->year.'-b2b';
+            $this->order['skladiste'] = '101';
+            $this->order['sa__skladiste'] = '101';
+            $this->order['skl_dokument']  = 'OT';
+            $this->order['vrsta_isporuke']  = '07';
+            $this->order['cijene_s_porezom']  = 'N';
+            $this->order['vrsta_placanja']  = '96-1063';
+            $this->order['komercijalist__radnik_uid'] = '';
+
+        }
+
         $this->log('Order create method: $this->>order - LOC_Order #156', $this->order);
     }
 
@@ -226,6 +242,10 @@ class LOC_Order
     private function getReservation()
     {
         $date = Carbon::now();
+
+        if ($this->hasOIB()) {
+            $date = $date->addDay(7);
+        }
 
         if (in_array($this->oc_order['payment_code'], ['cod', 'wspay'])) {
             $date = $date->addDay(10);
@@ -240,10 +260,23 @@ class LOC_Order
 
 
     /**
+     * @return bool
+     */
+    private function hasOIB(): bool
+    {
+        return ($this->oc_order['oib'] != '') ? true : false;
+    }
+
+
+    /**
      * @return string
      */
     private function getStatus()
     {
+        if ($this->hasOIB()) {
+            return '13';
+        }
+
         if ($this->oc_order['payment_code'] == 'cod') {
             return '02';
         }
@@ -285,7 +318,8 @@ class LOC_Order
             'shipping_zip'     => $this->oc_order['shipping_postcode'],
             'shipping_city'    => $this->oc_order['shipping_city'],
             'shipping_country' => $this->oc_order['shipping_country'],
-            'should_update'    => $update
+            'should_update'    => $update,
+            'has_oib'          => $this->hasOIB()
         ];
     }
 
@@ -479,7 +513,7 @@ class LOC_Order
      */
     private function checkInstallments(): void
     {
-        if ($this->oc_order['installment'] != '0000') {
+        if ($this->oc_order && $this->oc_order['installment'] != '0000') {
             $this->installments = (int) substr($this->oc_order['installment'], 0, 2);
         }
     }
@@ -492,6 +526,10 @@ class LOC_Order
      */
     private function getPaymentType()
     {
+        if ($this->hasOIB()) {
+            return '96-1063';
+        }
+
         if (in_array($this->oc_order['payment_code'], ['cod', 'bank_transfer'])) {
             $loc_p = (new LOC_Payment())->getList(agconf('luceed.payment.' . $this->oc_order['payment_code']))->first();
         }
@@ -576,7 +614,11 @@ class LOC_Order
 
         foreach ($order_total as $item) {
             if ($item->code == 'shipping') {
-                $shipping_amount = $item->value;
+                if ($this->hasOIB()) {
+                    $shipping_amount = $item->value / 1.25;
+                } else {
+                    $shipping_amount = $item->value;
+                }
             }
         }
 
@@ -586,6 +628,24 @@ class LOC_Order
             'cijena'   => (float) $shipping_amount,
             'rabat'    => (int) 0,
         ];
+    }
+
+
+    /**
+     * @return int|string
+     */
+    private function getSubTotal()
+    {
+        $order_total = OrderTotal::where('order_id', $this->oc_order['order_id'])->get();
+        $total = 0;
+
+        foreach ($order_total as $item) {
+            if ($item->code == 'total') {
+                $total = $item->value;
+            }
+        }
+
+        return number_format($total, 2, '.', '');
     }
 
 

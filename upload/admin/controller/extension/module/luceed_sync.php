@@ -616,7 +616,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $loc->setOrders(
             LuceedOrder::get(
                 $loc->collectStatuses(),
-                agconf('import.orders.from_date')
+                Carbon::now()->subMonth()->format('d.m.Y') //agconf('import.orders.from_date')
             )
         );
 
@@ -626,7 +626,34 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $this->sendMail($order);
         }
 
+        $updated += $this->updateB2BOrderStatuses();
+
         return $this->response($updated, 'orders');
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function updateB2BOrderStatuses()
+    {
+        $loc = new LOC_Order();
+
+        $loc->setOrders(
+            LuceedOrder::get(
+                $loc->collectStatuses(),
+                Carbon::now()->subMonth()->format('d.m.Y'), //agconf('import.orders.from_date')
+                true
+            )
+        );
+
+        $updated = $loc->sort()->updateStatuses();
+
+        foreach ($loc->collection as $order) {
+            $this->sendMail($order);
+        }
+
+        return $updated;
     }
 
 
@@ -681,6 +708,20 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $data['mail_data']          = $email['data'];
             $nhs_no                     = $order['order_id'] . date("ym");
             $data['mail_poziv_na_broj'] = $nhs_no . $this->mod11INI($nhs_no);
+
+            $data['b2b'] = $order['mail'];
+
+            $lc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Document();
+            $is_b2b = ($data['oib'] != '') ? true : false;
+
+            $data['is_b2b'] = $is_b2b;
+            $data['b2b_products'] = [];
+
+            if (isset($data['luceed_uid']) && $data['luceed_uid']) {
+                $data['b2b_products'] = $lc->setDocument($data['luceed_uid'], $is_b2b)->sortProducts($data['products']);
+            }
+
+            \Agmedia\Helpers\Log::store($data);
 
             $mail                = new Mail($this->config->get('config_mail_engine'));
             $mail->parameter     = $this->config->get('config_mail_parameter');
