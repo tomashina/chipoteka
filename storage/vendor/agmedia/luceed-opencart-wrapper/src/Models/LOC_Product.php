@@ -397,6 +397,7 @@ class LOC_Product
             'location'            => '',
             'price'               => $product['mpc'],
             'price_2'             => $product['mpc'],
+            'vpc'               => $product['vpc'],
             'tax_class_id'        => agconf('import.default_tax_class'),
             'quantity'            => $product['stanje_kol'],
             'minimum'             => 1,

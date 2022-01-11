@@ -346,6 +346,7 @@ class LOC_ProductSingle
             'mpn'                 => $this->product['jamstvo_naziv'] ?: '',
             'location'            => '',
             'price'               => $this->product['mpc'],
+            'vpc'               => $this->product['vpc'],
             'price_2'             => $this->product['mpc'],
             'tax_class_id'        => agconf('import.default_tax_class'),
             'quantity'            => $this->product['stanje_kol'] ?: 0,
