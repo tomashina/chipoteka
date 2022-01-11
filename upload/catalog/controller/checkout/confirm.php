@@ -119,9 +119,9 @@ class ControllerCheckoutConfirm extends Controller {
 
             if($data['groupId']>=2){
 
-                if ($this->cart->getTotal() < FREESHIPPINGB2B ) {
+                if ($this->cart->getTotal() < 1000 ) {
 
-                    $razlika = FREESHIPPINGB2B - $this->cart->getTotal();
+                    $razlika = 1000 - $this->cart->getTotal();
 
                     $razlika = number_format($razlika, 2, ',', '');
                     $data['freeshipppingnotification'] =   sprintf($this->language->get('freeshipppingnotificationb2b'), $razlika);

@@ -28,7 +28,7 @@ class ModelExtensionShippingFlat extends Model {
             if($data['groupId']>=2) {
 
 
-                if ($this->cart->getSubTotal() < FREESHIPPINGB2B) {
+                if ($this->cart->getSubTotal() < 1000) {
                     $shipping_price = $this->config->get('shipping_flat_cost');
                 } else {
                     $shipping_price = 0;
