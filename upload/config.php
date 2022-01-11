@@ -36,7 +36,6 @@ define('CACHE_PORT', 'cache_host_port');
 define('CACHE_PREFIX', 'cache_host_prefix');
 define('CACHE_PASSWORD', 'cache_host_password');
 
-// AG media custom
 
 define('FREESHIPPING', freeshipping);
 define('FREESHIPPINGB2B', freeshippingb2b);
