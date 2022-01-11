@@ -39,4 +39,5 @@ define('CACHE_PASSWORD', 'cache_host_password');
 
 define('FREESHIPPING', freeshipping);
 define('FREESHIPPINGB2B', freeshippingb2b);
+
 define('RATEPRIKAZ', rateprikaz);
