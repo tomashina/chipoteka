@@ -578,7 +578,7 @@ class ControllerMailOrder extends Controller {
             $data['b2b'] = $order['mail'];
 
             $lc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Document();
-            $is_b2b = ($data['oib'] != '') ? true : false;
+            $is_b2b = ($data['oib'] != '' && $data['customer_group_id'] > 2 ) ? true : false;
 
             $data['is_b2b'] = $is_b2b;
             $data['b2b_products'] = [];
@@ -602,6 +602,15 @@ class ControllerMailOrder extends Controller {
             $mail->setSubject(sprintf($email['subject'], $order['order_id']));
             $mail->setHtml($this->load->view('mail/mail', $data));
             $mail->send();
+
+
+            if($is_b2b=='1'){
+                $mail->setTo('b2b@chipoteka.hr');
+                $mail->send();
+            }
+
+
+
         }
     }
 

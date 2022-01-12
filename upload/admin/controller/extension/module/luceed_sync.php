@@ -712,7 +712,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $data['b2b'] = $order['mail'];
 
             $lc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Document();
-            $is_b2b = ($data['oib'] != '') ? true : false;
+            $is_b2b = ($data['oib'] != '' && $data['customer_group_id'] > 2 ) ? true : false;
 
             $data['is_b2b'] = $is_b2b;
             $data['b2b_products'] = [];
