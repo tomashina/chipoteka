@@ -264,7 +264,8 @@ class LOC_Order
      */
     private function hasOIB(): bool
     {
-        return ($this->oc_order['oib'] != '') ? true : false;
+
+        return ($this->oc_order['oib'] != '' && $this->oc_order['customer_group_id'] > 2) ? true : false;
     }
 
 
