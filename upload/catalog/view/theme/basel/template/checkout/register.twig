@@ -1,4 +1,4 @@
-     <h2 class="h6 pt-1 pb-3 mb-3 border-bottom">{{ text_your_details }}</h2>
+     <h2 class="h6 pt-1 pb-3 mb-3 mt-3 border-bottom" id="podaci_title">{{ text_your_details }}</h2>
         <div class="row" id="account">
             <div class="col-sm-12">
                 <div class="form-group mb-3 required" style="display: {% if customer_groups|length > 1 %} block {% else %} none {% endif %};">
@@ -17,6 +17,27 @@
                     {% endfor %}
                 </div>
             </div>
+
+            {% for custom_field in custom_fields %}
+                <div class="col-sm-6 pravna mb-3">
+                    {% if custom_field.location == 'account' %}
+                        {% if custom_field.type == 'text' %}
+                            <div id="payment-custom-field{{ custom_field.custom_field_id }}" class="form-group custom-field" data-sort="{{ custom_field.sort_order }}">
+                                <label class="form-label" for="input-payment-custom-field{{ custom_field.custom_field_id }}">{{ custom_field.name }} <span class="text-danger">*</span></label>
+                                <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{{ custom_field.value }}" placeholder="{{ custom_field.name }}" id="input-payment-custom-field{{ custom_field.custom_field_id }}" class="form-control" />
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+
+
+            <div class="col-sm-12">
+                <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom pravna">Kontakt osoba</h2>
+            </div>
+
+
             <div class="col-sm-6">
                 <div class="form-group mb-3 required">
                     <label class="form-label" for="input-payment-firstname">{{ entry_firstname }} <span class="text-danger">*</span></label>
@@ -42,18 +63,7 @@
                     <input type="text" name="telephone" value="" placeholder="{{ entry_telephone }}" id="input-payment-telephone" class="form-control" />
                 </div>
             </div>
-              {% for custom_field in custom_fields %}
-            <div class="col-sm-6 pravna">
-                      {% if custom_field.location == 'account' %}
-                      {% if custom_field.type == 'text' %}
-                      <div id="payment-custom-field{{ custom_field.custom_field_id }}" class="form-group custom-field" data-sort="{{ custom_field.sort_order }}">
-                        <label class="form-label" for="input-payment-custom-field{{ custom_field.custom_field_id }}">{{ custom_field.name }} <span class="text-danger">*</span></label>
-                        <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{{ custom_field.value }}" placeholder="{{ custom_field.name }}" id="input-payment-custom-field{{ custom_field.custom_field_id }}" class="form-control" />
-                      </div>
-                      {% endif %}
-                      {% endif %}
-            </div>
-              {% endfor %}
+
             <div class="col-sm-12">
             <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">{{ text_your_password }}</h2>
             </div>
@@ -71,7 +81,7 @@
             </div>
 
             <div class="col-sm-12">
-            <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">{{ text_your_address }}</h2>
+            <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom" id="address_title">{{ text_your_address }}</h2>
             </div>
 
               <div class="form-group d-none">
@@ -214,10 +224,15 @@
             if($(this).val()=="2")
             {
                 $('.pravna').show();
+
+                $('#address_title').text('Adresa tvrtke');
+                $('#podaci_title').text('Podaci tvrtke');
             }
             else if($(this).val()=="1")
             {
                 $(".pravna").hide();
+                $('#address_title').text('Adresa');
+                $('#podaci_title').text('Vaši osobni podaci');
             }
         });
 
