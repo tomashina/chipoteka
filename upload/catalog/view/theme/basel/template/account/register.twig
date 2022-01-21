@@ -265,7 +265,25 @@
 
 
     $(document).ready(function(){
-        $('.pravna').hide();
+       // $('.pravna').hide();
+
+        var grupa = $('input:radio[name="customer_group_id"]:checked').val();
+
+
+        if(grupa=="2")
+        {
+            $('.pravna').show();
+
+
+            $('#podaci_title').text('Podaci tvrtke');
+        }
+        else if(grupa=="1")
+        {
+            $(".pravna").hide();
+
+            $('#podaci_title').text('Vaši osobni podaci');
+        }
+
         $('input:radio[name="customer_group_id"]').change(function(){
             if($(this).val()=="2")
             {
