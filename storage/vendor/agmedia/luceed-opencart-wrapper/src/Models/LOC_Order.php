@@ -301,25 +301,27 @@ class LOC_Order
         $update = $this->checkAddress();
 
         return [
-            'customer_id'      => $this->oc_order['customer_id'],
-            'email'            => $this->oc_order['email'],
-            'phone'            => $this->oc_order['telephone'],
-            'fname'            => $this->oc_order['payment_firstname'],
-            'lname'            => $this->oc_order['payment_lastname'],
-            'company'          => $this->oc_order['payment_company'],
-            'address'          => $this->oc_order['payment_address_1'],
-            'zip'              => $this->oc_order['payment_postcode'],
-            'city'             => $this->oc_order['payment_city'],
-            'country'          => $this->oc_order['payment_country'],
-            'shipping_fname'   => $this->oc_order['shipping_firstname'],
-            'shipping_lname'   => $this->oc_order['shipping_lastname'],
-            'shipping_company' => $this->oc_order['shipping_company'],
-            'shipping_address' => $this->oc_order['shipping_address_1'],
-            'shipping_zip'     => $this->oc_order['shipping_postcode'],
-            'shipping_city'    => $this->oc_order['shipping_city'],
-            'shipping_country' => $this->oc_order['shipping_country'],
-            'should_update'    => $update,
-            'has_oib'          => $this->hasOIB()
+            'customer_id'       => $this->oc_order['customer_id'],
+            'customer_group_id' => $this->oc_order['customer_group_id'],
+            'email'             => $this->oc_order['email'],
+            'phone'             => $this->oc_order['telephone'],
+            'fname'             => $this->oc_order['payment_firstname'],
+            'lname'             => $this->oc_order['payment_lastname'],
+            'company'           => $this->oc_order['payment_company'],
+            'address'           => $this->oc_order['payment_address_1'],
+            'zip'               => $this->oc_order['payment_postcode'],
+            'city'              => $this->oc_order['payment_city'],
+            'country'           => $this->oc_order['payment_country'],
+            'shipping_fname'    => $this->oc_order['shipping_firstname'],
+            'shipping_lname'    => $this->oc_order['shipping_lastname'],
+            'shipping_company'  => $this->oc_order['shipping_company'],
+            'shipping_address'  => $this->oc_order['shipping_address_1'],
+            'shipping_zip'      => $this->oc_order['shipping_postcode'],
+            'shipping_city'     => $this->oc_order['shipping_city'],
+            'shipping_country'  => $this->oc_order['shipping_country'],
+            'should_update'     => $update,
+            'oib'               => $this->oc_order['oib'],
+            'has_oib'           => $this->hasOIB()
         ];
     }
 
