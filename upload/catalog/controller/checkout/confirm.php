@@ -180,6 +180,7 @@ class ControllerCheckoutConfirm extends Controller {
 				$order_data['email'] = $this->session->data['guest']['email'];
 				$order_data['telephone'] = $this->session->data['guest']['telephone'];
 				$order_data['custom_field'] = $this->session->data['guest']['custom_field'];
+                $order_data['oib'] = isset($order_data['custom_field'][1]) ? $order_data['custom_field'][1] : null;
 			}
 
 			$order_data['payment_firstname'] = $this->session->data['payment_address']['firstname'];
