@@ -23,7 +23,7 @@ class ControllerExtensionFeedFacebookstore extends Controller {
 
         foreach ($products as $product) {
 
-            if($product['quantity']>0 || $product['model']!='') {
+            if($product['quantity'] > 0 && $product['model']!='') {
 
 
 

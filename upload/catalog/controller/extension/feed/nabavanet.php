@@ -20,7 +20,7 @@ class ControllerExtensionFeedNabavanet extends Controller {
 
 
         foreach ($products as $product) {
-            if ($product['quantity'] > 0 || $product['model'] != '') {
+            if ($product['quantity'] > 0 && $product['model'] != '') {
 
                 $description = strip_tags(html_entity_decode($product['meta_description']));
                 $description = str_replace('&nbsp;', '', $description);
