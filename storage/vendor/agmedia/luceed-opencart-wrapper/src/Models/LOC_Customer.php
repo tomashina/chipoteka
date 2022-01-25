@@ -194,11 +194,15 @@ class LOC_Customer
              *       Zapisati _uid.
              */
 
+            Log::store($this->order_customer, 'oib_test');
+            Log::store('1', 'oib_test');
+
             if ($this->hasOIB() && ! $this->isB2B()) {
+                Log::store('2', 'oib_test');
                 $has = false;
 
                 foreach ($exist as $l_customer) {
-                    if ($l_customer->enabled == 'D' && $l_customer->oib == $this->customer['oib']) {
+                    if ($l_customer->enabled == 'D' && $l_customer->oib == $this->order_customer['oib']) {
                         $this->customer['uid'] = $l_customer->partner_uid;
                         $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
                         $this->customer['naziv'] = $l_customer->naziv;
@@ -207,8 +211,12 @@ class LOC_Customer
                     }
                 }
 
+                Log::store($has, 'oib_test');
+                Log::store($this->customer, 'oib_test');
+
                 if ( ! $has) {
-                    $this->customer['naziv'] = $this->order_customer['custom_field'];
+                    $this->customer['oib'] = $this->order_customer['oib'];
+                    $this->customer['naziv'] = $this->order_customer['company'];
 
                     $response = json_decode(
                         $this->service->createCustomer(['partner' => [$this->customer]])
@@ -219,6 +227,8 @@ class LOC_Customer
                         $this->customer['uid'] = $response->result[0];
                     }
                 }
+
+                Log::store($this->customer, 'oib_test');
             }
 
             // KORISNIK
@@ -447,7 +457,7 @@ class LOC_Customer
      */
     private function isB2B(): bool
     {
-        return ($this->customer['customer_group_id'] > 2) ? true : false;
+        return ($this->order_customer['customer_group_id'] > 2) ? true : false;
     }
 
 
@@ -456,7 +466,7 @@ class LOC_Customer
      */
     private function hasOIB(): bool
     {
-        return ($this->customer['has_oib']) ? true : false;
+        return ($this->order_customer['oib'] != '') ? true : false;
     }
 
 

@@ -321,6 +321,7 @@ class LOC_Order
             'shipping_city'     => $this->oc_order['shipping_city'],
             'shipping_country'  => $this->oc_order['shipping_country'],
             'should_update'     => $update,
+            'company'           => isset($this->oc_order['custom_field'][2]) ? $this->oc_order['custom_field'][2] : '',
             'oib'               => $this->oc_order['oib'],
             'has_oib'           => $this->hasOIB()
         ];
