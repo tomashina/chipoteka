@@ -497,6 +497,9 @@ class ControllerCheckoutConfirm extends Controller {
             $data['scountry'] = $this->session->data['shipping_address']['country'];
 
 
+            $data['oib'] = isset($order_data['custom_field'][1]) ? $order_data['custom_field'][1] : null;
+            $data['tvrtka'] = isset($order_data['custom_field'][2]) ? $order_data['custom_field'][2] : null;
+
 
 
 

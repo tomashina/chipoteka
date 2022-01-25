@@ -128,6 +128,9 @@ class ControllerCheckoutSuccess extends Controller {
 
         $data['payment_address'] = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace($find, $replace, $format))));
 
+            $data['oib'] = isset($order_info['custom_field'][1]) ? $order_info['custom_field'][1] : null;
+            $data['tvrtka'] = isset($order_info['custom_field'][2]) ? $order_info['custom_field'][2] : null;
+
         $data['payment_method'] = $order_info['payment_method'];
 
         if ($order_info['shipping_address_format']) {
