@@ -184,21 +184,10 @@ class LOC_Customer
                     }
                 }
             }
-
             /**
-             * @ovdje
-             *       provjeriti ima li oib:
-             *       Ako ima provjeriti $l_customer postoji li taj OIB:
-             *       Ako postoji upisati ga u uid i promjeniti ime kupca.
-             *       Ako ne postoji napraviti novog kupca sa oib-om i imenom firme.
-             *       Zapisati _uid.
+             * @hasOIB
              */
-
-            Log::store($this->order_customer, 'oib_test');
-            Log::store('1', 'oib_test');
-
             if ($this->hasOIB() && ! $this->isB2B()) {
-                Log::store('2', 'oib_test');
                 $has = false;
 
                 foreach ($exist as $l_customer) {
@@ -211,12 +200,13 @@ class LOC_Customer
                     }
                 }
 
-                Log::store($has, 'oib_test');
-                Log::store($this->customer, 'oib_test');
-
                 if ( ! $has) {
                     $this->customer['oib'] = $this->order_customer['oib'];
                     $this->customer['naziv'] = $this->order_customer['company'];
+                    $this->customer['ime'] = '';
+                    $this->customer['prezime'] = '';
+                    $this->customer['kontakt_osoba'] = $this->order_customer['fname'] . ' ' . $this->order_customer['lname'];
+                    $this->customer['tip_komitenta'] = 'P';
 
                     $response = json_decode(
                         $this->service->createCustomer(['partner' => [$this->customer]])
@@ -227,11 +217,10 @@ class LOC_Customer
                         $this->customer['uid'] = $response->result[0];
                     }
                 }
-
-                Log::store($this->customer, 'oib_test');
             }
-
-            // KORISNIK
+            /**
+             * @KORISNIK
+             */
             if ($this->diffAddress()) {
                 foreach ($exist as $l_customer) {
                     if ($l_customer->enabled == 'D') {
@@ -284,11 +273,9 @@ class LOC_Customer
                 }
             }
         }
-
-        /*Log::store('EXIST 1()::::::::::::::::::::::::::::::::::::::');
-        Log::store('$this->customer');
-        Log::store($this->customer);*/
-
+        /**
+         * @B2B
+         */
         if (empty($this->customer['uid']) && $this->isB2B()) {
             $alter = Customer::where('email', $this->customer['e_mail'])->first();
 
@@ -328,94 +315,6 @@ class LOC_Customer
             }
 
         }
-
-        /*Log::store('EXIST()::::::::::::::::::::::::::::::::::::::');
-        Log::store('$this->customer');
-        Log::store($this->customer);
-        Log::store('$this->alter_customer');
-        Log::store($this->alter_customer);*/
-
-        return $customer_exist;
-
-
-
-        /*if ( ! empty($exist)) {
-            foreach ($exist as $l_customer) {
-                if ($l_customer->enabled == 'D') {
-                    $customer_exist = true;
-
-                    if ( ! $this->checkUid($l_customer)) {
-                        Customer::where('customer_id', $this->customer['id'])->update([
-                            'luceed_uid' => $l_customer->partner_uid
-                        ]);
-
-                        $this->customer['uid'] = $l_customer->partner_uid;
-                        $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
-                    }
-
-                    // Kupac
-                    if ( ! $this->diffAddress() && $this->order_customer['shipping_address'] == $l_customer->adresa && ! $l_customer->grupacija) {
-                        Log::store('Kupac::: ::: if ( ! $this->diffAddress() && $this->order_customer[shipping_address] == $l_customer->adresa && ! $l_customer->grupacija) {');
-                        Customer::where('customer_id', $this->customer['id'])->update([
-                            'luceed_uid' => $l_customer->partner_uid
-                        ]);
-
-                        $this->customer['uid'] = $l_customer->partner_uid;
-                        $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
-                        $this->alter_customer = $this->customer;
-                    }
-
-                    // Korisnik
-                    if ($this->diffAddress() && $l_customer->adresa == $this->order_customer['shipping_address']) {
-                        Log::store('Korisnik::: ::: if ($this->diffAddress() && $l_customer->adresa == $this->order_customer');
-                        $luc_customer = collect($l_customer);
-                        $luc_customer->put('grupacija_parent', $this->customer['uid']);
-
-                        $this->alter_customer = $this->populateCustomerForLuceed($luc_customer, true);
-
-                        if ( ! $l_customer->grupacija) {
-                            // updejtaj alter partnera i grupaciju.
-                            $this->service->updateCustomer(['partner' => [$this->alter_customer]]);
-                        }
-                    }
-
-                    // Neregani kupac
-                    if ( ! $this->customer['uid'] && ! empty($l_customer->adresa)) {
-                        $this->customer['uid'] = $l_customer->partner_uid;
-                        $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
-                    }
-                }
-            }
-
-            // Ima kupca, ali nema korisnika
-            if ( ! empty($this->customer['uid']) && ! $this->alter_customer) {
-                // snimi korisnika u luceed
-                $this->alter_customer = [
-                    'id'                  => 0,
-                    'uid'                 => null,
-                    'parent__partner_uid' => $this->customer['uid'],
-                    'naziv'               => $this->order_customer['shipping_fname'] . ' ' . $this->order_customer['shipping_lname'],
-                    'ime'                 => $this->order_customer['shipping_fname'],
-                    'prezime'             => $this->order_customer['shipping_lname'],
-                    'enabled'             => 'D',
-                    'tip_komitenta'       => 'F',
-                    'adresa'              => $this->order_customer['shipping_address'],
-                    'telefon'             => $this->customer['telefon'],
-                    'e_mail'              => $this->customer['e_mail'],
-                    'postanski_broj'      => $this->order_customer['shipping_zip'],
-                    'mjesto_uid'          => $this->setCityUid($this->order_customer['shipping_zip'], $this->order_customer['shipping_city']),
-                ];
-
-                $response = json_decode(
-                    $this->service->createCustomer(['partner' => [$this->alter_customer]])
-                );
-
-                // složi podatke za order
-                if (isset($response->result[0])) {
-                    $this->alter_customer['uid'] = $response->result[0];
-                }
-            }
-        }*/
 
         return $customer_exist;
     }
