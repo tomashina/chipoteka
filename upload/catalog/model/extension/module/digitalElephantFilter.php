@@ -33,7 +33,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                 SELECT
                   p.product_id,
                   p.price,
-                  MIN(pd2.price) AS discount,
+                  MIN(ps.price) AS discount,
                   MIN(ps.price) AS special,
                   AVG(rating) AS total,
                   fixed_tax,
@@ -420,7 +420,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                                        OR pd2.date_start < NOW())
                                       AND (pd2.date_end = '0000-00-00'
                                            OR pd2.date_end > NOW()))
-                               ORDER BY pd2.priority ASC, pd2.price ASC
+                               ORDER BY pd2.priority ASC, ps.price ASC
                                LIMIT 1) AS discount,
                                (SELECT price
                                    FROM " . DB_PREFIX . "product_special ps
@@ -490,7 +490,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
             . "AND ((pd2.date_start = '0000-00-00' "
             . "OR pd2.date_start < NOW()) "
             . "AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) "
-            . "ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, "
+            . "ORDER BY pd2.priority ASC, ps.price ASC LIMIT 1) AS discount, "
             . "(SELECT price FROM " . DB_PREFIX . "product_special ps "
             . "WHERE ps.product_id = p.product_id "
             . "AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' "
@@ -712,8 +712,8 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
             $price_min = $this->currency->convert($data['price']['min'], $this->session->data['currency'], $this->config->get('config_currency'));
             $price_max = $this->currency->convert($data['price']['max'], $this->session->data['currency'], $this->config->get('config_currency'));
 
-            $sql .= " AND (IF(ps.price IS NOT NULL, ps.price, IF(pd2.price IS NOT NULL, pd2.price, p.price)) * (1 + IFNULL(percent_tax, 0)/100) + IFNULL(fixed_tax, 0)) >= '" . $this->db->escape($price_min) . "'";
-            $sql .= " AND (IF(ps.price IS NOT NULL, ps.price, IF(pd2.price IS NOT NULL, pd2.price, p.price)) * (1 + IFNULL(percent_tax, 0)/100) + IFNULL(fixed_tax, 0)) <= '" . $this->db->escape($price_max) . "'";
+            $sql .= " AND (IF(ps.price IS NOT NULL, ps.price, IF(ps.price IS NOT NULL, p.price, p.price)) * (1 + IFNULL(percent_tax, 0)/100) + IFNULL(fixed_tax, 0)) >= '" . $this->db->escape($price_min) . "'";
+            $sql .= " AND (IF(ps.price IS NOT NULL, ps.price, IF(ps.price IS NOT NULL, p.price, p.price)) * (1 + IFNULL(percent_tax, 0)/100) + IFNULL(fixed_tax, 0)) <= '" . $this->db->escape($price_max) . "'";
         }
 
         //PRICE WHERE END
