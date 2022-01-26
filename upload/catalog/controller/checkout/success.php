@@ -96,7 +96,6 @@ class ControllerCheckoutSuccess extends Controller {
             $data['oib'] = isset($order_info['custom_field'][1]) ? $order_info['custom_field'][1] : null;
             $data['tvrtka'] = isset($order_info['custom_field'][2]) ? $order_info['custom_field'][2] : null;
 
-
         if ($order_info['payment_address_format']) {
             $format = $order_info['payment_address_format'];
         } else {
