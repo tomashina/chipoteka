@@ -179,6 +179,7 @@ class LOC_Customer
                         ]);
 
                         $this->customer['uid'] = $l_customer->partner_uid;
+                        $this->customer['partner_uid'] = $l_customer->partner_uid;
                         $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
                     }
                 }
@@ -192,8 +193,10 @@ class LOC_Customer
                 foreach ($exist as $l_customer) {
                     if ($l_customer->enabled == 'D' && $l_customer->oib == $this->order_customer['oib']) {
                         $this->customer['uid'] = $l_customer->partner_uid;
+                        $this->customer['partner_uid'] = $l_customer->partner_uid;
                         $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
                         $this->customer['naziv'] = $l_customer->naziv;
+                        $this->customer['tip_komitenta'] = 'P';
 
                         $has = true;
                     }
@@ -209,6 +212,7 @@ class LOC_Customer
                     // složi podatke za order
                     if (isset($response->result[0])) {
                         $this->customer['uid'] = $response->result[0];
+                        $this->customer['partner_uid'] = $response->result[0];
                     }
                 }
             }
@@ -295,6 +299,7 @@ class LOC_Customer
                             if ($l_customer->enabled == 'D') {
                                 if ( ! $l_customer->grupacija) {
                                     $this->customer['uid'] = $l_customer->partner_uid;
+                                    $this->customer['partner_uid'] = $l_customer->partner_uid;
                                     $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
                                 }
                             }
@@ -302,6 +307,10 @@ class LOC_Customer
                     }
                 }
             }
+        }
+
+        if ($customer_exist) {
+            $this->service->updateCustomer(['partner' => [$this->customer]]);
         }
 
         return $customer_exist;
@@ -326,6 +335,7 @@ class LOC_Customer
 
         if (isset($response->result[0])) {
             $this->customer['uid'] = $response->result[0];
+            $this->customer['partner_uid'] = $response->result[0];
 
             if ($this->customer['id']) {
                 Customer::where('customer_id', $this->customer['id'])->update([
@@ -379,7 +389,6 @@ class LOC_Customer
      */
     private function create(array $customer = null): array
     {
-        //Log::store('create');
         return $this->populateCustomerForLuceed(collect($customer));
     }
 
@@ -400,14 +409,11 @@ class LOC_Customer
             $collection->put('grupacija_parent', null);
         }
 
-        /*Log::store('populateCustomerForLuceed::$collection');
-        Log::store($collection);
-        Log::store($luceed_data);*/
-
         if ($luceed_data) {
             return [
                 'id'                  => 0,
                 'uid'                 => $collection['partner_uid'],
+                'partner_uid'         => $collection['partner_uid'],
                 'parent__partner_uid' => $collection['grupacija_parent'],
                 'naziv'               => $collection['ime'] . ' ' . $collection['prezime'],
                 'ime'                 => $collection['ime'],
@@ -425,6 +431,7 @@ class LOC_Customer
         $data = [
             'id'                  => $collection['customer_id'],
             'uid'                 => $this->setUid($collection['customer_id'], true),
+            'partner_uid'         => $this->setUid($collection['customer_id'], true),
             'parent__partner_uid' => $collection['grupacija_parent'],
             'naziv'               => $collection['fname'] . ' ' . $collection['lname'],
             'ime'                 => $collection['fname'],
@@ -458,11 +465,13 @@ class LOC_Customer
 
             if ($customer && ! empty($customer->luceed_uid)) {
                 $this->customer['uid'] = $customer->luceed_uid;
+                $this->customer['partner_uid'] = $customer->luceed_uid;
             } else {
                 $this->customer['uid'] = null;
             }
         } else {
             $this->customer['uid'] = $uid ?: null;
+            $this->customer['partner_uid'] = $uid ?: null;
         }
     }
 
