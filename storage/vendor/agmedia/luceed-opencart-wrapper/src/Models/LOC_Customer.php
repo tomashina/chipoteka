@@ -152,6 +152,10 @@ class LOC_Customer
      * in the Luceed database.
      * Set uid data if exist.
      *
+     * @l_customer = luceed customer data.
+     * @this-customer = Created local class customer data.
+     * @this-order_customer = Collected data from OC customer.
+     *
      * @return bool
      */
     public function exist(): bool
@@ -162,17 +166,12 @@ class LOC_Customer
             $this->service->getCustomerByEmail($this->customer['e_mail'])
         );
 
-        // l_customer = luceed customer data.
-        // $this->>customer = Created local class customer data.
-        // $this->order_customer = Collected data from OC customer.
-
         $customer_exist = false;
 
         if ( ! empty($exist)) {
             foreach ($exist as $l_customer) {
                 if ($l_customer->enabled == 'D') {
                     $customer_exist = true;
-
                     // KUPAC
                     if ( ! $l_customer->grupacija && ! $this->hasOIB()) {
                         Customer::where('customer_id', $this->customer['id'])->update([
@@ -201,12 +200,7 @@ class LOC_Customer
                 }
 
                 if ( ! $has) {
-                    $this->customer['oib'] = $this->order_customer['oib'];
-                    $this->customer['naziv'] = $this->order_customer['company'];
-                    $this->customer['ime'] = '';
-                    $this->customer['prezime'] = '';
-                    $this->customer['kontakt_osoba'] = $this->order_customer['fname'] . ' ' . $this->order_customer['lname'];
-                    $this->customer['tip_komitenta'] = 'P';
+                    $this->setCustomerOibData();
 
                     $response = json_decode(
                         $this->service->createCustomer(['partner' => [$this->customer]])
@@ -279,15 +273,10 @@ class LOC_Customer
         if (empty($this->customer['uid']) && $this->isB2B()) {
             $alter = Customer::where('email', $this->customer['e_mail'])->first();
 
-            /*Log::store('enter');
-            Log::store($alter);*/
-
             if ($alter) {
                 // Namjesti kupca koji kupuje kao Alter Customer
                 foreach ($exist as $l_customer) {
                     if ($l_customer->grupacija && $l_customer->adresa == $alter->address->address_1) {
-                        //Log::store($l_customer);
-
                         $this->alter_customer = $this->populateCustomerForLuceed(collect($l_customer), true);
                         $this->alter_customer['uid'] = $l_customer->partner_uid;
                         $this->alter_customer['mjesto_uid'] = $l_customer->mjesto_uid;
@@ -313,7 +302,6 @@ class LOC_Customer
                     }
                 }
             }
-
         }
 
         return $customer_exist;
@@ -328,12 +316,13 @@ class LOC_Customer
      */
     public function store()
     {
+        if ($this->hasOIB() && ! $this->isB2B()) {
+            $this->setCustomerOibData();
+        }
+
         $response = json_decode(
             $this->service->createCustomer(['partner' => [$this->customer]])
         );
-
-        /*Log::store('public function store()::::::: $response =');
-        Log::store($response);*/
 
         if (isset($response->result[0])) {
             $this->customer['uid'] = $response->result[0];
@@ -366,6 +355,20 @@ class LOC_Customer
     private function hasOIB(): bool
     {
         return ($this->order_customer['oib'] != '') ? true : false;
+    }
+
+
+    /**
+     *
+     */
+    private function setCustomerOibData(): void
+    {
+        $this->customer['oib'] = $this->order_customer['oib'];
+        $this->customer['naziv'] = $this->order_customer['company'];
+        $this->customer['ime'] = '';
+        $this->customer['prezime'] = '';
+        $this->customer['kontakt_osoba'] = $this->order_customer['fname'] . ' ' . $this->order_customer['lname'];
+        $this->customer['tip_komitenta'] = 'P';
     }
 
 
