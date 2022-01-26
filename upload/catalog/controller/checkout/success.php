@@ -47,7 +47,7 @@ class ControllerCheckoutSuccess extends Controller {
             $order    = new LOC_Order($oc_order);
             $customer = new LOC_Customer($order->getCustomerData());
 
-          /*  if ( ! $customer->exist()) {
+            if ( ! $customer->exist()) {
                 $customer->store();
             }
 
@@ -55,7 +55,7 @@ class ControllerCheckoutSuccess extends Controller {
 
             if ( ! $sent) {
                 $order->recordError();
-            } */
+            }
 
             /*******************************************************************************
              *                              END Copyright : AGmedia                         *
