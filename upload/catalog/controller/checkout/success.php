@@ -47,7 +47,7 @@ class ControllerCheckoutSuccess extends Controller {
             $order    = new LOC_Order($oc_order);
             $customer = new LOC_Customer($order->getCustomerData());
 
-            if ( ! $customer->exist()) {
+          /*  if ( ! $customer->exist()) {
                 $customer->store();
             }
 
@@ -55,7 +55,7 @@ class ControllerCheckoutSuccess extends Controller {
 
             if ( ! $sent) {
                 $order->recordError();
-            }
+            } */
 
             /*******************************************************************************
              *                              END Copyright : AGmedia                         *
@@ -93,11 +93,21 @@ class ControllerCheckoutSuccess extends Controller {
         $data['order_id'] = (int)$order_id;
         $data['date_added'] = date($this->language->get('date_format_short'), strtotime($order_info['date_added']));
 
+            $data['oib'] = isset($order_info['custom_field'][1]) ? $order_info['custom_field'][1] : null;
+            $data['tvrtka'] = isset($order_info['custom_field'][2]) ? $order_info['custom_field'][2] : null;
+
 
         if ($order_info['payment_address_format']) {
             $format = $order_info['payment_address_format'];
         } else {
-            $format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
+
+            if($data['oib']){
+                $format =  '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}'. "\n" ."Kontakt osoba: " .'{firstname} {lastname}' ;
+            }
+            else{
+                $format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
+            }
+
         }
 
         $find = array(
@@ -128,15 +138,19 @@ class ControllerCheckoutSuccess extends Controller {
 
         $data['payment_address'] = str_replace(array("\r\n", "\r", "\n"), '<br />', preg_replace(array("/\s\s+/", "/\r\r+/", "/\n\n+/"), '<br />', trim(str_replace($find, $replace, $format))));
 
-            $data['oib'] = isset($order_info['custom_field'][1]) ? $order_info['custom_field'][1] : null;
-            $data['tvrtka'] = isset($order_info['custom_field'][2]) ? $order_info['custom_field'][2] : null;
+
 
         $data['payment_method'] = $order_info['payment_method'];
 
         if ($order_info['shipping_address_format']) {
             $format = $order_info['shipping_address_format'];
         } else {
-            $format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
+            if($data['oib']){
+                $format =  '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}'. "\n" ."Kontakt osoba: " .'{firstname} {lastname}' ;
+            }
+            else{
+                $format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
+            }
         }
 
         $find = array(

@@ -59,16 +59,10 @@
             <div class="col-sm-6">
                 <h4 class="h6">Adresa dostave:</h4>
 
-
-
-
-
-
-
                 {% if sfirst_name %}
                 <ul class="list-unstyled fs-sm">
                     {% if tvrtka %}  <li><span class="text-muted">Tvrtka:&nbsp;</span>{{ tvrtka }}</li>{% endif %}
-                    <li><span class="text-muted">Klijent:&nbsp;</span>{{ sfirst_name }} {{ slast_name }}</li>
+                    <li><span class="text-muted">{% if tvrtka %} Kontakt osoba: {% else %} Klijent: {% endif %} </span>{{ sfirst_name }} {{ slast_name }}</li>
                     <li><span class="text-muted">Adresa dostave:&nbsp;</span>{{ saddress }}, {{ szip }} {{ scity }}, {{ scountry }}</li>
                     <li><span class="text-muted">Telefon:&nbsp;</span>{{ phone }}</li>
                     <li><span class="text-muted">Email:&nbsp;</span>{{ email }}</li>
@@ -77,7 +71,7 @@
 
                     <ul class="list-unstyled fs-sm">
                         {% if tvrtka %}  <li><span class="text-muted">Tvrtka:&nbsp;</span>{{ tvrtka }}</li>{% endif %}
-                        <li><span class="text-muted">Klijent:&nbsp;</span>{{ first_name }} {{ last_name }}</li>
+                        <li><span class="text-muted">{% if tvrtka %} Kontakt osoba: {% else %} Klijent: {% endif %}</span>{{ first_name }} {{ last_name }}</li>
                         <li><span class="text-muted">Adresa dostave:&nbsp;</span>{{ address }}, {{ zip }} {{ city }}, {{ country }}</li>
                         <li><span class="text-muted">Telefon:&nbsp;</span>{{ phone }}</li>
                         <li><span class="text-muted">Email:&nbsp;</span>{{ email }}</li>

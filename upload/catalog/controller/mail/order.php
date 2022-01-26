@@ -572,6 +572,9 @@ class ControllerMailOrder extends Controller {
             $data['mail_title'] = sprintf($email['subject'], $order['order_id']);
             $data['mail_data'] = $email['data'];
 
+            $data['oib'] = isset($order['custom_field'][1]) ? $order['custom_field'][1] : null;
+            $data['tvrtka'] = isset($order['custom_field'][2]) ? $order['custom_field'][2] : null;
+
             $nhs_no = $order['order_id'].date("ym");
             $data['mail_poziv_na_broj'] = $nhs_no.$this->mod11INI($nhs_no);
 
