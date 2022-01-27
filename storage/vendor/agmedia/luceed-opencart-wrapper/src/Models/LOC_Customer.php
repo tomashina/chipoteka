@@ -170,10 +170,10 @@ class LOC_Customer
 
         if ( ! empty($exist)) {
             foreach ($exist as $l_customer) {
-                if ($l_customer->enabled == 'D') {
+                if ($l_customer->enabled == 'D' && $l_customer->oib == '' && ! $this->hasOIB()) {
                     $customer_exist = true;
                     // KUPAC
-                    if ( ! $l_customer->grupacija && ! $this->hasOIB()) {
+                    if ( ! $l_customer->grupacija) {
                         Customer::where('customer_id', $this->customer['id'])->update([
                             'luceed_uid' => $l_customer->partner_uid
                         ]);
@@ -202,7 +202,7 @@ class LOC_Customer
                     }
                 }
 
-                if ( ! $has) {
+                if ( ! $has && empty($this->customer['uid'])) {
                     $this->setCustomerOibData();
 
                     $response = json_decode(
@@ -329,22 +329,24 @@ class LOC_Customer
             $this->setCustomerOibData();
         }
 
-        $response = json_decode(
-            $this->service->createCustomer(['partner' => [$this->customer]])
-        );
+        if (empty($this->customer['uid'])) {
+            $response = json_decode(
+                $this->service->createCustomer(['partner' => [$this->customer]])
+            );
 
-        if (isset($response->result[0])) {
-            $this->customer['uid'] = $response->result[0];
-            $this->customer['partner_uid'] = $response->result[0];
+            if (isset($response->result[0])) {
+                $this->customer['uid'] = $response->result[0];
+                $this->customer['partner_uid'] = $response->result[0];
 
-            if ($this->customer['id']) {
-                Customer::where('customer_id', $this->customer['id'])->update([
-                    'luceed_uid' => $response->result[0]
-                ]);
+                if ($this->customer['id']) {
+                    Customer::where('customer_id', $this->customer['id'])->update([
+                        'luceed_uid' => $response->result[0]
+                    ]);
+                }
             }
-        }
 
-        $this->exist();
+            $this->exist();
+        }
 
         return $this;
     }
