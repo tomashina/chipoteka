@@ -709,6 +709,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $nhs_no                     = $order['order_id'] . date("ym");
             $data['mail_poziv_na_broj'] = $nhs_no . $this->mod11INI($nhs_no);
 
+
+            $data['oib'] = isset($order['custom_field'][1]) ? $order['custom_field'][1] : null;
+            $data['tvrtka'] = isset($order['custom_field'][2]) ? $order['custom_field'][2] : null;
+
             $data['b2b'] = $order['mail'];
 
             $lc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Document();
