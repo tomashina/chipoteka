@@ -352,12 +352,21 @@ class ControllerExtensionMeordermanager extends Controller {
 		
 		foreach ($results as $result) {
 			$order_info = $this->model_extension_me_order_manager->getOrder($result['order_id']);
+
+
+            $data['oib'] = isset($order_info['custom_field'][1]) ? $order_info['custom_field'][1] : null;
+            $data['tvrtka'] = isset($order_info['custom_field'][2]) ? $order_info['custom_field'][2] : null;
+
+
+                $firm =  '<span style="color:#ec2426" >'. $data['tvrtka'] . '  ' . $data['oib'] .'<br> </span>';
+
+
 			
 			//Payment Address
-			$payment_address = $order_info['payment_firstname'].' '.$order_info['payment_lastname'] . "," . (!empty($order_info['payment_company']) ? $order_info['payment_company'] . "," : ''). $order_info['payment_address_1'] . "," . (!empty($order_info['payment_address_2']) ? $order_info['payment_address_2'] . "," : '') . $order_info['payment_city'].' '.$order_info['payment_postcode'] . "," . $order_info['payment_zone'] . "," . $order_info['payment_country'];
+			$payment_address =  $order_info['payment_firstname'].' '.$order_info['payment_lastname'] . "," . (!empty($order_info['payment_company']) ? $order_info['payment_company'] . "," : ''). $order_info['payment_address_1'] . "," . (!empty($order_info['payment_address_2']) ? $order_info['payment_address_2'] . "," : '') . $order_info['payment_city'].' '.$order_info['payment_postcode'] . "," . $order_info['payment_zone'] . "," . $order_info['payment_country'];
 			
 			//Shipping Address
-			$shipping_address = $order_info['shipping_firstname'].' '.$order_info['shipping_lastname'] . "," . (!empty($order_info['shipping_company']) ? $order_info['shipping_company'] . "," : ''). $order_info['shipping_address_1'] . "," . (!empty($order_info['shipping_address_2']) ? $order_info['shipping_address_2'] . "," : '') . $order_info['shipping_city'].' '.$order_info['shipping_postcode'] . "," . $order_info['shipping_zone'] . "," . $order_info['shipping_country'];
+			$shipping_address = $firm. ' '.$order_info['shipping_firstname'].' '.$order_info['shipping_lastname'] . "," . (!empty($order_info['shipping_company']) ? $order_info['shipping_company'] . "," : ''). $order_info['shipping_address_1'] . "," . (!empty($order_info['shipping_address_2']) ? $order_info['shipping_address_2'] . "," : '') . $order_info['shipping_city'].' '.$order_info['shipping_postcode'] . "," . $order_info['shipping_zone'] . "," . $order_info['shipping_country'];
 			
 			//Affiliate
 			if ($order_info['affiliate_id']) {

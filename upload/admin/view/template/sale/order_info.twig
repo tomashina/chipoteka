@@ -145,10 +145,30 @@
                         {% endif %} </tr>
                     </thead>
                     <tbody>
+
+
                     <tr>
-                        <td class="text-left">{{ payment_address }}</td>
+                        <td class="text-left">  {% if account_custom_fields %}
+
+                                {% for custom_field in account_custom_fields %}
+                                    {% if custom_field.value !=''  %}
+                                <span style="color:#ec2426" >  {{ custom_field.name }}: {{ custom_field.value }}<br></span>
+                                    {% endif %}
+                                {% endfor %}
+
+                            {% endif %}
+
+                            {{ payment_address }}</td>
                         {% if shipping_method %}
-                            <td class="text-left">{{ shipping_address }}</td>
+                            <td class="text-left">{% if account_custom_fields %}
+
+                                    {% for custom_field in account_custom_fields %}
+                                        {% if custom_field.value !=''  %}
+                                            <span style="color:#ec2426" >  {{ custom_field.name }}: {{ custom_field.value }}<br></span>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                {% endif %}{{ shipping_address }}</td>
                         {% endif %} </tr>
                     </tbody>
                 </table>
