@@ -899,12 +899,27 @@
                                             <td class="column_cell bg_secondary brounded px_md pt_md text_dark text_center" style="vertical-align: top;background-color: #e5e9ee;color: #333333;border-radius: 4px;text-align: center;padding-left: 32px;padding-right: 32px;padding-top: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                                 <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Podaci o kupcu</h6>
                                                 <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
-                                                    {{ payment_firstname }} {{ payment_lastname }}<br>
-                                                    {{ payment_address_1 }}<br>
-                                                    {{ payment_postcode }} {{ payment_city }}<br>
-                                                    {{ payment_country }}<br>
-                                                    {{ telephone }}<br>
-                                                    {{ email }}
+                                                    {% if tvrtka %}
+                                                        Tvrtka:  {{ tvrtka }}<br>
+                                                        OIB: {{ oib }}<br>
+
+                                                        {{ payment_address_1 }}<br>
+                                                        {{ payment_postcode }} {{ payment_city }}<br>
+                                                        {{ payment_country }}<br>
+                                                        {{ telephone }}<br>
+                                                        {{ email }}<br>
+                                                        Kontakt osoba: {{ payment_firstname }} {{ payment_lastname }}
+
+                                                    {% else %}
+
+                                                        {{ payment_firstname }} {{ payment_lastname }}<br>
+                                                        {{ payment_address_1 }}<br>
+                                                        {{ payment_postcode }} {{ payment_city }}<br>
+                                                        {{ payment_country }}<br>
+                                                        {{ telephone }}<br>
+                                                        {{ email }}
+
+                                                    {% endif %}
                                                 </p>
                                                 <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Način plaćanja</h6>
                                                 <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
@@ -933,12 +948,25 @@
                                             <td class="column_cell bg_secondary brounded px_md pt_md text_dark text_center" style="vertical-align: top;background-color: #e5e9ee;color: #333333;border-radius: 4px;text-align: center;padding-left: 32px;padding-right: 32px;padding-top: 32px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                                 <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Podaci za dostavu</h6>
                                                 <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
-                                                    {{ shipping_firstname }} {{ shipping_lastname }}<br>
-                                                    {{ shipping_address_1 }}<br>
-                                                    {{ shipping_postcode }} {{ shipping_city }}<br>
-                                                    {{ shipping_country }}<br>
-                                                    {{ telephone }}<br>
-                                                    {{ email }}
+                                                    {% if tvrtka %}
+                                                        Tvrtka:  {{ tvrtka }}<br>
+                                                        {{ shipping_address_1 }}<br>
+                                                        {{ shipping_postcode }} {{ shipping_city }}<br>
+                                                        {{ shipping_country }}<br>
+                                                        {{ telephone }}<br>
+                                                        {{ email }}
+                                                        <br>
+                                                        Kontakt osoba: {{ shipping_firstname }} {{ shipping_lastname }}
+                                                    {% else %}
+
+                                                        {{ shipping_firstname }} {{ shipping_lastname }}<br>
+                                                        {{ shipping_address_1 }}<br>
+                                                        {{ shipping_postcode }} {{ shipping_city }}<br>
+                                                        {{ shipping_country }}<br>
+                                                        {{ telephone }}<br>
+                                                        {{ email }}
+
+                                                    {% endif %}
                                                 </p>
                                                 <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Način dostave</h6>
                                                 <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">

@@ -57,9 +57,9 @@
           </thead>
           <tbody>
           <tr>
-            <td class="text-left">{{ payment_address }}</td>
+            <td class="text-left">{% if tvrtka %} Tvrtka:  {{ tvrtka }}<br> {% endif %} {% if oib %} OIB: {{ oib }}<br> {% endif %}{{ payment_address }}</td>
             {% if shipping_address %}
-              <td class="text-left">{{ shipping_address }}</td>
+              <td class="text-left">{% if tvrtka %} Tvrtka:  {{ tvrtka }}<br> {% endif %} {{ shipping_address }}</td>
             {% endif %}
           </tr>
           </tbody>
