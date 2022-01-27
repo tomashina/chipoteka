@@ -25,8 +25,6 @@ class ControllerExtensionFeedFacebookstore extends Controller {
 
             if($product['quantity'] > 0 && $product['model']!='') {
 
-
-
                 $description = strip_tags(html_entity_decode($product['meta_description']));
                 $description = str_replace('&nbsp;', '', $description);
                 $description = str_replace('', '', $description);

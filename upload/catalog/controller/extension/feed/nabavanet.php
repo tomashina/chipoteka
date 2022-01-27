@@ -18,7 +18,6 @@ class ControllerExtensionFeedNabavanet extends Controller {
 
         $products = $this->model_catalog_product->getProducts();
 
-
         foreach ($products as $product) {
             if ($product['quantity'] > 0 && $product['model'] != '') {
 
