@@ -16,7 +16,7 @@
                                     <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only"> {{ button_cart }}</span></button>
                                     {% endif %}
                                     <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img loading="lazy" src="{{ product.thumb }}" alt="{{ product.name }}"></div>
-                                    {% if product.freeshipping and groupId < 2 %}
+                                    {% if product.freeshipping and groupId < 3 %}
                                     <div class="product-badge-cpta product-badge-cpta__free-shipping">
                                         <span> Besplatna dostava</span>
                                         <i class="fas fa-shipping-fast"></i>
@@ -26,7 +26,7 @@
                                 <a class="stretched-link" href="{{ product.href }}">
                                     <div class="card-body">
                                            <h3 class="product-title">{{ product.name }}</h3>
-                                        {% if groupId < 2 %}
+                                        {% if groupId < 3 %}
                                         {% if product.price %}
                                             <div class="product-price">
                                                 {% if product.special %}
