@@ -36,7 +36,7 @@ class ControllerExtensionPaymentBankTransfer extends Controller {
                 $data['groupId'] ='0';
             }
 
-            if($data['groupId'] >= 2){
+            if($data['groupId'] > 2){
                 $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], 27, $comment, true);
             }
             else{

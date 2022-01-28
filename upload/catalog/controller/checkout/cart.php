@@ -229,7 +229,7 @@ class ControllerCheckoutCart extends Controller {
 			}
 
 
-			if($data['groupId']>=2){
+			if($data['groupId']>2){
 
                 if ($this->cart->getTotal() < 1000 ) {
 

@@ -14,7 +14,7 @@ class ModelExtensionPaymentWSPay extends Model {
 
 		if ($this->config->get('wspay_total') > 0 && $this->config->get('wspay_total') > $total) {
 			$status = false;
-        } elseif ($data['groupId'] >= 2) {
+        } elseif ($data['groupId'] > 2) {
             $status = false;
 		} elseif (!$this->config->get('wspay_geo_zone_id')) {
 			$status = true;

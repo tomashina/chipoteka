@@ -17,7 +17,7 @@ class ModelExtensionPaymentCOD extends Model {
 		} elseif (!$this->cart->hasShipping()) {
 			$status = false;
 		}
-        elseif ($data['groupId'] >= 2) {
+        elseif ($data['groupId'] > 2) {
             $status = false;
         }
 		elseif (!$this->config->get('payment_cod_geo_zone_id')) {

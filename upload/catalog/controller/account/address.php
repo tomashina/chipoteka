@@ -185,7 +185,7 @@ class ControllerAccountAddress extends Controller {
 		foreach ($results as $result) {
 
 
-			if($data['groupId'] >= 2 ){
+			if($data['groupId'] > 2 ){
 
                 if ($result['address_format']) {
                     $format = $result['address_format'];

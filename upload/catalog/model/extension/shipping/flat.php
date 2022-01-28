@@ -25,7 +25,7 @@ class ModelExtensionShippingFlat extends Model {
 		if ($status) {
 			$quote_data = array();
 
-            if($data['groupId']>=2) {
+            if($data['groupId']>2) {
 
 
                 if ($this->cart->getSubTotal() < 1000) {
