@@ -51,12 +51,16 @@ class LOC_Action
     private $count;
 
     /**
-     * @var array
+     * @var string
      */
     private $insert_query;
+    /**
+     * @var string
+     */
+    private $insert_query_2;
 
     /**
-     * @var array
+     * @var string
      */
     private $insert_query_category;
 
@@ -215,6 +219,7 @@ class LOC_Action
     {
         $specials = collect();
         $this->insert_query = '';
+        $this->insert_query_2 = '';
         $this->insert_query_category = '';
         $this->count        = 0;
         $cat_action_id = agconf('import.default_action_category');
@@ -262,6 +267,7 @@ class LOC_Action
                 //$end = date('Y-m-d', strtotime("+1 day", strtotime($end)));
 
                 $this->insert_query .= '(' . $product->product_id . ', 1, 0, ' . number_format($mpc, 2, '.','') . ', "' . $start . '", "' . $end . '"),';
+                $this->insert_query_2 .= '(' . $product->product_id . ', 2, 0, ' . number_format($mpc, 2, '.','') . ', "' . $start . '", "' . $end . '"),';
                 $this->insert_query_category .= '(' . $product->product_id . ',' . $item->first()->category . '),';
 
                 $this->count++;
@@ -285,6 +291,13 @@ class LOC_Action
 
         try {
             $inserted = $this->db->query("INSERT INTO " . DB_PREFIX . "product_special (product_id, customer_group_id, priority, price, date_start, date_end) VALUES " . substr($this->insert_query, 0, -1) . ";");
+        }
+        catch (\Exception $exception) {
+            Log::store($exception->getMessage(), 'import_actions_query');
+        }
+
+        try {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "product_special (product_id, customer_group_id, priority, price, date_start, date_end) VALUES " . substr($this->insert_query_2, 0, -1) . ";");
         }
         catch (\Exception $exception) {
             Log::store($exception->getMessage(), 'import_actions_query');
