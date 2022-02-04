@@ -483,14 +483,6 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
             . "r1 WHERE r1.product_id = p.product_id "
             . "AND r1.status = '1' "
             . "GROUP BY r1.product_id) AS rating, "
-            . "(SELECT price FROM " . DB_PREFIX . "product_discount pd2 "
-            . "WHERE pd2.product_id = p.product_id "
-            . "AND pd2.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' "
-            . "AND pd2.quantity = '1' "
-            . "AND ((pd2.date_start = '0000-00-00' "
-            . "OR pd2.date_start < NOW()) "
-            . "AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) "
-            . "ORDER BY pd2.priority ASC, ps.price ASC LIMIT 1) AS discount, "
             . "(SELECT price FROM " . DB_PREFIX . "product_special ps "
             . "WHERE ps.product_id = p.product_id "
             . "AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' "
@@ -553,7 +545,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
 
             $sql .= ") AS t GROUP BY t.tax_class_id) AS tr2 ON (tr2.tax_class_id = p.tax_class_id)";
 
-            $sql .= " LEFT JOIN " . DB_PREFIX . "product_discount AS pd2 ON (pd2.product_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_special AS ps ON (ps.product_id = p.product_id)";
+            $sql .= "LEFT JOIN " . DB_PREFIX . "product_special AS ps ON (ps.product_id = p.product_id)";
         }
         //PRICE JOIN END
 
@@ -744,7 +736,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                 if ($data['sort'] == 'pd.name' || $data['sort'] == 'p.model') {
                     $sql .= " ORDER BY LCASE(" . $data['sort'] . ")";
                 } elseif ($data['sort'] == 'p.price') {
-                    $sql .= " ORDER BY (CASE WHEN special IS NOT NULL THEN special WHEN discount IS NOT NULL THEN discount ELSE p.price END)";
+                    $sql .= " ORDER BY (CASE WHEN special IS NOT NULL THEN special ELSE p.price END)";
                 } else {
                     $sql .= " ORDER BY " . $data['sort'];
                 }
