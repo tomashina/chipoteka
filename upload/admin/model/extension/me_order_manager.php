@@ -205,6 +205,8 @@ class ModelExtensionMeordermanager extends Model {
 
 		if (!empty($data['filter_customer'])) {
 			$sql .= " AND CONCAT(o.firstname, ' ', o.lastname) LIKE '%" . $this->db->escape($data['filter_customer']) . "%'";
+
+            $sql .= " OR o.custom_field LIKE '%" . $this->db->escape($data['filter_customer']) . "%'";
 		}
 		
 		if (!empty($data['filter_customeremail'])) {

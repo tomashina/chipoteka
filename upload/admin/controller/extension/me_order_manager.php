@@ -366,7 +366,7 @@ class ControllerExtensionMeordermanager extends Controller {
 			$payment_address =  $order_info['payment_firstname'].' '.$order_info['payment_lastname'] . "," . (!empty($order_info['payment_company']) ? $order_info['payment_company'] . "," : ''). $order_info['payment_address_1'] . "," . (!empty($order_info['payment_address_2']) ? $order_info['payment_address_2'] . "," : '') . $order_info['payment_city'].' '.$order_info['payment_postcode'] . "," . $order_info['payment_zone'] . "," . $order_info['payment_country'];
 			
 			//Shipping Address
-			$shipping_address = $firm. ' '.$order_info['shipping_firstname'].' '.$order_info['shipping_lastname'] . "," . (!empty($order_info['shipping_company']) ? $order_info['shipping_company'] . "," : ''). $order_info['shipping_address_1'] . "," . (!empty($order_info['shipping_address_2']) ? $order_info['shipping_address_2'] . "," : '') . $order_info['shipping_city'].' '.$order_info['shipping_postcode'] . "," . $order_info['shipping_zone'] . "," . $order_info['shipping_country'];
+			$shipping_address = $order_info['shipping_firstname'].' '.$order_info['shipping_lastname'] . "," . (!empty($order_info['shipping_company']) ? $order_info['shipping_company'] . "," : ''). $order_info['shipping_address_1'] . "," . (!empty($order_info['shipping_address_2']) ? $order_info['shipping_address_2'] . "," : '') . $order_info['shipping_city'].' '.$order_info['shipping_postcode'] . "," . $order_info['shipping_zone'] . "," . $order_info['shipping_country'];
 			
 			//Affiliate
 			if ($order_info['affiliate_id']) {
@@ -499,7 +499,7 @@ class ControllerExtensionMeordermanager extends Controller {
 				'language_code'      => $order_info['language_code'],
 				'currency_code'      => $order_info['currency_code'],
 				'ip'      => $order_info['ip'],
-				'customer'      => $result['customer'],
+				'customer'      => $firm. ' '.$result['customer'],
 				'email'      => $order_info['email'],
 				'telephone'      => $order_info['telephone'],
 				'customer_type'      => $customer_type,
