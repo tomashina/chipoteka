@@ -130,7 +130,8 @@ class LOC_Price
 
             // If Grupa artikala and Robna marka
             if ($item->grupa_artikla_uid && $item->robna_marka_uid && ! is_null($item->rabat)) {
-                $cat_man->put($item->grupa_artikla_uid, [
+                $cat_man->put(rand(1,9999999999), [
+                    'category' => $item->grupa_artikla_uid,
                     'manufacturer' => $item->robna_marka_uid,
                     'discount' => $item->rabat
                 ]);
@@ -172,7 +173,8 @@ class LOC_Price
         }
 
         foreach ($cat_man as $sifra => $item) {
-            $category = Category::where('lc_uid', $sifra)->first();
+
+            $category = Category::where('lc_uid', $item['category'])->first();
 
             if ($category) {
                 $manufacturer = Manufacturer::where('lc_uid', $item['manufacturer'])->first();
