@@ -199,6 +199,7 @@ class LOC_Customer
                         $this->customer['tip_komitenta'] = 'P';
 
                         $has = true;
+                        $customer_exist = true;
                     }
                 }
 
