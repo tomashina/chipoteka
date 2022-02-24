@@ -1,0 +1,1 @@
+ALTER TABLE `oc_product_special` ADD `pj` BOOLEAN NULL DEFAULT NULL AFTER `date_end`; 

@@ -272,6 +272,18 @@ class ControllerProductProduct extends Controller {
 
             $data['shopping_cart'] = $this->url->link('checkout/cart');
 
+            $data['pj'] = $this->model_catalog_product->getWebActions($product_id);
+
+            if($data['pj']== '1'){
+
+                $data['pj'] ='WEB';
+            }
+            else{
+
+                $data['pj'] ='';
+            }
+
+
 
 
             $manufacturer_info = $this->model_catalog_manufacturer->getManufacturer($product_info['manufacturer_id']);
@@ -594,6 +606,18 @@ class ControllerProductProduct extends Controller {
 
                 $vpc = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
+
+                $pj = $this->model_catalog_product->getWebActions($result['product_id']);
+
+                if( $pj == '1'){
+
+                    $pj ='WEB';
+                }
+                else{
+
+                    $pj ='';
+                }
+
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,
@@ -603,6 +627,7 @@ class ControllerProductProduct extends Controller {
                     'price_2'       => $price_2,
                     'vpc'       => $vpc,
 					'special'     => $special,
+					'pj' => $pj,
 					'freeshipping' => $freeshipping,
                     'saljemodo'     => $saljemodo,
 					'tax'         => $tax,

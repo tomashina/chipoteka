@@ -231,6 +231,17 @@ class ControllerProductCategory extends Controller {
 
                 $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + $rokisporuke, date('Y')));
 
+                $pj = $this->model_catalog_product->getWebActions($result['product_id']);
+
+                if($pj=='1'){
+
+                    $pj ='WEB';
+                }
+                else{
+
+                    $pj ='';
+                }
+
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
 					'thumb'       => $image,
@@ -238,6 +249,7 @@ class ControllerProductCategory extends Controller {
 					'price'       => $price,
                     'price_2'       => $price_2,
                     'vpc'       => $vpc,
+                    'pj' => $pj,
 					'special'     => $special,
                     'freeshipping' => $freeshipping,
 					'tax'         => $tax,

@@ -557,4 +557,16 @@ class ModelCatalogProduct extends Model {
 			return 0;
 		}
 	}
+
+    public function getWebActions($product_id){
+
+        $query = $this->db->query("SELECT pj FROM " . DB_PREFIX . "product_special WHERE product_id = '" . (int)$product_id . "'  AND customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((date_start = '0000-00-00 00:00:00' OR date_start < NOW()) AND (date_end = '0000-00-00 00:00:00' OR date_end > NOW()))");
+
+
+            return (int)$query->row['pj'];
+
+
+
+    }
+
 }

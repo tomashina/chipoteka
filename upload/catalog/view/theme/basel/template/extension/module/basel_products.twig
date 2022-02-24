@@ -38,14 +38,14 @@
                                         {% endif %}
                                         {% if product.price and product.special  %}
                                             <div class="product-badge-cpta product-badge-cpta__discount">
-                                                <span> AKCIJA</span>
+                                                <span> {{ product.pj }} AKCIJA</span>
                                                 <span> Uštedi <strong>{{ product.sale_badge }}</strong></span>
                                             </div>
                                         {% endif %}
 
                                         <div class="product-price--web">
                                             <span>
-                                                  {% if  product.special  %} Akcija: {% else %} {% if product.price_2 != product.price %} Web cijena: {% endif %} {% endif %}
+                                                  {% if  product.special  %} {{ product.pj }} Akcija: {% else %} {% if product.price_2 != product.price %} Web cijena: {% endif %} {% endif %}
                                             </span>
                                                                         <span>
                                                       {% if  product.special  %}

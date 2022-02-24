@@ -197,6 +197,18 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 
                     $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + $rokisporuke, date('Y')));
 
+
+                    $pj = $this->model_catalog_product->getWebActions($result['product_id']);
+
+                    if($pj=='1'){
+
+                        $pj ='WEB';
+                    }
+                    else{
+
+                        $pj ='';
+                    }
+
 					
 					$products[] = array(
 						'product_id' => $result['product_id'],
@@ -213,6 +225,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
                         'saljemodo'     => $saljemodo,
                         'freeshipping' => $freeshipping,
 						'special' 	 => $special,
+                        'pj' => $pj,
 						'tax'        => $tax,
 						'minimum'    => $result['minimum'] > 0 ? $result['minimum'] : 1,
 						'rating'     => $rating,

@@ -239,6 +239,18 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 
             $vpc = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
+
+            $pj = $this->model_catalog_product->getWebActions($result['product_id']);
+
+            if($pj=='1'){
+
+                $pj ='WEB';
+            }
+            else{
+
+                $pj ='';
+            }
+
             $products[] = array(
                 'product_id'  => $result['product_id'],
                 'thumb'       => $image,
@@ -249,6 +261,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                 'description' => $description,
                 'price'       => $price,
                 'price_2'       => $price_2,
+                'pj' => $pj,
                 'vpc'       => $vpc,
                 'saljemodo'     => $saljemodo,
                 'freeshipping' => $freeshipping,
