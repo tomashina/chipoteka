@@ -114,7 +114,7 @@ class ProductHelper
             'update_description' => $old_description ? $old_description['update_description'] : 1,
             'spec_description' => $spec ?: '',
             'short_description' => $description,
-            'tag' => $naziv,
+            'tag' => '',
             'meta_title' => $naziv,
             'meta_description' => strip_tags($description),
             'meta_keyword' => $naziv,
@@ -204,14 +204,10 @@ class ProductHelper
                 $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.' . $newstring;
             }
 
-            Log::store($name);
-            Log::store($product['filename']);
-
             // Setup and create the image with GD library.
             $bin = base64_decode(static::getImageString($product));
 
             if ($bin) {
-                Log::store('$bin OK...');
                 $errorlevel = error_reporting();
                 error_reporting(0);
                 $image = imagecreatefromstring($bin);
@@ -269,11 +265,7 @@ class ProductHelper
                 $doc = collect($doc)->toArray();
 
                 if (isset($doc['file_uid']) && substr($doc['filename'], -3) != 'pdf') {
-                    if (isset($doc['file_uid'])) {
-                        $uid = $doc['file_uid'];
-                    } else {
-                        $uid = $doc['file_uid'];
-                    }
+                    $uid = $doc['file_uid'];
 
                     $response[] = [
                         'uid' => $uid,
