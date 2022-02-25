@@ -213,6 +213,27 @@ class LOC_Action
 
 
     /**
+     * @param $action
+     *
+     * @return int
+     */
+    private function isPJ_10($action): int
+    {
+        if (empty($action->poslovne_jedinice)) {
+            return 0;
+        }
+
+        foreach ($action->poslovne_jedinice as $item) {
+            if ($item->pj == '10') {
+                return 1;
+            }
+        }
+
+        return 0;
+    }
+
+
+    /**
      * @return $this
      */
     public function sortActions()
@@ -232,6 +253,8 @@ class LOC_Action
                 'grupa_artikla' => $action->akcija_uid ?: '0'
             ];
 
+            $pj = $this->isPJ_10($action);
+
             $loc = new LOC_Category();
             $category = $loc->save($data, $cat_action_id, $key);
 
@@ -244,6 +267,7 @@ class LOC_Action
 
                     $item->start = $action->start_date . ' ' . $start_time;
                     $item->end = $action->end_date . ' ' . $end_time;
+                    $item->pj = $pj;
 
                     $specials->push($item);
                 }
@@ -266,8 +290,8 @@ class LOC_Action
 
                 //$end = date('Y-m-d', strtotime("+1 day", strtotime($end)));
 
-                $this->insert_query .= '(' . $product->product_id . ', 1, 0, ' . number_format($mpc, 2, '.','') . ', "' . $start . '", "' . $end . '"),';
-                $this->insert_query_2 .= '(' . $product->product_id . ', 2, 0, ' . number_format($mpc, 2, '.','') . ', "' . $start . '", "' . $end . '"),';
+                $this->insert_query .= '(' . $product->product_id . ', 1, 0, ' . number_format($mpc, 2, '.','') . ', "' . $start . '", "' . $end . '", ' . $item->first()->pj . '),';
+                $this->insert_query_2 .= '(' . $product->product_id . ', 2, 0, ' . number_format($mpc, 2, '.','') . ', "' . $start . '", "' . $end . '", ' . $item->first()->pj . '),';
                 $this->insert_query_category .= '(' . $product->product_id . ',' . $item->first()->category . '),';
 
                 $this->count++;
