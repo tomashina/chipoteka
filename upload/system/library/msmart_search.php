@@ -639,12 +639,9 @@ class Msmart_Search {
 		} else {
 			$order_by = 'p.sort_order';
 		}
-		
-		if( $this->_data['order'] == 'DESC' ) {
-			$order_by .= ' DESC, LCASE(`pd`.`name`) DESC';
-		} else {
-			$order_by .= ' ASC, LCASE(`pd`.`name`) ASC';
-		}
+
+
+        $order_by .= ' DESC, CASE WHEN pd.name LIKE "' . $this->_data['filter_name'] . '%" THEN 1 ELSE 2 END';
 		
 		$sql = str_replace(array(
 			'{from}',
@@ -747,7 +744,8 @@ class Msmart_Search {
 			$column = "REPLACE(" . $column . ", 'Ł', 'l')";
 			$phrase = preg_replace( '/[\x{0142}\x{0141}]/u', 'l', $phrase );
 		}
-		
+
+
 		return "LCASE(" . $column . ") LIKE '%" . $this->db->escape( $phrase ) . "%'";
 	}
 	
