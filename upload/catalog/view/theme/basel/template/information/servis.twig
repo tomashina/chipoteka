@@ -1,0 +1,64 @@
+{{ header }}
+
+<main class="offcanvas-enabled">
+    <!-- Custom page title-->
+    <div class="page-title-overlap pt-4 pe-lg-3 ">
+        <div class="container-fluid py-2">
+            <div class="pe-lg-4 text-center text-lg-start">
+                <h1 class="category-page-title text-primary" id="page-title">{{ heading_title }}</h1>
+            </div>
+            <div class=" mb-3 mb-lg-0">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb flex-lg-nowrap justify-content-center justify-content-lg-start">
+                        {% for breadcrumb in breadcrumbs %}
+                            <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                        {% endfor %}
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <div id="content" class="container-fluid pb-5 mb-2 mb-md-4">
+        {{ content_top }}
+
+        <div class="info-wrapper pb-3 mb-3">
+            <div id="search" class="page-search d-none search-field d-xl-flex flex-nowrap mx-4 trazi collapse">
+                <i class="fal fa-search position-absolute top-50 start-0 translate-middle-y ms-3" style="z-index:1000"></i>
+                <input class="form-control rounded-start w-100 main-search-input" name="search" type="text" autocomplete="off" value="{{ search }}" placeholder="{{ basel_text_search }}">
+                <span class="btn btn-contrast do-search main d-none">{{ basel_text_search }}</span>
+                <button type="button" class="btn btn-default btn-lg d-none"><i class="fa fa-search"></i></button>
+            </div>
+
+            {{ description }}
+            {{ content_bottom }}
+        </div>
+    </div>
+
+
+    <script type="text/javascript"><!--
+        $('input[name=\'search\']').autocomplete({
+            'source': function(request, response) {
+                $.ajax({
+                    url: 'index.php?route=information/servis/search&servis_id=' +  encodeURIComponent(request),
+                    dataType: 'json',
+                    success: function(json) {
+                        console.log(json)
+                        /*response($.map(json, function(item) {
+                            return {
+                                label: item['name'],
+                                value: item['link']
+                            }
+                        }));*/
+                    }
+                });
+            },
+            'select': function(item) {
+                console.log(item)
+                /*$('input[name=\'product\']').val(item['label']);
+                $('textarea[name=\'link\']').val(item['value']);*/
+            }
+        });
+        //--></script>
+
+{{ footer }}
