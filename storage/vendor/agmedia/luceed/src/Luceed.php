@@ -349,6 +349,17 @@ class Luceed
         return $this->service->get($this->end_points['order_document'], $uid);
     }
 
+
+    /**
+     * @param string $sid
+     *
+     * @return false|mixed
+     */
+    public function getOrderServiceData(string $sid)
+    {
+        return $this->service->get($this->end_points['servis'], $sid);
+    }
+
     /*******************************************************************************
     *                                Copyright : AGmedia                           *
     *                              email: filip@agmedia.hr                         *

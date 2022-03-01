@@ -41,4 +41,17 @@ class LuceedOrder extends Facade
         return $luceed->getOrderDocument($document_uid, $b2b);
     }
 
+
+    /**
+     * @param string $sid
+     *
+     * @return false|mixed
+     */
+    public static function getServisData(string $sid)
+    {
+        $luceed = new Luceed();
+
+        return $luceed->getOrderServiceData($sid);
+    }
+
 }
