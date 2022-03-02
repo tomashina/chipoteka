@@ -30,7 +30,7 @@ class LuceedEndPoints
             'stock_get'         => 'stock_skladista.json',
             'ind_stock_get'     => 'ind_stock_get.url',
             'raspis'            => 'raspis.url',
-            'servis'            => 'raspis.url',
+            'servis'            => 'servis.url',
             'mjesta'            => 'mjesta.json',
             'vrste_placanja'    => 'vrste_placanja.json',
             'b2b_prices'        => 'rabatna_politika.json',
