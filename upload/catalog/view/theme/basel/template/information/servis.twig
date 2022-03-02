@@ -10,10 +10,8 @@
             <div class=" mb-3 mb-lg-0">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb flex-lg-nowrap justify-content-center justify-content-lg-start">
-                        {% for breadcrumb in breadcrumbs %}
-                            <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-                        {% endfor %}
-                    </ol>
+                        <li class="breadcrumb-item"><a class="text-nowrap" href="https://www.chipoteka.hr"><i class="fal fa-home"></i></a></li>
+                        <li class="breadcrumb-item"><a class="text-nowrap" href="#">Status radnog naloga</a></li></ol>
                 </nav>
             </div>
         </div>
@@ -21,18 +19,18 @@
 
     <div id="content" class="container-fluid pb-5 mb-2 mb-md-4">
         {{ content_top }}
-
+<div class="pb-3 pt-0">
+    <p>Status Vaše reklamacije možete provjeriti upisom servisnog koda. Format: 000000-000000</p>
+</div>
         <div class="info-wrapper pb-3 mb-3">
-            <div class="page-search d-none search-field d-xl-flex flex-nowrap mx-4 trazi collapse">
-                <i class="fal fa-search position-absolute top-50 start-0 translate-middle-y ms-3" style="z-index:1000"></i>
-                <input class="form-control rounded-start w-100" name="servis_search" id="servis-input" type="text" autocomplete="off" value="{{ search }}" placeholder="{{ basel_text_search }}">
+            <div class="page-search d-none search-field d-xl-flex flex-nowrap mx-4 ms-0 trazi collapse">
+
+                <input class="form-control rounded-start w-100 " name="servis_search" id="servis-input" type="text" autocomplete="off" value="{{ search }}" placeholder="000000-000000" style="padding-left:1rem!important" >
                 <span class="btn btn-contrast do-search main d-none">{{ basel_text_search }}</span>
                 <button type="button" class="btn btn-default btn-lg" id="servis-click"><i class="fa fa-search"></i></button>
             </div>
 
-            {{ description }}
-
-            <div class="codeview" id="servis-view">
+            <div class="codeview mt-3" id="servis-view">
 
             </div>
 
@@ -49,9 +47,29 @@
                 url: 'index.php?route=information/servis/search&servis_id=' +  encodeURIComponent($input),
                 dataType: 'json',
                 success: function(json) {
-                    console.log(json)
 
-                    $('#servis-view').text(JSON.stringify(json));
+                    $('#servis-view').html('' +
+                        '<div class="row">' +
+                        '<div class="col-12">' +
+                        '<h3>Radni nalog ' + json.broj + '/' + json.datum.slice(-4) + '</h3>' +
+                        '<p>Datum zaprimanja: ' + json.prijavljen + '</p>' +
+                        '<p>Stranka: ' + json.partner_naziv + '</p>' +
+                        '<p>Stranka: ' + json.korisnik__partner_naziv + '</p>' +
+                        '<p>Predao: ' + json.partner_naziv + '</p>' +
+                        '<p>Telefon: ' + json.telefon + '</p>' +
+                        '<p>E-mail: ' + json.email + '</p>' +
+                        '<p>Artikl: ' + json.artikl + ' -' + json.artikl_naziv + ' </p>' +
+                        '<p class="mt-3"><strong>Opis kvara:</strong> ' + json.opis_kvara + '</p>' +
+                        '<p class="mb-3"><strong>Status radnog naloga:</strong> ' + json.status_radnog_naloga_naziv + '</p>' +
+
+                        '<p><strong>' + json.atributi[0].atribut_naziv + '</strong> ' + json.atributi[0].vrijednost + '</p>' +
+                        '<p><strong>' + json.atributi[1].atribut_naziv + '</strong> ' + json.atributi[1].vrijednost + '</p>' +
+                        '<p><strong>' + json.atributi[2].atribut_naziv + '</strong> ' + json.atributi[2].vrijednost + '</p>' +
+
+                        '<p class="mt-3"><strong>Opis rada: </strong>' + json.opis_servisa + '</p>' +
+                        '<p class="mt-3">- uređaj koji podliježe jamstvenim uvijetima će biti servisiran najviše u roku 45 dana,<br> - za uređaje koji nisu podignuti u roku 90 dana od datuma popravka ne odgovaramo,<br> - uređaj je moguće podići samo uz predočenje ovog radnog naloga<br> - ne odgovaramo za podatke spremljene na uređajima<br> - molimo kupce da naprave back up podataka prije predaje uređaja na servis</p>' +
+                        '</div>' +
+                        '</div>');
 
                 }
             });

@@ -5,7 +5,7 @@ use Agmedia\LuceedOpencartWrapper\Models\LOC_Servis;
 
 class ControllerInformationServis extends Controller {
 	public function index() {
-
+        $this->load->language('information/information');
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
@@ -21,16 +21,16 @@ class ControllerInformationServis extends Controller {
 
 		//$servis_info = $this->model_catalog_information->getInformation($servis_id);
 
-        $this->document->setTitle('meta_title');
-        $this->document->setDescription('meta_description');
-        $this->document->setKeywords('meta_keyword');
+        $this->document->setTitle('Status radnog naloga');
+        $this->document->setDescription('Status radnog naloga');
+        $this->document->setKeywords('Status radnog naloga');
 
         $data['breadcrumbs'][] = array(
             'text' => 'title',
             'href' => $this->url->link('information/servis', 'servis_id=' .  $servis_id)
         );
 
-        $data['heading_title'] = 'title';
+        $data['heading_title'] = 'Status radnog naloga';
 
         $data['description'] = html_entity_decode('description', ENT_QUOTES, 'UTF-8');
 
