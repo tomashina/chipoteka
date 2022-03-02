@@ -39,9 +39,9 @@ class LOC_Servis
 
 
     /**
-     * @return Collection
+     * @return array
      */
-    public function getResponse(): Collection
+    public function getResponse()
     {
         return collect($this->response)->first();
     }

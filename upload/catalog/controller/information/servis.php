@@ -1,4 +1,8 @@
 <?php
+
+use Agmedia\Luceed\Facade\LuceedOrder;
+use Agmedia\LuceedOpencartWrapper\Models\LOC_Servis;
+
 class ControllerInformationServis extends Controller {
 	public function index() {
 
@@ -43,13 +47,17 @@ class ControllerInformationServis extends Controller {
 	}
 
 	public function search() {
-        if (isset($this->request->get['servis_id'])) {
-            $servis_id = (int)$this->request->get['servis_id'];
-        } else {
-            $servis_id = 0;
-        }
+        $json = ['error' => 'Ne nalazimo vaš nalog. Probajte ponovo ili kontaktirajte administratora.'];
 
-        $json = ['servis' => $servis_id];
+	    if (isset($this->request->get['servis_id'])) {
+            $servis_id = (string)$this->request->get['servis_id'];
+
+            $ls = new LOC_Servis(
+                LuceedOrder::getServisData($servis_id)
+            );
+
+            $json = json_decode(json_encode($ls->getResponse()), true);
+        }
 
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput(json_encode($json));
