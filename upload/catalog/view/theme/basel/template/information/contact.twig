@@ -18,6 +18,10 @@
         </div>
     </div>
     <div id="content" class="container-fluid pb-3 mb-2 mb-md-4">
+
+        {% if izborkarte=='servis' %}
+            <p>Status Vaše reklamacije možete provjeriti <a class="text-primary" href="index.php?route=information/servis">ovdje.</a></p>
+        {% endif  %}
         {% if izborkarte=='servis' %}
             <script src="https://apps.elfsight.com/p/platform.js" defer></script>
             <div class="elfsight-app-82207754-9f67-4a35-a682-d9f14fccb35a"></div>
