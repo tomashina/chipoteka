@@ -75,11 +75,11 @@
             });
         });
 
-        $('#servis-input').onkeydown = (e) => {
+        $('#servis-input').on('keyup', (e) => {
             if(e.keyCode == 13){
                 $("#servis-click").click();
             }
-        };
+        });
         //--></script>
 
 {{ footer }}
