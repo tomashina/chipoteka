@@ -30,7 +30,7 @@ jQuery(function(){
 		}
 		
 		if( config.search_in_product_descriptions == '1' ) {
-			url += '&description=1';
+			url += '&description=0';
 		}
 		
 		return url;
