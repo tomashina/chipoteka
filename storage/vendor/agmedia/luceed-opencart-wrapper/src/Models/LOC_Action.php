@@ -314,14 +314,14 @@ class LOC_Action
         $this->deleteActionsDB();
 
         try {
-            $inserted = $this->db->query("INSERT INTO " . DB_PREFIX . "product_special (product_id, customer_group_id, priority, price, date_start, date_end) VALUES " . substr($this->insert_query, 0, -1) . ";");
+            $inserted = $this->db->query("INSERT INTO " . DB_PREFIX . "product_special (product_id, customer_group_id, priority, price, date_start, date_end, pj) VALUES " . substr($this->insert_query, 0, -1) . ";");
         }
         catch (\Exception $exception) {
             Log::store($exception->getMessage(), 'import_actions_query');
         }
 
         try {
-            $this->db->query("INSERT INTO " . DB_PREFIX . "product_special (product_id, customer_group_id, priority, price, date_start, date_end) VALUES " . substr($this->insert_query_2, 0, -1) . ";");
+            $this->db->query("INSERT INTO " . DB_PREFIX . "product_special (product_id, customer_group_id, priority, price, date_start, date_end, pj) VALUES " . substr($this->insert_query_2, 0, -1) . ";");
         }
         catch (\Exception $exception) {
             Log::store($exception->getMessage(), 'import_actions_query');
