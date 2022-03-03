@@ -91,7 +91,7 @@
                                                     <span>{{ price_2 }}</span>
                                                 {% else %}
 
-                                                    <span><del>{{ price_2 }}</del></span>
+                                                    <span> {% if pj !='WEB' %} <del> {% endif %} {{ price_2 }} {% if pj !='WEB' %} </del> {% endif %}</span>
 
                                                     <span id="special_countdown"></span>
                                                 {% endif %}
@@ -230,7 +230,7 @@
                                                 <span>{{ price_2 }}</span>
                                             {% else %}
 
-                                                <del>{{ price_2 }}</del>
+                                            {% if pj !='WEB' %} <del> {% endif %} {{ price_2 }} {% if pj !='WEB' %} </del> {% endif %}
                                             {% endif %}
                                         </div>
                                         <div class="product-price--web">
@@ -293,7 +293,7 @@
                                                 <span>{{ price_2 }}</span>
                                             {% else %}
 
-                                                <del>{{ price_2 }}</del>
+                                            {% if pj !='WEB' %} <del> {% endif %} {{ price_2 }}  {% if pj !='WEB' %} </del> {% endif %}
                                             {% endif %}
                                         </div>
 
