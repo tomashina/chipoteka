@@ -47,31 +47,53 @@
                 url: 'index.php?route=information/servis/search&servis_id=' +  encodeURIComponent($input),
                 dataType: 'json',
                 success: function(json) {
+                    $('#servis-view').innerHTML = '';
+
+                    if (!json) {
+                        $('#servis-view').html('' +
+                            '<div class="row">' +
+                            '<div class="col-12">' +
+                            '<p class="mt-3 text-danger"><strong>Ne nalazimo nalog prema upisanom servisnom kodu. Molimo vas provjerite upisane podatke.</strong></p>' +
+                            '</div>' +
+                            '</div>'
+                        );
+                    } else {
+                        $('#servis-view').html('' +
+                            '<div class="row">' +
+                            '<div class="col-12">' +
+                            '<h3>Radni nalog ' + json.broj + '/' + json.datum.slice(-4) + '</h3>' +
+                            '<p>Datum zaprimanja: ' + json.datum + '</p>' +
+                            '<p>Stranka: ' + json.partner_naziv + '</p>' +
+                            '<p>Stranka: ' + json.korisnik__partner_naziv + '</p>' +
+                            '<p>Predao: ' + json.partner_naziv + '</p>' +
+                            '<p>Telefon: ' + json.telefon + '</p>' +
+                            '<p>E-mail: ' + json.email + '</p>' +
+                            '<p>Artikl: ' + json.artikl + ' -' + json.artikl_naziv + ' </p>' +
+                            '<p class="mt-3"><strong>Opis kvara:</strong> ' + json.opis_kvara + '</p>' +
+                            '<p class="mb-3"><strong>Status radnog naloga:</strong> ' + json.status_radnog_naloga_naziv + '</p>' +
+
+                            '<p><strong>' + json.atributi[0].atribut_naziv + '</strong> ' + json.atributi[0].vrijednost + '</p>' +
+                            '<p><strong>' + json.atributi[1].atribut_naziv + '</strong> ' + json.atributi[1].vrijednost + '</p>' +
+                            '<p><strong>' + json.atributi[2].atribut_naziv + '</strong> ' + json.atributi[2].vrijednost + '</p>' +
+
+                            '<p class="mt-3"><strong>Opis rada: </strong>' + json.opis_servisa + '</p>' +
+                            '<p class="mt-3">- uređaj koji podliježe jamstvenim uvijetima će biti servisiran najviše u roku 45 dana,<br> - za uređaje koji nisu podignuti u roku 90 dana od datuma popravka ne odgovaramo,<br> - uređaj je moguće podići samo uz predočenje ovog radnog naloga<br> - ne odgovaramo za podatke spremljene na uređajima<br> - molimo kupce da naprave back up podataka prije predaje uređaja na servis</p>' +
+                            '</div>' +
+                            '</div>');
+                    }
+
+                },
+                error: (e) => {
+                    $('#servis-view').innerHTML = '';
 
                     $('#servis-view').html('' +
                         '<div class="row">' +
                         '<div class="col-12">' +
-                        '<h3>Radni nalog ' + json.broj + '/' + json.datum.slice(-4) + '</h3>' +
-                        '<p>Datum zaprimanja: ' + json.datum + '</p>' +
-                        '<p>Stranka: ' + json.partner_naziv + '</p>' +
-                        '<p>Stranka: ' + json.korisnik__partner_naziv + '</p>' +
-                        '<p>Predao: ' + json.partner_naziv + '</p>' +
-                        '<p>Telefon: ' + json.telefon + '</p>' +
-                        '<p>E-mail: ' + json.email + '</p>' +
-                        '<p>Artikl: ' + json.artikl + ' -' + json.artikl_naziv + ' </p>' +
-                        '<p class="mt-3"><strong>Opis kvara:</strong> ' + json.opis_kvara + '</p>' +
-                        '<p class="mb-3"><strong>Status radnog naloga:</strong> ' + json.status_radnog_naloga_naziv + '</p>' +
-
-                        '<p><strong>' + json.atributi[0].atribut_naziv + '</strong> ' + json.atributi[0].vrijednost + '</p>' +
-                        '<p><strong>' + json.atributi[1].atribut_naziv + '</strong> ' + json.atributi[1].vrijednost + '</p>' +
-                        '<p><strong>' + json.atributi[2].atribut_naziv + '</strong> ' + json.atributi[2].vrijednost + '</p>' +
-
-                        '<p class="mt-3"><strong>Opis rada: </strong>' + json.opis_servisa + '</p>' +
-                        '<p class="mt-3">- uređaj koji podliježe jamstvenim uvijetima će biti servisiran najviše u roku 45 dana,<br> - za uređaje koji nisu podignuti u roku 90 dana od datuma popravka ne odgovaramo,<br> - uređaj je moguće podići samo uz predočenje ovog radnog naloga<br> - ne odgovaramo za podatke spremljene na uređajima<br> - molimo kupce da naprave back up podataka prije predaje uređaja na servis</p>' +
+                        '<p class="mt-3 text-danger"><strong>Ne nalazimo nalog prema upisanom servisnom kodu. Molimo vas provjerite upisane podatke.</strong></p>' +
                         '</div>' +
-                        '</div>');
-
-                }
+                        '</div>'
+                    );
+            }
             });
         });
 
