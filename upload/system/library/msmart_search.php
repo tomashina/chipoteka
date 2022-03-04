@@ -216,7 +216,7 @@ class Msmart_Search {
 			if( $this->_limit !== null && count( $results ) >= $this->_limit ) break;
 		}
 		
-		if( isset( $this->_data['sort'] ) && $this->_data['order'] ) {
+		if( isset($this->_data['sort']) && $this->_data['sort'] != 'p.sort_order' && $this->_data['order'] ) {
 			usort( $results, array( $this, '__sortResults' ) );
 		}
 		
@@ -633,15 +633,20 @@ class Msmart_Search {
 		if( in_array( $this->_data['sort'], array( 'pd.name', 'p.model' ) ) ) {
 			$order_by = 'LCASE(' . $this->_data['sort'] . ')';
 		} else if( $this->_data['sort'] == 'p.price' ) {
-			$order_by = '(CASE WHEN `special` IS NOT NULL THEN `special` WHEN `discount` IS NOT NULL THEN `discount` ELSE `p`.`price` END)';
-		} else if( in_array( $this->_data['sort'], array( 'p.quantity', 'rating', 'p.sort_order', 'p.date_added' ) ) ) {
+            $order_by = '(CASE WHEN `special` IS NOT NULL THEN `special` WHEN `discount` IS NOT NULL THEN `discount` ELSE `p`.`price` END)';
+        }/* else if( $this->_data['sort'] == 'p.sort_order' ) {
+            $order_by = '(CASE WHEN pd.name LIKE "' . $this->_data['filter_name'] . '%" THEN 1 ELSE 2 END)';
+        }*/ else if( in_array( $this->_data['sort'], array( 'p.quantity', 'rating'/*, 'p.sort_order'*/, 'p.date_added' ) ) ) {
 			$order_by = $this->_data['sort'];
 		} else {
-			$order_by = 'p.sort_order';
+			$order_by = 'p.sort_order DESC, CASE WHEN pd.name LIKE "' . $this->_data['filter_name'] . '%" THEN 1 ELSE 2 END';
 		}
 
-
-        $order_by .= ' DESC, CASE WHEN pd.name LIKE "' . $this->_data['filter_name'] . '%" THEN 1 ELSE 2 END';
+        if( $this->_data['order'] == 'DESC' ) {
+            $order_by .= ' DESC, LCASE(`pd`.`name`) DESC';
+        } else {
+            $order_by .= ' ASC, LCASE(`pd`.`name`) ASC';
+        }
 		
 		$sql = str_replace(array(
 			'{from}',
