@@ -17,11 +17,10 @@
   <link rel="stylesheet" media="screen" href="catalog/view/dist/vendor/simplebar/dist/simplebar.min.css"/>
   <link rel="stylesheet" media="screen" href="catalog/view/dist/vendor/tiny-slider/dist/tiny-slider.css"/>
   <!-- Main Theme Styles + Bootstrap-->
-  <link rel="stylesheet" media="screen" href="catalog/view/dist/css/theme.css">
+  <link rel="stylesheet" media="screen" href="catalog/view/dist/css/stylemin.min.css">
   <link rel="stylesheet" media="print" href="catalog/view/dist/css/print.css">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#e31318">
   <meta name="msapplication-TileColor" content="#e31318">
@@ -30,7 +29,7 @@
   {% for style in styles %}
     <link href="{{ style.href }}" rel="{{ style.rel }}" media="{{ style.media }}" />
   {% endfor %}
-  <script src="catalog/view/javascript/jquery/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.js" integrity="sha512-7o2DtaB6EuAwjOyn86v4QEHQFNBXJ0jsln5kr3mvbxI7bCM1z1potVUcwoBCt4KNAQhw7VSmnIDp6EOhxNIzzw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   {% for script in scripts %}
     <script src="{{ script }}"></script>
   {% endfor %}
