@@ -176,15 +176,21 @@ class ControllerCheckoutGuest extends Controller {
 			}
 
 			/*if ((utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
-
 				$json['error']['telephone'] = $this->language->get('error_telephone');
 			}*/
 
-
+            // fj.agmedia.hr
+            if (isset($this->request->post['R1_needed']) && $this->request->post['R1_needed'] == 'on') {
+                if ((utf8_strlen(trim($this->request->post['custom_field']['account'][2])) < 2) || (utf8_strlen(trim($this->request->post['custom_field']['account'][2])) > 128)) {
+                    $json['error']['custom-field2'] = 'Naziv tvrtke mora sadržavati između 2 i 128 znakova!';
+                }
+                if ((utf8_strlen(trim($this->request->post['custom_field']['account'][1])) < 10) || (utf8_strlen(trim($this->request->post['custom_field']['account'][1])) > 13)) {
+                    $json['error']['custom-field1'] = 'OIB mora sadržavati između 11 i 13 znakova!';
+                }
+            }
+            // END ::: fj.agmedia.hr
 
             if( !preg_match("/^\+?[0-9]{3}-?[0-9]{6,12}$/", $this->request->post['telephone']) ) {
-
-
                 $json['error']['telephone'] = $this->language->get('error_telephone');
             }
 
@@ -192,7 +198,6 @@ class ControllerCheckoutGuest extends Controller {
 
             if(!preg_match('([a-zA-Z].*[0-9]|[0-9].*[a-zA-Z])', $this->request->post['address_1']) ){
                 $json['error']['address_1'] = 'Adresa treba sadržavati i broj.';
-
             }
 
 
