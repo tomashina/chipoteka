@@ -4,7 +4,7 @@
     <div class="col-sm-12">
         <div class=" mb-3 ">
             <label class="form-check-label" style="padding:10px;border:1px solid #ddd;">
-                <input id="racun" type="checkbox" href="#collapseR" class="form-check-input" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseR">
+                <input id="racun" type="checkbox" name="R1_needed" href="#collapseR" class="form-check-input" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="collapseR">
                 Trebam R1 račun</label>
         </div>
     </div>
@@ -13,8 +13,6 @@
         $('#racun').change(function() {
             // this will contain a reference to the checkbox
             if (this.checked) {
-                console.log($(this).val() + ' is now checked');
-
                 $('#address_title').text('Adresa tvrtke');
                 $('#podaci_title').text('Podaci tvrtke');
             } else {
