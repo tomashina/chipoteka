@@ -108,7 +108,7 @@
             <i class="fal fa-search navbar-tool-icon start-0"></i>
           </div>
         </a>
-        <a class="navbar-tool" href="{{ wishlist }}">
+        {% if logged %} <a class="navbar-tool" href="{{ wishlist }}">
                         <span class="navbar-tool-tooltip">
                             Lista želja
 
@@ -116,8 +116,8 @@
           <div class="navbar-tool-icon-box">
             <i class="navbar-tool-icon fal fa-heart"></i>
           </div>
-        </a>
-        <a class="navbar-tool" href="{% if logged %}{{ account }}{% else %} {{ login }}{% endif %}">
+        </a>{% endif %}
+        <a class="navbar-tool" href="{% if logged %}{{ account }}{% else %}{{ login }}{% endif %}">
           <div class="navbar-tool-icon-box">
             <i class="fal fa-user navbar-tool-icon"></i>
           </div>
