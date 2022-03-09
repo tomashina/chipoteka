@@ -2,8 +2,8 @@
 /upload/catalog/view/node_modules
 
 # Config and Htaccess Files
-/upload/.htaccess
-#/upload/config.php
+#/upload/.htaccess
+/upload/config.php
 /upload/admin/config.php
 
 # Image Cache Files
