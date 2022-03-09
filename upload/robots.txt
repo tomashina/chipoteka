@@ -1,4 +1,3 @@
-
 Disallow: /*?page=$
 Disallow: /*&page=$
 Disallow: /*?sort=
@@ -13,3 +12,5 @@ Disallow: /*?filter_sub_category=
 Disallow: /*&filter_sub_category=
 Disallow: /*?filter_description=
 Disallow: /*&filter_description=
+
+Sitemap: https://www.chipoteka.hr/sitemap.xml

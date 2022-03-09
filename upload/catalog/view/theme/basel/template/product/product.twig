@@ -37,11 +37,11 @@
                                     <div class="product-gallery-preview gallery">
                                         {% if thumb or images %}
                                             {% if thumb %}
-                                                <div class="product-gallery-preview-item active" id="first"><a class="gallery-item rounded-3" href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}"  data-zoom="{{ popup }}" alt="{{ heading_title }}"></a>
+                                                <div class="product-gallery-preview-item active" id="first"><a class="gallery-item rounded-3" href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}"  data-zoom="{{ popup }}" alt="{{ heading_title }}" title="{{ heading_title }}"></a>
                                                 </div>
                                             {% endif %}
                                             {% for image in images %}
-                                                <div class="product-gallery-preview-item" id="image{{ image.imageid }}"><a class="gallery-item rounded-3" href="{{ image.popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ image.thumb_lg }}" loading="lazy" alt="{{ heading_title }}"></a></div>
+                                                <div class="product-gallery-preview-item" id="image{{ image.imageid }}"><a class="gallery-item rounded-3" href="{{ image.popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ image.thumb_lg }}" loading="lazy" alt="{{ heading_title }}" title="{{ heading_title }}"></a></div>
                                             {% endfor %}
                                         {% endif %}
                                     </div>
@@ -379,7 +379,7 @@
                                     {% if (product.quantity > 0)  %}
                                         <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
                                     {% endif %}
-                                    <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" loading="lazy" alt="{{ product.name }}"></div>
+                                    <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" loading="lazy" title="{{ product.name }}" alt="{{ product.name }}"></div>
                                     {% if product.freeshipping and groupId < 3 %}
 
                                         <div class="product-badge-cpta product-badge-cpta__free-shipping">
