@@ -8,7 +8,15 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0,user-scalable=0"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>{{ title }}</title>
+
+  {% if class == 'common-home' %}
+    <title>{{ title }}</title>
+    {% else %}
+      <title>{{ title }} - chipoteka.hr</title>
+  {% endif %}
+
+
+
 <base href="{{ base }}" />
 {% if description %}<meta name="description" content="{{ description|striptags }}" />{% endif %}
 {% if keywords %}<meta name="keywords" content= "{{ keywords }}" />{% endif %}
@@ -52,7 +60,7 @@
   {% if class == 'common-home' %}
     <meta property="og:url" content="{{ base }}" >
   {% endif %}
-  {% if ('product-product' not in class) and ('product-category' not in class) and ('product-manufacturer-info' not in class) %}
+  {% if ('product-product' not in class)  and ('product-manufacturer-info' not in class) %}
     <meta property="og:image" content="{{ logo_meta }}" >
     <meta property="og:image:width" content="1200" >
     <meta property="og:image:height" content="638" >
@@ -61,6 +69,14 @@
   {% for meta_tag in ogmeta %}
     <meta {{ meta_tag.meta_name}} content="{{ meta_tag.content }}" >
   {% endfor %}
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content=“@chipoteka” />
+  <meta name="twitter:title" content="{{ title }}" />
+  <meta name="twitter:description" content="{{ description ? description : '' }}" />
+  {% if ('product-product' not in class)  and ('product-manufacturer-info' not in class) %}
+  <meta name="twitter:image" content="{{ logo_meta }}" />
+  {% endif %}
 </head>
 <body>
 
