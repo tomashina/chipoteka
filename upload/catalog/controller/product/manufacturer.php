@@ -119,6 +119,7 @@ class ControllerProductManufacturer extends Controller {
 		$manufacturer_info = $this->model_catalog_manufacturer->getManufacturer($manufacturer_id);
 
 		if ($manufacturer_info) {
+
 			$this->document->setTitle($manufacturer_info['name']);
 
 			$url = '';
@@ -342,6 +343,8 @@ class ControllerProductManufacturer extends Controller {
 			if (isset($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
+
+            $this->document->addOGMeta('property="og:url"', $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . ( ($page != 1) ? '&page='. $page : '' ), true) );
 
 			$pagination = new Pagination();
 			$pagination->total = $product_total;
