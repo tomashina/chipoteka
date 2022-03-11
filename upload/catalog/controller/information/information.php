@@ -25,6 +25,8 @@ class ControllerInformationInformation extends Controller {
 			$this->document->setDescription($information_info['meta_description']);
 			$this->document->setKeywords($information_info['meta_keyword']);
 
+            $this->document->addOGMeta('property="og:url"', $this->url->link('information/information', 'information_id=' .  $information_id) );
+
             $this->document->addLink($this->url->link('information/information', 'information_id=' .  $information_id), 'canonical');
 
 			$data['breadcrumbs'][] = array(
