@@ -352,6 +352,8 @@ class ControllerProductProduct extends Controller {
 
             if ($product_info['image']) {
                 $this->document->addOGMeta('property="og:image"', 'https://cdn.chipoteka.hr/image/'.$product_info['image'] );
+
+                $this->document->addOGMeta('property="twitter:image"', 'https://cdn.chipoteka.hr/image/'.$product_info['image'] );
                 $this->document->addOGMeta('property="og:image:width"', '600');
                 $this->document->addOGMeta('property="og:image:height"', '600');
             } else {
@@ -361,6 +363,7 @@ class ControllerProductProduct extends Controller {
             }
             foreach ($results as $result) {
                 $this->document->addOGMeta( 'property="og:image"', 'https://cdn.chipoteka.hr/image/'.$result['image']);
+                $this->document->addOGMeta( 'property="twitter:image"', 'https://cdn.chipoteka.hr/image/'.$result['image']);
                 $this->document->addOGMeta('property="og:image:width"', '600');
                 $this->document->addOGMeta('property="og:image:height"', '600');
             }
