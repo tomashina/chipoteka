@@ -11,8 +11,8 @@ class ControllerInformationContact extends Controller {
             $data['izborkarte'] = '';
         }
 
-            if($data['izborkarte']=='poslovnice'){
-                $this->document->setTitle('Naše poslovnice - chipoteka.hr');
+            if($data['izborkarte']=='servis'){
+                $this->document->setTitle('Servis - chipoteka.hr');
             }
 
             elseif ($data['izborkarte']=='veleprodaja'){
@@ -20,7 +20,7 @@ class ControllerInformationContact extends Controller {
             }
             else{
 
-                $this->document->setTitle('Servis - chipoteka.hr');
+                $this->document->setTitle('Naše poslovnice - chipoteka.hr');
                 }
 
 
