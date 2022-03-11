@@ -11,9 +11,18 @@ class ControllerInformationContact extends Controller {
             $data['izborkarte'] = '';
         }
 
+            if($data['izborkarte']=='poslovnice'){
+                $this->document->setTitle('Naše poslovnice - chipoteka.hr');
+            }
 
+            elseif ($data['izborkarte']=='veleprodaja'){
+                $this->document->setTitle('Veleprodaja - chipoteka.hr');
+            }
+            else{
 
-        $this->document->setTitle($this->language->get('heading_title'));
+                $this->document->setTitle('Servis - chipoteka.hr');
+                }
+
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
 			$mail = new Mail($this->config->get('config_mail_engine'));
