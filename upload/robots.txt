@@ -5,7 +5,6 @@ Disallow: /*route=checkout/
 Disallow: /*route=product/search
 Disallow: /index.php?route=product/product*&manufacturer_id=
 Disallow: /admin
-Disallow: /catalog
 Disallow: /download
 Disallow: /export
 Disallow: /system
@@ -39,7 +38,6 @@ Disallow: /*route=checkout/
 Disallow: /*route=product/search
 Disallow: /index.php?route=product/product*&manufacturer_id=
 Disallow: /admin
-Disallow: /catalog
 Disallow: /download
 Disallow: /export
 Disallow: /system
