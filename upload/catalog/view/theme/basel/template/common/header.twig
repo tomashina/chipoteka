@@ -14,9 +14,6 @@
     {% else %}
       <title>{{ title }} - chipoteka.hr</title>
   {% endif %}
-
-
-
 <base href="{{ base }}" />
 {% if description %}<meta name="description" content="{{ description|striptags }}" />{% endif %}
 {% if keywords %}<meta name="keywords" content= "{{ keywords }}" />{% endif %}
@@ -110,9 +107,6 @@
     <div class="container-fluid px-0">
       <a class="navbar-brand me-0 me-xl-4 flex-shrink-0 py-0" href="{{ home }}">
         <img src="catalog/view/dist/img/logo-chipoteka.svg" alt="{{ name }}"></a>
-      {# <a class="navbar-brand d-sm-none me-2" href="{{ home }}">
-                                                  <img src="catalog/view/dist/img/logo-chipoteka.svg" width="74" alt="{{ name }}">
-                                              </a> #}
       <!-- Search-->
       {{ basel_search }}
       <!-- Toolbar-->
