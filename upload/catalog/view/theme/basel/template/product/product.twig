@@ -131,6 +131,12 @@
                                         </div>
 
                                     {% endif %}
+                                    {% if qty  < 5 %}
+                                    <div class="text-danger porukareach mb-3" >
+                                    Dostupno manje od 5 kom
+                                    </div>
+                                    {% endif %}
+
                                     {% if prikazrata  and groupId < 3 %}
                                         <div class="buying-choices mb-1 mt-n1 mt-md-n3">
                                             <div class="choices-wrapper">
