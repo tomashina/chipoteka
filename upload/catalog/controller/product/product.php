@@ -301,6 +301,7 @@ class ControllerProductProduct extends Controller {
             $data['jamstvo'] = $product_info['mpn'];
 			$data['reward'] = $product_info['reward'];
 			$data['points'] = $product_info['points'];
+            $data['upc'] = $product_info['upc'];
             $product_info['description'] = str_replace('<br><br>', '<br>', $product_info['description']);
 
 			$data['description'] = html_entity_decode($product_info['description'], ENT_QUOTES, 'UTF-8');
@@ -532,6 +533,7 @@ class ControllerProductProduct extends Controller {
 
 			$data['reviews'] = sprintf($this->language->get('text_reviews'), (int)$product_info['reviews']);
 			$data['rating'] = (int)$product_info['rating'];
+            $data['reviews_number'] = (int)$product_info['reviews'];
 
 			// Captcha
 			if ($this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('review', (array)$this->config->get('config_captcha_page'))) {
