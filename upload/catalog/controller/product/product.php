@@ -338,8 +338,13 @@ class ControllerProductProduct extends Controller {
 			if ($product_info['image']) {
 				$data['popup'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_height'));
 
+
+                $data['slika'] = 'https://cdn.chipoteka.hr/image/'.$product_info['image'];
+
 			} else {
 				$data['popup'] = '';
+
+                $data['slika'] = '';
 
 			}
 
@@ -356,7 +361,7 @@ class ControllerProductProduct extends Controller {
             if ($product_info['image']) {
                 $this->document->addOGMeta('property="og:image"', 'https://cdn.chipoteka.hr/image/'.$product_info['image'] );
 
-                $data['slika'] = 'https://cdn.chipoteka.hr/image/'.$product_info['image'];
+
 
                 $this->document->addOGMeta('property="twitter:image"', 'https://cdn.chipoteka.hr/image/'.$product_info['image'] );
                 $this->document->addOGMeta('property="og:image:width"', '600');
