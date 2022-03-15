@@ -356,6 +356,8 @@ class ControllerProductProduct extends Controller {
             if ($product_info['image']) {
                 $this->document->addOGMeta('property="og:image"', 'https://cdn.chipoteka.hr/image/'.$product_info['image'] );
 
+                $data['slika'] = 'https://cdn.chipoteka.hr/image/'.$product_info['image'];
+
                 $this->document->addOGMeta('property="twitter:image"', 'https://cdn.chipoteka.hr/image/'.$product_info['image'] );
                 $this->document->addOGMeta('property="og:image:width"', '600');
                 $this->document->addOGMeta('property="og:image:height"', '600');
