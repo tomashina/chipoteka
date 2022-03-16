@@ -14,8 +14,8 @@
                         "offers": {
                         "@type": "Offer",
                         "priceCurrency": "HRK",
-                        {% if price %}"price": "{{ price|replace({'kn': '', ',' : '.'}) }}",
-                        {% else %}"price": "{{ special|replace({'kn': '', ',' : '.'}) }}",{% endif %}
+                        {% if price %}"price": "{{ price|replace({'kn': '', ',' : '.', '.' : ','}) }}",
+                        {% else %}"price": "{{ special|replace({'kn': '', ',' : '.', '.' : ','}) }}",{% endif %}
                         "itemCondition" : "http://schema.org/NewCondition",
                         "availability" : "https://schema.org/InStock"
                       },
