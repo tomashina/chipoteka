@@ -6,6 +6,7 @@
                         "name": "{{ heading_title }}",
                         "description": "{{description [:220] | striptags }} ...",
                         "image" : "{{ slika }}",
+                        "sku": "{{ model }}",
                         "gtin14": "{{ upc }}",
                         "brand": {
                             "@type": "Brand",
@@ -13,16 +14,13 @@
                          },
                         "offers": {
                         "@type": "Offer",
+                         "url": "{{ url }}",
                         "priceCurrency": "HRK",
-                        {% if price %}"price": "{{ price|replace({'kn': '', ',' : '.', '.' : ','}) }}",
-                        {% else %}"price": "{{ special|replace({'kn': '', ',' : '.', '.' : ','}) }}",{% endif %}
+                        {% if price %}"price": "{{ price|replace({'kn': '', ',' : '.', '.' : ''}) }}",
+                        {% else %}"price": "{{ special|replace({'kn': '', ',' : '.', '.' : ''}) }}",{% endif %}
+                        "priceValidUntil": "{{ pricevaliduntil }}",
                         "itemCondition" : "http://schema.org/NewCondition",
                         "availability" : "https://schema.org/InStock"
-                      },
-                      "aggregateRating": {
-                        "@type": "AggregateRating",
-                        "ratingValue": "{{ rating }}",
-                        "reviewCount": "{{ reviews_number }}"
                       }
                     }
                     </script>

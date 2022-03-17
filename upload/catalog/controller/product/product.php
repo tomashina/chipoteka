@@ -302,6 +302,9 @@ class ControllerProductProduct extends Controller {
 			$data['reward'] = $product_info['reward'];
 			$data['points'] = $product_info['points'];
             $data['upc'] = $product_info['upc'];
+            $data['pricevaliduntil'] = Date('Y-m-d', strtotime('+30 days'));
+
+            $data['url'] = $this->url->link('product/product', 'product_id=' . (int)$this->request->get['product_id']);
             $product_info['description'] = str_replace('<br><br>', '<br>', $product_info['description']);
 
 			$data['description'] = html_entity_decode($product_info['description'], ENT_QUOTES, 'UTF-8');
