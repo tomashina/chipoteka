@@ -25,7 +25,6 @@
                     }
                     </script>
 <main class="offcanvas-enabled product-container">
-    <!-- Custom page title-->
     <div class="page-title-overlap  pt-4">
         <div class="container-fluid py-2">
             <div class="pe-lg-4 text-center text-lg-start">
@@ -45,7 +44,6 @@
     </div>
     <div class="container-fluid">
         <div class="bg-white shadow-lg rounded-3" >
-            <!-- Tabs-->
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item"><a class="nav-link active" href="#general" data-bs-toggle="tab" role="tab">Info</a></li>
                 <li class="nav-item"><a class="nav-link" href="#description" data-bs-toggle="tab" role="tab">Opis  </a></li>
@@ -53,7 +51,6 @@
             </ul>
             <div class="pb-3 mb-5">
                 <div class="tab-content px-3">
-                    <!-- General info tab-->
                     <div class="tab-pane fade show active" id="general" role="tabpanel">
                         <div class="row">
                             <!-- Product gallery-->
@@ -245,7 +242,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Tech specs tab-->
                     <div class="tab-pane fade" id="description" role="tabpanel">
                         {% if groupId < 3 %}
                             <div class="d-md-flex justify-content-between pb-4 mt-3 mb-4 border-bottom product-features flex-column flex-lg-row">
@@ -308,7 +304,7 @@
 
                         </div>
                     </div>
-                    <!-- Reviews tab-->
+                    {% if attribute_groups %}
                     <div class="tab-pane fade" id="specs" role="tabpanel">
                         {% if groupId < 3 %}
                             <div class="d-md-flex justify-content-between pb-4 mt-3 mb-4 border-bottom product-features flex-column flex-lg-row">
@@ -391,6 +387,7 @@
                             {% endif %}
                         </div>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -405,14 +402,12 @@
                     {% for product in products|slice(0, 10) %}
                         <div>
                             <div class="card product-card">
-                                {# <button class="btn-wishlist btn-sm" type="button"  onclick="wishlist.add('{{ product.product_id }}');" ><i class="fal fa-heart"></i></button> #}
                                 <div class="position-relative">
                                     {% if (product.quantity > 0)  %}
                                         <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
                                     {% endif %}
                                     <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" loading="lazy" title="{{ product.name }}" alt="{{ product.name }}"></div>
                                     {% if product.freeshipping and groupId < 3 %}
-
                                         <div class="product-badge-cpta product-badge-cpta__free-shipping">
                                             <span> Besplatna dostava</span>
                                             <i class="fas fa-shipping-fast"></i>
@@ -422,7 +417,6 @@
                                 <a class="stretched-link" href="{{ product.href }}">
                                     <div class="card-body">
                                         <h3 class="product-title">{{ product.name }}</h3>
-
                                         {% if groupId < 3 %}
                                             {% if product.price %}
                                                 <div class="product-price">
@@ -433,7 +427,7 @@
                                                         <span> {{ product.price_2 }}</span>
                                                     {% endif %}
 
-                                                </div><!-- .price -->
+                                                </div>
                                             {% endif %}
                                             {% if product.rating %}
                                                 <div class="star-rating {{ product.rating }}"><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fas fa-star active"></i><i class="star-rating-icon fal fa-star"></i>
@@ -456,7 +450,7 @@
                                                 <div class="product-price--web">
                                                     <span style="font-weight:300;color: #828282;"> Preporučena MPC </span>
                                                     <span> {{ product.price_2 }}</span>
-                                                </div><!-- .price -->
+                                                </div>
                                             {% endif %}
 
 
