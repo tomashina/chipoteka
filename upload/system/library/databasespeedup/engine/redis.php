@@ -20,7 +20,6 @@ class Redis implements Cache_Interface {
         $this->prefix = $config['redis_prefix'];
         $this->expire = $config['redis_expire'];
 
-
         try {
         	$this->redis = new \Redis();
 
