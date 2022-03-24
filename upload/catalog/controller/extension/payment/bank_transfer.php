@@ -37,7 +37,7 @@ class ControllerExtensionPaymentBankTransfer extends Controller {
             }
 
             if($data['groupId'] > 2){
-                $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], 27, $comment, true);
+                $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], 23, $comment, true);
             }
             else{
                 $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_bank_transfer_order_status_id'), $comment, true);
