@@ -275,7 +275,7 @@ class LOC_Order
     private function getStatus()
     {
         if ($this->hasOIB()) {
-            return '13';
+            return '12';
         }
 
         if ($this->oc_order['payment_code'] == 'cod') {
