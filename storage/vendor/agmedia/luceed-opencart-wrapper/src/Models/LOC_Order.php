@@ -187,8 +187,8 @@ class LOC_Order
             'nalog_prodaje_b2b'         => $this->oc_order['order_id']. '-' . Carbon::now()->year.'-web',
             'narudzba'                   => $this->oc_order['order_id'] . '-' . Carbon::now()->year,
             'datum'                     => Carbon::make($this->oc_order['date_added'])->format(agconf('luceed.date')),
-            'skladiste'                 => '001',
-            'sa__skladiste'             => '001',
+            'skladiste'                 => '099',// 001 -> 099
+            'sa__skladiste'             => '101',// 001 -> 101
             'status'                    => $this->getStatus(),
             'napomena'                  => $this->oc_order['comment'],
             'poruka_dolje'              => $this->oc_order['comment'],
@@ -216,8 +216,8 @@ class LOC_Order
 
         if ($this->items_available) {
             $this->order['sa__skladiste'] = agconf('luceed.stock_warehouse_uid');
-            $this->order['na__skladiste'] = agconf('luceed.default_warehouse_uid');
-            $this->order['skl_dokument']  = 'MS';
+            $this->order['na__skladiste'] = '099'; // agconf('luceed.default_warehouse_uid') -> 099
+            $this->order['skl_dokument']  = 'MSM'; // MS -> MSM
         }
 
         if ($this->hasOIB()) {
