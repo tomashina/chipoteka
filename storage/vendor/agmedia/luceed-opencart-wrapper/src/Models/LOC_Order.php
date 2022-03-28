@@ -214,10 +214,13 @@ class LOC_Order
             $this->order['vezani_poziv_na_broj'] = $this->oc_order['poziv_na_broj'];
         }
 
+        $this->order['na__skladiste'] = '099'; // agconf('luceed.default_warehouse_uid') -> 099
+        $this->order['skl_dokument']  = 'MSM'; // MS -> MSM
+
         if ($this->items_available) {
             $this->order['sa__skladiste'] = agconf('luceed.stock_warehouse_uid');
-            $this->order['na__skladiste'] = '099'; // agconf('luceed.default_warehouse_uid') -> 099
-            $this->order['skl_dokument']  = 'MSM'; // MS -> MSM
+            /*$this->order['na__skladiste'] = '099'; // agconf('luceed.default_warehouse_uid') -> 099
+            $this->order['skl_dokument']  = 'MSM'; // MS -> MSM*/
         }
 
         if ($this->hasOIB()) {
