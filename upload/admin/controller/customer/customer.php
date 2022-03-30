@@ -1574,6 +1574,7 @@ class ControllerCustomerCustomer extends Controller {
 			$results = $this->model_customer_customer->getCustomers($filter_data);
 
 			foreach ($results as $result) {
+
 				$json[] = array(
 					'customer_id'       => $result['customer_id'],
 					'customer_group_id' => $result['customer_group_id'],

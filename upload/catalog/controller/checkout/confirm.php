@@ -117,7 +117,7 @@ class ControllerCheckoutConfirm extends Controller {
 
 			$this->load->language('checkout/checkout');
 
-            if($data['groupId']>=2){
+            if($data['groupId']>2){
 
                 if ($this->cart->getTotal() < 1000 ) {
 
@@ -450,7 +450,9 @@ class ControllerCheckoutConfirm extends Controller {
 					'subtract'   => $product['subtract'],
                     'stock'     => $product['stock'] ? true : !(!$this->config->get('config_stock_checkout') || $this->config->get('config_stock_warning')),
 					'price'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']),
+                    'priceeur'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')), 'EUR'),
 					'total'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity'], $this->session->data['currency']),
+                    'totaleur'      => $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity'], 'EUR'),
 					'href'       => $this->url->link('product/product', 'product_id=' . $product['product_id'])
 				);
 			}
@@ -472,7 +474,7 @@ class ControllerCheckoutConfirm extends Controller {
 			foreach ($order_data['totals'] as $total) {
 				$data['totals'][] = array(
 					'title' => $total['title'],
-					'text'  => $this->currency->format($total['value'], $this->session->data['currency'])
+					'text'  => '<small>'.$this->currency->format($total['value'], 'EUR'). '</small> '.$this->currency->format($total['value'], $this->session->data['currency'])
 				);
 			}
 

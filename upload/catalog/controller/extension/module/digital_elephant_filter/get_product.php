@@ -158,20 +158,25 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 
             if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
                 $price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                $priceeur = $this->currency->format($this->tax->calculate(($result['price']), $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
             } else {
                 $price = false;
+                $priceeur = false;
             }
 
             //price_2 agmedia
 
             if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
                 $price_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                $price_2eur = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
             } else {
                 $price_2 = false;
+                $price_2eur = false;
             }
 
             if ((float)$result['special']) {
                 $special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                $specialeur = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
                 if($result['special'] >= FREESHIPPING){
                     $freeshipping = true;
                 }
@@ -180,6 +185,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                 }
             } else {
                 $special = false;
+                $specialeur = false;
                 if($result['price'] >= FREESHIPPING){
                     $freeshipping = true;
                 }
@@ -260,7 +266,9 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 				'quantity'  => $result['quantity'],
                 'description' => $description,
                 'price'       => $price,
+                'priceeur'       => $priceeur,
                 'price_2'       => $price_2,
+                'price_2eur'       => $price_2eur,
                 'pj' => $pj,
                 'vpc'       => $vpc,
                 'saljemodo'     => $saljemodo,
@@ -268,6 +276,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 				'sale_badge'  => $sale_badge,
 				'new_label'   => $is_new,
                 'special'     => $special,
+                'specialeur'     => $specialeur,
                 'tax'         => $tax,
                 'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
                 'rating'      => $result['rating'],

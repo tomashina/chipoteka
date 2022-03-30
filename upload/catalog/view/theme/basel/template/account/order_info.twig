@@ -129,8 +129,8 @@
                 {% endfor %}</td>
               <td class="text-left hidden-xs hidden-sm">{{ product.model }}</td>
               <td class="text-right hidden-xs hidden-sm">{{ product.quantity }}</td>
-              <td class="text-right hidden-xs hidden-sm">{{ product.price }}</td>
-              <td class="text-right">{{ product.total }}</td>
+              <td class="text-right hidden-xs hidden-sm"><small class="nulaosam">{{ product.priceeur }}</small> {{ product.price }}</td>
+              <td class="text-right"><small class="nulaosam">{{ product.totaleur }}</small> {{ product.total }}</td>
               <td class="text-right" style="white-space: nowrap;">&nbsp;
               {% if product.reorder %}
                 <a href="{{ product.reorder }}" data-toggle="tooltip" title="{{ button_reorder }}" class="button-circle"><i class="icon-refresh"></i></a>

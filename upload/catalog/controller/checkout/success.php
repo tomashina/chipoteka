@@ -247,7 +247,9 @@ class ControllerCheckoutSuccess extends Controller {
                 'option'   => $option_data,
                 'quantity' => $product['quantity'],
                 'price'    => $this->currency->format($product['price'] + ($this->config->get('config_tax') ? $product['tax'] : 0), $order_info['currency_code'], $order_info['currency_value']),
+                'priceeur'    => $this->currency->format($product['price'] + ($this->config->get('config_tax') ? $product['tax'] : 0), 'EUR'),
                 'total'    => $this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $product['quantity']) : 0), $order_info['currency_code'], $order_info['currency_value']),
+                'totaleur'    => $this->currency->format($product['total'] + ($this->config->get('config_tax') ? ($product['tax'] * $order_product['quantity']) : 0), 'EUR'),
                 'reorder'  => $reorder,
                 'return'   => $this->url->link('account/return/add', 'order_id=' . $order_info['order_id'] . '&product_id=' . $product['product_id'], true)
             );
@@ -279,7 +281,7 @@ class ControllerCheckoutSuccess extends Controller {
             }
             $data['totals'][] = array(
                 'title' => $total['title'],
-                'text'  => $this->currency->format($total['value'], $order_info['currency_code'], $order_info['currency_value']),
+                'text'  => '<small>'.$this->currency->format($total['value'], 'EUR'). '</small> '.$this->currency->format($total['value'], $order_info['currency_code'], $order_info['currency_value']),
             );
         }
 

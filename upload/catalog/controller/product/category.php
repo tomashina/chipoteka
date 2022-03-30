@@ -181,8 +181,10 @@ class ControllerProductCategory extends Controller {
 
 				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
 					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                    $priceeur = $this->currency->format($this->tax->calculate(($result['price']), $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
 				} else {
 					$price = false;
+                    $priceeur = false;
 				}
 
                 $vpc = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
@@ -191,12 +193,15 @@ class ControllerProductCategory extends Controller {
 
                 if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
                     $price_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                    $price_2eur = $this->currency->format($this->tax->calculate(($result['price_2']), $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
                 } else {
                     $price_2 = false;
+                    $price_2eur = false;
                 }
 
 				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                    $specialeur = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
 					$tax_price = (float)$result['special'];
                     if($result['special'] >= FREESHIPPING){
                         $freeshipping = true;
@@ -206,6 +211,7 @@ class ControllerProductCategory extends Controller {
                     }
 				} else {
 					$special = false;
+                    $specialeur = false;
 					$tax_price = (float)$result['price'];
                     if($result['price'] >= FREESHIPPING){
                         $freeshipping = true;
@@ -247,10 +253,13 @@ class ControllerProductCategory extends Controller {
 					'thumb'       => $image,
 					'name'        => $result['name'],
 					'price'       => $price,
+                    'priceeur'       => $priceeur,
                     'price_2'       => $price_2,
+                    'price_2eur'       => $price_2eur,
                     'vpc'       => $vpc,
                     'pj' => $pj,
 					'special'     => $special,
+                    'specialeur'     => $specialeur,
                     'freeshipping' => $freeshipping,
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,

@@ -89,9 +89,13 @@ class ControllerCommonReview extends Controller {
 				
 				$price = $this->currency->format($unit_price, $this->session->data['currency']);
 				$total = $this->currency->format($unit_price * $product['quantity'], $this->session->data['currency']);
+                $priceeur = $this->currency->format($unit_price, 'EUR');
+                $totaleur = $this->currency->format($unit_price * $product['quantity'], 'EUR');
 			} else {
 				$price = false;
 				$total = false;
+                $priceeur = false;
+                $totaleur = false;
 			}
 
 			$data['products'][] = array(
@@ -102,8 +106,10 @@ class ControllerCommonReview extends Controller {
 				'option'    => $option_data,
 				'recurring' => ($product['recurring'] ? $product['recurring']['name'] : ''),
 				'quantity'  => $product['quantity'],
-				'price'     => $price,
-				'total'     => $total,
+                'price'     => $price,
+                'priceeur'     => $priceeur,
+                'total'     => $total,
+                'totaleur'     => $totaleur,
 				'href'      => $this->url->link('product/product', 'product_id=' . $product['product_id'])
 			);
 		}
@@ -126,7 +132,7 @@ class ControllerCommonReview extends Controller {
 		foreach ($totals as $total) {
 			$data['totals'][] = array(
 				'title' => $total['title'],
-				'text'  => $this->currency->format($total['value'], $this->session->data['currency']),
+				'text'  => '<small>'.$this->currency->format($total['value'], 'EUR'). '</small> '.$this->currency->format($total['value'], $this->session->data['currency']),
 			);
 		}
 

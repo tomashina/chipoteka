@@ -189,6 +189,10 @@ strong {
 }
 
 small, .small {
+  font-size: 0.6em;
+}
+
+.card small {
   font-size: 0.8em;
 }
 
