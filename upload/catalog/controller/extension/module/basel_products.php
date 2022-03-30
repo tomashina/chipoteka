@@ -126,22 +126,27 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 					
 					if (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) {
 						$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                        $priceeur = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
 					} else {
 						$price = false;
+                        $priceeur = false;
 					}
 
                     //price_2 agmedia
 
                     if (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) {
                         $price_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                        $price_2eur = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
                     } else {
                         $price_2 = false;
+                        $price_2eur = false;
                     }
 
                     $vpc = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 							
 					if ((float)$result['special']) {
 						$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                        $specialeur = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
 						$date_end = $this->model_extension_basel_basel->getSpecialEndDate($result['product_id']);
                         if($result['special'] >= FREESHIPPING){
                             $freeshipping = true;
@@ -151,6 +156,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
                         }
 					} else {
 						$special = false;
+                        $specialeur = false;
 						$date_end = false;
                         if($result['price'] >= FREESHIPPING){
                             $freeshipping = true;
@@ -218,13 +224,16 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 						'sale_end_date' => $date_end['date_end'] ?? '',
 						'name'    	 => $result['name'],
 						'price'   	 => $price,
+                        'priceeur'   	 => $priceeur,
                         'price_2'       => $price_2,
+                        'price_2eur'       => $price_2eur,
                         'vpc'       => $vpc,
 						'new_label'  => $is_new,
 						'sale_badge' => $sale_badge,
                         'saljemodo'     => $saljemodo,
                         'freeshipping' => $freeshipping,
 						'special' 	 => $special,
+                        'specialeur' 	 => $specialeur,
                         'pj' => $pj,
 						'tax'        => $tax,
 						'minimum'    => $result['minimum'] > 0 ? $result['minimum'] : 1,
