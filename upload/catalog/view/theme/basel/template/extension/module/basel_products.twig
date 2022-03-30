@@ -30,9 +30,9 @@
                                         {% if product.price %}
                                             <div class="product-price">
                                                 {% if product.special %}
-                                                        <span><del>{{ product.price_2 }}</del></span>
+                                                        <span><del>{{ product.price_2 }} <small>{{ product.price_2eur }}</small></del></span>
                                                 {% else %}
-                                                    <span> {{ product.price_2 }}</span>
+                                                    <span> {{ product.price_2 }} <small>{{ product.price_2eur }}</small></span>
                                                 {% endif %}
                                             </div><!-- .price -->
                                         {% endif %}
@@ -49,9 +49,9 @@
                                             </span>
                                                                         <span>
                                                       {% if  product.special  %}
-                                                          {{ product.special }}
+                                                          {{ product.special }} <small>{{ product.specialeur }}</small>
                                                       {% else %}
-                                                          {% if product.price_2 != product.price %}   {{ product.price }} {% endif %}
+                                                          {% if product.price_2 != product.price %}   {{ product.price }}  <small>{{ product.priceeur }}</small>{% endif %}
                                                       {% endif %}
                                             </span>
                                         </div>
