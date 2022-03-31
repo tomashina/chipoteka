@@ -66,4 +66,23 @@ class ModelCatalogCategory extends Model {
 
 		return $query->row['total'];
 	}
+
+    public function getLowestTierSubcategory($product_id) {
+        $query = $this->db->query(
+            "SELECT t1.category_id, t1.parent_id
+            FROM `oc_category` t1
+            INNER JOIN `oc_product_to_category` as ptc on ptc.category_id = t1.category_id
+            INNER JOIN `oc_category_description` as cd on cd.category_id = ptc.category_id
+            WHERE ptc.product_id = " . $product_id . " 
+            AND NOT EXISTS (
+                SELECT t2.parent_id
+                FROM `oc_category` t2
+                WHERE t2.parent_id = t1.category_id
+                )
+            LIMIT 1;"
+
+        );
+
+        return $query->rows[0];
+    }
 }

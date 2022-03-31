@@ -100,7 +100,7 @@ class ControllerProductCategory extends Controller {
 
 		if ($category_info) {
 
-			$this->document->setDescription($category_info['meta_description']);
+			$this->document->setDescription('Pogledajte našu odličnu ponudu proizvoda '.$category_info['meta_title']);
 			$this->document->setKeywords($category_info['meta_keyword']);
 
 			$data['heading_title'] = $category_info['name'];

@@ -680,75 +680,10 @@ class ControllerProductProduct extends Controller {
 
 			$this->response->setOutput($this->load->view('product/product', $data));
 		} else {
-			$url = '';
+            $this->load->model('catalog/category');
+            $temp_cat = $this->model_catalog_category->getLowestTierSubcategory($this->request->get['product_id']);
+            $this->response->redirect($this->url->link('product/category&path='.$temp_cat['category_id'], '', true));
 
-			if (isset($this->request->get['path'])) {
-				$url .= '&path=' . $this->request->get['path'];
-			}
-
-			if (isset($this->request->get['filter'])) {
-				$url .= '&filter=' . $this->request->get['filter'];
-			}
-
-			if (isset($this->request->get['manufacturer_id'])) {
-				$url .= '&manufacturer_id=' . $this->request->get['manufacturer_id'];
-			}
-
-			if (isset($this->request->get['search'])) {
-				$url .= '&search=' . $this->request->get['search'];
-			}
-
-			if (isset($this->request->get['tag'])) {
-				$url .= '&tag=' . $this->request->get['tag'];
-			}
-
-			if (isset($this->request->get['description'])) {
-				$url .= '&description=' . $this->request->get['description'];
-			}
-
-			if (isset($this->request->get['category_id'])) {
-				$url .= '&category_id=' . $this->request->get['category_id'];
-			}
-
-			if (isset($this->request->get['sub_category'])) {
-				$url .= '&sub_category=' . $this->request->get['sub_category'];
-			}
-
-			if (isset($this->request->get['sort'])) {
-				$url .= '&sort=' . $this->request->get['sort'];
-			}
-
-			if (isset($this->request->get['order'])) {
-				$url .= '&order=' . $this->request->get['order'];
-			}
-
-			if (isset($this->request->get['page'])) {
-				$url .= '&page=' . $this->request->get['page'];
-			}
-
-			if (isset($this->request->get['limit'])) {
-				$url .= '&limit=' . $this->request->get['limit'];
-			}
-
-			$data['breadcrumbs'][] = array(
-				'text' => $this->language->get('text_error'),
-				'href' => $this->url->link('product/product', $url . '&product_id=' . $product_id)
-			);
-
-			$this->document->setTitle($this->language->get('text_error'));
-
-			$data['continue'] = $this->url->link('common/home');
-
-			$this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . ' 404 Not Found');
-
-			$data['column_left'] = $this->load->controller('common/column_left');
-			$data['column_right'] = $this->load->controller('common/column_right');
-			$data['content_top'] = $this->load->controller('common/content_top');
-			$data['content_bottom'] = $this->load->controller('common/content_bottom');
-			$data['footer'] = $this->load->controller('common/footer');
-			$data['header'] = $this->load->controller('common/header');
-
-			$this->response->setOutput($this->load->view('error/not_found', $data));
 		}
 	}
 
