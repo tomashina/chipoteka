@@ -27,6 +27,10 @@ class ControllerProductProduct extends Controller {
 
 		$this->load->model('catalog/category');
 
+        if (!isset($this->request->get['path]'])) {
+            $this->request->get['path'] = $this->getProductPath($this->request->get['product_id']);
+        }
+
 		if (isset($this->request->get['path'])) {
 			$path = '';
 
@@ -839,4 +843,25 @@ class ControllerProductProduct extends Controller {
         $this->response->addHeader('Content-Type: application/json');
         $this->response->setOutput($skladista->toJson());
 	}
+
+    public function getCategoryIdFromProductId($product_id) {
+        $query = $this->db->query("SELECT category_id FROM oc_product_to_category WHERE product_id = '" . (int)$product_id . "' ORDER by category_id DESC");
+        if ($query->num_rows) return $query->row['category_id'];
+        else return false;
+    }
+    public function getCategoryParentId($category_id) {
+        $query = $this->db->query("SELECT parent_id FROM oc_category WHERE category_id = '" . (int)$category_id . "' ORDER by parent_id DESC");
+        if ($query->num_rows) return $query->row['parent_id'];
+        else return false;
+    }
+    public function getProductPath ($product_id) {
+        if (is_numeric($product_id)) {
+            if ($category_id = $this->getCategoryIdFromProductId($product_id)) {
+                $path = $category_id;
+                if ($parent_id = $this->getCategoryParentId($category_id)) $path = $parent_id . '_' . $path;
+                return $path;
+            }
+        }
+        return '';
+    }
 }

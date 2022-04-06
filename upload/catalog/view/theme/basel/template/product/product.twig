@@ -99,6 +99,12 @@
                                             </div>
                                         {% endif %}
                                     </div>
+
+                                    {% if groupId < 3 %}
+                                        <p class="product-id"><strong>{{ text_model }}</strong> {{ model }}</p>
+                                    {% else %}
+                                        <p ><strong>{{ text_model }}</strong> {{ model }}</p>
+                                    {% endif %}
                                     <div class="description-short   ">
                                         {% if short_description %}
                                             <h5 class="title">{{ text_short_description }}</h5>
@@ -232,10 +238,6 @@
                                                 <span id="availability-subtitle"></span>
                                             </div>
                                         </div>
-                                        <p class="product-id"><strong>{{ text_model }}</strong> {{ model }}</p>
-                                    {% else %}
-                                        <p ><strong>{{ text_model }}</strong> {{ model }}</p>
-
                                     {% endif %}
 
                                 </div>

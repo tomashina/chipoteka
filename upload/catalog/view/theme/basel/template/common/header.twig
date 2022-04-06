@@ -190,18 +190,20 @@
   </div>
 </header>
 
+
+
 <aside id="sideNav" class="sidebar offcanvas offcanvas-expand w-100 border-end zindex-xl-5 pt-xl-5"  {% if notification_status %} {% endif %}>
   <div class="pt-2 d-none d-xl-block"></div>
-  <ul class="nav nav-tabs nav-justified mt-0 mt-xl-5 mb-0" role="tablist">
+  <ul class="nav nav-tabs nav-justified mt-0 mt-xl-5 mb-0" role="tablist" id="myTab">
     <li class="nav-item">
-      <a class="nav-link active" href="#categories" data-bs-toggle="tab" role="tab">
+      <a class="nav-link active" href="#categories" data-bs-toggle="tab" role="tab" id="shop">
         <i class="fas fa-store"></i>
         Web shop
 
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="#menu" data-bs-toggle="tab" role="tab">
+      <a class="nav-link" href="#menu" data-bs-toggle="tab" role="tab" id="info">
         <i class="fas fa-info-circle"></i>
         Info
 
@@ -217,6 +219,9 @@
       </a>
     </li>
   </ul>
+
+
+
   <div class="offcanvas-body px-0 pb-0" data-simplebar>
     <div class="tab-content">
       <!-- Categories-->
