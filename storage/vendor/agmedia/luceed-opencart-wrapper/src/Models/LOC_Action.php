@@ -173,7 +173,7 @@ class LOC_Action
     public function collectActive()
     {
         $actions = $this->getActions()
-                        ->where('status', '=', '2')
+                        ->where('status', '=', '02')
                         ->where('naziv', '!=', 'web_cijene');
 
         foreach ($actions as $key => $action) {
