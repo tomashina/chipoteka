@@ -280,7 +280,7 @@ class LOC_Action
             $mpc = $item->first()->mpc;
             $product = Product::where('model', $item->first()->artikl)->first();
 
-            if ( ! $mpc && $item->first()->mpc_rabat) {
+            if ($product && ! $mpc && $item->first()->mpc_rabat) {
                 $mpc = $this->calculateDiscountPrice($product->price, $item->first()->mpc_rabat);
             }
 
@@ -297,6 +297,9 @@ class LOC_Action
                 $this->count++;
             }
         }
+
+        Log::store($this->insert_query, 'testiranje');
+        Log::store($this->insert_query_2, 'testiranje');
 
         return $this;
     }
