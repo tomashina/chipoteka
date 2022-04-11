@@ -217,7 +217,7 @@ class LOC_Order
         if ( ! $this->hasOIB()) {
             $this->order['na__skladiste'] = '099'; // agconf('luceed.default_warehouse_uid') -> 099
             $this->order['skl_dokument']  = 'MSM'; // MS -> MSM
-            $this->order['raspored'] = Carbon::now()->format('d.m.Y HH:mm:ss');
+            $this->order['raspored'] = Carbon::make($this->oc_order['date_added'])->format('d.m.Y HH:mm:ss');
         }
 
         if ($this->items_available) {
