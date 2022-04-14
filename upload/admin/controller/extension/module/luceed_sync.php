@@ -452,7 +452,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         foreach ($products as $product) {
             Product::where('sku', $product->artikl)->update([
                 'jm' => $product->jm,
-                'pakiranje' => $product->pakiranje
+                'pakiranje' => $product->pakiranje ?: 1
             ]);
         }
 
