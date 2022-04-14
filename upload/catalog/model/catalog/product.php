@@ -42,6 +42,7 @@ class ModelCatalogProduct extends Model {
 				'manufacturer'     => $query->row['manufacturer'],
 				'price'            => $price,
                 'price_2'          => $query->row['price_2'],
+                'pakiranje'        => $query->row['pakiranje'],
 				'special'          => $query->row['special'],
 				'reward'           => $query->row['reward'],
 				'points'           => $query->row['points'],

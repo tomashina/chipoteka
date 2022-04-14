@@ -184,7 +184,7 @@
                                                 {% set qty = 5000  %}
                                                 <input type="text" step="1" min="{{ minimum }}" max="{{ qty }}" name="quantity" value="{{ minimum }}" id="input-quantity"  class="form-control input-quantity"  />
                                             {% else %}
-                                                <input type="text" step="1" min="{{ minimum }}" max="{{ qty }}" name="quantity" value="{{ minimum }}" id="input-quantity"  class="form-control input-quantity"  />
+                                                <input type="text" step="{{ pakiranje }}" min="{{ minimum * pakiranje }}" max="{{ qty }}" name="quantity" value="{{ minimum * pakiranje }}" id="input-quantity"  class="form-control input-quantity"  />
                                             {% endif %}
                                             <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
                                                 <i class="fas fa-minus"></i>
@@ -602,21 +602,24 @@
             var $input = $button.closest('.quantity').find("input.input-quantity");
 
             if ($button.data('multi') == "1" ) {
-                var newVal = parseFloat($input.val()) + 1;
+                var newVal = parseFloat($input.val()) + 1 * {{ pakiranje }};
             } else {
                 // Don't allow decrementing below zero
-                if ($input.val() > 1) {
-                    var newVal = parseFloat($input.val()) - 1;
+                if ($input.val() > 1 * {{ pakiranje }}) {
+                    var newVal = parseFloat($input.val()) - 1 * {{ pakiranje }};
                 } else {
-                    newVal = 1;
+                    newVal = 1 * {{ pakiranje }};
                 }
             }
-            if (newVal <= {{ qty }} ) {
+
+            console.log(newVal, $input.val())
+
+            if (newVal <= {{ qty * pakiranje }} ) {
                 $('.input-quantity').val(newVal);
                 $('.porukareach').addClass('d-none');
 
             }
-            if (newVal > {{ qty }} ) {
+            if (newVal > {{ qty * pakiranje }} ) {
                 $('.porukareach').removeClass('d-none');
             }
             else{
