@@ -601,6 +601,8 @@
             var $button = $(this);
             var $input = $button.closest('.quantity').find("input.input-quantity");
 
+            console.log($button.data('multi'))
+
             if ($button.data('multi') == "1" ) {
                 var newVal = parseFloat($input.val()) + 1 * {{ pakiranje }};
             } else {
@@ -612,14 +614,14 @@
                 }
             }
 
-            console.log(newVal, $input.val())
+            console.log(newVal, {{ qty }})
 
-            if (newVal <= {{ qty * pakiranje }} ) {
+            if (newVal <= {{ qty }} ) {
                 $('.input-quantity').val(newVal);
                 $('.porukareach').addClass('d-none');
 
             }
-            if (newVal > {{ qty * pakiranje }} ) {
+            if (newVal > {{ qty }} ) {
                 $('.porukareach').removeClass('d-none');
             }
             else{
