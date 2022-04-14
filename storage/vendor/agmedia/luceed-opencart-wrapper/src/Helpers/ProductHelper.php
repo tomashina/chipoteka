@@ -320,6 +320,7 @@ class ProductHelper
             'naziv' => $product->naziv,
             'barcode' => $product->barcode,
             'jm' => $product->jm,
+            'pakiranje' => $product->pakiranje,
             'opis' => static::setDescription($product->opis),
             'vpc' => $product->vpc,
             'mpc' => $product->mpc,

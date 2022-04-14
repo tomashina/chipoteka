@@ -123,7 +123,7 @@
                                     <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="update-products" data-toggle="tooltip" title="Update proizvoda" class="btn btn-info btn-block">Update proizvoda</a>
                                     </div>
-                                    <p class="col-sm-8" style="margin-top: 9px;">Update postojećih proizvoda.</p>
+                                    <p class="col-sm-8" style="margin-top: 9px;">Update postojećih proizvoda. <a href="javascript:void(0)" id="update-products-pakiranje">..</a></p>
                                 </div>
 
                                 <div class="form-group">
@@ -361,6 +361,7 @@
             $('#import-new-payments')       .on('click', e => { callApi(e, 'importPayments'); });
             $('#import-new-products')       .on('click', e => { callApi(e, 'importProducts'); });
             $('#update-products')           .on('click', e => { callApi(e, 'updateProducts'); });
+            $('#update-products-pakiranje') .on('click', e => { callApi(e, 'updateAdditionalProductData'); });
             $('#import-detail-product')     .on('click', e => { callApi(e, 'importProduct'); });
             $('#import-new-actions')        .on('click', e => { callApi(e, 'importActions'); });
             $('#check-active-min')          .on('click', e => { callApi(e, 'checkMinQty'); });

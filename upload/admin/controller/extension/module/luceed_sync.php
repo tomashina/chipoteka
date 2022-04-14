@@ -439,6 +439,26 @@ class ControllerExtensionModuleLuceedSync extends Controller
     }
 
 
+    public function updateAdditionalProductData()
+    {
+        $_loc = new LOC_Product(LuceedProduct::all());
+
+        $products = $_loc->getProducts()
+                         ->where('artikl', '!=', '')
+                         ->where('naziv', '!=', '')
+                         ->where('enabled', '!=', 'N')
+                         ->where('webshop', '!=', 'N');
+
+        foreach ($products as $product) {
+            Product::where('sku', $product->artikl)->update([
+                'jm' => $product->jm,
+                'pakiranje' => $product->pakiranje
+            ]);
+        }
+
+        return $this->response($updated, 'products');
+    }
+
     /**
      * @return mixed
      * @throws Exception
