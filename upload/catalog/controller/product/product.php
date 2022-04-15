@@ -27,7 +27,7 @@ class ControllerProductProduct extends Controller {
 
 		$this->load->model('catalog/category');
 
-        if (!isset($this->request->get['path]'])) {
+        if (!isset($this->request->get['path'])) {
             $this->request->get['path'] = $this->getProductPath($this->request->get['product_id']);
         }
 
@@ -846,7 +846,7 @@ class ControllerProductProduct extends Controller {
 	}
 
     public function getCategoryIdFromProductId($product_id) {
-        $query = $this->db->query("SELECT category_id FROM oc_product_to_category WHERE product_id = '" . (int)$product_id . "' ORDER by category_id DESC");
+        $query = $this->db->query("SELECT pc.category_id FROM oc_product_to_category pc LEFT JOIN oc_category c ON (pc.category_id = c.category_id ) WHERE pc.product_id = '" . (int)$product_id . "' AND c.parent_id != 315 ORDER by pc.category_id DESC");
         if ($query->num_rows) return $query->row['category_id'];
         else return false;
     }

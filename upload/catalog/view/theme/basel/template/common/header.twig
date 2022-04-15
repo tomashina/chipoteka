@@ -341,3 +341,15 @@
 <div class="container">
 {{ position_top }}
 </div>
+<script>
+  $(function() {
+    $(window).unload(function() {
+      var scrollPosition = $(".offcanvas-body").scrollTop();
+      localStorage.setItem("scrollPosition", scrollPosition);
+    });
+    if(localStorage.scrollPosition) {
+      $(".offcanvas-body").scrollTop(localStorage.getItem("scrollPosition"));
+    }
+  });
+
+</script>
