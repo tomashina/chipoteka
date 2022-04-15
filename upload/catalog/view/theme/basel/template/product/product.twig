@@ -39,6 +39,13 @@
                         {% endfor %}
                     </ol>
                 </nav>
+                <div class="breadcrumb flex-lg-nowrap justify-content-center justify-content-lg-start">
+                {% if groupId < 3 %}
+                    <p class="product-id mb-0 mt-1"><strong>{{ text_model }}</strong> {{ model }}</p>
+                {% else %}
+                    <p class="mb-0 mt-1"><strong>{{ text_model }}</strong> {{ model }}</p>
+                {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -100,11 +107,7 @@
                                         {% endif %}
                                     </div>
 
-                                    {% if groupId < 3 %}
-                                        <p class="product-id"><strong>{{ text_model }}</strong> {{ model }}</p>
-                                    {% else %}
-                                        <p ><strong>{{ text_model }}</strong> {{ model }}</p>
-                                    {% endif %}
+
                                     <div class="description-short   ">
                                         {% if short_description %}
                                             <h5 class="title">{{ text_short_description }}</h5>
