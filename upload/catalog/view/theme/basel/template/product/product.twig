@@ -40,11 +40,11 @@
                     </ol>
                 </nav>
                 <div class="breadcrumb flex-lg-nowrap justify-content-center justify-content-lg-start">
-                {% if groupId < 3 %}
-                    <p class="product-id mb-0 mt-1"><strong>{{ text_model }}</strong> {{ model }}</p>
-                {% else %}
-                    <p class="mb-0 mt-1"><strong>{{ text_model }}</strong> {{ model }}</p>
-                {% endif %}
+                    {% if groupId < 3 %}
+                        <p class="product-id mb-0 mt-1"><strong>{{ text_model }}</strong> {{ model }}</p>
+                    {% else %}
+                        <p class="mb-0 mt-1"><strong>{{ text_model }}</strong> {{ model }}</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -163,9 +163,9 @@
 
                                     {% endif %}
                                     {% if qty < 5 and qty > 0 %}
-                                    <div class="text-danger mb-3" >
-                                    Dostupno manje od 5 kom
-                                    </div>
+                                        <div class="text-danger mb-3" >
+                                            Dostupno manje od 5 kom
+                                        </div>
                                     {% endif %}
 
                                     {% if prikazrata  and groupId < 3 %}
@@ -187,7 +187,7 @@
                                                 {% set qty = 5000  %}
                                                 <input type="text" step="1" min="{{ minimum }}" max="{{ qty }}" name="quantity" value="{{ minimum }}" id="input-quantity"  class="form-control input-quantity"  />
                                             {% else %}
-                                                <input type="text" step="{{ pakiranje }}" min="{{ minimum * pakiranje }}" max="{{ qty }}" name="quantity" value="{{ minimum * pakiranje }}" id="input-quantity"  class="form-control input-quantity"  />
+                                                <input type="text" step="{{ pakiranje }}" min="{{ minimum * pakiranje }}" max="{{ qty }}" name="quantity" value="{{ minimum * pakiranje }}" id="input-quantity"  class="form-control input-quantity" {% if pakiranje > 1  %} disabled="disabled" {% endif %} />
                                             {% endif %}
                                             <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
                                                 <i class="fas fa-minus"></i>
@@ -262,7 +262,7 @@
                                                 <span>{{ price_2 }}</span>
                                             {% else %}
 
-                                            {% if pj !='WEB' %} <del> {% endif %} {{ price_2 }} {% if pj !='WEB' %} </del> {% endif %}
+                                                {% if pj !='WEB' %} <del> {% endif %} {{ price_2 }} {% if pj !='WEB' %} </del> {% endif %}
                                             {% endif %}
                                         </div>
                                         <div class="product-price--web">
@@ -310,88 +310,88 @@
                         </div>
                     </div>
                     {% if attribute_groups %}
-                    <div class="tab-pane fade" id="specs" role="tabpanel">
-                        {% if groupId < 3 %}
-                            <div class="d-md-flex justify-content-between pb-4 mt-3 mb-4 border-bottom product-features flex-column flex-lg-row">
-                                <div class="d-flex align-items-center flex-column flex-sm-row mt-3 mb-3 mt-lg-0 mb-lg-0">
-                                    {% if thumb or images %}
-                                        {% if thumb %}
-                                            <img  src="{{ thumb_sm }}"  style="width: 90px;height:90px" loading="lazy" data-zoom="{{ popup }}" alt="{{ heading_title }}"  width="90" class="me-2" />
-                                        {% endif %}
-                                    {% endif %}
-                                    <div class="price-wrapper mb-0">
-                                        <div class="product-price">
-                                            {% if not special %}
-                                                <span>{{ price_2 }}</span>
-                                            {% else %}
-
-                                            {% if pj !='WEB' %} <del> {% endif %} {{ price_2 }}  {% if pj !='WEB' %} </del> {% endif %}
+                        <div class="tab-pane fade" id="specs" role="tabpanel">
+                            {% if groupId < 3 %}
+                                <div class="d-md-flex justify-content-between pb-4 mt-3 mb-4 border-bottom product-features flex-column flex-lg-row">
+                                    <div class="d-flex align-items-center flex-column flex-sm-row mt-3 mb-3 mt-lg-0 mb-lg-0">
+                                        {% if thumb or images %}
+                                            {% if thumb %}
+                                                <img  src="{{ thumb_sm }}"  style="width: 90px;height:90px" loading="lazy" data-zoom="{{ popup }}" alt="{{ heading_title }}"  width="90" class="me-2" />
                                             {% endif %}
+                                        {% endif %}
+                                        <div class="price-wrapper mb-0">
+                                            <div class="product-price">
+                                                {% if not special %}
+                                                    <span>{{ price_2 }}</span>
+                                                {% else %}
+
+                                                    {% if pj !='WEB' %} <del> {% endif %} {{ price_2 }}  {% if pj !='WEB' %} </del> {% endif %}
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="product-price--web">
+                                                <span>{% if  special %}{{ pj }} Akcija:{% else %}  {% if price_2 != price %} Web cijena:{% endif %} {% endif %}</span>
+                                                <span> {% if  special %} {{ special }} {% else %} {% if price_2 != price %} {{ price }} {% endif %} {% endif %}</span>
+                                            </div>
+
                                         </div>
-
-                                        <div class="product-price--web">
-                                            <span>{% if  special %}{{ pj }} Akcija:{% else %}  {% if price_2 != price %} Web cijena:{% endif %} {% endif %}</span>
-                                            <span> {% if  special %} {{ special }} {% else %} {% if price_2 != price %} {{ price }} {% endif %} {% endif %}</span>
+                                    </div>
+                                    <div class="product-quantity-button mb-0">
+                                        <div class="input-group me-0 me-sm-3 quantity">
+                                            <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}"  max="{{ qty }}"   id="input-quantitydva" class="form-control input-quantity" />
+                                            <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <button class="btn btn-white border btn-icon ddd" data-multi="1" type="button">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
                                         </div>
-
+                                        <input type="hidden" name="product_id" value="{{ product_id }}" />
+                                        <button type="button" id="button-cart3" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
                                     </div>
-                                </div>
-                                <div class="product-quantity-button mb-0">
-                                    <div class="input-group me-0 me-sm-3 quantity">
-                                        <input type="text" step="1" min="{{ minimum }}" name="quantity" value="{{ minimum }}"  max="{{ qty }}"   id="input-quantitydva" class="form-control input-quantity" />
-                                        <button class="btn btn-white border btn-icon ddd" data-multi="-1" type="button">
-                                            <i class="fas fa-minus"></i>
-                                        </button>
-                                        <button class="btn btn-white border btn-icon ddd" data-multi="1" type="button">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="hidden" name="product_id" value="{{ product_id }}" />
-                                    <button type="button" id="button-cart3" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
-                                </div>
-                            </div>
-                        {% endif %}
-
-                        <!-- Reviews-->
-                        <!-- Specs table-->
-                        <div class="row pt-2">
-                            <div class="col-lg-7 mb-3">
-                                <h5>{{ text_spec_description }}</h5>
-                                <!--<p class="fs-md">{{ spec_description }}</p>-->
-
-                                {% if attribute_groups %}
-                                    <div class="table-responsive">
-                                        <table class="table table-striped specification">
-                                            {% for attribute_group in attribute_groups %}
-                                                <tbody>
-                                                {% for attribute in attribute_group.attribute %}
-                                                    <tr>
-                                                        <td class="text-left"><b>{{ attribute.name }}</b></td>
-                                                        <td class="text-right">{{ attribute.text }}</td>
-                                                    </tr>
-                                                {% endfor %}
-                                                </tbody>
-                                            {% endfor %}
-                                        </table>
-                                    </div>
-                                {% endif %}
-
-
-                            </div>
-                            {% if manufacturer %}
-                                <div class="col-lg-5 mb-3">
-                                    <h5>{{ manufacturer }}</h5>
-                                    {% if manufacturer_logo %}
-                                        <a href="{{ manufacturers }}">  <img src="{{ manufacturer_logo }}"  class="rounded  mb-2" alt="{{ manufacturer }}"/></a><br>
-                                    {% endif %}
-                                    {% if manufacturer_description %}
-                                        {{ manufacturer_description }}
-                                    {% endif %}
-                                    <a class="btn btn-outline-primary btn-icon" href="{{ manufacturers }}">Pregled svih {{ manufacturer }} proizvoda</a>
                                 </div>
                             {% endif %}
+
+                            <!-- Reviews-->
+                            <!-- Specs table-->
+                            <div class="row pt-2">
+                                <div class="col-lg-7 mb-3">
+                                    <h5>{{ text_spec_description }}</h5>
+                                    <!--<p class="fs-md">{{ spec_description }}</p>-->
+
+                                    {% if attribute_groups %}
+                                        <div class="table-responsive">
+                                            <table class="table table-striped specification">
+                                                {% for attribute_group in attribute_groups %}
+                                                    <tbody>
+                                                    {% for attribute in attribute_group.attribute %}
+                                                        <tr>
+                                                            <td class="text-left"><b>{{ attribute.name }}</b></td>
+                                                            <td class="text-right">{{ attribute.text }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                {% endfor %}
+                                            </table>
+                                        </div>
+                                    {% endif %}
+
+
+                                </div>
+                                {% if manufacturer %}
+                                    <div class="col-lg-5 mb-3">
+                                        <h5>{{ manufacturer }}</h5>
+                                        {% if manufacturer_logo %}
+                                            <a href="{{ manufacturers }}">  <img src="{{ manufacturer_logo }}"  class="rounded  mb-2" alt="{{ manufacturer }}"/></a><br>
+                                        {% endif %}
+                                        {% if manufacturer_description %}
+                                            {{ manufacturer_description }}
+                                        {% endif %}
+                                        <a class="btn btn-outline-primary btn-icon" href="{{ manufacturers }}">Pregled svih {{ manufacturer }} proizvoda</a>
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
-                    </div>
                     {% endif %}
                 </div>
             </div>
