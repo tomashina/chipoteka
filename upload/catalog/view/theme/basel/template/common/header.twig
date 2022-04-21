@@ -248,18 +248,18 @@
               {% if information.informations_children %}
                 <div class="accordion-item border-bottom">
                   <h3 class="accordion-header">
-                    <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#id{{ information.infoid }}" aria-expanded="false" aria-controls="home">
+                    <button class="accordion-button {% if information.active != 1 %}collapsed{% endif %} py-3" type="button" data-bs-toggle="collapse" data-bs-target="#id{{ information.infoid }}" aria-expanded="{% if information.active %}true{% else %}false{% endif %}" aria-controls="home">
                       {{ information.title }}
                     </button>
                   </h3>
-                  <div class="collapse" id="id{{ information.infoid }}" data-bs-parent="#shop-menu">
+                  <div class="collapse {% if information.active %}show{% endif %}" id="id{{ information.infoid }}" data-bs-parent="#shop-menu">
                     <div class="pt-1">
                       <div class="widget widget-links">
                         <ul class="widget-list">
                         {% if groupId > 2 %}
                             {% for informations_child in information.informations_children %}
                               {% if informations_child.group_id =='1' %}
-                                <li class="widget-list-item">
+                                <li class="widget-list-item {% if informations_child.active %}active{% endif %}">
                                   <a href="{{ informations_child.href }}" class="widget-list-link">
                                     {{ informations_child.title }}
                                   </a>
@@ -271,7 +271,7 @@
                           {% if groupId <= 2 %}
                             {% for informations_child in information.informations_children %}
                               {% if informations_child.group_id !='1' %}
-                                <li class="widget-list-item">
+                                <li class="widget-list-item {% if informations_child.active %}active{% endif %}">
                                   <a href="{{ informations_child.href }}" class="widget-list-link">
                                     {{ informations_child.title }}
                                   </a>

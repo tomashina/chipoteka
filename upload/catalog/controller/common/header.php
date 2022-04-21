@@ -31,6 +31,13 @@ class ControllerCommonHeader extends Controller {
 			$this->document->addLink($server . 'image/' . $this->config->get('config_icon'), 'icon');
 		}
 
+		//\Agmedia\Helpers\Log::store($this->request->get, 'req');
+
+		// fj.agmedia.hr
+        $info_id = 0;
+        if (isset($this->request->get['information_id'])) {
+            $info_id = $this->request->get['information_id'];
+        }
 
         $this->load->model('extension/information_parent');
 
@@ -38,21 +45,33 @@ class ControllerCommonHeader extends Controller {
 
         foreach ($this->model_extension_information_parent->getInformations() as $result) {
             $data['informations_children'] = array();
+            $parent_id = 0;
+
             foreach ($this->model_extension_information_parent->getInformations($result['information_id']) as $child_result) {
+                if ($child_result['information_id'] == $info_id) {
+                    $parent_id = $result['information_id'];
+                }
+
                 $data['informations_children'][] = array(
                     'title' => $child_result['title'],
                     'group_id' => $child_result['group_id'],
+                    'active' => ($child_result['information_id'] == $info_id) ? 1 : 0,
                     'href'  => $this->url->link('information/information', 'information_id=' . $child_result['information_id'])
                 );
             }
 
+            \Agmedia\Helpers\Log::store($parent_id, 'info');
+
             $data['informations'][] = array(
                 'title' => $result['title'],
                 'infoid' => $result['information_id'],
+                'active' => ($parent_id && $parent_id == $result['information_id']) ? 1 : 0,
                 'href'  => $this->url->link('information/information', 'information_id=' . $result['information_id']),
                 'informations_children'  => $data['informations_children'],
             );
         }
+
+        \Agmedia\Helpers\Log::store($data['informations'], 'info');
 
 		$data['title'] = $this->document->getTitle();
 
