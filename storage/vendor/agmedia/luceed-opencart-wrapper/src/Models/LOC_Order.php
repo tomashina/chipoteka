@@ -257,9 +257,9 @@ class LOC_Order
             $date = $date->addDay(10);
         }
 
-        if ($this->oc_order['payment_code'] == 'bank_transfer') {
+        /*if ($this->oc_order['payment_code'] == 'bank_transfer') {
             $date = $date->addDay(4);
-        }
+        }*/
 
         return $date->format(agconf('luceed.date'));
     }
@@ -475,7 +475,7 @@ class LOC_Order
                 ];
             }
 
-            if ($order->order_status_changed < Carbon::now()->subHour(48) && $order->order_status_changed > Carbon::now()->subHour(24) && in_array($status->luceed_status_id, ['12'])) {
+            if ($order->order_status_changed < Carbon::now()->subHour(48) && $order->order_status_changed > Carbon::now()->subHour(24) && in_array($status->luceed_status_id, ['12', '01'])) {
                 $this->collection[] = [
                     'order_id'    => $order->order_id,
                     'longer_then' => 48,
@@ -485,7 +485,7 @@ class LOC_Order
                 ];
             }
 
-            if ($order->order_status_changed < Carbon::now()->subHour(24) && $order->order_status_changed > Carbon::now() && in_array($status->luceed_status_id, ['02', '05', '12'])) {
+            if ($order->order_status_changed < Carbon::now()->subHour(24) && $order->order_status_changed > Carbon::now() && in_array($status->luceed_status_id, ['02', '05', '12', '01'])) {
                 $this->collection[] = [
                     'order_id'    => $order->order_id,
                     'longer_then' => 24,
