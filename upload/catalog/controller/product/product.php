@@ -306,6 +306,7 @@ class ControllerProductProduct extends Controller {
 			$data['reward'] = $product_info['reward'];
 			$data['points'] = $product_info['points'];
             $data['upc'] = $product_info['upc'];
+            $data['ean'] = $product_info['ean'];
             $data['pricevaliduntil'] = Date('Y-m-d', strtotime('+30 days'));
             $data['pakiranje'] = $product_info['pakiranje'] ?: 1;
 
