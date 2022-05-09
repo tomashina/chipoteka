@@ -289,7 +289,7 @@ class LOC_Order
         }
 
         if ($this->oc_order['payment_code'] == 'bank_transfer') {
-            return '12';
+            return '01';
         }
 
         if ($this->oc_order['payment_code'] == 'wspay') {
