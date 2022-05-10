@@ -14,7 +14,7 @@
             <add position="before"><![CDATA[
 $data['site_key'] = '';
 if ($this->config->get('captcha_google_status')) {
-			$this->document->addScript('https://www.google.com/recaptcha/api.js');
+			$this->document->addScript('https://www.google.com/recaptcha/api.js?hl=hr');
 			$data['site_key'] = $this->config->get('captcha_google_key');
 }
 		]]></add>
@@ -80,7 +80,7 @@ if ($this->config->get('captcha_google_status')) {
 				<add position="before"><![CDATA[
 $data['site_key'] = '';
 if ($this->config->get('captcha_google_status')) {
-	$this->document->addScript('https://www.google.com/recaptcha/api.js');
+	$this->document->addScript('https://www.google.com/recaptcha/api.js?hl=hr');
 	$data['site_key'] = $this->config->get('captcha_google_key');
 }
 ]]></add>
@@ -147,7 +147,7 @@ if ($this->config->get('captcha_google_status')) {
 				<add position="before"><![CDATA[
 $data['site_key'] = '';
 if ($this->config->get('captcha_google_status')) {
-	$this->document->addScript('https://www.google.com/recaptcha/api.js');
+	$this->document->addScript('https://www.google.com/recaptcha/api.js?hl=hr');
 	$data['site_key'] = $this->config->get('captcha_google_key');
 }
 ]]></add>
