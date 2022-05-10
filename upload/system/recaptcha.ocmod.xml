@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<modification>
+	<name>Login Recapcha</name>
+	<code>login_forgotten_recaptcha</code>
+	<version>1.0</version>
+	<link>https://www.jwbasics.com</link>
+	<author>Nightwing</author>
+
+<!-- Admin Login -->
+
+    <file path="admin/controller/common/login.php">
+        <operation info="Adding sitekey in controller">
+            <search><![CDATA[$data['header'] = $this->load->controller('common/header');]]></search>
+            <add position="before"><![CDATA[
+$data['site_key'] = '';
+if ($this->config->get('captcha_google_status')) {
+			$this->document->addScript('https://www.google.com/recaptcha/api.js');
+			$data['site_key'] = $this->config->get('captcha_google_key');
+}
+		]]></add>
+        </operation>
+        <operation info="adding Error Text">
+            <search><![CDATA[if (isset($this->session->data['success'])) {]]></search>
+            <add position="before"><![CDATA[if (isset($this->error['captcha'])) {
+			$data['error_captcha'] = $this->error['captcha'];
+		} else {
+			$data['error_captcha'] = '';
+		}
+]]></add>
+        </operation>
+        <operation info="Adding Validation">
+            <search><![CDATA[return !$this->error;]]></search>
+            <add position="before"><![CDATA[
+        if ($this->config->get('captcha_google_status')) {
+                $this->load->language('extension/captcha/google_captcha');
+
+                $recaptcha = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . urlencode($this->config->get('captcha_google_secret')) . '&response=' . $this->request->post['g-recaptcha-response'] . '&remoteip=' . $this->request->server['REMOTE_ADDR']);
+
+                $recaptcha = json_decode($recaptcha, true);
+
+                if ($recaptcha['success']) {
+                    $this->session->data['gcapcha']	= true;
+                } else {
+                    $this->error['captcha'] = $this->language->get('error_captcha');
+                }
+		}
+        ]]></add>
+        </operation>
+    </file>
+    <file path="admin/language/hr-hr/common/login.php">
+        <operation>
+            <search><![CDATA[$_['button_login']   = 'Login';]]></search>
+            <add position="after"><![CDATA[
+          	$_['entry_captcha']  = 'Označite kučicu/okvir ispod';
+				$_['error_captcha']  = 'Verifikacija nije ispravna!';
+            ]]></add>
+        </operation>
+    </file>
+    <file path="admin/view/template/common/login.twig">
+        <operation info="Adding the Captcha Box in template">
+            <search><![CDATA[<div class="text-right">]]></search>
+            <add position="before"><![CDATA[
+{% if site_key %}
+            <div class="form-group" align="center">
+                <div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
+                {% if error_captcha %}
+                  <div class="text-danger">{{ error_captcha }}</div>
+                {% endif %}
+            </div>
+{% endif %}
+]]></add>
+        </operation>
+    </file>
+
+<!-- Catalog Login -->
+
+<file path="catalog/controller/account/login.php">
+		<operation info="Adding sitekey in controller">
+				<search><![CDATA[$data['header'] = $this->load->controller('common/header');]]></search>
+				<add position="before"><![CDATA[
+$data['site_key'] = '';
+if ($this->config->get('captcha_google_status')) {
+	$this->document->addScript('https://www.google.com/recaptcha/api.js');
+	$data['site_key'] = $this->config->get('captcha_google_key');
+}
+]]></add>
+		</operation>
+		<operation info="adding Error Text">
+				<search><![CDATA[if (isset($this->session->data['success'])) {]]></search>
+				<add position="before"><![CDATA[
+	if (isset($this->error['captcha'])) {
+	$data['error_captcha'] = $this->error['captcha'];
+} else {
+	$data['error_captcha'] = '';
+}
+]]></add>
+		</operation>
+		<operation info="Adding Validation">
+				<search><![CDATA[if (!$this->error) {]]></search>
+				<add position="before"><![CDATA[
+				 if ($this->config->get('captcha_google_status')) {
+						$this->load->language('extension/captcha/google_captcha');
+
+						$recaptcha = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . urlencode($this->config->get('captcha_google_secret')) . '&response=' . $this->request->post['g-recaptcha-response'] . '&remoteip=' . $this->request->server['REMOTE_ADDR']);
+
+						$recaptcha = json_decode($recaptcha, true);
+
+						if ($recaptcha['success']) {
+								$this->session->data['gcapcha']	= true;
+						} else {
+								$this->error['captcha'] = $this->language->get('error_captcha');
+						}
+				}
+		]]></add>
+		</operation>
+</file>
+<file path="catalog/language/hr-hr/account/login.php">
+		<operation>
+				<search><![CDATA[<?php]]></search>
+				<add position="after"><![CDATA[
+				$_['entry_captcha']  = 'Označite kučicu/okvir ispod';
+				$_['error_captcha']  = 'Verifikacija nije ispravna!';
+				]]></add>
+		</operation>
+</file>
+<file path="catalog/view/theme/basel/template/account/login.twig">
+		<operation info="Adding the Captcha Box in template">
+				<search><![CDATA[<a class="nav-link-inline fs-sm" href="{{ forgotten }}">{{ text_forgotten }}</a>]]></search>
+				<add position="after"><![CDATA[
+{% if site_key %}
+				<div class="form-group" align="left">
+						<div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
+						{% if error_captcha %}
+							<div class="text-danger">{{ error_captcha }}</div>
+						{% endif %}
+				</div>
+{% endif %}
+]]></add>
+		</operation>
+</file>
+
+<!-- Catalog Forgotten -->
+
+<file path="catalog/controller/account/forgotten.php">
+		<operation info="Adding sitekey in controller">
+				<search><![CDATA[$data['header'] = $this->load->controller('common/header');]]></search>
+				<add position="before"><![CDATA[
+$data['site_key'] = '';
+if ($this->config->get('captcha_google_status')) {
+	$this->document->addScript('https://www.google.com/recaptcha/api.js');
+	$data['site_key'] = $this->config->get('captcha_google_key');
+}
+]]></add>
+		</operation>
+		<operation info="adding Error Text">
+				<search><![CDATA[if (isset($this->error['warning'])) {]]></search>
+				<add position="before"><![CDATA[
+	if (isset($this->error['captcha'])) {
+	$data['error_captcha'] = $this->error['captcha'];
+} else {
+	$data['error_captcha'] = '';
+}
+]]></add>
+		</operation>
+		<operation info="Adding Validation">
+				<search><![CDATA[if (!isset($this->request->post['email'])) {]]></search>
+				<add position="before"><![CDATA[
+				 if ($this->config->get('captcha_google_status')) {
+						$this->load->language('extension/captcha/google_captcha');
+
+						$recaptcha = file_get_contents('https://www.google.com/recaptcha/api/siteverify?secret=' . urlencode($this->config->get('captcha_google_secret')) . '&response=' . $this->request->post['g-recaptcha-response'] . '&remoteip=' . $this->request->server['REMOTE_ADDR']);
+
+						$recaptcha = json_decode($recaptcha, true);
+
+						if ($recaptcha['success']) {
+								$this->session->data['gcapcha']	= true;
+						} else {
+								$this->error['captcha'] = $this->language->get('error_captcha');
+						}
+				}
+		]]></add>
+		</operation>
+</file>
+<file path="catalog/language/hr-hr/account/forgotten.php">
+		<operation>
+				<search><![CDATA[<?php]]></search>
+				<add position="after"><![CDATA[
+					$_['entry_captcha']  = 'Označite kučicu/okvir ispod';
+				$_['error_captcha']  = 'Verifikacija nije ispravna!';
+				]]></add>
+		</operation>
+</file>
+<file path="catalog/view/theme/basel/template/account/forgotten.twig">
+		<operation info="Adding the Captcha Box in template">
+				<search><![CDATA[<button class="btn btn-primary" type="submit">{{ button_continue }}</button>]]></search>
+				<add position="before"><![CDATA[
+{% if site_key %}
+				<div class="form-group mb-3">
+					<label class="col-sm-2 control-label" for="input-email"></label>
+						<div class="col-sm-10">
+						<div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
+						{% if error_captcha %}
+							<div class="text-danger">{{ error_captcha }}</div>
+						{% endif %}
+				</div>
+			</div>
+{% endif %}
+]]></add>
+		</operation>
+</file>
+</modification>
