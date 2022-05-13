@@ -82,6 +82,21 @@
   {% if ('product-product' not in class)  and ('product-manufacturer-info' not in class) %}
   <meta name="twitter:image" content="{{ logo_meta }}" />
   {% endif %}
+
+
+
+  <script id="mcjs">
+    function showPopup() {
+
+      !function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/a42edaf1f170c1646921949fd/91005810918a81f7e8a50079f.js");
+//unsetting the cookie
+      document.cookie = "MCPopupClosed=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = "MCPopupSubscribed=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    }
+
+    document.getElementById("show-popup").onclick = function() { showPopup(); }
+  </script>
+
 </head>
 <body>
 
@@ -125,6 +140,12 @@
           <div class="navbar-tool-icon-box">
             <i class="fal fa-search navbar-tool-icon start-0"></i>
           </div>
+        </a>
+
+        <a style="cursor: pointer" class="navbar-tool" data-bs-toggle="tooltip" data-bs-placement="top"  title="Newsletter prijava" onclick="showPopup()">
+        <div class="navbar-tool-icon-box">
+          <i class="fal fa-envelope navbar-tool-icon start-0 start-0"></i>
+        </div>
         </a>
         {% if logged %} <a class="navbar-tool" href="{{ wishlist }}">
                         <span class="navbar-tool-tooltip">
