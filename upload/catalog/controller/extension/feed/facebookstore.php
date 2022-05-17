@@ -87,9 +87,9 @@ class ControllerExtensionFeedFacebookstore extends Controller {
         echo $dom->saveXml();
 
 
-       // $this->response->addHeader('Content-Type: application/xml');
+        $this->response->addHeader('Content-Type: application/xml');
 
-       // $this->response->setOutput($output);
+        $this->response->setOutput($output);
 
 
     }

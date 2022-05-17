@@ -26,7 +26,6 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 $description = str_replace('', '', $description);
                 $description = str_replace('&#44', '', $description);
                 $description = str_replace("'", '', $description);
-                $description = str_replace('"','in',  $description);
                 $description = str_replace('', '', $description);
                 $description = str_replace('.', '', $description);
                 $description = str_replace('', '', $description);
@@ -38,7 +37,6 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 $name = str_replace('', '', $name);
                 $name = str_replace('&#44', '', $name);
                 $name = str_replace("'", '', $name);
-                $name = str_replace('"','in', $name);
                 $name = str_replace('', '', $name);
                 $name = str_replace('.', '', $name);
                 $name = str_replace('', '', $name);
@@ -74,7 +72,7 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 $output .= '<description>' . $this->wrapInCDATA($description) . '</description>';
                  $output .= '<shipping_cost>'. $shipping_cost .'</shipping_cost>';
 
-                 if($product['upc']){
+                if($product['upc'] && count_chars($product['upc'], 3) > 1 ){
                      $output .= '<upc>' . $product['upc'] . '</upc>';
                  }
 
