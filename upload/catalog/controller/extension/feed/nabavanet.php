@@ -74,9 +74,9 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 $output .= '<description>' . $this->wrapInCDATA($description) . '</description>';
                  $output .= '<shipping_cost>'. $shipping_cost .'</shipping_cost>';
 
-                if($product['upc'] && count_chars($product['upc'], 3) > 1 ){
+             /*   if($product['upc'] && count_chars($product['upc'], 3) > 1 ){
                      $output .= '<upc>' . $product['upc'] . '</upc>';
-                 }
+                 }*/
 
 
 
@@ -94,18 +94,10 @@ class ControllerExtensionFeedNabavanet extends Controller {
         }
         $output .= '</products>';
 
-      //  $this->response->addHeader('Content-Type: application/xml');
-      //  $this->response->setOutput($output);
+       $this->response->addHeader('Content-Type: application/xml');
+       $this->response->setOutput($output);
 
-        $dom = new DOMDocument;
-        $dom->preserveWhiteSpace = false;
-        $dom->loadXml($output);
-        $xpath = new DOMXPath($dom);
-        foreach ($xpath->query('//text()') as $domText) {
-            $domText->data = trim($domText->nodeValue);
-        }
-        $dom->formatOutput = true;
-        echo $dom->saveXml();
+
 
 
     }
