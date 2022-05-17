@@ -7,8 +7,7 @@ class ControllerExtensionFeedNabavanet extends Controller {
 
         $output = '<?xml version="1.0" encoding="UTF-8"?>';
         $output .= '<products>';
-        $this->load->model('catalog/product');
-        $products = $this->model_catalog_product->getProducts();
+
 
 
         $this->load->model('catalog/product');
