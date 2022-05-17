@@ -59,7 +59,7 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 }
 
                 $output .= '<product>';
-              /*  $output .= '<name>' . $this->wrapInCDATA($name) . '</name>';*/
+               $output .= '<name>' . $this->wrapInCDATA($name) . '</name>';
                 $output .= '<price>' . number_format($price,'2', '.','') . '</price>';
                 //$output .= '<regular_price>' . $product['price_2'] . '</regular_price>';
                 $output .= '<url>' . $this->url->link('product/product', 'product_id=' . $product['product_id']) . '</url>';
@@ -71,7 +71,7 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 $output .= '<internal_product_id>' . $product['product_id'] . '</internal_product_id>';
                  $output .= '<category>'.$this->wrapInCDATA($this->getCategoriesName($product['product_id'])).'</category>';
                 $output .= '<image_url>' . $this->wrapInCDATA('https://cdn.chipoteka.hr/image/' . $product['image']) . '</image_url>';
-              /*  $output .= '<description>' . $this->wrapInCDATA($description) . '</description>';*/
+              $output .= '<description>' . $this->wrapInCDATA($description) . '</description>';
                  $output .= '<shipping_cost>'. $shipping_cost .'</shipping_cost>';
 
              /*   if($product['upc'] && count_chars($product['upc'], 3) > 1 ){
@@ -93,6 +93,9 @@ class ControllerExtensionFeedNabavanet extends Controller {
 
         }
         $output .= '</products>';
+
+
+        $output = iconv('UTF-8', 'UTF-8//IGNORE', $output);
 
        $this->response->addHeader('Content-Type: application/xml');
        $this->response->setOutput($output);
