@@ -37,6 +37,9 @@ class ControllerExtensionFeedFacebookstore extends Controller {
                 $description = str_replace('>', '', $description);
                 $description = str_replace('<', '', $description);
 
+
+                $description = $this->stripInvalidXml($description);
+
                 $name = strip_tags(html_entity_decode($product['name']));
                 $name = str_replace('&nbsp;', '', $name);
                 $name = str_replace('', '', $name);
@@ -90,20 +93,12 @@ class ControllerExtensionFeedFacebookstore extends Controller {
         $output .= '</rss>';
 
 
-        $dom = new DOMDocument;
-        $dom->preserveWhiteSpace = false;
-        $dom->loadXml($output);
-        $xpath = new DOMXPath($dom);
-        foreach ($xpath->query('//text()') as $domText) {
-            $domText->data = trim($domText->nodeValue);
-        }
-        $dom->formatOutput = true;
-        echo $dom->saveXml();
 
 
-     //   $this->response->addHeader('Content-Type: application/xml');
 
-       // $this->response->setOutput($output);
+  $this->response->addHeader('Content-Type: application/xml');
+
+        $this->response->setOutput($output);
 
 
     }
@@ -120,6 +115,39 @@ class ControllerExtensionFeedFacebookstore extends Controller {
     {
         return str_replace($char, '', $string);
     }
+
+
+    private function stripInvalidXml($value)
+    {
+        $ret = "";
+        $current;
+        if (empty($value))
+        {
+            return $ret;
+        }
+
+        $length = strlen($value);
+        for ($i=0; $i < $length; $i++)
+        {
+            $current = ord($value{$i});
+            if (($current == 0x9) ||
+                ($current == 0xA) ||
+                ($current == 0xD) ||
+
+                (($current >= 0x28) && ($current <= 0xD7FF)) ||
+                (($current >= 0xE000) && ($current <= 0xFFFD)) ||
+                (($current >= 0x10000) && ($current <= 0x10FFFF)))
+            {
+                $ret .= chr($current);
+            }
+            else
+            {
+                $ret .= " ";
+            }
+        }
+        return $ret;
+    }
+
 
 
     protected function getPath($parent_id, $current_path = '') {
