@@ -32,6 +32,17 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 $description = str_replace('', '', $description);
 
 
+                $name = strip_tags(html_entity_decode($product['name']));
+                $name = str_replace('&nbsp;', '', $name);
+                $name = str_replace('', '', $name);
+                $name = str_replace('', '', $name);
+                $name = str_replace('&#44', '', $name);
+                $name = str_replace("'", '', $name);
+                $name = str_replace('', '', $name);
+                $name = str_replace('.', '', $name);
+                $name = str_replace('', '', $name);
+
+
                 if ($product['price'] < 500) {
                     $shipping_cost = '39.00';
 
@@ -47,7 +58,7 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 }
 
                 $output .= '<product>';
-                $output .= '<name>' . $this->wrapInCDATA($product['name']) . '</name>';
+                $output .= '<name>' . $this->wrapInCDATA($name) . '</name>';
                 $output .= '<price>' . number_format($price,'2', '.','') . '</price>';
                 //$output .= '<regular_price>' . $product['price_2'] . '</regular_price>';
                 $output .= '<url>' . $this->url->link('product/product', 'product_id=' . $product['product_id']) . '</url>';
