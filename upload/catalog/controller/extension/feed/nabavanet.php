@@ -32,6 +32,9 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 $description = str_replace('>', '', $description);
                 $description = str_replace('<', '', $description);
 
+
+                $description = $this->stripInvalidXml($description);
+
                 $name = strip_tags(html_entity_decode($product['name']));
                 $name = str_replace('&nbsp;', '', $name);
                 $name = str_replace('', '', $name);
@@ -43,6 +46,8 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 $name = str_replace('', '', $name);
                 $name = str_replace('>', '', $name);
                 $name = str_replace('<', '', $name);
+
+                $name = $this->stripInvalidXml($name);
 
                 if ($product['price'] < 500) {
                     $shipping_cost = '39.00';
@@ -59,6 +64,7 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 }
 
                 $output .= '<product>';
+                $output .= '<internal_product_id>' . $product['product_id'] . '</internal_product_id>';
                $output .= '<name>' . $this->wrapInCDATA($name) . '</name>';
                 $output .= '<price>' . number_format($price,'2', '.','') . '</price>';
                 //$output .= '<regular_price>' . $product['price_2'] . '</regular_price>';
@@ -68,10 +74,10 @@ class ControllerExtensionFeedNabavanet extends Controller {
 
                 $output .= '<shipping_info>Besplatna dostava za narudžbe iznad 500 kn</shipping_info>';
 
-                $output .= '<internal_product_id>' . $product['product_id'] . '</internal_product_id>';
+               // $output .= '<internal_product_id>' . $product['product_id'] . '</internal_product_id>';
                  $output .= '<category>'.$this->wrapInCDATA($this->getCategoriesName($product['product_id'])).'</category>';
                 $output .= '<image_url>' . $this->wrapInCDATA('https://cdn.chipoteka.hr/image/' . $product['image']) . '</image_url>';
-            //  $output .= '<description>' . $this->wrapInCDATA($description) . '</description>';
+        $output .= '<description>' . $this->wrapInCDATA($description) . '</description>';
                  $output .= '<shipping_cost>'. $shipping_cost .'</shipping_cost>';
 
              /*   if($product['upc'] && count_chars($product['upc'], 3) > 1 ){
@@ -110,6 +116,38 @@ class ControllerExtensionFeedNabavanet extends Controller {
     {
         return "<![CDATA[ " . $in . " ]]>";
         //return $in;
+    }
+
+
+private function stripInvalidXml($value)
+    {
+        $ret = "";
+        $current;
+        if (empty($value))
+        {
+            return $ret;
+        }
+
+        $length = strlen($value);
+        for ($i=0; $i < $length; $i++)
+        {
+            $current = ord($value{$i});
+            if (($current == 0x9) ||
+                ($current == 0xA) ||
+                ($current == 0xD) ||
+
+                (($current >= 0x28) && ($current <= 0xD7FF)) ||
+                (($current >= 0xE000) && ($current <= 0xFFFD)) ||
+                (($current >= 0x10000) && ($current <= 0x10FFFF)))
+            {
+                $ret .= chr($current);
+            }
+            else
+            {
+                $ret .= " ";
+            }
+        }
+        return $ret;
     }
 
 
