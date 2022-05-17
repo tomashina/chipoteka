@@ -94,8 +94,18 @@ class ControllerExtensionFeedNabavanet extends Controller {
         }
         $output .= '</products>';
 
-        $this->response->addHeader('Content-Type: application/xml');
-        $this->response->setOutput($output);
+      //  $this->response->addHeader('Content-Type: application/xml');
+      //  $this->response->setOutput($output);
+
+        $dom = new DOMDocument;
+        $dom->preserveWhiteSpace = false;
+        $dom->loadXml($output);
+        $xpath = new DOMXPath($dom);
+        foreach ($xpath->query('//text()') as $domText) {
+            $domText->data = trim($domText->nodeValue);
+        }
+        $dom->formatOutput = true;
+        echo $dom->saveXml();
 
 
     }
