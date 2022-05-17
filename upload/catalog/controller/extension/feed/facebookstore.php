@@ -34,6 +34,20 @@ class ControllerExtensionFeedFacebookstore extends Controller {
                 $description = str_replace('', '', $description);
                 $description = str_replace('.', '', $description);
                 $description = str_replace('', '', $description);
+                $description = str_replace('>', '', $description);
+                $description = str_replace('<', '', $description);
+
+                $name = strip_tags(html_entity_decode($product['name']));
+                $name = str_replace('&nbsp;', '', $name);
+                $name = str_replace('', '', $name);
+                $name = str_replace('', '', $name);
+                $name = str_replace('&#44', '', $name);
+                $name = str_replace("'", '', $name);
+                $name = str_replace('', '', $name);
+                $name = str_replace('.', '', $name);
+                $name = str_replace('', '', $name);
+                $name = str_replace('>', '', $name);
+                $name = str_replace('<', '', $name);
 
 
 
@@ -41,7 +55,7 @@ class ControllerExtensionFeedFacebookstore extends Controller {
                 $output .= '<item>';
 
                 $output .= '<g:id>' . $this->wrapInCDATA($product['model']) . '</g:id>';
-                $output .= '<g:title>' . $this->wrapInCDATA($product['name']) . '</g:title>';
+                $output .= '<g:title>' . $this->wrapInCDATA($name) . '</g:title>';
 
 
                 $output .= '<g:description>' . $this->wrapInCDATA($description) . '</g:description>';

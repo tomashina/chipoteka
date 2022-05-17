@@ -29,7 +29,8 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 $description = str_replace('', '', $description);
                 $description = str_replace('.', '', $description);
                 $description = str_replace('', '', $description);
-
+                $description = str_replace('>', '', $description);
+                $description = str_replace('<', '', $description);
 
                 $name = strip_tags(html_entity_decode($product['name']));
                 $name = str_replace('&nbsp;', '', $name);
@@ -40,7 +41,8 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 $name = str_replace('', '', $name);
                 $name = str_replace('.', '', $name);
                 $name = str_replace('', '', $name);
-
+                $name = str_replace('>', '', $name);
+                $name = str_replace('<', '', $name);
 
                 if ($product['price'] < 500) {
                     $shipping_cost = '39.00';
