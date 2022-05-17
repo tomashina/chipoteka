@@ -52,7 +52,7 @@ class ControllerExtensionFeedFacebookstore extends Controller {
                 $name = str_replace('>', '', $name);
                 $name = str_replace('<', '', $name);
 
-
+                $name = $this->stripInvalidXml($name);
 
 
                 $output .= '<item>';
