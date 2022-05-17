@@ -26,6 +26,7 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 $description = str_replace('', '', $description);
                 $description = str_replace('&#44', '', $description);
                 $description = str_replace("'", '', $description);
+                $description = str_replace('"','in',  $description);
                 $description = str_replace('', '', $description);
                 $description = str_replace('.', '', $description);
                 $description = str_replace('', '', $description);
