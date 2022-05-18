@@ -326,6 +326,7 @@ class ProductHelper
             'mpc' => $product->mpc,
             'enabled' => $product->enabled,
             'specifikacija' => static::setDescription($product->specifikacija),
+            'kataloski_broj' => $product->kataloski_broj,
             'stopa_pdv' => $product->stopa_pdv,
             'nadgrupa_artikla' => $product->nadgrupa_artikla,
             'nadgrupa_artikla_naziv' => $product->nadgrupa_artikla_naziv,
