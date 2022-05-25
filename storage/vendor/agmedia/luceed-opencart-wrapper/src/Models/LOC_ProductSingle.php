@@ -340,7 +340,7 @@ class LOC_ProductSingle
             'sku'                 => $this->product['artikl'],
             'luceed_uid'          => $this->product['artikl_uid'],
             'upc'                 => $this->product['barcode'],
-            'ean'                 => $product['kataloski_broj'],
+            'ean'                 => $this->product['kataloski_broj'],
             'jan'                 => '',
             'isbn'                => '5',
             'mpn'                 => $this->product['jamstvo_naziv'] ?: '',
