@@ -244,7 +244,7 @@
         else{
             var inactiveTab = '#menu';
         }
-        if(activeTab){
+        if(activeTab && activeTab !='#description' && activeTab !='#general'){
             $(activeTab).addClass("active");
             $(activeTab).addClass("show");
             $('#myTab a[href="' + activeTab + '"]').addClass("active");
