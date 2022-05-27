@@ -6,7 +6,7 @@ header, footer, aside, nav, form, iframe, .menu, .hero, .adslot, #cart {
      display: none;
  }
 
-@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap");
+@font-face{font-family:Rubik;font-style:normal;font-weight:400;src:local('Rubik Regular'),url('Rubik-Regular.woff') format('woff')}@font-face{font-family:Rubik;font-style:normal;font-weight:300;src:local('Rubik Light'),url('Rubik-Light.woff') format('woff')}@font-face{font-family:Rubik;font-style:normal;font-weight:500;src:local('Rubik Medium'),url('Rubik-Medium.woff') format('woff')}@font-face{font-family:Rubik;font-style:normal;font-weight:700;src:local('Rubik Bold'),url('Rubik-Bold.woff') format('woff')}
 
 
 
