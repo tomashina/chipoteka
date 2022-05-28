@@ -24,7 +24,11 @@
                 {% if product.price %}
                     <div class="product-price">
                         {% if product.special and product.pj !='WEB'  %}
-                            <span><del>{{ product.price_2 }}</del></span>
+                            {% if product.last_30 %}
+                                <span><del>{{ product.last_30 }}</del></span>
+                            {% else %}
+                                <span><del>{{ product.price_2 }}</del></span>
+                            {% endif %}
                         {% else %}
                             <span> {{ product.price_2 }}</span>
                         {% endif %}

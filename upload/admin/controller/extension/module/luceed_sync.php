@@ -420,8 +420,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function finishUpdateProduct()
     {
-        \Agmedia\Helpers\Log::store($this->request->post['data'], 'finish');
-
         if (isset($this->request->post['data'])) {
             $inserted = LuceedProductForRevisionData::insert([
                 'last_revision_date' => Carbon::now(),
@@ -439,6 +437,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
     }
 
 
+    /**
+     * @return mixed
+     */
     public function updateAdditionalProductData()
     {
         $_loc = new LOC_Product(LuceedProduct::all());
@@ -456,8 +457,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
             ]);
         }
 
-        return $this->response($updated, 'products');
+        return $this->response('1', 'products');
     }
+
 
     /**
      * @return mixed
@@ -472,6 +474,20 @@ class ControllerExtensionModuleLuceedSync extends Controller
                          ->import();
 
         return $this->response($imported, 'products_actions');
+    }
+
+
+    /**
+     * @return mixed
+     * @throws Exception
+     */
+    public function importActionPricesLast30Days()
+    {
+        $_loc = new LOC_Action(LuceedProduct::getActionsPricesLast30(), true);
+
+        $imported = $_loc->update('last_30');
+
+        return $this->response($imported, 'actions_last30');
     }
 
 
@@ -745,8 +761,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 $data['b2b_products'] = $lc->setDocument($data['luceed_uid'], $is_b2b)->sortProducts($data['products']);
             }
 
-            \Agmedia\Helpers\Log::store($data);
-
             $mail                = new Mail($this->config->get('config_mail_engine'));
             $mail->parameter     = $this->config->get('config_mail_parameter');
             $mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
@@ -797,7 +811,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $data = [];
 
         $data['products'] = $products;
-        \Agmedia\Helpers\Log::store($data);
 
         $mail                = new Mail($this->config->get('config_mail_engine'));
         $mail->parameter     = $this->config->get('config_mail_parameter');

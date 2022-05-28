@@ -305,8 +305,6 @@ class LOC_ProductSingle
      */
     public function make(): array
     {
-        Log::store($this->product['artikl']);
-        
         $manufacturer = ProductHelper::getManufacturer($this->product);
         $stock_status = $this->product['stanje_kol'] ? agconf('import.default_stock_full') : agconf('import.default_stock_empty');
         $status       = 1;
@@ -381,7 +379,7 @@ class LOC_ProductSingle
             'product_category'    => ProductHelper::getCategories($this->product),
             'product_seo_url'     => [0 => ProductHelper::getSeoUrl($this->product)],
         ];
-        Log::store($prod);
+
         return $prod;
     }
 

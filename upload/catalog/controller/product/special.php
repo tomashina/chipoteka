@@ -101,6 +101,11 @@ class ControllerProductSpecial extends Controller {
                 $price_2 = false;
             }
 
+            $last_30 = null;
+            if ($result['price_last_30'] != '0.0000') {
+                $last_30 = $this->currency->format($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+            }
+
 			if (!is_null($result['special']) && (float)$result['special'] >= 0) {
 				$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				$tax_price = (float)$result['special'];
@@ -127,7 +132,8 @@ class ControllerProductSpecial extends Controller {
 				'name'        => $result['name'],
 				'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 				'price'       => $price,
-                'price_2'       => $price_2,
+                'price_2'     => $price_2,
+                'last_30'     => $last_30,
 				'special'     => $special,
 				'tax'         => $tax,
 				'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,

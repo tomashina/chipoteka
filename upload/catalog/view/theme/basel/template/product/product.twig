@@ -121,10 +121,12 @@
                                                 {% if not special %}
                                                     <span>{{ price_2 }}</span>
                                                 {% else %}
-
-                                                    <span> {% if pj !='WEB' %} <del> {% endif %} {{ price_2 }} {% if pj !='WEB' %} </del> {% endif %}</span>
-
-                                                    <span id="special_countdown"></span>
+                                                    {% if not last_30 %}
+                                                        <span> {% if pj !='WEB' %} <del> {% endif %} {{ price_2 }} {% if pj !='WEB' %} </del> {% endif %}</span>
+                                                        <span id="special_countdown"></span>
+                                                    {% else %}
+                                                        <span><del>{{ last_30 }}</del></span>
+                                                    {% endif %}
                                                 {% endif %}
                                             </div>
 

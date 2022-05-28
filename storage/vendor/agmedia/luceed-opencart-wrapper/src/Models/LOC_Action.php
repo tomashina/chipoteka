@@ -70,9 +70,9 @@ class LOC_Action
      *
      * @param $products
      */
-    public function __construct($actions)
+    public function __construct($actions, $last_30 = false)
     {
-        $this->actions = $this->setActions($actions);
+        $this->actions = $last_30 ? $this->setActionPricesLast30($actions) : $this->setActions($actions);
         $this->db      = new Database(DB_DATABASE);
     }
 
@@ -359,13 +359,28 @@ class LOC_Action
                     $temp_product .= '("' . $sifra . '", 0, ' . number_format($price, 2, '.','') . '),';
                 }
 
-                Log::store($temp_product, 'import_prices_query');
-
                 $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($temp_product, 0, -1) . ";");
                 $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.price = pt.price");
 
                 return $this->prices_to_update->count();
             }
+        }
+
+        if ($type == 'last_30' && $this->getActions()->count()) {
+            $this->deleteProductTempDB();
+
+            $temp_product = '';
+
+            foreach ($this->getActions()->where('artikl_uid', '!=', '')->all() as $product) {
+                $temp_product .= '("' . $product->artikl_uid . '", 0, ' . number_format($product->najnizi_mpc_30_dana, 2, '.','') . '),';
+            }
+
+            Log::store($temp_product, 'import_last30_query');
+
+            $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($temp_product, 0, -1) . ";");
+            $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.luceed_uid = pt.uid SET p.price_last_30 = pt.price");
+
+            return $this->getActions()->count();
         }
 
         return 0;
@@ -424,6 +439,19 @@ class LOC_Action
         $prods = json_decode($actions);
 
         return $prods->result[0]->akcije;
+    }
+
+
+    /**
+     * @param $actions
+     *
+     * @return array
+     */
+    private function setActionPricesLast30($actions): array
+    {
+        $prods = json_decode($actions);
+
+        return $prods->result[0]->artikli_popusti;
     }
 
 

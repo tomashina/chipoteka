@@ -135,6 +135,13 @@
 
                                 <div class="form-group">
                                     <div class="col-sm-4 text-center">
+                                        <a href="javascript:void(0)" id="update-last30-prices" data-toggle="tooltip" title="Import Akc. zadnjih 30 dana" class="btn btn-info btn-block">Import Akc. zadnjih 30 dana</a>
+                                    </div>
+                                    <p class="col-sm-8" style="margin-top: 9px;">Import Akcijskih cijena u zadnjih 30 dana</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="update-prices" data-toggle="tooltip" title="{{ btn_products_update_p }}" class="btn btn-info btn-block">{{ btn_products_update_p }}</a>
                                     </div>
                                     <p class="col-sm-8" style="margin-top: 9px;">{{ help_products_update_p }}</p>
@@ -364,6 +371,7 @@
             $('#update-products-pakiranje') .on('click', e => { callApi(e, 'updateAdditionalProductData'); });
             $('#import-detail-product')     .on('click', e => { callApi(e, 'importProduct'); });
             $('#import-new-actions')        .on('click', e => { callApi(e, 'importActions'); });
+            $('#update-last30-prices')      .on('click', e => { callApi(e, 'importActionPricesLast30Days'); });
             $('#check-active-min')          .on('click', e => { callApi(e, 'checkMinQty'); });
             $('#categories-active-min')     .on('click', e => { callApi(e, 'checkMinQtyOfCategories'); });
             $('#update-prices-quantities')  .on('click', e => { callApi(e, 'updatePricesAndQuantities'); });

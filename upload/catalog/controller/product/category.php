@@ -195,6 +195,11 @@ class ControllerProductCategory extends Controller {
                     $price_2 = false;
                 }
 
+                $last_30 = null;
+                if ($result['price_last_30'] != '0.0000') {
+                    $last_30 = $this->currency->format($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                }
+
 				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 					$tax_price = (float)$result['special'];
@@ -243,19 +248,20 @@ class ControllerProductCategory extends Controller {
                 }
 
 				$data['products'][] = array(
-					'product_id'  => $result['product_id'],
-					'thumb'       => $image,
-					'name'        => $result['name'],
-					'price'       => $price,
-                    'price_2'       => $price_2,
-                    'vpc'       => $vpc,
-                    'pj' => $pj,
-					'special'     => $special,
+                    'product_id'   => $result['product_id'],
+                    'thumb'        => $image,
+                    'name'         => $result['name'],
+                    'price'        => $price,
+                    'price_2'      => $price_2,
+                    'last_30'      => $last_30,
+                    'vpc'          => $vpc,
+                    'pj'           => $pj,
+                    'special'      => $special,
                     'freeshipping' => $freeshipping,
-					'tax'         => $tax,
-					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
-					'rating'      => $result['rating'],
-					'href'        => $this->url->link('product/product', 'path=' . $this->request->get['path'] . '&product_id=' . $result['product_id'] . $url)
+                    'tax'          => $tax,
+                    'minimum'      => $result['minimum'] > 0 ? $result['minimum'] : 1,
+                    'rating'       => $result['rating'],
+					'href'         => $this->url->link('product/product', 'path=' . $this->request->get['path'] . '&product_id=' . $result['product_id'] . $url)
 				);
 			}
 
