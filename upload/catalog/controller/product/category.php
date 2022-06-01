@@ -219,6 +219,16 @@ class ControllerProductCategory extends Controller {
                         $freeshipping = false;
                     }
 				}
+
+                if ( (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
+                    if ($this->config->get('salebadge_status') == '2') {
+                        $sale_badge = '-' . number_format(((($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
+                    } else {
+                        $sale_badge = $this->language->get('basel_text_sale');
+                    }
+                } else {
+                    $sale_badge = false;
+                }
 	
 				if ($this->config->get('config_tax')) {
 					$tax = $this->currency->format($tax_price, $this->session->data['currency']);
@@ -254,6 +264,7 @@ class ControllerProductCategory extends Controller {
                     'price'        => $price,
                     'price_2'      => $price_2,
                     'last_30'      => $last_30,
+                    'sale_badge' => $sale_badge,
                     'vpc'          => $vpc,
                     'pj'           => $pj,
                     'special'      => $special,
