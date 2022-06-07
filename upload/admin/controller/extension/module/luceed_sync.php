@@ -19,6 +19,7 @@ use Agmedia\LuceedOpencartWrapper\Models\LOC_Payment;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Price;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Product;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle;
+use Agmedia\LuceedOpencartWrapper\Models\LOC_Related;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Stock;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse;
 use Agmedia\Models\Category\Category;
@@ -474,6 +475,22 @@ class ControllerExtensionModuleLuceedSync extends Controller
                          ->import();
 
         return $this->response($imported, 'products_actions');
+    }
+
+
+    /**
+     * @return mixed
+     * @throws Exception
+     */
+    public function importRelatedProducts()
+    {
+        $_loc = new LOC_Related(LuceedProduct::getRelated());
+
+        $imported = $_loc->collectActive()
+                         ->sort()
+                         ->import();
+
+        return $this->response($imported, 'products');
     }
 
 

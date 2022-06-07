@@ -193,6 +193,17 @@ class Luceed
      *
      * @return mixed
      */
+    public function getProductsRelated(array $query = null)
+    {
+        return $this->service->get($this->end_points['product_related'] . ($query ?: ''));
+    }
+
+
+    /**
+     * @param array|null $query
+     *
+     * @return mixed
+     */
     public function getProductsActionsInLast30Days(array $query = null)
     {
         return $this->service->get($this->end_points['product_action_30'] . ($query ?: ''));

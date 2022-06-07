@@ -73,6 +73,17 @@ class LuceedProduct extends Facade
     /**
      * @return mixed
      */
+    public static function getRelated()
+    {
+        $luceed = new Luceed();
+
+        return $luceed->getProductsRelated();
+    }
+
+
+    /**
+     * @return mixed
+     */
     public static function getActionsPricesLast30()
     {
         $luceed = new Luceed();
