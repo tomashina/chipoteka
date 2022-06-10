@@ -423,7 +423,7 @@ class ModelCatalogProduct extends Model {
             }
         }
 
-		return $product_data;
+		return collect($product_data)->reverse()->take(5)->toArray();
 	}
 
 	public function getProductLayoutId($product_id) {
