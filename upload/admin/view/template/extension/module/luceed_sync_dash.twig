@@ -346,6 +346,47 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading darker-bg" style="height: 52px;">
+                                <div class="pull-right">
+                                    {#<button type="button" data-toggle="tooltip" title="Ponovi upload liste za reviziju." class="btn btn-sm btn-info" id="btn-check-list" onclick="checkRevisionList()" style="margin-right: 10px;"><i class="fa fa-upload"></i> Provjera Revizijske Liste</button>
+                                    <button type="button" data-toggle="tooltip" title="Ponovi upload liste za reviziju." class="btn btn-sm btn-info" id="btn-updating-list" onclick="updateList();"><i class="fa fa-upload"></i> Upload Liste</button>#}
+                                </div>
+                                <h3 class="panel-title"><i class="fa fa-list"></i> Lista proizvoda sa cijenom 0 kn</h3>
+                            </div>
+                            <div class="panel-body form-horizontal">
+
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Naziv</th>
+                                        <th scope="col">Luceed-UID</th>
+                                        <th scope="col">Šifra</th>
+                                        <th scope="col">Cijena</th>
+                                        <th scope="col">Data</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for pz_product in price_zero_products %}
+                                        <tr>
+                                            <th scope="row">{{ loop.index }}</th>
+                                            <td>{{ pz_product.name }}</td>
+                                            <td>{{ pz_product.luceed_uid }}</td>
+                                            <td>{{ pz_product.sku }}</td>
+                                            <td>{{ pz_product.proce }}</td>
+                                            <td class="small">{{ pz_product.data }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
