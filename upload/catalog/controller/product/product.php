@@ -420,9 +420,9 @@ class ControllerProductProduct extends Controller {
                 $data['ratedvacetiri'] = $this->currency->format($this->tax->calculate($ratedvacetiri, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
             }
 
-            $data['last_30'] = null;
+            $data['price_last_30'] = null;
             if ($product_info['price_last_30'] != '0.0000') {
-                $data['last_30'] = $this->currency->format($this->tax->calculate($product_info['price_last_30'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                $data['price_last_30'] = $this->currency->format($this->tax->calculate($product_info['price_last_30'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
             }
 
 			if (!is_null($product_info['special']) && (float)$product_info['special'] >= 0) {

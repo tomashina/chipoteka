@@ -121,13 +121,15 @@
                                                 {% if not special %}
                                                     <span>{{ price_2 }}</span>
                                                 {% else %}
-                                                    {% if not last_30 %}
+                                                    {% if not price_last_30 %}
                                                         <span> {% if pj !='WEB' %} <del> {% endif %} {{ price_2 }} {% if pj !='WEB' %} </del> {% endif %}</span>
                                                         <span id="special_countdown"></span>
                                                     {% else %}
-                                                        <span><del>{{ last_30 }}</del></span>
+                                                        <span><del>{{ price_last_30 }} *</del></span>
                                                     {% endif %}
                                                 {% endif %}
+
+                                                {% if price_last_30 %} <small style="font-size: 12px;">*najniža cijena u posljednjih 30 dana</small>  {% endif %}
                                             </div>
 
                                             <div class="product-price--web">
@@ -264,13 +266,17 @@
                                                 <span>{{ price_2 }}</span>
                                             {% else %}
 
-                                                {% if pj !='WEB' %} <del> {% endif %} {{ price_2 }} {% if pj !='WEB' %} </del> {% endif %}
+                                                {% if pj !='WEB' %} <del> {% endif %} {% if price_last_30 %} {{ price_last_30 }} * {% else %} {{ price_2 }} {% endif %}  {% if pj !='WEB' %} </del> {% endif %}
                                             {% endif %}
+                                            {% if price_last_30 %} <small style="font-size: 12px;">*najniža cijena u posljednjih 30 dana</small>  {% endif %}
                                         </div>
+
                                         <div class="product-price--web">
                                             <span>{% if  special %}{{ pj }} Akcija:{% else %} {% if price_2 != price %} Web cijena:{% endif %} {% endif %}</span>
                                             <span> {% if  special %} {{ special }} {% else %}  {% if price_2 != price %} {{ price }} {% endif %} {% endif %}</span>
                                         </div>
+
+
                                     </div>
                                 </div>
                                 <div class="product-quantity-button mb-0">
@@ -286,6 +292,7 @@
                                     <input type="hidden" name="product_id" value="{{ product_id }}" />
                                     <button type="button" id="button-cart2" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
                                 </div>
+
                             </div>
                         {% endif %}
                         <!-- Specs table-->
