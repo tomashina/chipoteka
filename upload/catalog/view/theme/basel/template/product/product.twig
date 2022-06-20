@@ -127,7 +127,7 @@
                                                     {% else %}
                                                         <span><del>{{ price_last_30 }} *</del></span>
                                                     {% endif %}
-                                                    <small style="font-size: 12px;">*najniža cijena u posljednjih 30 dana</small>
+                                                    <small style="font-size: 12px;">*najniža cijena u prethodnih 30 dana</small>
                                                 {% endif %}
 
 
@@ -269,7 +269,7 @@
 
                                                 {% if pj !='WEB' %} <del> {% endif %} {% if price_last_30 %} {{ price_last_30 }} * {% else %} {{ price_2 }} {% endif %}  {% if pj !='WEB' %} </del> {% endif %}
 
-                                                <small style="font-size: 12px;">*najniža cijena u posljednjih 30 dana</small>
+                                                <small style="font-size: 12px;">*najniža cijena u prethodnih 30 dana</small>
                                             {% endif %}
 
                                         </div>
