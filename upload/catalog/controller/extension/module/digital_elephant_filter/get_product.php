@@ -170,6 +170,11 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                 $price_2 = false;
             }
 
+            $last_30 = null;
+            if ($result['price_last_30'] != '0.0000') {
+                $last_30 = $this->currency->format($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+            }
+
             if ((float)$result['special']) {
                 $special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
                 if($result['special'] >= FREESHIPPING){
@@ -261,6 +266,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                 'description' => $description,
                 'price'       => $price,
                 'price_2'       => $price_2,
+                'last_30'      => $last_30,
                 'pj' => $pj,
                 'vpc'       => $vpc,
                 'saljemodo'     => $saljemodo,
