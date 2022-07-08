@@ -101,8 +101,12 @@
                                         {% endif %}
                                         {% if price and special and sale_badge %}
                                             <div class="product-badge-cpta product-badge-cpta__discount">
-                                                <span> {{ pj }} Akcija</span>
+                                                <span> {{ pj }} Akcija </span>
+                                                {% if sale_percent > 3 %}
                                                 <span> Uštedi <strong>{{ sale_badge }}</strong></span>
+                                                {% else %}
+                                                    <span>UŠTEDI</span>
+                                                {% endif %}
                                             </div>
                                         {% endif %}
                                     </div>

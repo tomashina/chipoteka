@@ -201,11 +201,76 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 			}
 			
 			if ( (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
-			if ($this->config->get('salebadge_status') == '2') {
-				$sale_badge = '-' . number_format(((($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
-			} else {
-				$sale_badge = $this->language->get('basel_text_sale');
-			}		
+                if ($result['price_last_30'] != '0.0000' && $result['price_last_30'] < $result['price_2']) {
+
+                    if ($this->config->get('salebadge_status') == '2') {
+
+                        $data['sale_percent'] = number_format(((($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.');
+
+                        //provjera postotka ako je veće od 3
+
+                        if($data['sale_percent'] > 3){
+                            $data['razlika_broj'] = ($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax'))) - ($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')));
+
+                            //provjera razlike  veće od 100 kn prikaži cifru inače postotak
+                            if($data['razlika_broj'] > 100){
+                                $sale_badge = $this->currency->format($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')) -  $this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                            }
+                            else{
+                                $sale_badge = '-' .number_format(((($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.'). '%';
+                            }
+
+                        }
+                        else{
+
+                            $sale_badge = '-' . number_format(((($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
+
+                        }
+
+
+
+
+
+                    } else {
+                        $data['sale_badge'] = $this->language->get('basel_text_sale');
+                    }
+
+                }
+
+                else{
+
+
+                    if ($this->config->get('salebadge_status') == '2') {
+
+
+                        $data['sale_percent'] = number_format(((($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.');
+
+                        //provjera postotka ako je veće od 3
+
+                        if($data['sale_percent'] > 3){
+                            $data['razlika_broj'] = ($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax'))) - ($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')));
+
+                            //provjera razlike  veće od 100 kn prikaži cifru inače postotak
+                            if($data['razlika_broj'] > 100){
+                                $sale_badge = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')) -  $this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                            }
+                            else{
+                                $sale_badge = '-' .number_format(((($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.'). '%';
+                            }
+
+                        }
+                        else{
+
+                            $sale_badge = '-' . number_format(((($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
+
+                        }
+
+
+                    } else {
+                        $data['sale_badge'] = $this->language->get('basel_text_sale');
+                    }
+
+                }
 			} else {
 				$sale_badge = false;
 			}
