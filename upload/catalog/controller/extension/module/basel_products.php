@@ -138,6 +138,11 @@ class ControllerExtensionModuleBaselProducts extends Controller {
                         $price_2 = false;
                     }
 
+                    $last_30 = null;
+                    if ($result['price_last_30'] != '0.0000') {
+                        $last_30 = $this->currency->format($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                    }
+
                     $vpc = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 							
 					if ((float)$result['special']) {
@@ -285,6 +290,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 						'price'   	 => $price,
                         'price_2'       => $price_2,
                         'vpc'       => $vpc,
+                        'last_30'      => $last_30,
 						'new_label'  => $is_new,
 						'sale_badge' => $sale_badge,
                         'sale_percent' => $data['sale_percent'],
