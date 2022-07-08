@@ -333,6 +333,7 @@ class ControllerProductCategory extends Controller {
                     'price_2'      => $price_2,
                     'last_30'      => $last_30,
                     'sale_badge' => $sale_badge,
+                    'sale_percent' => $data['sale_percent'],
                     'quantity'  => $result['quantity'],
                     'vpc'          => $vpc,
                     'pj'           => $pj,

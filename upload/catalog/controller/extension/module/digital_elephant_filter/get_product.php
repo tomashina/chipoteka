@@ -332,6 +332,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                 'price'       => $price,
                 'price_2'       => $price_2,
                 'last_30'      => $last_30,
+                'sale_percent' => $data['sale_percent'],
                 'pj' => $pj,
                 'vpc'       => $vpc,
                 'saljemodo'     => $saljemodo,

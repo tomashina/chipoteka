@@ -287,6 +287,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
                         'vpc'       => $vpc,
 						'new_label'  => $is_new,
 						'sale_badge' => $sale_badge,
+                        'sale_percent' => $data['sale_percent'],
                         'saljemodo'     => $saljemodo,
                         'freeshipping' => $freeshipping,
 						'special' 	 => $special,
