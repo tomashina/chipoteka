@@ -131,6 +131,8 @@ class LOC_ProductSingle
         $existing = Product::pluck('luceed_uid');
         $diff     = LuceedProduct::whereNotIn('uid', $existing)->first();
 
+        Log::store($diff, 'diff');
+
         if ($diff) {
             $this->luceed_product = $diff;
 
@@ -338,7 +340,7 @@ class LOC_ProductSingle
             'sku'                 => $this->product['artikl'],
             'luceed_uid'          => $this->product['artikl_uid'],
             'upc'                 => $this->product['barcode'],
-            'ean'                 => $this->product['kataloski_broj'],
+            'ean'                 => ProductHelper::setText($this->product['kataloski_broj']),
             'jan'                 => '',
             'isbn'                => '5',
             'mpn'                 => $this->product['jamstvo_naziv'] ?: '',

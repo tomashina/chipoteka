@@ -108,16 +108,16 @@ class ProductHelper
         }
 
         $response[agconf('import.default_language')] = [
-            'name' => $naziv,
+            'name' => static::setText($naziv),
             'update_name' => $old_description ? $old_description['update_name'] : 1,
-            'description' => $description,
+            'description' => static::setText($description),
             'update_description' => $old_description ? $old_description['update_description'] : 1,
             'spec_description' => $spec ?: '',
-            'short_description' => $description,
+            'short_description' => static::setText($description),
             'tag' => '',
-            'meta_title' => $naziv,
-            'meta_description' => strip_tags($description),
-            'meta_keyword' => $naziv,
+            'meta_title' => static::setText($naziv),
+            'meta_description' => strip_tags(static::setText($description)),
+            'meta_keyword' => static::setText($naziv),
         ];
 
         return $response;
@@ -148,7 +148,7 @@ class ProductHelper
                         'attribute_id' => $id,
                         'product_attribute_description' => [
                             agconf('import.default_language') => [
-                                'text' => $attribute['vrijednost']
+                                'text' => static::setText($attribute['vrijednost'])
                             ]
                         ]
                     ];
@@ -382,6 +382,24 @@ class ProductHelper
 
 
     /**
+     * @param string|null $text
+     *
+     * @return string
+     */
+    public static function setText(string $text = null): string
+    {
+        if ($text) {
+            $text = str_replace("'", "", $text);
+            $text = str_replace('"', 'in', $text);
+
+            return $text;
+        }
+
+        return '';
+    }
+
+
+    /**
      * @param $attribute
      *
      * @return bool
@@ -416,7 +434,7 @@ class ProductHelper
             AttributeDescription::insert([
                 'attribute_id' => $id,
                 'language_id' => agconf('import.default_language'),
-                'name' => $attribute['naziv']
+                'name' => static::setText($attribute['naziv'])
             ]);
 
             return $id;

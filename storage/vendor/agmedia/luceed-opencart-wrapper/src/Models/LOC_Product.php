@@ -390,7 +390,7 @@ class LOC_Product
             'sku'                 => $product['artikl'],
             'luceed_uid'          => $product['artikl_uid'],
             'upc'                 => $product['barcode'],
-            'ean'                 => $product['kataloski_broj'],
+            'ean'                 => ProductHelper::setText($product['kataloski_broj']),
             'jan'                 => '',
             'isbn'                => '5',
             'mpn'                 => $product['jamstvo_naziv'] ?: '',
