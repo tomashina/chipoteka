@@ -20,6 +20,14 @@ class LOC_Warehouse
     private $list = [];
 
     /**
+     * Varijabla da bi odvojili default skladišta od
+     * zbrajanja default skldišta na kojima se dopušta kupnja.
+     *
+     * @var array
+     */
+    private $strict_default_houses = ['101', '001'];
+
+    /**
      * @var array
      */
     private $warehouses;
@@ -140,10 +148,12 @@ class LOC_Warehouse
         $qty_default = 0;
         // DEFAULT WAREHOUSE COUNT
         foreach ($houses_default as $house) {
-            $has = $defaults->where('skladiste_uid', $house['skladiste_uid'])->first();
+            if (in_array($house['skladiste'], $this->strict_default_houses)) {
+                $has = $defaults->where('skladiste_uid', $house['skladiste_uid'])->first();
 
-            if ($has) {
-                $qty_default += max($has->raspolozivo_kol, 0);
+                if ($has) {
+                    $qty_default += max($has->raspolozivo_kol, 0);
+                }
             }
         }
 
