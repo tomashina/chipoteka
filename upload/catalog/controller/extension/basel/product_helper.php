@@ -45,7 +45,7 @@
 
             if ($this->config->get('salebadge_status') == '2') {
 
-                $sale_percent = number_format(((($this->tax->calculate($product_info['price_last_30'], $product_info['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($product_info['price_last_30'], $product_info['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.');
+                $data['sale_percent'] = number_format(((($this->tax->calculate($product_info['price_last_30'], $product_info['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($product_info['price_last_30'], $product_info['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.');
 
                 //provjera postotka ako je veće od 3
 
