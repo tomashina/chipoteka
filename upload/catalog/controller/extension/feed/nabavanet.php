@@ -42,7 +42,6 @@ class ControllerExtensionFeedNabavanet extends Controller {
                 $name = str_replace('&#44', '', $name);
                 $name = str_replace("'", '', $name);
                 $name = str_replace('', '', $name);
-                $name = str_replace('.', '', $name);
                 $name = str_replace('', '', $name);
                 $name = str_replace('>', '', $name);
                 $name = str_replace('<', '', $name);
