@@ -154,7 +154,13 @@ jQuery(function(){
 							out += '<br />';
 							out += '<strike>';
 
-							out += data.price_2;
+							if( data.last_30 ) {
+
+							out += data.last_30;
+							}
+							else{
+								out += data.price_2;
+							}
 						}
 
 						else{

@@ -40,6 +40,8 @@ class ControllerExtensionModuleMsmartSearch extends Controller {
 
         $price_2 = null;
 
+        $last_30 = null;
+
 		/* @var $special string|null */
 		$special = null;
 
@@ -49,6 +51,11 @@ class ControllerExtensionModuleMsmartSearch extends Controller {
 			} else {
 				$price = $this->currency->format($this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')));
 			}
+
+
+            if ($product['price_last_30'] != '0.0000') {
+                $last_30 = $this->currency->format($this->tax->calculate($product['price_last_30'], $$produc['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+            }
 
 			if( ! empty( $product['special'] ) ) {
 				if( version_compare( VERSION, '2.2.0.0', '>=' ) ) {
@@ -79,6 +86,7 @@ class ControllerExtensionModuleMsmartSearch extends Controller {
 			'img' => $img,
 			'img_w' => $width,
 			'img_h' => $height,
+            'last_30'      => $last_30,
 			'price' => empty( $config['show_price'] ) ? null : $price,
             'price_2' =>  $price_2,
 			'special' => empty( $config['show_price'] ) ? null : $special,
