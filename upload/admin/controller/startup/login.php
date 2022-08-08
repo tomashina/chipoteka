@@ -16,6 +16,7 @@ class ControllerStartupLogin extends Controller {
             'extension/module/luceed_sync/importProducts',
             'extension/module/luceed_sync/updateProducts',
             'extension/module/luceed_sync/checkRevision',
+            'extension/module/luceed_sync/importActionPricesLast30Days',
 		);
 
 		// User
@@ -42,6 +43,9 @@ class ControllerStartupLogin extends Controller {
                 'extension/module/luceed_sync/importProducts',
                 'extension/module/luceed_sync/updateProducts',
                 'extension/module/luceed_sync/checkRevision',
+                'extension/module/luceed_sync/importActionPricesLast30Days',
+
+
 			);
 
 			if (!in_array($route, $ignore) && (!isset($this->request->get['user_token']) || !isset($this->session->data['user_token']) || ($this->request->get['user_token'] != $this->session->data['user_token']))) {
