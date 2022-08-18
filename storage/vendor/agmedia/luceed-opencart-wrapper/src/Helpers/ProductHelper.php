@@ -325,6 +325,7 @@ class ProductHelper
             'barcode' => $product->barcode,
             'jm' => $product->jm,
             'pakiranje' => $product->pakiranje,
+            'licenca' => $product->licenca,
             'opis' => static::setDescription($product->opis),
             'vpc' => $product->vpc,
             'mpc' => $product->mpc,
