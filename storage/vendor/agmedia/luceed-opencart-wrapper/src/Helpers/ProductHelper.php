@@ -38,17 +38,21 @@ class ProductHelper
         if ($actual && $actual->count()) {
             $response[0] = $actual->category_id;
 
+            if ($product['licenca'] == 'SUPER DEAL') {
+                $response[1] = 9845;
+            }
+
             if ($actual->parent_id) {
                 $parent = Category::where('category_id', $actual->parent_id)->first();
 
                 if ($parent->count()) {
-                    $response[1] = $parent->category_id;
+                    $response[2] = $parent->category_id;
 
                     if ($parent->parent_id) {
                         $main = Category::where('category_id', $parent->parent_id)->first();
 
                         if ($main->count()) {
-                            $response[2] = $main->category_id;
+                            $response[3] = $main->category_id;
                         }
                     }
                 }
@@ -321,6 +325,7 @@ class ProductHelper
             'barcode' => $product->barcode,
             'jm' => $product->jm,
             'pakiranje' => $product->pakiranje,
+            'licenca' => $product->licenca,
             'opis' => static::setDescription($product->opis),
             'vpc' => $product->vpc,
             'mpc' => $product->mpc,
