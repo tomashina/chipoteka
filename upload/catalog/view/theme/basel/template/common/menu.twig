@@ -1,26 +1,31 @@
 {% if categories %}
+
+
 {% for category in categories %}
 
  {% if groupId > 2 and category.name=='AKCIJE' %}
 
 {% else %}
 
+
+
+
     {% if category.children %}
         <div class="accordion-item border-bottom">
 
-    {% if cats and category.category_id in cats  %}
-            <h3 class="accordion-header">
-                <button class="accordion-button  py-3" type="button" data-bs-toggle="collapse" data-bs-target="#catid{{ category.category_id }}" aria-expanded="true" aria-controls="catid{{ category.category_id }}"><span class="d-flex align-items-center">{{ category.name }} </span></button>
-            </h3>
-            <div class="collapse show" id="catid{{ category.category_id }}" data-bs-parent="#shop-categories">
-    {% else %}
-                <h3 class="accordion-header">
-                    <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#catid{{ category.category_id }}" aria-expanded="false" aria-controls="catid{{ category.category_id }}"><span class="d-flex align-items-center">{{ category.name }} </span></button>
-                </h3>
-        <div class="collapse " id="catid{{ category.category_id }}" data-bs-parent="#shop-categories">
-            {% endif %}
-                 <div>
-                    <div class="widget widget-links">
+                        {% if cats and category.category_id in cats  %}
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button  py-3" type="button" data-bs-toggle="collapse" data-bs-target="#catid{{ category.category_id }}" aria-expanded="true" aria-controls="catid{{ category.category_id }}"><span class="d-flex align-items-center">{{ category.name }} </span></button>
+                                </h3>
+                                <div class="collapse show" id="catid{{ category.category_id }}" data-bs-parent="#shop-categories">
+                        {% else %}
+                                    <h3 class="accordion-header">
+                                        <button class="accordion-button collapsed py-3" type="button" data-bs-toggle="collapse" data-bs-target="#catid{{ category.category_id }}" aria-expanded="false" aria-controls="catid{{ category.category_id }}"><span class="d-flex align-items-center">{{ category.name }} </span></button>
+                                    </h3>
+                                 <div class="collapse " id="catid{{ category.category_id }}" data-bs-parent="#shop-categories">
+                        {% endif %}
+                                 <div>
+                                   <div class="widget widget-links">
                         {% for children in category.children|batch(category.children|length / category.column|round(1, 'ceil')) %}
                             <ul class="widget-list">
                                 {% for child in children %}
@@ -55,9 +60,16 @@
                         {% endfor %}
 
                     </div>
-                </div>
-            </div>
+                                </div>
+                             </div>
         </div>
+
+            {% if category.category_id =='315' %}
+
+                <div class="accordion-item border-bottom">
+                    <h3 class="accordion-header"><a class="nav-link-style d-block fs-md fw-normal py-3 " href="super-deal"><span class="d-flex align-items-center" style="font-size:1rem;padding-left:20px">SUPER DEAL</span></a></h3>
+                </div>
+            {% endif %}
     {% else %}
         <div class="accordion-item border-bottom">
             <h3 class="accordion-header"><a class="nav-link-style d-block fs-md fw-normal py-3" href="{{ category.href }}"><span class="d-flex align-items-center">{{ category.name }}</span></a></h3>
@@ -67,5 +79,8 @@
             {% endif %}
 
 {% endfor %}
-{% endif %}
 
+
+
+
+{% endif %}
