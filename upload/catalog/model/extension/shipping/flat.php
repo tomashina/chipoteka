@@ -45,12 +45,19 @@ class ModelExtensionShippingFlat extends Model {
 
             }
 
+            if($this->session->data['currency']=='HRK'){
+                $text =  $this->currency->format($this->tax->calculate($shipping_price, $this->config->get('shipping_flat_tax_class_id'), $this->config->get('config_tax')), $this->session->data['currency']).' <small>('.$this->currency->format($this->tax->calculate($shipping_price, $this->config->get('shipping_flat_tax_class_id'), $this->config->get('config_tax')), 'EUR'). ')</small> ';
+            }
+            else{
+                $text = $this->currency->format($this->tax->calculate($shipping_price, $this->config->get('shipping_flat_tax_class_id'), $this->config->get('config_tax')), $this->session->data['currency']);
+            }
+
 			$quote_data['flat'] = array(
 				'code'         => 'flat.flat',
 				'title'        => $this->language->get('text_description'),
 				'cost'         => $shipping_price,
 				'tax_class_id' => $this->config->get('shipping_flat_tax_class_id'),
-				'text'         => $this->currency->format($this->tax->calculate($shipping_price, $this->config->get('shipping_flat_tax_class_id'), $this->config->get('config_tax')), $this->session->data['currency'])
+				'text'         => $text
 			);
 
 			$method_data = array(
