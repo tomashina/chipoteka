@@ -126,6 +126,13 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 					
 					if (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) {
 						$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                        if($this->session->data['currency']=='HRK'){
+                            $priceeur = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
+                        }
+                        else{
+                            $priceeur  ='';
+
+                        }
 					} else {
 						$price = false;
 					}
@@ -134,6 +141,13 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 
                     if (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) {
                         $price_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                        if($this->session->data['currency']=='HRK'){
+                            $priceeur_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
+                        }
+                        else{
+                            $priceeur_2  ='';
+
+                        }
                     } else {
                         $price_2 = false;
                     }
@@ -141,12 +155,29 @@ class ControllerExtensionModuleBaselProducts extends Controller {
                     $last_30 = null;
                     if ($result['price_last_30'] != '0.0000') {
                         $last_30 = $this->currency->format($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+
+
+                        if($this->session->data['currency']=='HRK'){
+                            $lasteur_30 = $this->currency->format($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
+
+                        }
+                        else{
+                            $lasteur_30  ='';
+
+                        }
                     }
 
                     $vpc = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 							
 					if ((float)$result['special']) {
 						$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                        if($this->session->data['currency']=='HRK'){
+                            $specialeur = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')),  'EUR');
+                        }
+                        else{
+                            $specialeur  ='';
+
+                        }
 						$date_end = $this->model_extension_basel_basel->getSpecialEndDate($result['product_id']);
                         if($result['special'] >= FREESHIPPING){
                             $freeshipping = true;
@@ -291,6 +322,10 @@ class ControllerExtensionModuleBaselProducts extends Controller {
                         'price_2'       => $price_2,
                         'vpc'       => $vpc,
                         'last_30'      => $last_30,
+                        'priceeur'       => $priceeur,
+                        'specialeur'     => $specialeur,
+                        'priceeur_2'       => $priceeur_2,
+                        'lasteur_30'      => $lasteur_30,
 						'new_label'  => $is_new,
 						'sale_badge' => $sale_badge,
                         'sale_percent' => $data['sale_percent'],
