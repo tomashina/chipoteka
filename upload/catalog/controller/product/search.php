@@ -209,6 +209,13 @@ class ControllerProductSearch extends Controller {
 
 				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
 					$price = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                    if($this->session->data['currency']=='HRK'){
+                        $priceeur = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
+                    }
+                    else{
+                        $priceeur  ='';
+
+                    }
 				} else {
 					$price = false;
 				}
@@ -217,6 +224,13 @@ class ControllerProductSearch extends Controller {
 
                 if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
                     $price_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                    if($this->session->data['currency']=='HRK'){
+                        $priceeur_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
+                    }
+                    else{
+                        $priceeur_2  ='';
+
+                    }
                 } else {
                     $price_2 = false;
                 }
@@ -224,10 +238,26 @@ class ControllerProductSearch extends Controller {
                 $last_30 = null;
                 if ($result['price_last_30'] != '0.0000') {
                     $last_30 = $this->currency->format($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+
+                    if($this->session->data['currency']=='HRK'){
+                        $lasteur_30 = $this->currency->format($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
+
+                    }
+                    else{
+                        $lasteur_30  ='';
+
+                    }
                 }
 
 				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
 					$special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+                    if($this->session->data['currency']=='HRK'){
+                        $specialeur = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')),  'EUR');
+                    }
+                    else{
+                        $specialeur  ='';
+
+                    }
 					$tax_price = (float)$result['special'];
                     if($result['special'] >= FREESHIPPING){
                         $freeshipping = true;
@@ -271,6 +301,10 @@ class ControllerProductSearch extends Controller {
                     'price_2'     => $price_2,
                     'last_30'     => $last_30,
 					'special'     => $special,
+                    'priceeur'       => $priceeur,
+                    'specialeur'     => $specialeur,
+                    'priceeur_2'       => $priceeur_2,
+                    'lasteur_30'      => $lasteur_30,
                     'freeshipping' => $freeshipping,
                     'saljemodo'   => $saljemodo,
 					'tax'         => $tax,
