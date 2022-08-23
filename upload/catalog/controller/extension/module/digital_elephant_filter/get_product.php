@@ -168,6 +168,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                 }
             } else {
                 $price = false;
+                $priceeur  ='';
             }
 
             //price_2 agmedia
@@ -183,6 +184,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                 }
             } else {
                 $price_2 = false;
+                $priceeur_2  ='';
             }
 
             $last_30 = null;
@@ -197,6 +199,8 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                     $lasteur_30  ='';
 
                 }
+            }else{
+                $lasteur_30  ='';
             }
 
             if ((float)$result['special']) {
@@ -217,6 +221,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                 }
             } else {
                 $special = false;
+                $specialeur  ='';
                 if($result['price'] >= FREESHIPPING){
                     $freeshipping = true;
                 }

@@ -185,6 +185,7 @@ class ControllerProductManufacturer extends Controller {
                     }
 				} else {
 					$price = false;
+                    $priceeur  ='';
 				}
 
 
@@ -201,6 +202,7 @@ class ControllerProductManufacturer extends Controller {
                     }
                 } else {
                     $price_2 = false;
+                    $priceeur_2  ='';
                 }
 
                 $last_30 = null;
@@ -214,6 +216,9 @@ class ControllerProductManufacturer extends Controller {
                         $lasteur_30  ='';
 
                     }
+                }
+                else{
+                    $lasteur_30  ='';
                 }
 
 				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
@@ -234,6 +239,7 @@ class ControllerProductManufacturer extends Controller {
                     }
 				} else {
 					$special = false;
+                    $specialeur  ='';
 					$tax_price = (float)$result['price'];
                     if($result['price'] >= FREESHIPPING){
                         $freeshipping = true;

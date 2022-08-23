@@ -191,6 +191,7 @@ class ControllerProductCategory extends Controller {
                     }
 				} else {
 					$price = false;
+                    $priceeur  ='';
 				}
 
                 $vpc = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
@@ -209,6 +210,7 @@ class ControllerProductCategory extends Controller {
                     }
                 } else {
                     $price_2 = false;
+                    $priceeur_2  ='';
                 }
 
                 $last_30 = null;
@@ -224,6 +226,8 @@ class ControllerProductCategory extends Controller {
 
                     }
 
+                }else{
+                    $lasteur_30  ='';
                 }
 
 				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
@@ -247,6 +251,7 @@ class ControllerProductCategory extends Controller {
                     }
 				} else {
 					$special = false;
+                    $specialeur  ='';
 					$tax_price = (float)$result['price'];
                     if($result['price'] >= FREESHIPPING){
                         $freeshipping = true;

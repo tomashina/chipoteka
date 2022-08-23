@@ -411,6 +411,7 @@ class ControllerProductProduct extends Controller {
 
             } else {
 				$data['price'] = false;
+                $data['priceeur'] ='';
 			}
 
             $data['vpc'] = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
@@ -432,6 +433,7 @@ class ControllerProductProduct extends Controller {
                 $data['ratedvacetiri'] = $this->currency->format($this->tax->calculate($ratedvacetiri, $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
             } else {
                 $data['price_2'] = false;
+                $data['priceeur_2']  ='';
 
                 $ratedvanaest = $product_info['price'] / 12;
                 $ratedvacetiri = ($product_info['price'] * 1.07) / 24;
@@ -451,6 +453,9 @@ class ControllerProductProduct extends Controller {
 
                     $data['priceeur_last_30'] ='';
                 }
+            }
+            else{
+                $data['priceeur_last_30'] ='';
             }
 
 			if (!is_null($product_info['special']) && (float)$product_info['special'] >= 0) {
@@ -483,6 +488,7 @@ class ControllerProductProduct extends Controller {
                 }
 			} else {
 				$data['special'] = false;
+                $data['specialeur']  ='';
 				$tax_price = (float)$product_info['price'];
 
                 if($product_info['price']>= FREESHIPPING){
@@ -627,6 +633,7 @@ class ControllerProductProduct extends Controller {
                     }
 				} else {
 					$price = false;
+                    $priceeur  ='';
 				}
 
                 //price_2 agmedia
@@ -643,6 +650,7 @@ class ControllerProductProduct extends Controller {
                     }
                 } else {
                     $price_2 = false;
+                    $priceeur_2  ='';
                 }
 
 				if (!is_null($result['special']) && (float)$result['special'] >= 0) {
@@ -663,6 +671,7 @@ class ControllerProductProduct extends Controller {
                     }
 				} else {
 					$special = false;
+                    $specialeur  ='';
 					$tax_price = (float)$result['price'];
 
                     if($result['price'] >= FREESHIPPING){
