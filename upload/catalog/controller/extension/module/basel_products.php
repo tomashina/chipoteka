@@ -135,6 +135,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
                         }
 					} else {
 						$price = false;
+                        $priceeur  ='';
 					}
 
                     //price_2 agmedia
@@ -150,6 +151,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
                         }
                     } else {
                         $price_2 = false;
+                        $priceeur_2  ='';
                     }
 
                     $last_30 = null;
@@ -165,6 +167,8 @@ class ControllerExtensionModuleBaselProducts extends Controller {
                             $lasteur_30  ='';
 
                         }
+                    }else{
+                        $lasteur_30  ='';
                     }
 
                     $vpc = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
@@ -187,6 +191,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
                         }
 					} else {
 						$special = false;
+                        $specialeur  ='';
 						$date_end = false;
                         if($result['price'] >= FREESHIPPING){
                             $freeshipping = true;
