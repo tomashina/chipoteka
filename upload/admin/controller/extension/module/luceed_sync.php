@@ -593,7 +593,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
     {
         $_loc = new LOC_Action(LuceedProduct::getActions());
 
-        $updated = $_loc->collectWebPrices()
+        $updated = $_loc->collectProductsRegularPrices()
+                        ->collectWebPrices()
                         ->update();
 
         return $this->response($updated, 'update');

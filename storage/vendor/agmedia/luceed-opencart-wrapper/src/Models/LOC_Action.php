@@ -72,6 +72,7 @@ class LOC_Action
      */
     public function __construct($actions, $last_30 = false)
     {
+        $this->prices_to_update = collect();
         $this->actions = $last_30 ? $this->setActionPricesLast30($actions) : $this->setActions($actions);
         $this->db      = new Database(DB_DATABASE);
     }
@@ -100,15 +101,12 @@ class LOC_Action
      */
     public function collectWebPrices()
     {
-        $this->prices_to_update = collect();
         $action = $this->getActions()
                         ->where('status', '!=', '1')
                         ->where('naziv', '=', 'web_cijene')->first();
 
         $categories = collect();
         $manufacturers = collect();
-
-        $this->collectProductsRegularPrices();
 
         foreach ($action->stavke as $item) {
             if ($item->grupa_artikla && ! is_null($item->mpc_rabat)) {
@@ -375,8 +373,6 @@ class LOC_Action
                 $temp_product .= '("' . $product->artikl_uid . '", 0, ' . number_format($product->najnizi_mpc_30_dana, 2, '.','') . '),';
             }
 
-            Log::store($temp_product, 'import_last30_query');
-
             $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($temp_product, 0, -1) . ";");
             $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.luceed_uid = pt.uid SET p.price_last_30 = pt.price");
 
@@ -386,15 +382,11 @@ class LOC_Action
         return 0;
     }
 
-    /*******************************************************************************
-    *                                Copyright : AGmedia                           *
-    *                              email: filip@agmedia.hr                         *
-    *******************************************************************************/
 
     /**
-     *
+     * @return $this
      */
-    private function collectProductsRegularPrices(): void
+    public function collectProductsRegularPrices()
     {
         $loc = new LOC_Product(LuceedProduct::all());
 
@@ -408,7 +400,14 @@ class LOC_Action
         foreach ($products as $product) {
             $this->prices_to_update->put($product->artikl, $product->mpc);
         }
+
+        return $this;
     }
+
+    /*******************************************************************************
+    *                                Copyright : AGmedia                           *
+    *                              email: filip@agmedia.hr                         *
+    *******************************************************************************/
 
 
     /**
