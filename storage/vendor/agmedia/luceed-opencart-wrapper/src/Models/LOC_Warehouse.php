@@ -176,9 +176,9 @@ class LOC_Warehouse
         }
 
         // provjeri trgovine bez dubrovnika
-        $qty_stores_without_dubrovnik = 0;
+        //$qty_stores_without_dubrovnik = 0;
         // STORES WAREHOUSE COUNT
-        foreach ($houses_stores as $house) {
+        /*foreach ($houses_stores as $house) {
             if ($house['skladiste'] != '012') {
                 $has = $stores->where('skladiste_uid', $house['skladiste_uid'])->first();
 
@@ -190,7 +190,7 @@ class LOC_Warehouse
 
         if ($qty_stores_without_dubrovnik < 0) {
             $qty_stores_without_dubrovnik = 0;
-        }
+        }*/
 
         $title = '';
         $btn = '';
@@ -211,7 +211,7 @@ class LOC_Warehouse
             $date = 0;
         }
 
-        if ( ! $qty_default && ($suplier->dobavljac_stanje || $qty_stores_without_dubrovnik)) {
+        if ( ! $qty_default && ($suplier->dobavljac_stanje/* || $qty_stores_without_dubrovnik*/)) {
             $title = 'warning';
             $btn = 'DOSTUPNO NA IZDVOJENOM SKLADIŠTU';
             $button = 'Stavi u košaricu';
