@@ -119,6 +119,8 @@ class LOC_Warehouse
             LuceedProduct::getSuplierStock($product)
         ))->where('main', 'D')->first();
 
+        $dobavljac_stanje = $suplier->dobavljac_stanje;
+
         // AVAILABILITY VIEW
         foreach ($houses as $house) {
             $has = $availables->where('skladiste_uid', $house['skladiste_uid'])->first();
@@ -157,9 +159,9 @@ class LOC_Warehouse
             }
         }
 
-        /*if ($qty_default < 0) {
+        if ($qty_default < 0) {
             $qty_default = 0;
-        }*/
+        }
 
         $qty_stores = 0;
         // STORES WAREHOUSE COUNT
@@ -192,6 +194,10 @@ class LOC_Warehouse
             $qty_stores_without_dubrovnik = 0;
         }*/
 
+        if ( ! $dobavljac_stanje && $qty_stores) {
+            $dobavljac_stanje = $qty_stores;
+        }
+
         $title = '';
         $btn = '';
         $button = '';
@@ -204,21 +210,21 @@ class LOC_Warehouse
             $date = ($date->diff(Carbon::now())->days < 1) ? 'Šaljemo sutra' : 'Šaljemo do ' . $date->format('d.m.Y');;
         }
 
-        if ( ! $qty_default && ! $suplier->dobavljac_stanje && $qty_stores) {
+        if ( ! $qty_default && ! $dobavljac_stanje && $qty_stores) {
             $title = 'secondary';
             $btn = 'NEDOSTUPNO NA WEBU';
             $button = 'Nedostupno online';
             $date = 0;
         }
 
-        if ( ! $qty_default && ($suplier->dobavljac_stanje/* || $qty_stores_without_dubrovnik*/)) {
+        if ( ! $qty_default && ($dobavljac_stanje/* || $qty_stores_without_dubrovnik*/)) {
             $title = 'warning';
             $btn = 'DOSTUPNO NA IZDVOJENOM SKLADIŠTU';
             $button = 'Stavi u košaricu';
             $date = 'Šaljemo do ' . Carbon::now()->addWeekdays(5)->format('d.m.Y');
         }
 
-        if ( ! $qty_default && ! $suplier->dobavljac_stanje && ! $qty_stores) {
+        if ( ! $qty_default && ! $dobavljac_stanje && ! $qty_stores) {
             $title = 'secondary';
             $btn = 'PROIZVOD NEDOSTUPAN';
             $button = 'Nedostupno';
@@ -234,7 +240,7 @@ class LOC_Warehouse
         $response->push([
             'title' => 'Dobavljač',
             'address' => '',
-            'qty'   => $suplier->dobavljac_stanje
+            'qty'   => $dobavljac_stanje
         ]);
 
         $response->push([
