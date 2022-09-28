@@ -9,6 +9,7 @@ class ModelToolImage extends Model {
 
 		$image_old = $filename;
 		$image_new = 'cache/' . utf8_substr($filename, 0, utf8_strrpos($filename, '.')) . '-' . (int)$width . 'x' . (int)$height . '.' . $extension;
+        $image_new_webp = 'cachewebp/' . utf8_substr($filename, 0, utf8_strrpos($filename, '.')) . '-' . (int)$width . 'x' . (int)$height . '.webp';
 
 		if (!is_file(DIR_IMAGE . $image_new) || (filemtime(DIR_IMAGE . $image_old) > filemtime(DIR_IMAGE . $image_new))) {
 			list($width_orig, $height_orig, $image_type) = getimagesize(DIR_IMAGE . $image_old);
@@ -37,6 +38,28 @@ class ModelToolImage extends Model {
 				copy(DIR_IMAGE . $image_old, DIR_IMAGE . $image_new);
 			}
 		}
+
+        $gd = gd_info();
+        if ($gd['WebP Support']) {
+            if (!is_file(DIR_IMAGE . $image_new_webp) || (filectime(DIR_IMAGE . $image_new) > filectime(DIR_IMAGE . $image_new_webp))) {
+
+                $path = '';
+
+                $directories = explode('/', dirname($image_new_webp));
+
+                foreach ($directories as $directory) {
+                    $path = $path . '/' . $directory;
+
+                    if (!is_dir(DIR_IMAGE . $path)) {
+                        @mkdir(DIR_IMAGE . $path, 0777);
+                    }
+                }
+
+                $image_webp = new Image(DIR_IMAGE . $image_old);
+                $image_webp->resize($width, $height);
+                $image_webp->save_webp(DIR_IMAGE . $image_new_webp);
+            }
+        }
 		
 		$image_new = str_replace(' ', '%20', $image_new);  // fix bug when attach image on email (gmail.com). it is automatic changing space " " to +
 		

@@ -72,6 +72,28 @@ class Response {
 	 * 
 	 * @return	string
  	*/
+
+    public function webpRebuild($output) {
+        $gd = gd_info();
+        if ($gd['WebP Support']) {
+            $uri = '';
+
+            if (isset($_SERVER['REQUEST_URI'])) {
+                $uri = $_SERVER['REQUEST_URI'];
+            }
+
+            if (stripos($uri, 'admin') === false) {
+                if (isset($_SERVER['HTTP_ACCEPT']) && isset($_SERVER['HTTP_USER_AGENT'])) {
+                    if( strpos( $_SERVER['HTTP_ACCEPT'], 'image/webp' ) !== false ) {
+                        $re = '/(cache)(.*)(\.jpg|\.png|.jpeg)/U';
+                        $subst = '$1webp$2.webp';
+                        $this->output = preg_replace($re, $subst, $this->output);
+                    }
+                }
+            }
+        }
+    }
+
 	private function compress($data, $level = 0) {
 		if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false)) {
 			$encoding = 'gzip';
@@ -117,7 +139,8 @@ class Response {
             $this->output = preg_replace("/\>\r\n</", '><', $this->output);
         }
 		if ($this->output) {
-			$output = $this->level ? $this->compress($this->output, $this->level) : $this->output;
+            $this->webpRebuild($this->output);
+            $output = $this->level ? $this->compress($this->output, $this->level) : $this->output;
 			
 			if (!headers_sent()) {
 				foreach ($this->headers as $header) {

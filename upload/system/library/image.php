@@ -113,6 +113,15 @@ class Image {
      * @param	string	$file
 	 * @param	int		$quality
      */
+
+    public function save_webp($file, $quality = 90) {
+        if (is_resource($this->image)) {
+            imagewebp($this->image, $file, $quality);
+            imagedestroy($this->image);
+        }
+    }
+
+
 	public function save($file, int $quality = 90) {
 		$info = pathinfo($file);
 
