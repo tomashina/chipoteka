@@ -75,7 +75,7 @@ class ControllerExtensionFeedNabavanet extends Controller {
 
                // $output .= '<internal_product_id>' . $product['product_id'] . '</internal_product_id>';
                  $output .= '<category>'.$this->wrapInCDATA($this->getCategoriesName($product['product_id'])).'</category>';
-                $output .= '<image_url>' . $this->wrapInCDATA('https://cdn.chipoteka.hr/image/' . $product['image']) . '</image_url>';
+                $output .= '<image_url>' . $this->wrapInCDATA('https://cdn.pluschip.lin29.host25.com/image/' . $product['image']) . '</image_url>';
         $output .= '<description>' . $this->wrapInCDATA($description) . '</description>';
                  $output .= '<shipping_cost>'. $shipping_cost .'</shipping_cost>';
 
