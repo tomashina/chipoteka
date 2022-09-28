@@ -34,6 +34,7 @@ class ModelCatalogProduct extends Model {
 				'jan'              => $query->row['jan'],
 				'isbn'             => $query->row['isbn'],
 				'mpn'              => $query->row['mpn'],
+                'vpc'              => $query->row['vpc'],
 				'location'         => $query->row['location'],
 				'quantity'         => $query->row['quantity'],
 				'stock_status'     => $query->row['stock_status'],

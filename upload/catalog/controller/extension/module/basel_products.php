@@ -274,7 +274,8 @@ class ControllerExtensionModuleBaselProducts extends Controller {
                         }
 					} else {
 						$sale_badge = false;
-					}
+
+                        $data['sale_percent'] ='';			}
 
 					$image2 = $this->model_catalog_product->getProductImages($result['product_id']);
 					if(isset($image2[0]['image']) && !empty($image2[0]['image']) && $this->config->get('basel_thumb_swap')){
