@@ -296,6 +296,8 @@ class ControllerProductCategory extends Controller {
 
                         } else {
                             $sale_badge = $this->language->get('basel_text_sale');
+
+
                         }
 
                     }
@@ -331,12 +333,14 @@ class ControllerProductCategory extends Controller {
 
                         } else {
                             $sale_badge = $this->language->get('basel_text_sale');
+
                         }
 
                     }
 
                 } else {
                     $sale_badge = false;
+                    $data['sale_percent'] ='';
                 }
 	
 				if ($this->config->get('config_tax')) {
@@ -367,7 +371,7 @@ class ControllerProductCategory extends Controller {
                 }
 
 				$data['products'][] = array(
-                    'product_id'   => $result['product_id'],
+                    'product_id'   => $result['product_id'],f
                     'thumb'        => $image,
                     'name'         => $result['name'],
                     'price'        => $price,
