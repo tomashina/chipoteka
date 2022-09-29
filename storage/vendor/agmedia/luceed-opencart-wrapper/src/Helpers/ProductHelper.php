@@ -202,7 +202,7 @@ class ProductHelper
                 $newstring = substr($product['filename'], -3);
             }
 
-            $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.webp';
+            $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.jpg';
 
             if (in_array($newstring, ['png', 'PNG'])) {
                 $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.' . $newstring;
@@ -241,7 +241,7 @@ class ProductHelper
                         }
                         imagepng($image, DIR_IMAGE . $image_path . $name, 8);
                     } else {*/
-                        imagewebp($image, DIR_IMAGE . $image_path . $name, 90);
+                        imagejpeg($image, DIR_IMAGE . $image_path . $name, 90);
                    // }
 
                     // Return only the image path.
