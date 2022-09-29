@@ -73,7 +73,7 @@ class Response {
 	 * @return	string
  	*/
 
-   /* public function webpRebuild($output) {
+   public function webpRebuild($output) {
         $gd = gd_info();
         if ($gd['WebP Support']) {
             $uri = '';
@@ -92,7 +92,7 @@ class Response {
                 }
             }
         }
-    }*/
+    }
 
 	private function compress($data, $level = 0) {
 		if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false)) {
@@ -139,7 +139,7 @@ class Response {
             $this->output = preg_replace("/\>\r\n</", '><', $this->output);
         }
 		if ($this->output) {
-          //  $this->webpRebuild($this->output);
+            $this->webpRebuild($this->output);
             $output = $this->level ? $this->compress($this->output, $this->level) : $this->output;
 			
 			if (!headers_sent()) {

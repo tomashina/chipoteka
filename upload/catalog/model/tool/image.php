@@ -39,7 +39,7 @@ class ModelToolImage extends Model {
 			}
 		}
 
-    /*    $gd = gd_info();
+       $gd = gd_info();
         if ($gd['WebP Support']) {
             if (!is_file(DIR_IMAGE . $image_new_webp) || (filectime(DIR_IMAGE . $image_new) > filectime(DIR_IMAGE . $image_new_webp))) {
 
@@ -59,7 +59,7 @@ class ModelToolImage extends Model {
                 $image_webp->resize($width, $height);
                 $image_webp->save_webp(DIR_IMAGE . $image_new_webp);
             }
-        }*/
+        }
 		
 		$image_new = str_replace(' ', '%20', $image_new);  // fix bug when attach image on email (gmail.com). it is automatic changing space " " to +
 		
