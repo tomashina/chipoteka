@@ -215,31 +215,14 @@ class ProductHelper
                 $errorlevel = error_reporting();
                 error_reporting(0);
                 $image = imagecreatefromstring($bin);
-                imagealphablending($image, false); // setting alpha blending on
-                imagesavealpha($image, true); // save alphablending setting (important)
+              //  imagealphablending($image, false); // setting alpha blending on
+              //  imagesavealpha($image, true); // save alphablending setting (important)
              //   error_reporting($errorlevel);
 
                 if ($image !== false) {
-                    if (in_array($newstring, ['png', 'PNG'])) {
-                        $bg = imagecreatetruecolor(imagesx($image), imagesy($image));
+                  if (in_array($newstring, ['png', 'PNG'])) {
 
-                        // Allocate the color
-                        $color = imagecolorallocate($bg, 255, 255, 255);
-
-                        // Fill the background with white
-                        imagefill($bg, 0, 0, $color);
-
-                        // Alpha blending must be enabled on the background!
-                        imagealphablending($bg, TRUE);
-
-                        // Copy the current image onto the opaque background
-                        if (imagecopy($bg, $image, 0, 0, 0, 0, imagesx($image), imagesy($image)))
-                        {
-                            // Replace the image with the background copy
-                            imagedestroy($image);
-                            $image = $bg;
-                        }
-                        imagepng($image, DIR_IMAGE . $image_path . $name, 60);
+                        imagepng($image, DIR_IMAGE . $image_path . $name, 70);
                     } else {
                     imagewebp($image, DIR_IMAGE . $image_path . $name, 90);
                     }
