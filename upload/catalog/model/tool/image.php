@@ -42,7 +42,6 @@ class ModelToolImage extends Model {
        $gd = gd_info();
         if ($gd['WebP Support']) {
             if (!is_file(DIR_IMAGE . $image_new_webp) || (filectime(DIR_IMAGE . $image_new) > filectime(DIR_IMAGE . $image_new_webp))) {
-
                 $path = '';
 
                 $directories = explode('/', dirname($image_new_webp));

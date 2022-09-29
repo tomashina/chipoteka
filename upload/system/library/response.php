@@ -93,7 +93,6 @@ class Response {
             }
         }
     }
-
 	private function compress($data, $level = 0) {
 		if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && (strpos($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') !== false)) {
 			$encoding = 'gzip';

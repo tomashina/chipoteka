@@ -121,7 +121,6 @@ class Image {
         }
     }
 
-
 	public function save($file, int $quality = 90) {
 		$info = pathinfo($file);
 
