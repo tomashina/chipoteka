@@ -249,7 +249,7 @@ class ProductHelper
                         }
                         imagepng($image, DIR_IMAGE . $image_path . $name, 8);
                     } else {*/
-                    imagewebp($image, DIR_IMAGE . $image_path . $name, 100);
+                    imagewebp($image, DIR_IMAGE . $image_path . $name, 90);
                    // }
 
                     // Return only the image path.
