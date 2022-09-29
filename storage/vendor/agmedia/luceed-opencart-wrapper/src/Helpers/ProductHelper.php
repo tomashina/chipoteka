@@ -239,10 +239,10 @@ class ProductHelper
                             imagedestroy($image);
                             $image = $bg;
                         }
-                        imagepng($image, DIR_IMAGE . $image_path . $name, 8);
+                        imagepng($image, DIR_IMAGE . $image_path . $name, 60);
                     } else {
                     imagewebp($image, DIR_IMAGE . $image_path . $name, 90);
-                   // }
+                    }
 
                     // Return only the image path.
                     return $image_path . $name;
