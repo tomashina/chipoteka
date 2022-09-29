@@ -414,7 +414,7 @@ class ControllerProductProduct extends Controller {
                 $data['priceeur'] ='';
 			}
 
-            $data['vpc'] = $this->currency->format($this->tax->calculate($result['vpc'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
+            $data['vpc'] = $this->currency->format($this->tax->calculate($product_info['vpc'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 
             //price_2 agmedia
 
