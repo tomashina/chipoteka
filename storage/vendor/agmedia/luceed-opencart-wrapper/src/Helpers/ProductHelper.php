@@ -202,7 +202,7 @@ class ProductHelper
                 $newstring = substr($product['filename'], -3);
             }
 
-            $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.jpg';
+            $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.webp';
 
             if (in_array($newstring, ['png', 'PNG'])) {
                 $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.' . $newstring;
@@ -220,29 +220,12 @@ class ProductHelper
              //   error_reporting($errorlevel);
 
                 if ($image !== false) {
-                  /*  if (in_array($newstring, ['png', 'PNG'])) {
-                        $bg = imagecreatetruecolor(imagesx($image), imagesy($image));
+                   if (in_array($newstring, ['png', 'PNG'])) {
 
-                        // Allocate the color
-                        $color = imagecolorallocate($bg, 255, 255, 255);
-
-                        // Fill the background with white
-                        imagefill($bg, 0, 0, $color);
-
-                        // Alpha blending must be enabled on the background!
-                        imagealphablending($bg, TRUE);
-
-                        // Copy the current image onto the opaque background
-                        if (imagecopy($bg, $image, 0, 0, 0, 0, imagesx($image), imagesy($image)))
-                        {
-                            // Replace the image with the background copy
-                            imagedestroy($image);
-                            $image = $bg;
-                        }
                         imagepng($image, DIR_IMAGE . $image_path . $name, 8);
-                    } else {*/
-                        imagejpeg($image, DIR_IMAGE . $image_path . $name, 90);
-                   // }
+                    } else {
+                        imagewebp($image, DIR_IMAGE . $image_path . $name, 90);
+                    }
 
                     // Return only the image path.
                     return $image_path . $name;
