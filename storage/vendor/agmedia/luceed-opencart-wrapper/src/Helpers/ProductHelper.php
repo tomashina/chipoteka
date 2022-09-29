@@ -204,9 +204,7 @@ class ProductHelper
 
             $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.jpg';
 
-            if (in_array($newstring, ['png', 'PNG'])) {
-                $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.' . $newstring;
-            }
+
 
             // Setup and create the image with GD library.
             $bin = base64_decode(static::getImageString($product));
