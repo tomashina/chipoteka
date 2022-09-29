@@ -202,10 +202,10 @@ class ProductHelper
                 $newstring = substr($product['filename'], -3);
             }
 
-            $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.jpg';
+            $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.webp';
 
             if (in_array($newstring, ['png', 'PNG'])) {
-                $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.' . $newstring;
+                $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.webp' ;
             }
 
             // Setup and create the image with GD library.
@@ -241,7 +241,7 @@ class ProductHelper
                         }
                         imagepng($image, DIR_IMAGE . $image_path . $name, 8);
                     } else {*/
-                        imagejpeg($image, DIR_IMAGE . $image_path . $name, 90);
+                    imagewebp($image, DIR_IMAGE . $image_path . $name, 100);
                    // }
 
                     // Return only the image path.
