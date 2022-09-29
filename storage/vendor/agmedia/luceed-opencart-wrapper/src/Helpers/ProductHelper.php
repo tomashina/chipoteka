@@ -204,8 +204,9 @@ class ProductHelper
 
             $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.webp';
 
-            Log::store($uid, 'image_uid');
-
+            if (in_array($newstring, ['png', 'PNG'])) {
+                $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.' . $newstring;
+            }
 
             // Setup and create the image with GD library.
             $bin = base64_decode(static::getImageString($product));
@@ -213,6 +214,14 @@ class ProductHelper
             if ($bin) {
                 $errorlevel = error_reporting();
                 error_reporting(0);
+
+
+            Log::store(getimagesizefromstring($bin), 'image_bin');
+
+
+
+
+
                 $image = imagecreatefromstring($bin);
               //  imagealphablending($image, false); // setting alpha blending on
               //  imagesavealpha($image, true); // save alphablending setting (important)
@@ -240,7 +249,7 @@ class ProductHelper
                         }
                         imagepng($image, DIR_IMAGE . $image_path . $name, 8);
                     } else {*/
-                    imagewebp($image, DIR_IMAGE . $image_path . $name, 30);
+                    imagewebp($image, DIR_IMAGE . $image_path . $name, 100);
                    // }
 
                     // Return only the image path.
