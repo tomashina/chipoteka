@@ -202,7 +202,7 @@ class ProductHelper
                 $newstring = substr($product['filename'], -3);
             }
 
-            $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.jpg';
+            $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.webp';
 
 
 
