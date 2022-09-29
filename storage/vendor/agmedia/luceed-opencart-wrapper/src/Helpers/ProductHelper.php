@@ -204,7 +204,7 @@ class ProductHelper
 
             $name = Str::slug($naziv) . '-' . strtoupper(Str::random(9)) . '.webp';
 
-            Log::store('image', $uid);
+            Log::store($uid, 'image_uid');
 
 
             // Setup and create the image with GD library.
