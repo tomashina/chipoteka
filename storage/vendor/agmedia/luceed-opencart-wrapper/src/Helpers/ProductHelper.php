@@ -221,7 +221,6 @@ class ProductHelper
 
                 if ($image !== false) {
                     if (in_array($newstring, ['png', 'PNG'])) {
-
                         imagepng($image, DIR_IMAGE . $image_path . $name, 90);
                     } else {
                         imagewebp($image, DIR_IMAGE . $image_path . $name, 90);
