@@ -76,7 +76,6 @@
   {% if ('product-product' not in class)  %}
     <meta property="og:type" content="website" />
   {% endif %}
-
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:site" content="@chipoteka" />
   <meta name="twitter:title" content="{{ title }}" />
@@ -84,22 +83,39 @@
   {% if ('product-product' not in class)  and ('product-manufacturer-info' not in class) %}
   <meta name="twitter:image" content="{{ logo_meta }}" />
   {% endif %}
-
-
-
   <script id="mcjs">
     function showPopup() {
-
       !function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/a42edaf1f170c1646921949fd/91005810918a81f7e8a50079f.js");
 //unsetting the cookie
       document.cookie = "MCPopupClosed=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       document.cookie = "MCPopupSubscribed=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     }
   </script>
-
+  <script>
+    $( window ).on( 'load', function () {
+      if( $( '.page-loader' ).length > 0 ) {
+        $( '.page-loader' ).fadeOut();
+      }
+    });
+  </script>
+  <style>
+    body {
+      animation: fadeInAnimation ease 1s;
+      animation-iteration-count: 1;
+      animation-fill-mode: forwards;
+    }
+    @keyframes fadeInAnimation {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+  </style>
 </head>
 <body>
-
+<div class="page-loader"></div>
 <header class="page-header" data-fixed-element>
   {% if notification_status %}
 
