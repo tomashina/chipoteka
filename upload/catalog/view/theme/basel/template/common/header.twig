@@ -91,13 +91,7 @@
       document.cookie = "MCPopupSubscribed=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     }
   </script>
-  <script>
-    $( window ).on( 'load', function () {
-      if( $( '.page-loader' ).length > 0 ) {
-        $( '.page-loader' ).fadeOut();
-      }
-    });
-  </script>
+
   <style>
     body {
       animation: fadeInAnimation ease 1s;
@@ -115,7 +109,6 @@
   </style>
 </head>
 <body>
-<div class="page-loader"></div>
 <header class="page-header" data-fixed-element>
   {% if notification_status %}
 
