@@ -1,7 +1,7 @@
 <?php
 
 namespace Agmedia\LuceedOpencartWrapper\Models;
-
+use Agmedia\Helpers\Database;
 use Agmedia\Helpers\Log;
 use Agmedia\Luceed\Facade\LuceedProduct;
 use Carbon\Carbon;
@@ -13,6 +13,13 @@ use Illuminate\Support\Collection;
  */
 class LOC_Warehouse
 {
+
+
+    /**
+     * @var Database
+     */
+    private $db;
+
 
     /**
      * @var array
@@ -243,6 +250,8 @@ class LOC_Warehouse
             'qty'   => $dobavljac_stanje
         ]);
 
+
+
         $response->push([
             'title' => 'Btn',
             'btn' => $title,
@@ -250,6 +259,10 @@ class LOC_Warehouse
             'address' => $btn,
             'qty'   => $date
         ]);
+
+        $this->db = new Database(DB_DATABASE);
+
+        $this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = '".$qty_default."' + '". $dobavljac_stanje."' WHERE sku = '".$product."'  ");
 
         return $response;
     }
