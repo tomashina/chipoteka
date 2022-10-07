@@ -172,6 +172,10 @@ class ControllerProductProduct extends Controller {
 		}
 
 		$this->load->model('catalog/product');
+        $pinfo = $this->model_catalog_product->getProduct($product_id);
+
+        $loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse();
+        $loc->getAvailabilityForProduct($pinfo['sku']);
 
 		$product_info = $this->model_catalog_product->getProduct($product_id);
 
