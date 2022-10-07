@@ -305,7 +305,9 @@
                             <div class="col-lg-7 mb-3">
                                 <h5>Opis</h5>
                                 {{ description }}
-
+                                {% if  ean  %}
+                                    <div id="flix-inpage"></div><script type="text/javascript" src="//media.flixfacts.com/js/loader.js" data-flix-distributor="18103" data-flix-language="hr" data-flix-brand="{{ manufacturer }}" data-flix-mpn="{{ ean }}" data-flix-ean="" data-flix-sku=""  data-flix-inpage="flix-inpage" data-flix-button-image="" data-flix-price="" data-flix-fallback-language="" async></script>
+                                {% endif %}
 
                             </div>
                             {% if manufacturer %}
