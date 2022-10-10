@@ -381,6 +381,7 @@ class ControllerProductCategory extends Controller {
                     'sale_badge' => $sale_badge,
                     'sale_percent' => $data['sale_percent'],
                     'quantity'  => $result['quantity'],
+                    'pakiranje' => $result['pakiranje'] ?: 1,
                     'vpc'          => $vpc,
                     'pj'           => $pj,
                     'special'      => $special,

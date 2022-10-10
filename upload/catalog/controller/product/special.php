@@ -135,6 +135,8 @@ class ControllerProductSpecial extends Controller {
                 'price_2'     => $price_2,
                 'last_30'     => $last_30,
 				'special'     => $special,
+                'quantity'  => $result['quantity'],
+                'pakiranje' => $result['pakiranje'] ?: 1,
 				'tax'         => $tax,
 				'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 				'rating'      => $result['rating'],

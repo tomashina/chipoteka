@@ -337,6 +337,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
                         'sale_percent' => $data['sale_percent'],
                         'saljemodo'     => $saljemodo,
                         'freeshipping' => $freeshipping,
+                        'pakiranje' => $result['pakiranje'] ?: 1,
 						'special' 	 => $special,
                         'pj' => $pj,
 						'tax'        => $tax,

@@ -275,6 +275,8 @@ class ControllerProductManufacturer extends Controller {
                     'last_30'     => $last_30,
 					'special'     => $special,
                     'priceeur'       => $priceeur,
+                    'quantity'  => $result['quantity'],
+                    'pakiranje' => $result['pakiranje'] ?: 1,
                     'specialeur'     => $specialeur,
                     'priceeur_2'       => $priceeur_2,
                     'lasteur_30'      => $lasteur_30,

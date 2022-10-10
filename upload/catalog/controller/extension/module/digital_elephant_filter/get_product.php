@@ -365,6 +365,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 				'sale_end_date' => $date_end['date_end'] ?? '',
                 'name'        => $result['name'],
 				'quantity'  => $result['quantity'],
+                'pakiranje' => $result['pakiranje'] ?: 1,
                 'description' => $description,
                 'price'       => $price,
                 'price_2'       => $price_2,
