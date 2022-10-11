@@ -64,10 +64,10 @@ class ModelToolImage extends Model {
 		
 		if ($this->request->server['HTTPS']) {
 			//return $this->config->get('config_ssl') . 'image/' . $image_new;
-            return 'https://cdn.pluschip.lin29.host25.com/image/' . $image_new . '" width="' . $width . '" height="' . $height;
+            return 'https://www.chipoteka.hr/image/' . $image_new . '" width="' . $width . '" height="' . $height;
 		} else {
 			//return $this->config->get('config_url') . 'image/' . $image_new;
-            return 'https://cdn.pluschip.lin29.host25.com/image/' . $image_new . '" width="' . $width . '" height="' . $height;
+            return 'https://www.chipoteka.hr/image/' . $image_new . '" width="' . $width . '" height="' . $height;
 		}
 	}
 }

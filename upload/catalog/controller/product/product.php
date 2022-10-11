@@ -352,7 +352,7 @@ class ControllerProductProduct extends Controller {
 				$data['popup'] = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_popup_height'));
 
 
-                $data['slika'] = 'https://cdn.pluschip.lin29.host25.com/image/'.$product_info['image'];
+                $data['slika'] = 'https://www.chipoteka.hr/image/'.$product_info['image'];
 
 			} else {
 				$data['popup'] = '';
@@ -372,11 +372,11 @@ class ControllerProductProduct extends Controller {
 			$results = $this->model_catalog_product->getProductImages($this->request->get['product_id']);
 
             if ($product_info['image']) {
-                $this->document->addOGMeta('property="og:image"', 'https://cdn.pluschip.lin29.host25.com/image/'.$product_info['image'] );
+                $this->document->addOGMeta('property="og:image"', 'https://www.chipoteka.hr/image/'.$product_info['image'] );
 
 
 
-                $this->document->addOGMeta('property="twitter:image"', 'https://cdn.pluschip.lin29.host25.com/image/'.$product_info['image'] );
+                $this->document->addOGMeta('property="twitter:image"', 'https://www.chipoteka.hr/image/'.$product_info['image'] );
                 $this->document->addOGMeta('property="og:image:width"', '600');
                 $this->document->addOGMeta('property="og:image:height"', '600');
             } else {
@@ -385,8 +385,8 @@ class ControllerProductProduct extends Controller {
                 $this->document->addOGMeta('property="og:image:height"', '300');
             }
             foreach ($results as $result) {
-                $this->document->addOGMeta( 'property="og:image"', 'https://cdn.pluschip.lin29.host25.com/image/'.$result['image']);
-                $this->document->addOGMeta( 'property="twitter:image"', 'https://cdn.pluschip.lin29.host25.com/image/'.$result['image']);
+                $this->document->addOGMeta( 'property="og:image"', 'https://www.chipoteka.hr/image/'.$result['image']);
+                $this->document->addOGMeta( 'property="twitter:image"', 'https://www.chipoteka.hr/image/'.$result['image']);
                 $this->document->addOGMeta('property="og:image:width"', '600');
                 $this->document->addOGMeta('property="og:image:height"', '600');
             }
