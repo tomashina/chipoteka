@@ -77,22 +77,26 @@ class ControllerExtensionModuleMsmartSearch extends Controller {
 				$img = $this->model_tool_image->resize('placeholder.png', $width, $height );
 			}
 		}
+        if($product['price'] > 0){
 
-		return array(
-			'type' => 'product',
-			'id' => $product['product_id'],
-			'name' => html_entity_decode($product['name'], ENT_QUOTES, 'UTF-8'),
-			'url' => $this->url->link('product/product', 'product_id=' . $product['product_id'], 'SSL'),
-			'img' => $img,
-			'img_w' => $width,
-			'img_h' => $height,
-            'last_30'      => $last_30,
-			'price' => empty( $config['show_price'] ) ? null : $price,
-            'price_2' =>  $price_2,
-			'special' => empty( $config['show_price'] ) ? null : $special,
-			'manufacturer' => empty( $config['show_manufacturer'] ) ? null : $product['manufacturer'],
-			'model' => empty( $config['show_model'] ) ? null : $product['model'],
-		);
+
+                return array(
+                    'type' => 'product',
+                    'id' => $product['product_id'],
+                    'name' => html_entity_decode($product['name'], ENT_QUOTES, 'UTF-8'),
+                    'url' => $this->url->link('product/product', 'product_id=' . $product['product_id'], 'SSL'),
+                    'img' => $img,
+                    'img_w' => $width,
+                    'img_h' => $height,
+                    'last_30'      => $last_30,
+                    'price' => empty( $config['show_price'] ) ? null : $price,
+                    'price_2' =>  $price_2,
+                    'special' => empty( $config['show_price'] ) ? null : $special,
+                    'manufacturer' => empty( $config['show_manufacturer'] ) ? null : $product['manufacturer'],
+                    'model' => empty( $config['show_model'] ) ? null : $product['model'],
+                );
+
+        }
 	}
 	
 	public function generateExtraPhrases( $products, $phrase, $config ) {

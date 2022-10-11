@@ -565,7 +565,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
             $store_id = $this->config->get('config_store_id');
         }
 
-        $sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$store_id . "'";
+        $sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1'  AND p.price > '0' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$store_id . "'";
 
         //OPTIONS WHERE BEGIN
         if ($data['options']) {
