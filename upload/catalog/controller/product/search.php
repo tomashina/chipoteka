@@ -22,6 +22,8 @@ class ControllerProductSearch extends Controller {
             $data['groupId'] ='0';
         }
 
+        $data['shopping_cart'] = $this->url->link('checkout/cart');
+
 		if (isset($this->request->get['tag'])) {
 			$tag = $this->request->get['tag'];
 		} elseif (isset($this->request->get['search'])) {
