@@ -300,7 +300,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
             }
         }
 
-        $this->updateQuantities();
+        //$this->updateQuantities();
+        $this->finishUpdateProduct();
 
         return $this->response($count, 'products');
     }
@@ -429,15 +430,20 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 'last_revision_date' => Carbon::now(),
                 'data'               => serialize($this->request->post['data'])
             ]);
-
-            $this->sendRevisionMail();
-
-            $this->db->query("UPDATE `" . DB_PREFIX . "product` SET updated = 0 WHERE 1");
-
-            $this->updateQuantities();
-
-            return $this->output($inserted);
+        } else {
+            $inserted = LuceedProductForRevisionData::insert([
+                'last_revision_date' => Carbon::now(),
+                'data'               => serialize(['updated' => 'No data!', 'inserted' => 'No data!', 'deleted' => 'No data!'])
+            ]);
         }
+
+        $this->sendRevisionMail();
+
+        $this->db->query("UPDATE `" . DB_PREFIX . "product` SET updated = 0 WHERE 1");
+
+        $this->updateQuantities();
+
+        return $this->output($inserted);
     }
 
 
@@ -825,13 +831,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     private function sendRevisionMail()
     {
-        $products = LuceedProductForRevision::query()->pluck('name', 'sku');
-
-        // $products = LuceedProductForRevision::query()->select('name', 'sku')->toArray();
-
         $data = [];
-
-        $data['products'] = $products;
+        $data['products'] = LuceedProductForRevision::query()->select('name', 'sku', 'has_image', 'has_description', 'data')->get()->toArray();
 
         $mail                = new Mail($this->config->get('config_mail_engine'));
         $mail->parameter     = $this->config->get('config_mail_parameter');

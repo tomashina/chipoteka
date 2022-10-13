@@ -232,6 +232,11 @@ class LOC_ProductSingle
                 'message' => 'updated'
             ];
         }
+
+        return [
+            'status'  => 300,
+            'message' => 'error'
+        ];
     }
 
 
@@ -321,7 +326,7 @@ class LOC_ProductSingle
             $description = ProductHelper::getDescription($this->product, $old_description);
         }
 
-        if ( ! $this->product['opis'] || empty($this->product['dokumenti'])) {
+        if ( ! $this->product['opis'] || empty($this->product['dokumenti']) || ! $this->product['mpc'] || $this->product['mpc'] == 0) {
             $status = 0;
             $this->pushToRevision();
         }
@@ -413,6 +418,10 @@ class LOC_ProductSingle
 
         if ( ! empty($this->product['dokumenti'])) {
             $this->product['has_image'] = 1;
+        }
+
+        if ($this->product['mpc'] || $this->product['mpc'] == 0) {
+            $this->product['data'] = 'Cijena je 0 kn.';
         }
 
         $has = LuceedProductForRevision::where('uid', $this->product['artikl_uid'])->first();
