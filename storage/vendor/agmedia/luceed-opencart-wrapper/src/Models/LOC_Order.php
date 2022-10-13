@@ -257,9 +257,9 @@ class LOC_Order
             $date = $date->addDay(10);
         }
 
-        /*if ($this->oc_order['payment_code'] == 'bank_transfer') {
+        if ($this->oc_order['payment_code'] == 'bank_transfer') {
             $date = $date->addDay(4);
-        }*/
+        }
 
         return $date->format(agconf('luceed.date'));
     }
@@ -289,14 +289,14 @@ class LOC_Order
         }
 
         if ($this->oc_order['payment_code'] == 'bank_transfer') {
-            return '01';
+            return '12';
         }
 
         if ($this->oc_order['payment_code'] == 'wspay') {
             return '02';
         }
 
-        return '01';
+        return '12';
     }
 
 
