@@ -585,6 +585,11 @@
                             return;
                         }
 
+                        if (json.message != 'finish' || json.message != 'deleted' || json.message != 'error' || json.message != 'inserted' || json.message != 'updated') {
+                            releseTarget('Završeno s Grškom', $('#import-luceed-products'));
+                            checkResult({status: 300, message: 'Došlo je do greške, molimo vas da pokušate ponovo.!!!'});
+                        }
+
                         localStorage.setItem('sync_total', total);
                         document.getElementById('luceed-importing').innerHTML = total;
 

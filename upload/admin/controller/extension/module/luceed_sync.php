@@ -832,7 +832,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
     private function sendRevisionMail()
     {
         $data = [];
-        $data['products'] = LuceedProductForRevision::query()->select('name', 'sku', 'has_image', 'has_description', 'data')->get()->toArray();
+        $data['products'] = LuceedProductForRevision::query()->select('sku', 'name', 'data', 'has_image', 'has_description')->get()->toArray();
 
         $mail                = new Mail($this->config->get('config_mail_engine'));
         $mail->parameter     = $this->config->get('config_mail_parameter');
