@@ -400,7 +400,7 @@ class LOC_Product
             'jm'                  => $product['jm'],
             'pakiranje'           => $product['pakiranje'],
             'vpc'                 => $product['vpc'],
-            'tax_class_id'        => agconf('import.default_tax_class'),
+            'tax_class_id'        => ProductHelper::getTax($product),
             'quantity'            => $product['stanje_kol'],
             'minimum'             => 1,
             'subtract'            => 1,
