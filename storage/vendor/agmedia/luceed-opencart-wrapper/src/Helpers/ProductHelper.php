@@ -129,6 +129,8 @@ class ProductHelper
 
 
     /**
+     * @param Collection $product
+     *
      * @return array
      */
     public static function getAttributes(Collection $product): array
@@ -165,7 +167,9 @@ class ProductHelper
 
 
     /**
-     * @return array
+     * @param Collection $product
+     *
+     * @return string[]
      */
     public static function getSeoUrl(Collection $product): array
     {
@@ -339,6 +343,21 @@ class ProductHelper
         return sha1(
             collect($product)->toJson()
         );
+    }
+
+
+    /**
+     * @param Collection $product
+     *
+     * @return int
+     */
+    public static function getTax(Collection $product): int
+    {
+        if (isset(agconf('import.taxes')[$product->stopa_pdv])) {
+            return agconf('import.taxes')[$product->stopa_pdv];
+        }
+
+        return agconf('import.default_tax_class');
     }
 
 

@@ -355,7 +355,7 @@ class LOC_ProductSingle
             'jm'                  => $this->product['jm'],
             'pakiranje'           => $this->product['pakiranje'],
             'vpc'                 => $this->product['vpc'],
-            'tax_class_id'        => agconf('import.default_tax_class'),
+            'tax_class_id'        => ProductHelper::getTax($this->product),
             'quantity'            => $this->product['stanje_kol'] ?: 0,
             'minimum'             => 1,
             'subtract'            => 1,
