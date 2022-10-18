@@ -30,7 +30,7 @@
                         </tr>
                         <tr>
                             <td><button data-toggle="tooltip" title="{{ text_payment_method }}" class="btn btn-info btn-xs"><i class="fa fa-credit-card fa-fw"></i></button></td>
-                            <td>{{ payment_method }}</td>
+                            <td>{{ payment_method }} </td>
                         </tr>
                         {% if shipping_method %}
                             <tr>
@@ -99,22 +99,45 @@
                                     <button disabled="disabled" class="btn btn-success btn-xs"><i class="fa fa-plus-circle"></i></button>
                                 {% endif %}</td>
                         </tr>
+
+                        {% if payment_code =='wspay' %}
                         <tr>
-                            <td>{{ text_affiliate }}
-                                {% if affiliate %}
-                                    (<a href="{{ affiliate }}">{{ affiliate_firstname }} {{ affiliate_lastname }}</a>)
-                                {% endif %}</td>
-                            <td class="text-right">{{ commission }}</td>
-                            <td class="text-center">{% if affiliate %}
-                                    {% if not commission_total %}
-                                        <button id="button-commission-add" data-loading-text="{{ text_loading }}" data-toggle="tooltip" title="{{ button_commission_add }}" class="btn btn-success btn-xs"><i class="fa fa-plus-circle"></i></button>
-                                    {% else %}
-                                        <button id="button-commission-remove" data-loading-text="{{ text_loading }}" data-toggle="tooltip" title="{{ button_commission_remove }}" class="btn btn-danger btn-xs"><i class="fa fa-minus-circle"></i></button>
-                                    {% endif %}
+
+                            <td>Credit Card Type
+                              </td>
+                            <td class="text-right">
+
+                                   <select name="payment_card" id="input-payment_card" class="form-control">
+
+                                       {% if not payment_card %}
+                                           <option  selected="selected">Molimo odaberite</option>
+                                       {% else %}
+
+                                       {% for card in config_cards %}
+                                           {% if card == payment_card %}
+                                               <option value="{{ card }}" selected="selected">{{card }}</option>
+                                           {% else %}
+                                               <option value="{{ card }}">{{ card }}</option>
+                                           {% endif %}
+                                       {% endfor %}
+
+                                       {% endif %}
+                                   </select>
+
+
+                               </select>
+
+                            </td>
+
+                            <td class="text-center">
+                                {% if not payment_card %}
+                                    <button id="button-payment-card-send" data-loading-text="{{ text_loading }}" data-toggle="tooltip" title="{{ button_generate }}" class="btn btn-success btn-xs"><i class="fa fa-cog"></i></button>
                                 {% else %}
-                                    <button disabled="disabled" class="btn btn-success btn-xs"><i class="fa fa-plus-circle"></i></button>
-                                {% endif %}</td>
+                                    <button disabled="disabled" class="btn btn-success btn-xs"><i class="fa fa-refresh"></i></button>
+                                {% endif %}
+                            </td>
                         </tr>
+                        {% endif %}
                         <tr>
                             <td>Luceed UID</td>
                             <td id="luceed_uid" class="text-right">{{ luceed_uid }}</td>

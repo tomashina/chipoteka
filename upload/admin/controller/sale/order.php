@@ -839,6 +839,11 @@ class ControllerSaleOrder extends Controller {
             $data['shipping_method'] = $order_info['shipping_method'];
             $data['payment_method'] = $order_info['payment_method'];
 
+            $data['payment_code'] = $order_info['payment_code'];
+            $data['payment_card'] = $order_info['payment_card'];
+
+            $data['config_cards'] =  agconf('import.payments.cards');
+
             // Payment Address
             if ($order_info['payment_address_format']) {
                 $format = $order_info['payment_address_format'];
