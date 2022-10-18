@@ -1890,6 +1890,31 @@ class ControllerSaleOrder extends Controller {
     }
 
 
+    public function changePaymentCard()
+    {
+        $this->load->language('sale/order');
+
+        $json['error'] = 'Whoops.!! Greška kod snimanja kartice..!';
+
+        if (!$this->user->hasPermission('modify', 'sale/order')) {
+            $json['error'] = $this->language->get('error_permission');
+
+        } else if (isset($this->request->get['order_id']) && isset($this->request->get['card'])) {
+            $order = \Agmedia\Models\Order\Order::query()->where('order_id', $this->request->get['order_id'])->first();
+
+            if ($order) {
+                $order->update(['payment_card' => $this->request->get['card']]);
+
+                unset($json['error']);
+                $json['success'] = 'Kartica je uspješno snimljena..!';
+            }
+        }
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json));
+    }
+
+
     /**
      * @param string $nb
      *
