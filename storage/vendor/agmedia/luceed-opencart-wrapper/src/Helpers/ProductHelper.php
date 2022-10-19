@@ -353,8 +353,8 @@ class ProductHelper
      */
     public static function getTax(Collection $product): int
     {
-        if (isset(agconf('import.taxes')[$product->stopa_pdv])) {
-            return agconf('import.taxes')[$product->stopa_pdv];
+        if (isset(agconf('import.taxes')[$product['stopa_pdv']])) {
+            return agconf('import.taxes')[$product['stopa_pdv']];
         }
 
         return agconf('import.default_tax_class');
