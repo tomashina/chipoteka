@@ -108,6 +108,9 @@
                                     <select name="payment_card" id="input-payment-card" class="form-control" style="height: 23px; padding-top: 2px; padding-bottom: 1px;">
                                         {% if not payment_card %}
                                             <option  selected="selected">Molimo odaberite</option>
+                                            {% for card in config_cards %}
+                                                    <option value="{{ card }}">{{ card }}</option>
+                                            {% endfor %}
                                         {% else %}
                                             {% for card in config_cards %}
                                                 {% if card == payment_card %}
@@ -121,7 +124,7 @@
                                 </td>
 
                                 <td class="text-center">
-                                    {% if payment_card %}
+                                    {% if not payment_card %}
                                         <button id="button-payment-card-send" data-loading-text="{{ text_loading }}" data-toggle="tooltip" title="{{ button_generate }}" class="btn btn-success btn-xs"><i class="fa fa-cog"></i></button>
                                     {% else %}
                                         <button disabled="disabled" class="btn btn-success btn-xs"><i class="fa fa-refresh"></i></button>
