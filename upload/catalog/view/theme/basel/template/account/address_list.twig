@@ -54,8 +54,8 @@
           <table class="table table-hover mb-0">
             <thead>
             <tr>
-              <th>{% if groupId < '2' %}  Adrese {% else %} Adresa dostave {% endif %}</th>
-              {% if groupId < '2' %}  <th>Uredi</th> {% endif %}
+              <th>    {% if groupId <= 2 %}  Adrese {% else %} Adresa dostave {% endif %}</th>
+              {% if groupId <= 2 %}  <th>Uredi</th> {% endif %}
             </tr>
             </thead>
             <tbody>
@@ -64,7 +64,7 @@
             {% for result in addresses %}
             <tr>
               <td class="py-3 align-middle">   {{ result.address }}</td>
-              {% if groupId < '2' %}   <td class="py-3 align-middle">
+              {% if groupId <= 2 %}   <td class="py-3 align-middle">
                 <a class="nav-link-style me-2" href="{{ result.update }}" data-bs-toggle="tooltip" title="{{ button_edit }}"><i class="fal fa-edit"></i></a>
                 <a class="nav-link-style text-danger" href="{{ result.delete }}" data-bs-toggle="tooltip" title="{{ button_delete }}"><div class="fal fa-trash-alt"></div></a>
               </td>{% endif %}
@@ -80,7 +80,7 @@
         {% else %}
           <p>{{ text_empty }}</p>
         {% endif %}
-        {% if groupId < '2' %}    <div class="text-sm-start pt-4"><a class="btn btn-primary" href="{{ add }}" data-bs-toggle="modal">{{ button_new_address }}</a></div> {% endif %}
+        {% if groupId <= 2 %}    <div class="text-sm-start pt-4"><a class="btn btn-primary" href="{{ add }}" data-bs-toggle="modal">{{ button_new_address }}</a></div> {% endif %}
 
 
 
