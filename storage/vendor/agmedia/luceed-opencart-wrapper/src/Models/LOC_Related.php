@@ -99,7 +99,7 @@ class LOC_Related
                 foreach ($items as $item) {
                     $related = Product::where('sku', $item->dodatak__artikl)->first();
 
-                    if ($related) {
+                    if ($related && isset($related->product_id) && $related->product_id) {
                         $this->insert_query .= '(' . $main->product_id . ', ' . $related->product_id . '),';
                     }
                 }
@@ -112,7 +112,9 @@ class LOC_Related
 
                         if (count($products)) {
                             for ($i = 0; $i < 5; $i++) {
-                                $this->insert_query .= '(' . $main->product_id . ', ' . $products[$i]['product_id'] . '),';
+                                if (isset($products[$i]['product_id']) && $products[$i]['product_id']) {
+                                    $this->insert_query .= '(' . $main->product_id . ', ' . $products[$i]['product_id'] . '),';
+                                }
                             }
                         }
                     }
@@ -134,7 +136,9 @@ class LOC_Related
         $this->deleteRelatedDB();
 
         try {
-            $inserted = $this->db->query("INSERT INTO " . DB_PREFIX . "product_related (product_id, related_id) VALUES " . substr($this->insert_query, 0, -1) . ";");
+            $sql = "INSERT INTO " . DB_PREFIX . "product_related (product_id, related_id) VALUES " . substr($this->insert_query, 0, -1) . ";";
+
+            $inserted = $this->db->query($sql);
         }
         catch (\Exception $exception) {
             Log::store($exception->getMessage(), 'import_related_query');
