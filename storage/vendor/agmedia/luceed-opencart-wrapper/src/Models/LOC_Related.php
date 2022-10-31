@@ -105,7 +105,7 @@ class LOC_Related
                 }
 
                 if ($count < 5) {
-                    $category = ProductCategory::where('product_id', $main->product_id)->orderBy('category_id', 'ASC')->first();
+                    $category = ProductCategory::where('product_id', $main->product_id)->orderBy('category_id', 'DESC')->first();
 
                     if ($category) {
                         $products = ProductCategory::where('category_id', $category->category_id)->get()->toArray();
