@@ -108,7 +108,7 @@ class LOC_Related
                     $category = ProductCategory::where('product_id', $main->product_id)->orderBy('category_id', 'DESC')->first();
 
                     if ($category) {
-                        $products = ProductCategory::where('category_id', $category->category_id)->get()->toArray();
+                        $products = ProductCategory::where('category_id', $category->category_id)->where('product_id','!=', $main->product_id)->get()->toArray();
 
                         if (count($products)) {
                             for ($i = 0; $i < 5 - $count; $i++) {
