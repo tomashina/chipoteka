@@ -1,87 +1,87 @@
 
 {% if payment_methods %}
-  <h2 class="h6 pb-3 mt-3 mb-2">{{ text_payment_method }}</h2>
+    <h2 class="h6 pb-3 mt-3 mb-2">{{ text_payment_method }}</h2>
 
 
 
-<div class="table-responsive" id="notif">
-  <table class="table table-hover fs-sm border-top">
+    <div class="table-responsive" id="notif">
+        <table class="table table-hover fs-sm border-top">
 
-    <tbody>
+            <tbody>
 
-{% for payment_method in payment_methods %}
-  <tr>
-    <td>
+            {% for payment_method in payment_methods %}
+                <tr>
+                    <td>
 
-      <div class="form-check mb-0 mt-1">
-        {% if payment_method.code == code or not code %}
+                        <div class="form-check mb-0 mt-1">
+                            {% if payment_method.code == code or not code %}
 
-          {% set code = payment_method.code %}
-
-
-          <label class="form-check-label" for="{{ payment_method.code }}">
-          <input class="form-check-input" type="radio" name="payment_method" id="{{ payment_method.code }}" value="{{ payment_method.code }}" checked="checked" />
-          <span class="text-dark fw-medium"> {{ payment_method.title }}</span>   </label>
-        {% if payment_method.code == 'wspay' %}
-          <div class="row gx-4 gy-3 mt-1">
-
-            <div class="col-sm-6  required">
-              <label class="form-label" for="credit_card_type">Kartica</label>
-              <select name="CreditCardName" id="CreditCardName" class="form-select mt-0">
-                <option value=""  {% if creditcardname == '' %} selected="selected"  {% endif %}>Odaberite karticu</option>
-                <option value="MAESTRO" id="MAESTRO"  {% if creditcardname == 'MAESTRO' %} selected="selected"  {% endif %} >Maestro</option>
-                <option value="VISA" id="VISA" {% if creditcardname == 'VISA' and paymentplan =='0000' %} selected="selected"  {% endif %}>Visa  </option>
-                <option value="MASTERCARD" id="MASTERCARD" {% if creditcardname == 'MASTERCARD' %} selected="selected"  {% endif %}>MasterCard </option>
-                <option value="VISA" id="VISAPREMIUM" {% if creditcardname == 'VISA' and paymentplan !='0000'%} selected="selected"  {% endif %}>Visa Premium  </option>
-              </select>
-            </div>
-            <div class="col-sm-6  required">
-              <label class="form-label" for="PaymentPlan">Broj rata</label>
-              <select name="PaymentPlan" id="PaymentPlan" class="form-select mt-0">
-              </select>
-            </div>
-          </div>
-        {% endif %}
-
-          {% else %}
-            <label class="form-check-label" for="{{ payment_method.code }}">
-            <input class="form-check-input" type="radio" name="payment_method" id="{{ payment_method.code }}" value="{{ payment_method.code }}" />
-            <span class="text-dark fw-medium"> {{ payment_method.title }}</span> </label>
-            {% if payment_method.code == 'wspay' %}
-              <div class="row gx-4 gy-3 mt-1">
-
-                <div class="col-sm-6  required">
-                  <label class="form-label" for="credit_card_type">Kartica</label>
-                  <select name="CreditCardName" id="CreditCardName" class="form-select mt-0">
-                    <option value=""  {% if creditcardname == '' %} selected="selected"  {% endif %}>Odaberite karticu</option>
-                    <option value="MAESTRO" id="MAESTRO"  {% if creditcardname == 'MAESTRO' %} selected="selected"  {% endif %} >Maestro</option>
-                    <option value="VISA" id="VISA" {% if creditcardname == 'VISA' and paymentplan =='0000' %} selected="selected"  {% endif %}>Visa  </option>
-                    <option value="MASTERCARD" id="MASTERCARD" {% if creditcardname == 'MASTERCARD' %} selected="selected"  {% endif %}>MasterCard </option>
-                    <option value="VISA" id="VISAPREMIUM" {% if creditcardname == 'VISA' and paymentplan !='0000' %} selected="selected"  {% endif %}>Visa Premium  </option>
-                  </select>
-                </div>
-                <div class="col-sm-6  required">
-                  <label class="form-label" for="PaymentPlan">Broj rata</label>
-                  <select name="PaymentPlan" id="PaymentPlan" class="form-select mt-0">
-                  </select>
-                </div>
-              </div>
-            {% endif %}
-          {% endif %}
-
-      </div>
-
-    </td>
+                                {% set code = payment_method.code %}
 
 
-  </tr>
+                                <label class="form-check-label" for="{{ payment_method.code }}">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="{{ payment_method.code }}" value="{{ payment_method.code }}" checked="checked" />
+                                    <span class="text-dark fw-medium"> {{ payment_method.title }}</span>   </label>
+                                {% if payment_method.code == 'wspay' %}
+                                    <div class="row gx-4 gy-3 mt-1" id="card-view-div">
+
+                                        <div class="col-sm-6  required">
+                                            <label class="form-label" for="credit_card_type">Kartica</label>
+                                            <select name="CreditCardName" id="CreditCardName" class="form-select mt-0">
+                                                <option value=""  {% if creditcardname == '' %} selected="selected"  {% endif %}>Odaberite karticu</option>
+                                                <option value="MAESTRO" id="MAESTRO"  {% if creditcardname == 'MAESTRO' %} selected="selected"  {% endif %} >Maestro</option>
+                                                <option value="VISA" id="VISA" {% if creditcardname == 'VISA' and paymentplan =='0000' %} selected="selected"  {% endif %}>Visa  </option>
+                                                <option value="MASTERCARD" id="MASTERCARD" {% if creditcardname == 'MASTERCARD' %} selected="selected"  {% endif %}>MasterCard </option>
+                                                <option value="VISA" id="VISAPREMIUM" {% if creditcardname == 'VISA' and paymentplan !='0000'%} selected="selected"  {% endif %}>Visa Premium  </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-6  required">
+                                            <label class="form-label" for="PaymentPlan">Broj rata</label>
+                                            <select name="PaymentPlan" id="PaymentPlan" class="form-select mt-0">
+                                            </select>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
+                            {% else %}
+                                <label class="form-check-label" for="{{ payment_method.code }}">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="{{ payment_method.code }}" value="{{ payment_method.code }}" />
+                                    <span class="text-dark fw-medium"> {{ payment_method.title }}</span> </label>
+                                {% if payment_method.code == 'wspay' %}
+                                    <div class="row gx-4 gy-3 mt-1" id="card-view-div">
+
+                                        <div class="col-sm-6  required">
+                                            <label class="form-label" for="credit_card_type">Kartica</label>
+                                            <select name="CreditCardName" id="CreditCardName" class="form-select mt-0">
+                                                <option value=""  {% if creditcardname == '' %} selected="selected"  {% endif %}>Odaberite karticu</option>
+                                                <option value="MAESTRO" id="MAESTRO"  {% if creditcardname == 'MAESTRO' %} selected="selected"  {% endif %} >Maestro</option>
+                                                <option value="VISA" id="VISA" {% if creditcardname == 'VISA' and paymentplan =='0000' %} selected="selected"  {% endif %}>Visa  </option>
+                                                <option value="MASTERCARD" id="MASTERCARD" {% if creditcardname == 'MASTERCARD' %} selected="selected"  {% endif %}>MasterCard </option>
+                                                <option value="VISA" id="VISAPREMIUM" {% if creditcardname == 'VISA' and paymentplan !='0000' %} selected="selected"  {% endif %}>Visa Premium  </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-6  required">
+                                            <label class="form-label" for="PaymentPlan">Broj rata</label>
+                                            <select name="PaymentPlan" id="PaymentPlan" class="form-select mt-0">
+                                            </select>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+
+                        </div>
+
+                    </td>
 
 
-{% endfor %}
+                </tr>
 
-    </tbody>
-  </table>
-</div>
+
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
 
 
 {% endif %}
@@ -89,69 +89,89 @@
 
 
 
-  <div class="col-sm-12">
+<div class="col-sm-12">
 
     <div class="alert getred alert-secondary d-flex" role="alert">
 
         <div class="form-check  required">
 
-          <label class="form-check-label " >
+            <label class="form-check-label " >
 
-            {% if agree %}
-              <input type="checkbox" class="form-check-input" name="agree" value="1" checked="checked" required/>
-            {% else %}
-              <input type="checkbox" class="form-check-input" name="agree" value="1" required/>
-            {% endif %}
+                {% if agree %}
+                    <input type="checkbox" class="form-check-input" name="agree" value="1" checked="checked" required/>
+                {% else %}
+                    <input type="checkbox" class="form-check-input" name="agree" value="1" required/>
+                {% endif %}
 
-            {{ text_agree }}</label>
+                {{ text_agree }}</label>
         </div>
 
 
     </div>
 
     <div class="alert getred alert-secondary d-flex" role="alert">
-      <small>Zbog mogućih pogrešaka u sustavu ili više sile, Chipoteka zadržava pravo ne isporučiti naručeni proizvod ukoliko je došlo do pogreške u navođenju cijene ili nije u mogućnosti izvršiti isporuku robe zbog iscrpljenih zaliha. U navedenim slučajevima će Chipoteka obavijestit kupca o nastaloj situaciji te izvršiti povrat novca čim prije moguće, a najkasnije u roku od 15 dana od obavijesti kupcu.</small>
+        <small>Zbog mogućih pogrešaka u sustavu ili više sile, Chipoteka zadržava pravo ne isporučiti naručeni proizvod ukoliko je došlo do pogreške u navođenju cijene ili nije u mogućnosti izvršiti isporuku robe zbog iscrpljenih zaliha. U navedenim slučajevima će Chipoteka obavijestit kupca o nastaloj situaciji te izvršiti povrat novca čim prije moguće, a najkasnije u roku od 15 dana od obavijesti kupcu.</small>
     </div>
 
 
 
-  </div>
+</div>
 
-  <div class=" d-flex pt-4 mt-3">
+<div class=" d-flex pt-4 mt-3">
     <div class="w-50 pe-3"><a class="btn btn-outline-primary d-flex align-items-center justify-content-center w-100" href="javascript:;" id="button-back-to-shipping-method" ><i class="fal fa-chevron-left mt-sm-0 me-1"></i><span class="d-none d-sm-inline">Povratak</span><span class="d-inline d-sm-none">Povratak</span></a></div>
     <div class="w-50 ps-2"><button type="button" value="{{ button_continue }}" id="button-payment-method" onclick="window.scrollTo(0, 0)" class="btn btn-primary d-flex align-items-center justify-content-center w-100" ><span class="d-none d-sm-inline">Provjeri narudžbu</span><span class="d-inline d-sm-none">Provjeri</span><i class="fal fa-chevron-right mt-sm-0 ms-1"></i></button></div>
-  </div>
+</div>
 
 
 <script>
-  jQuery(function($) {
-   // $("#PaymentPlan").html("<option value='{{ paymentplan }}' selected='selected'>{{ paymentplan }}</option>");
-    $("#CreditCardName").change(function () {
+    jQuery(function($) {
+        // $("#PaymentPlan").html("<option value='{{ paymentplan }}' selected='selected'>{{ paymentplan }}</option>");
+        $("#CreditCardName").change(function () {
 
 
-      var id = $(this).children(":selected").attr("id");
-      if (id == "MAESTRO") {
-        $("#PaymentPlan").html("<option value='0000' selected='selected'>Jednokratno</option>");
-      } else if (id == "VISA") {
-        $("#PaymentPlan").html("<option value='0000' selected='selected'>Jednokratno</option>");
-      } else if (id == "MASTERCARD") {
-        $("#PaymentPlan").html("<option value='0000'  {% if paymentplan == '0000' %} selected='selected' {% endif %}  >Jednokratno</option><option value='0200' {% if paymentplan == '0200' %} selected='selected' {% endif %}>2 rate</option><option value='0300' {% if paymentplan == '0300' %} selected='selected' {% endif %}>3 rate</option><option value='0400' {% if paymentplan == '0400' %} selected='selected' {% endif %}>4 rate</option><option value='0500' {% if paymentplan == '0500' %} selected='selected' {% endif %}>5 rata</option><option value='0600' {% if paymentplan == '0600' %} selected='selected' {% endif %}>6 rata</option><option value='0700' {% if paymentplan == '0700' %} selected='selected' {% endif %}>7 rata</option><option value='0800' {% if paymentplan == '0800' %} selected='selected' {% endif %}>8 rata</option><option value='0900' {% if paymentplan == '0900' %} selected='selected' {% endif %}>9 rata</option><option value='1000' {% if paymentplan == '1000' %} selected='selected' {% endif %}>10 rata</option><option value='1100' {% if paymentplan == '1100' %} selected='selected' {% endif %}>11 rata</option><option value='1200' {% if paymentplan == '1200' %} selected='selected' {% endif %}>12 rata</option><option value='1300' {% if paymentplan == '1300' %} selected='selected' {% endif %}>13 rata</option><option value='1400' {% if paymentplan == '1400' %} selected='selected' {% endif %}>14 rata</option><option value='1500' {% if paymentplan == '1500' %} selected='selected' {% endif %}>15 rata</option><option value='1600' {% if paymentplan == '1600' %} selected='selected' {% endif %}>16 rata</option><option value='1700' {% if paymentplan == '1700' %} selected='selected' {% endif %}>17 rata</option><option value='1800' {% if paymentplan == '1800' %} selected='selected' {% endif %} >18 rata</option><option value='1900' {% if paymentplan == '1900' %} selected='selected' {% endif %}>19 rata</option><option value='2000' {% if paymentplan == '2000' %} selected='selected' {% endif %}>20 rata</option><option value='2100' {% if paymentplan == '2100' %} selected='selected' {% endif %} >21 rata</option><option value='2200' {% if paymentplan == '2200' %} selected='selected' {% endif %} >22 rate</option><option value='2300' {% if paymentplan == '2300' %} selected='selected' {% endif %}>23 rate</option><option value='2400' {% if paymentplan == '2400' %} selected='selected' {% endif %}>24 rate</option>");
-      } else if (id == "VISAPREMIUM") {
-        $("#PaymentPlan").html("<option value='0000'  {% if paymentplan == '0000' %} selected='selected' {% endif %}  >Jednokratno</option><option value='0200' {% if paymentplan == '0200' %} selected='selected' {% endif %}>2 rate</option><option value='0300' {% if paymentplan == '0300' %} selected='selected' {% endif %}>3 rate</option><option value='0400' {% if paymentplan == '0400' %} selected='selected' {% endif %}>4 rate</option><option value='0500' {% if paymentplan == '0500' %} selected='selected' {% endif %}>5 rata</option><option value='0600' {% if paymentplan == '0600' %} selected='selected' {% endif %}>6 rata</option><option value='0700' {% if paymentplan == '0700' %} selected='selected' {% endif %}>7 rata</option><option value='0800' {% if paymentplan == '0800' %} selected='selected' {% endif %}>8 rata</option><option value='0900' {% if paymentplan == '0900' %} selected='selected' {% endif %}>9 rata</option><option value='1000' {% if paymentplan == '1000' %} selected='selected' {% endif %}>10 rata</option>");
-      }
-      else if (id == "NO") {
-        $("#PaymentPlan").html("<option value='0000' selected='selected'>Jednokratno</option>");
-      }
+            var id = $(this).children(":selected").attr("id");
+            if (id == "MAESTRO") {
+                $("#PaymentPlan").html("<option value='0000' selected='selected'>Jednokratno</option>");
+            } else if (id == "VISA") {
+                $("#PaymentPlan").html("<option value='0000' selected='selected'>Jednokratno</option>");
+            } else if (id == "MASTERCARD") {
+                $("#PaymentPlan").html("<option value='0000'  {% if paymentplan == '0000' %} selected='selected' {% endif %}  >Jednokratno</option><option value='0200' {% if paymentplan == '0200' %} selected='selected' {% endif %}>2 rate</option><option value='0300' {% if paymentplan == '0300' %} selected='selected' {% endif %}>3 rate</option><option value='0400' {% if paymentplan == '0400' %} selected='selected' {% endif %}>4 rate</option><option value='0500' {% if paymentplan == '0500' %} selected='selected' {% endif %}>5 rata</option><option value='0600' {% if paymentplan == '0600' %} selected='selected' {% endif %}>6 rata</option><option value='0700' {% if paymentplan == '0700' %} selected='selected' {% endif %}>7 rata</option><option value='0800' {% if paymentplan == '0800' %} selected='selected' {% endif %}>8 rata</option><option value='0900' {% if paymentplan == '0900' %} selected='selected' {% endif %}>9 rata</option><option value='1000' {% if paymentplan == '1000' %} selected='selected' {% endif %}>10 rata</option><option value='1100' {% if paymentplan == '1100' %} selected='selected' {% endif %}>11 rata</option><option value='1200' {% if paymentplan == '1200' %} selected='selected' {% endif %}>12 rata</option><option value='1300' {% if paymentplan == '1300' %} selected='selected' {% endif %}>13 rata</option><option value='1400' {% if paymentplan == '1400' %} selected='selected' {% endif %}>14 rata</option><option value='1500' {% if paymentplan == '1500' %} selected='selected' {% endif %}>15 rata</option><option value='1600' {% if paymentplan == '1600' %} selected='selected' {% endif %}>16 rata</option><option value='1700' {% if paymentplan == '1700' %} selected='selected' {% endif %}>17 rata</option><option value='1800' {% if paymentplan == '1800' %} selected='selected' {% endif %} >18 rata</option><option value='1900' {% if paymentplan == '1900' %} selected='selected' {% endif %}>19 rata</option><option value='2000' {% if paymentplan == '2000' %} selected='selected' {% endif %}>20 rata</option><option value='2100' {% if paymentplan == '2100' %} selected='selected' {% endif %} >21 rata</option><option value='2200' {% if paymentplan == '2200' %} selected='selected' {% endif %} >22 rate</option><option value='2300' {% if paymentplan == '2300' %} selected='selected' {% endif %}>23 rate</option><option value='2400' {% if paymentplan == '2400' %} selected='selected' {% endif %}>24 rate</option>");
+            } else if (id == "VISAPREMIUM") {
+                $("#PaymentPlan").html("<option value='0000'  {% if paymentplan == '0000' %} selected='selected' {% endif %}  >Jednokratno</option><option value='0200' {% if paymentplan == '0200' %} selected='selected' {% endif %}>2 rate</option><option value='0300' {% if paymentplan == '0300' %} selected='selected' {% endif %}>3 rate</option><option value='0400' {% if paymentplan == '0400' %} selected='selected' {% endif %}>4 rate</option><option value='0500' {% if paymentplan == '0500' %} selected='selected' {% endif %}>5 rata</option><option value='0600' {% if paymentplan == '0600' %} selected='selected' {% endif %}>6 rata</option><option value='0700' {% if paymentplan == '0700' %} selected='selected' {% endif %}>7 rata</option><option value='0800' {% if paymentplan == '0800' %} selected='selected' {% endif %}>8 rata</option><option value='0900' {% if paymentplan == '0900' %} selected='selected' {% endif %}>9 rata</option><option value='1000' {% if paymentplan == '1000' %} selected='selected' {% endif %}>10 rata</option>");
+            }
+            else if (id == "NO") {
+                $("#PaymentPlan").html("<option value='0000' selected='selected'>Jednokratno</option>");
+            }
 
-      else{
-        $("#PaymentPlan").html("<option value='0000' selected='selected'>Jednokratno</option>");
-      }
-
-
-    }).trigger('change');
+            else{
+                $("#PaymentPlan").html("<option value='0000' selected='selected'>Jednokratno</option>");
+            }
 
 
-  });
+        }).trigger('change');
+
+
+        var radioButtons = document.querySelectorAll('input[name="payment_method"]');
+
+        for(var radioButton of radioButtons){
+            radioButton.addEventListener('change', showSelected);
+        }
+
+        function showSelected(e) {
+            let selected = e.currentTarget.value;
+
+            console.log(selected);
+
+            if (selected != 'wspay') {
+                $('#card-view-div').hide();
+                console.log('IF');
+            } else {
+                console.log('ELSE');
+                $('#card-view-div').show();
+            }
+        }
+
+    });
 </script>
 
 
