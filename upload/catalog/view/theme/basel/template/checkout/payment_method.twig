@@ -155,18 +155,19 @@
 
         for(var radioButton of radioButtons){
             radioButton.addEventListener('change', showSelected);
+
+            if (radioButton.checked) {
+                let mook_event = { currentTarget: { value: radioButton.value }};
+                showSelected(mook_event);
+            }
         }
 
         function showSelected(e) {
             let selected = e.currentTarget.value;
 
-            console.log(selected);
-
             if (selected != 'wspay') {
                 $('#card-view-div').hide();
-                console.log('IF');
             } else {
-                console.log('ELSE');
                 $('#card-view-div').show();
             }
         }
