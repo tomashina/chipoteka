@@ -111,7 +111,7 @@ class LOC_Related
                         $products = ProductCategory::where('category_id', $category->category_id)->get()->toArray();
 
                         if (count($products)) {
-                            for ($i = 0; $i < 5; $i++) {
+                            for ($i = 0; $i < 5 - $count; $i++) {
                                 if (isset($products[$i]['product_id']) && $products[$i]['product_id']) {
                                     $this->insert_query .= '(' . $main->product_id . ', ' . $products[$i]['product_id'] . '),';
                                 }
