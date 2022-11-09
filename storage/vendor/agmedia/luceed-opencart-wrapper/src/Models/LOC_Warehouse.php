@@ -262,7 +262,7 @@ class LOC_Warehouse
 
         $this->db = new Database(DB_DATABASE);
 
-        $this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = '".$qty_default."' + '". $dobavljac_stanje."' WHERE sku = '".$product."'  ");
+       // $this->db->query("UPDATE " . DB_PREFIX . "product SET quantity = '".$qty_default."' + '". $dobavljac_stanje."' WHERE sku = '".$product."'  ");
 
         return $response;
     }
