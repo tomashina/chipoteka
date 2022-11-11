@@ -441,7 +441,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
         $this->db->query("UPDATE `" . DB_PREFIX . "product` SET updated = 0 WHERE 1");
 
-        $this->updateQuantities();
+        //$this->updateQuantities();
 
         return $this->output($inserted);
     }
