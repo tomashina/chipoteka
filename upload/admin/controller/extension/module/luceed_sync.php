@@ -288,7 +288,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
                     $this->model_catalog_product->editProduct(
                         $_loc_ps->product_to_update['product_id'],
-                        $product_for_update
+                        $product_for_update,
+                        true
                     );
 
                     $_loc_ps->finishUpdate();
@@ -344,7 +345,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
                     $this->model_catalog_product->editProduct(
                         $_loc_ps->product_to_update['product_id'],
-                        $_loc_ps->makeForUpdate($product)
+                        $_loc_ps->makeForUpdate($product),
+                        true
                     );
                 } else {
                     if ($_loc_ps->product_to_insert) {
@@ -374,7 +376,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
             $this->model_catalog_product->editProduct(
                 $_loc_ps->product_to_update['product_id'],
-                $product_for_update
+                $product_for_update,
+                true
             );
 
             LuceedProductForUpdate::where('uid', $_loc_ps->product_to_update['luceed_uid'])->delete();
