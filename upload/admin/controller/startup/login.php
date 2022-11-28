@@ -17,6 +17,7 @@ class ControllerStartupLogin extends Controller {
             'extension/module/luceed_sync/updateProducts',
             'extension/module/luceed_sync/checkRevision',
             'extension/module/luceed_sync/importActionPricesLast30Days',
+            'extension/module/luceed_sync/importRelatedProducts',
 		);
 
 		// User
@@ -44,6 +45,7 @@ class ControllerStartupLogin extends Controller {
                 'extension/module/luceed_sync/updateProducts',
                 'extension/module/luceed_sync/checkRevision',
                 'extension/module/luceed_sync/importActionPricesLast30Days',
+                'extension/module/luceed_sync/importRelatedProducts',
 
 
 			);
