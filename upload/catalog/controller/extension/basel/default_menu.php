@@ -78,6 +78,8 @@ class ControllerExtensionBaselDefaultMenu extends Controller {
 
 
 				// Level 1
+
+                if ($this->model_catalog_product->getTotalProducts($filter_data) != 0)
 				$data['categories'][] = array(
 					'name'     => $category['name'],
 					'children' => $children_data,

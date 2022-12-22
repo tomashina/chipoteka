@@ -180,7 +180,7 @@ class ControllerProductManufacturer extends Controller {
                         $priceeur = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
                     }
                     else{
-                        $priceeur  ='';
+                        $priceeur = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), 'HRK');
 
                     }
 				} else {
@@ -197,7 +197,7 @@ class ControllerProductManufacturer extends Controller {
                         $priceeur_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
                     }
                     else{
-                        $priceeur_2  ='';
+                        $priceeur_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), 'HRK');
 
                     }
                 } else {
@@ -213,7 +213,7 @@ class ControllerProductManufacturer extends Controller {
 
                     }
                     else{
-                        $lasteur_30  ='';
+                        $lasteur_30 = $this->currency->format($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')), 'HRK');
 
                     }
                 }
@@ -227,7 +227,7 @@ class ControllerProductManufacturer extends Controller {
                         $specialeur = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')),  'EUR');
                     }
                     else{
-                        $specialeur  ='';
+                        $specialeur = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')),  'HRK');
 
                     }
 					$tax_price = (float)$result['special'];

@@ -163,7 +163,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                     $priceeur = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
                 }
                 else{
-                    $priceeur  ='';
+                    $priceeur = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), 'HRK');
 
                 }
             } else {
@@ -179,7 +179,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                     $priceeur_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
                 }
                 else{
-                    $priceeur_2  ='';
+                    $priceeur_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), 'HRK');
 
                 }
             } else {
@@ -196,7 +196,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 
                 }
                 else{
-                    $lasteur_30  ='';
+                    $lasteur_30 = $this->currency->format($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')), 'HRK');
 
                 }
             }else{
@@ -210,7 +210,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                     $specialeur = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')),  'EUR');
                 }
                 else{
-                    $specialeur  ='';
+                    $specialeur = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')),  'HRK');
 
                 }
                 if($result['special'] >= FREESHIPPING){

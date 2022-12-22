@@ -407,7 +407,7 @@ class ControllerProductProduct extends Controller {
 
                 }
                 else{
-                    $data['priceeur'] ='';
+                    $data['priceeur'] = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), 'HRK');
 
                 }
 
@@ -428,7 +428,8 @@ class ControllerProductProduct extends Controller {
                     $data['priceeur_2'] = $this->currency->format($this->tax->calculate($product_info['price_2'], $product_info['tax_class_id'], $this->config->get('config_tax')), 'EUR');
                 }
                 else{
-                    $data['priceeur_2']  ='';
+
+                    $data['priceeur_2'] = $this->currency->format($this->tax->calculate($product_info['price_2'], $product_info['tax_class_id'], $this->config->get('config_tax')), 'HRK');
 
                 }
                 $ratedvanaest = $product_info['price_2'] / 12;
@@ -455,7 +456,7 @@ class ControllerProductProduct extends Controller {
                 }
                 else{
 
-                    $data['priceeur_last_30'] ='';
+                    $data['priceeur_last_30'] = $this->currency->format($this->tax->calculate($product_info['price_last_30'], $product_info['tax_class_id'], $this->config->get('config_tax')), 'HRK');
                 }
             }
             else{
@@ -475,7 +476,7 @@ class ControllerProductProduct extends Controller {
                     $data['specialeur'] = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), 'EUR');
                 }
                 else{
-                    $data['specialeur']  ='';
+                    $data['specialeur'] = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), 'HRK');
 
                 }
 				$tax_price = (float)$product_info['special'];
@@ -632,7 +633,7 @@ class ControllerProductProduct extends Controller {
                         $priceeur = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
                     }
                     else{
-                        $priceeur  ='';
+                        $priceeur = $this->currency->format($this->tax->calculate($result['price'], $result['tax_class_id'], $this->config->get('config_tax')), 'HRK');
 
                     }
 				} else {
@@ -649,7 +650,7 @@ class ControllerProductProduct extends Controller {
                         $priceeur_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), 'EUR');
                     }
                     else{
-                        $priceeur_2  ='';
+                        $priceeur_2 = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')), 'HRK');
 
                     }
                 } else {
@@ -663,7 +664,7 @@ class ControllerProductProduct extends Controller {
                         $specialeur = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')),  'EUR');
                     }
                     else{
-                        $specialeur  ='';
+                        $specialeur = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')),  'HRK');
 
                     }
 					$tax_price = (float)$result['special'];

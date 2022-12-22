@@ -309,10 +309,7 @@ class LOC_Category
                 'category_id'      => $id,
                 'language_id'      => 2,
                 'name'             => $naziv,
-                'description'      => $naziv,
-                'meta_title'       => $naziv,
-                'meta_description' => $naziv,
-                'meta_keyword'     => $naziv,
+               
             ]);
 
             $level = 0;
