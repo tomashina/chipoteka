@@ -69,6 +69,7 @@ class LuceedService
             $ch = curl_init($this->base_url . $url . $option);
             curl_setopt($ch, CURLOPT_USERPWD, $this->username . ":" . $this->password);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 500);
 
             $response = curl_exec($ch);
             curl_close($ch);
@@ -105,6 +106,7 @@ class LuceedService
             curl_setopt ($ch, CURLOPT_POST, true);
             curl_setopt ($ch, CURLOPT_POSTFIELDS, json_encode($body));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
 
             $response = curl_exec($ch);
             curl_close($ch);
@@ -143,6 +145,7 @@ class LuceedService
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt ($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
             curl_setopt ($ch, CURLOPT_POSTFIELDS, json_encode($body));
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
 
             $response = curl_exec($ch);
             curl_close($ch);
