@@ -1412,7 +1412,7 @@ class ControllerCatalogProduct extends Controller {
 
             foreach ($product_specials  as $product_special) {
                 if (($product_special['date_start'] == '0000-00-00' || strtotime($product_special['date_start']) < time()) && ($product_special['date_end'] == '0000-00-00' || strtotime($product_special['date_end']) > time())) {
-                    $special = number_format($product_special['price'], '2', '.', '').' HRK';
+                    $special = number_format($product_special['price'], '2', '.', '').' EUR';
 
                     break;
                 }
