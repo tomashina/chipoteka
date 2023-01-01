@@ -283,7 +283,7 @@ class ControllerCheckoutSuccess extends Controller {
             if ($total['title']=='Ukupno'){
 
                 $ukupno = $this->currency->format($total['value'], $order_info['currency_code'], $order_info['currency_value']);
-                $ukupnohub = number_format((float)$total['value'], 2, '.', '');
+                $ukupnohub = (int)$total['value'] * 100;
             }
             $data['totals'][] = array(
                 'title' => $total['title'],
@@ -337,6 +337,7 @@ class ControllerCheckoutSuccess extends Controller {
                       'data' =>
                           array (
                               'amount' => floatval($ukupnohub),
+                              'currency' => 'EUR',
                               'sender' =>
                                   array (
                                       'name' => $order_info['payment_firstname'].' '.$order_info['payment_lastname'],
@@ -359,7 +360,7 @@ class ControllerCheckoutSuccess extends Controller {
 
                   $postString = json_encode($hubstring);
 
-                  $url = 'https://hub3.bigfish.software/api/v1/barcode';
+                  $url = 'https://hub3.bigfish.software/api/v2/barcode';
                   $ch = curl_init($url);
 
                   # Setting our options
