@@ -283,7 +283,12 @@ class ControllerCheckoutSuccess extends Controller {
             if ($total['title']=='Ukupno'){
 
                 $ukupno = $this->currency->format($total['value'], $order_info['currency_code'], $order_info['currency_value']);
-                $ukupnohub = (int)$total['value'] * 100;
+               // $ukupnohub = number_format((float)$total['value'], 2, '.', '');
+
+                $ukupnohub = number_format($total['value'] * 100, 2, '.', '');
+                $ukupnohub = str_replace('.', '', $ukupnohub);
+
+
             }
             $data['totals'][] = array(
                 'title' => $total['title'],
