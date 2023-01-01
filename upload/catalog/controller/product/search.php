@@ -248,7 +248,7 @@ class ControllerProductSearch extends Controller {
 
                     }
                     else{
-                        $lasteur_30  ='';
+                        $lasteur_30 = $this->currency->format($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')), 'HRK');
 
                     }
                 }
