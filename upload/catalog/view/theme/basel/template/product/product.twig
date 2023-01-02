@@ -15,9 +15,9 @@
                         "offers": {
                         "@type": "Offer",
                          "url": "{{ url }}",
-                        "priceCurrency": "HRK",
-                        {% if price %}"price": "{{ price|replace({'kn': '', ',' : '.', '.' : ''}) }}",
-                        {% else %}"price": "{{ special|replace({'kn': '', ',' : '.', '.' : ''}) }}",{% endif %}
+                        "priceCurrency": "EUR",
+                        {% if price %}"price": "{{ price|replace({'€': '', ',' : '.', '.' : ''}) }}",
+                        {% else %}"price": "{{ special|replace({'€': '', ',' : '.', '.' : ''}) }}",{% endif %}
                         "priceValidUntil": "{{ pricevaliduntil }}",
                         "itemCondition" : "http://schema.org/NewCondition",
                         "availability" : "https://schema.org/InStock"

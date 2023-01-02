@@ -48,8 +48,8 @@ class ControllerExtensionFeedNabavanet extends Controller {
 
                 $name = $this->stripInvalidXml($name);
 
-                if ($product['price'] < 500) {
-                    $shipping_cost = '39.00';
+                if ($product['price'] < 66.36) {
+                    $shipping_cost = '5.17';
 
                 } else {
                     $shipping_cost = '0';
@@ -71,7 +71,7 @@ class ControllerExtensionFeedNabavanet extends Controller {
 
                 $output .= '<availability>Raspoloživo</availability>';
 
-                $output .= '<shipping_info>Besplatna dostava za narudžbe iznad 500 kn</shipping_info>';
+                $output .= '<shipping_info>Besplatna dostava za narudžbe iznad 66.36 €</shipping_info>';
 
                // $output .= '<internal_product_id>' . $product['product_id'] . '</internal_product_id>';
                  $output .= '<category>'.$this->wrapInCDATA($this->getCategoriesName($product['product_id'])).'</category>';

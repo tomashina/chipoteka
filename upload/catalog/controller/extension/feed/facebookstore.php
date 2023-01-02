@@ -68,11 +68,11 @@ class ControllerExtensionFeedFacebookstore extends Controller {
                 $output .= '<g:condition>new</g:condition>';
                 $output .= '<g:availability>in stock</g:availability>';
 
-                $output .= '<g:price>' . number_format($product['price'], '2','.','') . ' HRK</g:price>';
+                $output .= '<g:price>' . number_format($product['price'], '2','.','') . ' EUR</g:price>';
 
                 if($product['special']!=''){
 
-                    $output .= '<g:sale_price>' .  number_format($product['special'], '2','.','') . ' HRK</g:sale_price>';
+                    $output .= '<g:sale_price>' .  number_format($product['special'], '2','.','') . ' EUR</g:sale_price>';
 
                 }
 
