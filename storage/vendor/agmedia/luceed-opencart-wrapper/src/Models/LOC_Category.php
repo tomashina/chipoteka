@@ -93,14 +93,14 @@ class LOC_Category
     {
         $this->existing = Category::pluck('luceed_uid');
         $list_diff      = $this->getList()
-                               ->where('enabled', 'D')
+                               ->where('enabled', '=', 'D')
                                ->where('grupa_artikla', '!=', '')
                                ->where('naziv', '!=', '')
                                ->pluck('grupa_artikla')
                                ->diff($this->existing)
                                ->reject(function ($value, $key) {
-                                   if (in_array($value, agconf('import.category.excluded'))) {
-                                       return $value;
+                                   if (in_array((string)$value, agconf('import.category.excluded'))) {
+                                       return (string)$value;
                                    }
                                })
                                ->flatten();
@@ -108,7 +108,7 @@ class LOC_Category
         $categories = $this->getList()->whereIn('grupa_artikla', $list_diff);
 
         foreach ($categories as $category) {
-            $parent = Category::where('luceed_uid', $category->nadgrupa_artikla)->first();
+            $parent = Category::where('luceed_uid', (string)$category->nadgrupa_artikla)->first();
 
             if (isset($parent->luceed_uid) && $parent->luceed_uid != '') {
                 $top_parent = Category::where('category_id', $parent->parent_id)->first();
@@ -213,8 +213,8 @@ class LOC_Category
         $new_cats = new \stdClass();
         $top      = Category::where('category_id', $parent->parent_id)->first();
 
-        $new_cats->grupa_artikla    = $parent->luceed_uid;
-        $new_cats->nadgrupa_artikla = $top ? $top->luceed_uid : null;
+        $new_cats->grupa_artikla    = (string)$parent->luceed_uid;
+        $new_cats->nadgrupa_artikla = $top ? (string)$top->luceed_uid : null;
 
         return $new_cats;
     }
@@ -238,8 +238,10 @@ class LOC_Category
         $count      = 0;
         $categories = $this->sort($this->categories_to_add);
 
+        Log::store($categories, 'cats_list');
+
         foreach ($categories as $i => $category) {
-            $exist = Category::where('luceed_uid', $category->grupa_artikla)->first();
+            $exist = Category::where('luceed_uid', (string)$category->grupa_artikla)->first();
 
             if ( ! $exist) {
                 $cat_id = $this->save($category, 0, $i);
@@ -250,7 +252,7 @@ class LOC_Category
 
             if (isset($category->sub) && ! empty($category->sub)) {
                 foreach ($category->sub as $k => $subcat) {
-                    $exist = Category::where('luceed_uid', $subcat->grupa_artikla)->first();
+                    $exist = Category::where('luceed_uid', (string)$subcat->grupa_artikla)->first();
 
                     if ( ! $exist) {
                         $sub_cat_id = $this->save($subcat, $cat_id, $k);
@@ -261,7 +263,7 @@ class LOC_Category
 
                     if (isset($subcat->sub) && ! empty($subcat->sub)) {
                         foreach ($subcat->sub as $n => $subsubcat) {
-                            $exist = Category::where('luceed_uid', $subsubcat->grupa_artikla)->first();
+                            $exist = Category::where('luceed_uid', (string)$subsubcat->grupa_artikla)->first();
 
                             if ( ! $exist) {
                                 $this->save($subsubcat, $sub_cat_id, $n);
@@ -406,7 +408,7 @@ class LOC_Category
 
         foreach ($category_list as $category) {
             for ($i = 0; $i < count($temp_category); $i++) {
-                if ($category->nadgrupa_artikla == $temp_category[$i]->grupa_artikla) {
+                if ((string)$category->nadgrupa_artikla == (string)$temp_category[$i]->grupa_artikla) {
                     $temp_category[$i]->sub[] = $category;
                 }
             }
@@ -416,7 +418,7 @@ class LOC_Category
             for ($i = 0; $i < count($temp_category); $i++) {
                 if (isset($temp_category[$i]->sub) && is_array($temp_category[$i]->sub)) {
                     for ($k = 0; $k < count($temp_category[$i]->sub); $k++) {
-                        if ($category->nadgrupa_artikla == $temp_category[$i]->sub[$k]->grupa_artikla) {
+                        if ((string)$category->nadgrupa_artikla == (string)$temp_category[$i]->sub[$k]->grupa_artikla) {
                             $temp_category[$i]->sub[$k]->sub[] = $category;
                         }
                     }

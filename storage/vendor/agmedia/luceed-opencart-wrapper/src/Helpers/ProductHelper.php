@@ -39,7 +39,7 @@ class ProductHelper
             $response[0] = $actual->category_id;
 
             if ($product['licenca'] == 'SUPER DEAL') {
-                $response[1] = 9845;
+                $response[1] = 303;
             }
 
             if ($actual->parent_id) {
