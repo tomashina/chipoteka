@@ -270,7 +270,7 @@ class ControllerAccountRegister extends Controller {
             if ((utf8_strlen(trim($this->request->post['custom_field']['account'][2])) < 2) || (utf8_strlen(trim($this->request->post['custom_field']['account'][2])) > 128)) {
                 $this->error['custom_field']['2'] = 'Naziv tvrtke mora sadržavati između 2 i 128 znakova!';
             }
-            if ((utf8_strlen(trim($this->request->post['custom_field']['account'][1])) < 9) || (utf8_strlen(trim($this->request->post['custom_field']['account'][1])) > 13) ) {
+            if ((utf8_strlen(trim($this->request->post['custom_field']['account'][1])) < 9) || (utf8_strlen(trim($this->request->post['custom_field']['account'][1])) > 13) && !is_numeric($this->request->post['custom_field']['account'][1]) ) {
                 $this->error['custom_field']['1'] = 'OIB nije u ispravnom formatu!';
             }
         }

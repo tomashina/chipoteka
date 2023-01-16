@@ -184,11 +184,14 @@ class ControllerCheckoutGuest extends Controller {
                 if ((utf8_strlen(trim($this->request->post['custom_field']['account'][2])) < 2) || (utf8_strlen(trim($this->request->post['custom_field']['account'][2])) > 128)) {
                     $json['error']['custom-field2'] = 'Naziv tvrtke mora sadržavati između 2 i 128 znakova!';
                 }
-                if ((utf8_strlen(trim($this->request->post['custom_field']['account'][1])) < 9) || (utf8_strlen(trim($this->request->post['custom_field']['account'][1])) > 13) ) {
+                if ((utf8_strlen(trim($this->request->post['custom_field']['account'][1])) < 9) || (utf8_strlen(trim($this->request->post['custom_field']['account'][1])) > 13) && !is_numeric($this->request->post['custom_field']['account'][1]) ) {
                     $json['error']['custom-field1'] = 'OIB nije u ispravnom formatu!';
                 }
             }
-            // END ::: fj.agmedia.hr
+
+
+
+                // END ::: fj.agmedia.hr
 
             if( !preg_match("/^\+?[0-9]{3}-?[0-9]{6,12}$/", $this->request->post['telephone']) ) {
                 $json['error']['telephone'] = $this->language->get('error_telephone');
