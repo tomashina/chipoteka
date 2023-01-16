@@ -215,13 +215,22 @@ class ControllerCheckoutRegister extends Controller {
 
 			$custom_fields = $this->model_account_custom_field->getCustomFields($customer_group_id);
 
-			foreach ($custom_fields as $custom_field) {
+		/*	foreach ($custom_fields as $custom_field) {
 				if ($custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']])) {
 					$json['error']['custom_field' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
 				} elseif (($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !filter_var($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $custom_field['validation'])))) {
 					$json['error']['custom_field' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
 				}
-			}
+			}*/
+
+            if (isset($this->request->post['customer_group_id']) && $this->request->post['customer_group_id'] == '2') {
+                if ((utf8_strlen(trim($this->request->post['custom_field']['account'][2])) < 2) || (utf8_strlen(trim($this->request->post['custom_field']['account'][2])) > 128)) {
+                    $json['error']['custom-field2'] = 'Naziv tvrtke mora sadržavati između 2 i 128 znakova!';
+                }
+                if ((utf8_strlen(trim($this->request->post['custom_field']['account'][1])) < 9) || (utf8_strlen(trim($this->request->post['custom_field']['account'][1])) > 13) ) {
+                    $json['error']['custom-field1'] = 'OIB nije u ispravnom formatu!';
+                }
+            }
 
 			// Captcha
 			if ($this->config->get('captcha_' . $this->config->get('config_captcha') . '_status') && in_array('register', (array)$this->config->get('config_captcha_page'))) {

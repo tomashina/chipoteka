@@ -238,9 +238,11 @@ class ControllerAccountRegister extends Controller {
 
         if( !preg_match("/^\+?[0-9]{3}-?[0-9]{6,12}$/", $this->request->post['telephone']) ) {
 
+            $this->error['telephone'] = $this->language->get('error_telephone');
 
-            $json['error']['telephone'] = $this->language->get('error_telephone');
         }
+
+
 
 		// Customer Group
 		if (isset($this->request->post['customer_group_id']) && is_array($this->config->get('config_customer_group_display')) && in_array($this->request->post['customer_group_id'], $this->config->get('config_customer_group_display'))) {
@@ -254,7 +256,7 @@ class ControllerAccountRegister extends Controller {
 
 		$custom_fields = $this->model_account_custom_field->getCustomFields($customer_group_id);
 
-		foreach ($custom_fields as $custom_field) {
+		/*foreach ($custom_fields as $custom_field) {
 			if ($custom_field['location'] == 'account') {
 				if ($custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']])) {
 					$this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
@@ -262,10 +264,19 @@ class ControllerAccountRegister extends Controller {
 					$this->error['custom_field'][$custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
 				}
 			}
-		}
+		}*/
+
+        if (isset($this->request->post['customer_group_id']) && $this->request->post['customer_group_id'] == '2') {
+            if ((utf8_strlen(trim($this->request->post['custom_field']['account'][2])) < 2) || (utf8_strlen(trim($this->request->post['custom_field']['account'][2])) > 128)) {
+                $this->error['custom_field']['2'] = 'Naziv tvrtke mora sadržavati između 2 i 128 znakova!';
+            }
+            if ((utf8_strlen(trim($this->request->post['custom_field']['account'][1])) < 9) || (utf8_strlen(trim($this->request->post['custom_field']['account'][1])) > 13) ) {
+                $this->error['custom_field']['1'] = 'OIB nije u ispravnom formatu!';
+            }
+        }
 
 		if ((utf8_strlen(html_entity_decode($this->request->post['password'], ENT_QUOTES, 'UTF-8')) < 4) || (utf8_strlen(html_entity_decode($this->request->post['password'], ENT_QUOTES, 'UTF-8')) > 40)) {
-			$this->error['password'] = $this->language->get('error_password');
+		$this->error['password'] = $this->language->get('error_password');
 		}
 
 		if ($this->request->post['confirm'] != $this->request->post['password']) {
