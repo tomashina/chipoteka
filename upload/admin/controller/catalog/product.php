@@ -323,6 +323,8 @@ class ControllerCatalogProduct extends Controller {
 
         $data['export_csv'] = $this->url->link('catalog/product/exportCSV', 'user_token=' . $this->session->data['user_token'] . $url, true);
 
+        $data['export_csv_facebook'] = $this->url->link('catalog/product/exportCSVFacebook', 'user_token=' . $this->session->data['user_token'] . $url, true);
+
 		$filter_data = array(
 			'filter_name'	  => $filter_name,
 			'filter_model'	  => $filter_model,
@@ -1457,6 +1459,99 @@ class ControllerCatalogProduct extends Controller {
           $this->_fputcsv($output, $row); // here you can change delimiter/enclosure
 
            // fputcsv($output, $row , "\"", "," ); // here you can change delimiter/enclosure
+
+
+        }
+
+
+        fclose($output); // Closing the File
+
+
+
+    }
+
+    public function exportCSVFacebook(){
+
+        $this->load->model('catalog/product'); // Loading the Model of Products
+
+        $this->load->model('catalog/category');
+
+        $temp_data = $this->model_catalog_product->getProducts(); // Fetch all the Products where Status is Enabled
+
+        //  print_r($temp_data);
+
+
+        /* CSV Header Starts Here
+
+        header("Content-Type: text/csv");
+        header("Content-Disposition: attachment; filename=ProductsCSV-".date('d-m-Y').".csv");
+        // Disable caching
+        header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1
+        header("Pragma: no-cache"); // HTTP 1.0
+        header("Expires: 0"); // Proxies*/
+
+        /* CSV Header Ends Here */
+
+        $headers = 'id,override,availability,price,link,image_link,sale_price';
+
+        // $output = fopen("php://output", "w"); //Opens and clears the contents of file; or creates a new file if it doesn't exist
+
+        $output = fopen ('../image/chipotekafb.csv', "w");
+
+        fputcsv($output, explode(',', $headers));
+
+        $data = array();
+
+        $this->load->model('tool/image');
+
+        // print_r($temp_data);
+
+        // We don't want to export all the information to be exported so maintain a separate array for the information to be exported
+        foreach($temp_data as $data2)
+        {
+            $special = false;
+
+            $product_specials = $this->model_catalog_product->getProductSpecials($data2['product_id']);
+
+            foreach ($product_specials  as $product_special) {
+                if (($product_special['date_start'] == '0000-00-00' || strtotime($product_special['date_start']) < time()) && ($product_special['date_end'] == '0000-00-00' || strtotime($product_special['date_end']) > time())) {
+                    $special = number_format($product_special['price'], '2', '.', '').' EUR';
+
+                    break;
+                }
+            }
+
+            $category = $this->getCategoriesName($data2['product_id']);
+
+
+            $data[] = array(
+                'id' =>$data2['product_id'],
+                'override' =>'HR',
+                'availability' =>'in stock',
+                'price' => number_format($data2['price'], '2', '.', '').' EUR',
+                'link' => 'https://www.chipoteka.hr/index.php?route=product/product&product_id=' . $data2['product_id'],
+                'image_link' => $this->model_tool_image->resize($data2['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')),
+                'sale_price' => $special
+
+
+
+
+            );
+
+        }
+        //echo'<pre>';
+        // print_r($data);
+        //echo'</pre>';
+        // Exporting the CSV
+
+
+
+
+        foreach($data as $row)
+        {
+            $this->_fputcsv($output, $row); // here you can change delimiter/enclosure
+
+            // fputcsv($output, $row , "\"", "," ); // here you can change delimiter/enclosure
 
 
         }
