@@ -66,6 +66,25 @@
 
                 </div>
             </div>
+
+            {% if description %}
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+                            {{ description }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if categories %}
+
+                {% for category in categories %}
+                    <a class="btn btn-outline-secondary btn-sm me-1 mb-1 text-uppercase" href="{{ category.href }}">{{ category.name }}</a>
+                {% endfor %}
+
+
+            {% endif %}
+
             <div class="row pt-3 product-holder ">
                 {% if products %}
                 <!-- Product-->
@@ -76,6 +95,8 @@
                 {% if not categories and not products %}
                     <p>{{ text_empty }}</p>
                 {% endif %}
+
+
             </div>
  
             <nav class="d-flex justify-content-center pt-2 pagination-navigation" aria-label="Page navigation">
