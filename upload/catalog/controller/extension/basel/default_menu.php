@@ -77,6 +77,12 @@ class ControllerExtensionBaselDefaultMenu extends Controller {
 				}
 
 
+                if($category['category_id'] == 308){
+
+                    $children_data = array_reverse($children_data);
+                }
+
+
 				// Level 1
 
                 if ($this->model_catalog_product->getTotalProducts($filter_data) != 0)
