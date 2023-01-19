@@ -68,7 +68,7 @@
             </div>
 
             {% if description %}
-                <div class="row">
+                <div class="row d-none d-sm-block">
                     <div class="col-sm-12">
                         <div class="alert alert-secondary alert-dismissible fade show" role="alert">
                             {{ description }}
@@ -77,11 +77,11 @@
                 </div>
             {% endif %}
             {% if categories %}
-
+            <div class="d-none d-sm-block">
                 {% for category in categories %}
                     <a class="btn btn-outline-secondary btn-sm me-1 mb-1 text-uppercase" href="{{ category.href }}">{{ category.name }}</a>
                 {% endfor %}
-
+            </div>
 
             {% endif %}
 
@@ -102,6 +102,18 @@
             <nav class="d-flex justify-content-center pt-2 pagination-navigation" aria-label="Page navigation">
                 {{ pagination }}
             </nav>
+
+            {% if description %}
+                <div class="row d-block d-sm-none mt-5">
+                    <div class="col-sm-12">
+                        <div class="alert alert-secondary alert-dismissible fade show" role="alert">
+                            {{ description }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+
         </div>
     </div>
     </div>
