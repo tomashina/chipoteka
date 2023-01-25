@@ -197,7 +197,7 @@ class LOC_Category
         $this->db->query("INSERT INTO " . DB_PREFIX . "category_temp (id, naziv, opis, seo, data_1, data_2) VALUES " . $this->query_update . ";");
         $this->db->query("UPDATE " . DB_PREFIX . "category c INNER JOIN " . DB_PREFIX . "category_temp ct ON c.category_id = ct.id SET c.status = ct.data_2");
         $this->db->query("UPDATE " . DB_PREFIX . "category_description cd INNER JOIN " . DB_PREFIX . "category_temp ct ON cd.category_id = ct.id SET cd.name = ct.naziv");
-        $this->db->query("UPDATE " . DB_PREFIX . "seo_url su INNER JOIN " . DB_PREFIX . "category_temp ct ON su.query = ct.data_1 SET su.keyword = ct.seo");
+       // $this->db->query("UPDATE " . DB_PREFIX . "seo_url su INNER JOIN " . DB_PREFIX . "category_temp ct ON su.query = ct.data_1 SET su.keyword = ct.seo");
 
         return Category::count();
     }
