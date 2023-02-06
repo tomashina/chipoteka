@@ -32,6 +32,7 @@ class Msmart_Search_Singularisation
             '/s$/' => 's',
             '/^$/' => '',
             '/$/' => 's',
+
         ),
         'uninflected' => array(
             '.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', 'people', 'cookie'
@@ -133,8 +134,12 @@ class Msmart_Search_Singularisation
             '/(f)eet$/i' => '\1oot',
             '/(n)ews$/i' => '\1\2ews',
             '/eaus$/' => 'eau',
+            '/nici$/' => 'nik',
             '/^(.*us)$/' => '\\1',
             '/s$/i' => '',
+            '/i$/i' => '',
+
+
         ),
         'uninflected' => array(
             '.*[nrlm]ese',
@@ -147,7 +152,7 @@ class Msmart_Search_Singularisation
             '.*ss',
         ),
         'irregular' => array(
-            'criteria'  => 'criterion',
+
             'curves'    => 'curve',
             'emphases'  => 'emphasis',
             'foes'      => 'foe',
