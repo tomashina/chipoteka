@@ -86,6 +86,40 @@ class ProductHelper
 
 
     /**
+     * @param array $categories
+     * @param array $manufacturer
+     *
+     * @return string
+     */
+    public static function getTags(array $categories, array $manufacturer): string
+    {
+        $tags_string = '';
+
+        if ( ! empty($categories)) {
+            $cats = collect($categories)->reverse()->take(2);
+
+            foreach ($cats as $cat) {
+                $title = Category::query()->where('category_id', $cat)->first()->name;
+                $title = str_replace(' i ', ',', $title);
+                $title = str_replace(' za ', ',', $title);
+                $title = str_replace(', ', ',', $title);
+                $arr = explode(',', $title);
+
+                foreach ($arr as $item) {
+                    $tags_string .= $item . ',';
+                }
+            }
+        }
+
+        if ( ! empty($manufacturer) && isset($manufacturer['name'])) {
+            $tags_string .= $manufacturer['name'] . ',';
+        }
+
+        return substr($tags_string, 0, -1);
+    }
+
+
+    /**
      * Return description with default language.
      * Language_id as response array key.
      *
