@@ -138,6 +138,8 @@ class Msmart_Search_Singularisation
             '/^(.*us)$/' => '\\1',
             '/s$/i' => '',
             '/i$/i' => '',
+            '/e$/i' => '',
+            '/a$/i' => '',
 
 
         ),
