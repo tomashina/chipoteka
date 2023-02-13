@@ -120,7 +120,14 @@ class ControllerProductManufacturer extends Controller {
 
 		if ($manufacturer_info) {
 
-			$this->document->setTitle($manufacturer_info['name']);
+            if($manufacturer_info['meta_title']){
+                $this->document->setTitle($manufacturer_info['meta_title']);
+            }
+            else{
+                $this->document->setTitle($manufacturer_info['name']);
+            }
+
+            $this->document->setDescription($manufacturer_info['meta_description']);
 
 			$url = '';
 
@@ -282,6 +289,7 @@ class ControllerProductManufacturer extends Controller {
                     'lasteur_30'      => $lasteur_30,
                     'freeshipping' => $freeshipping,
                     'saljemodo'   => $saljemodo,
+                    'categoryname' =>  ' - '.$manufacturer_info['name'],
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,
 					'rating'      => $result['rating'],

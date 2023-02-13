@@ -100,7 +100,7 @@ class ControllerProductCategory extends Controller {
 
 		if ($category_info) {
 
-			$this->document->setDescription('Pogledajte našu odličnu ponudu proizvoda '.$category_info['meta_title']);
+			$this->document->setDescription($category_info['meta_description']);
 			$this->document->setKeywords($category_info['meta_keyword']);
 
 			$data['heading_title'] = $category_info['name'];
@@ -386,6 +386,7 @@ class ControllerProductCategory extends Controller {
                     'pj'           => $pj,
                     'special'      => $special,
                     'freeshipping' => $freeshipping,
+                    'categoryname' => ' - '.$category_info['name'],
                     'tax'          => $tax,
                     'minimum'      => $result['minimum'] > 0 ? $result['minimum'] : 1,
                     'rating'       => $result['rating'],
