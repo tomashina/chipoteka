@@ -85,7 +85,7 @@ class Response {
             if (stripos($uri, 'admin') === false) {
                 if (isset($_SERVER['HTTP_ACCEPT']) && isset($_SERVER['HTTP_USER_AGENT'])) {
                     if( strpos( $_SERVER['HTTP_ACCEPT'], 'image/webp' ) !== false ) {
-                        $re = '/(cache)(.*)(\.jpg|\.png|.jpeg)/U';
+                        $re = '/(cache)(.*)(\.jpg|\.png|\.PNG|.jpeg)/U';
                         $subst = '$1webp$2.webp';
                         $this->output = preg_replace($re, $subst, $this->output);
                     }
