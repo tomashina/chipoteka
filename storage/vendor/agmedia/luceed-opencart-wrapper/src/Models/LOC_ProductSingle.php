@@ -318,7 +318,6 @@ class LOC_ProductSingle
         $status       = 1;
 
         $description = ProductHelper::getDescription($this->product);
-        $description[agconf('import.default_language')]['tag'] = ProductHelper::getTags($categories, $manufacturer);
 
         if ($this->product_to_update) {
             $old_description = ProductDescription::where('product_id', $this->product_to_update->product_id)
@@ -327,6 +326,8 @@ class LOC_ProductSingle
 
             $description = ProductHelper::getDescription($this->product, $old_description);
         }
+
+        $description[agconf('import.default_language')]['tag'] = ProductHelper::getTags($categories, $manufacturer);
 
         if ( ! $this->product['opis'] || empty($this->product['dokumenti']) || ! $this->product['mpc'] || $this->product['mpc'] == 0) {
             $status = 0;
