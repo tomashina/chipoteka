@@ -313,10 +313,12 @@ class LOC_ProductSingle
     public function make(): array
     {
         $manufacturer = ProductHelper::getManufacturer($this->product);
+        $categories   = ProductHelper::getCategories($this->product);
         $stock_status = $this->product['stanje_kol'] ? agconf('import.default_stock_full') : agconf('import.default_stock_empty');
         $status       = 1;
 
         $description = ProductHelper::getDescription($this->product);
+        $description[agconf('import.default_language')]['tag'] = ProductHelper::getTags($categories, $manufacturer);
 
         if ($this->product_to_update) {
             $old_description = ProductDescription::where('product_id', $this->product_to_update->product_id)
@@ -383,7 +385,7 @@ class LOC_ProductSingle
             'product_description' => $description,
             'product_image'       => $images,
             'product_layout'      => [0 => ''],
-            'product_category'    => ProductHelper::getCategories($this->product),
+            'product_category'    => $categories,
             'product_seo_url'     => [0 => ProductHelper::getSeoUrl($this->product)],
         ];
 

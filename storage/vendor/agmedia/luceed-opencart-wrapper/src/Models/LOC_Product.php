@@ -367,10 +367,12 @@ class LOC_Product
     {
         $product = collect($product);
         $manufacturer = ProductHelper::getManufacturer($product);
+        $categories   = ProductHelper::getCategories($product);
         $stock_status = $product['stanje_kol'] ? agconf('import.default_stock_full') : agconf('import.default_stock_empty');
         $status       = 1;
 
         $description = ProductHelper::getDescription($product);
+        $description[agconf('import.default_language')]['tag'] = ProductHelper::getTags($categories, $manufacturer);
 
         if ( ! $product['opis'] || empty($product['dokumenti'])) {
             $status = 0;
@@ -428,7 +430,7 @@ class LOC_Product
             'product_description' => $description,
             'product_image'       => $images,
             'product_layout'      => [0 => ''],
-            'product_category'    => ProductHelper::getCategories($product),
+            'product_category'    => $categories,
             'product_seo_url'     => [0 => ProductHelper::getSeoUrl($product)],
         ];
 

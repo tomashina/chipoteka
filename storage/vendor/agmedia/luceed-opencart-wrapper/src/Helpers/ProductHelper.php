@@ -9,6 +9,7 @@ use Agmedia\Luceed\Facade\LuceedProduct;
 use Agmedia\Models\Attribute\Attribute;
 use Agmedia\Models\Attribute\AttributeDescription;
 use Agmedia\Models\Category\Category;
+use Agmedia\Models\Category\CategoryDescription;
 use Agmedia\Models\Manufacturer\Manufacturer;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -96,12 +97,15 @@ class ProductHelper
         $tags_string = '';
 
         if ( ! empty($categories)) {
-            $cats = collect($categories)->reverse()->take(2);
+            $cats = collect($categories)->take(2);
 
             foreach ($cats as $cat) {
-                $title = Category::query()->where('category_id', $cat)->first()->name;
-                $title = str_replace(' i ', ',', $title);
+                $title = CategoryDescription::query()->where('category_id', $cat)->first()->name;
+
+                $title = str_replace(' i ', ',', strtolower($title));
                 $title = str_replace(' za ', ',', $title);
+                $title = str_replace(' I ', ',', $title);
+                $title = str_replace(' ZA ', ',', $title);
                 $title = str_replace(', ', ',', $title);
                 $arr = explode(',', $title);
 
@@ -112,7 +116,9 @@ class ProductHelper
         }
 
         if ( ! empty($manufacturer) && isset($manufacturer['name'])) {
-            $tags_string .= $manufacturer['name'] . ',';
+            if ($manufacturer['name'] != 'Razno') {
+                $tags_string .= strtolower($manufacturer['name']) . ',';
+            }
         }
 
         return substr($tags_string, 0, -1);
