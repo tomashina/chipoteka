@@ -161,7 +161,7 @@ class ProductHelper
             'tag' => '',
             'meta_title' => static::setText($naziv),
             'meta_description' => strip_tags(static::setText($description)),
-            'meta_keyword' => static::setText($naziv),
+            'meta_keyword' => static::setText(str_replace(' ', ',', $naziv)),
         ];
 
         return $response;
