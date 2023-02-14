@@ -35,7 +35,7 @@
                                 <li class="widget-list-item"><a class="widget-list-link"  data-bs-toggle="collapse" data-bs-target="#subid{{ child.category_id }}" aria-expanded="true" aria-controls="subid{{ child.category_id }}">{{ child.name }} {{ child.show }}</a>
                                                         <ul class="widget-list collapse show" id="subid{{ child.category_id }}">
                                                 {% else %}
-                                                            <li class="widget-list-item"><a class="widget-list-link"  data-bs-toggle="collapse" data-bs-target="#subid{{ child.category_id }}" aria-expanded="false" aria-controls="subid{{ child.category_id }}">{{ child.name }} {{ child.show }}</a>
+                                                            <li class="widget-list-item"><a class="widget-list-link"  href="{{ child.href }}" data-bs-toggle="collapse" data-bs-target="#subid{{ child.category_id }}" aria-expanded="false" aria-controls="subid{{ child.category_id }}">{{ child.name }} {{ child.show }}</a>
                                                             <ul class="widget-list collapse" id="subid{{ child.category_id }}">
                                                  {% endif %}
                                                 {% for grandchild in child.grandchildren %}
