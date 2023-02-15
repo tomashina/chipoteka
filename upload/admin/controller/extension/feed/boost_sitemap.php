@@ -495,11 +495,11 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 						if ($product['image']) {
 							$output .= '  <image:image>';
 							$output .= '  <image:loc>' . $this->model_extension_feed_boost_sitemap->resizeImage($product['image'], $width, $height, $store['url']) . '</image:loc>';
-							$output .= '  <image:caption>' . $product['name'] . '</image:caption>';
-							$output .= '  <image:title>' . $product['name'] . '</image:title>';
+							$output .= '  <image:caption><![CDATA[' . $product['name'] . ']]></image:caption>';
+							$output .= '  <image:title><![CDATA[' . $product['name'] . ']]></image:title>';
 							$output .= '  </image:image>';
 						}
-						
+
 						$output .= '</url>';
 					}
 							
@@ -583,8 +583,8 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 							if ($product['image']) {
 								$output .= '  <image:image>';
 								$output .= '  <image:loc>' . $this->model_extension_feed_boost_sitemap->resizeImage($product['image'], $width, $height, $store['url']) . '</image:loc>';
-								$output .= '  <image:caption>' . $product['name'] . '</image:caption>';
-								$output .= '  <image:title>' . $product['name'] . '</image:title>';
+								$output .= '  <image:caption><![CDATA[' . $product['name'] . ']]></image:caption>';
+								$output .= '  <image:title><![CDATA[' . $product['name'] . ']]></image:title>';
 								$output .= '  </image:image>';
 							}
 							
@@ -733,8 +733,8 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 							if ($manufacturer['image']) {
 								$output .= '  <image:image>';
 								$output .= '  <image:loc>' . $this->model_extension_feed_boost_sitemap->resizeImage($manufacturer['image'], $width, $height, $store['url']) . '</image:loc>';
-								$output .= '  <image:caption>' . $manufacturer['name'] . '</image:caption>';
-								$output .= '  <image:title>' . $manufacturer['name'] . '</image:title>';
+								$output .= '  <image:caption><![CDATA[' . $manufacturer['name'] . ']]></image:caption>';
+								$output .= '  <image:title><![CDATA[' . $manufacturer['name'] . ']]></image:title>';
 								$output .= '  </image:image>';
 							}
 								
@@ -992,8 +992,8 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 								$output .= '  <priority>1.0</priority>';
 								$output .= '  <image:image>';
 								$output .= '  <image:loc>' . $this->model_extension_feed_boost_sitemap->resizeImage($product['image'], $width, $height, $store['url']) . '</image:loc>';
-								$output .= '  <image:caption>' . $product['name'] . '</image:caption>';
-								$output .= '  <image:title>' . $product['name'] . '</image:title>';
+								$output .= '  <image:caption><![CDATA[' . $product['name'] . ']]></image:caption>';
+								$output .= '  <image:title><![CDATA[' . $product['name'] . ']]></image:title>';
 								$output .= '  </image:image>';
 								$output .= '</url>';
 							}
@@ -1079,8 +1079,8 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 							if ($category['image']) {
 								$output .= '  <image:image>';
 								$output .= '  <image:loc>' . $this->model_extension_feed_boost_sitemap->resizeImage($category['image'], $width, $height, $store['url']) . '</image:loc>';
-								$output .= '  <image:caption>' . $category['name'] . '</image:caption>';
-								$output .= '  <image:title>' . $category['name'] . '</image:title>';
+								$output .= '  <image:caption><![CDATA[' . $category['name'] . ']]></image:caption>';
+								$output .= '  <image:title><![CDATA[' . $category['name'] . ']]></image:title>';
 								$output .= '  </image:image>';
 							}
 							
