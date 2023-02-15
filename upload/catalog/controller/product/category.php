@@ -518,11 +518,24 @@ class ControllerProductCategory extends Controller {
 			$pagination->url = $this->url->link('product/category', 'path=' . $this->request->get['path'] . $url . '&page={page}');
 
 			$data['pagination'] = $pagination->render();
+
+			if($category_info['meta_title'] != ''){
+
+			    $metanaslov = $category_info['meta_title'];
+
+            }
+			else{
+                $metanaslov = $category_info['name'];
+
+            }
+
+
+
             if ($page == 1) {
-            $this->document->setTitle($category_info['meta_title'] );
+            $this->document->setTitle($metanaslov );
 
             } else {
-                $this->document->setTitle($category_info['meta_title']. ' - Strana: ' . $page );
+                $this->document->setTitle($metanaslov. ' - Strana: ' . $page );
             }
 
 			//$data['results'] = sprintf($this->language->get('text_pagination'), ($product_total) ? (($page - 1) * $limit) + 1 : 0, ((($page - 1) * $limit) > ($product_total - $limit)) ? $product_total : ((($page - 1) * $limit) + $limit), $product_total, ceil($product_total / $limit));

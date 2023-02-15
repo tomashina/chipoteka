@@ -13,7 +13,7 @@
                             <div class="card product-card">
                                 <div class="position-relative">
                                     {% if (product.quantity > 0)  %}
-                                    <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only"> {{ button_cart }}</span></button>
+                                    <button class="btn btn-primary btn-basket" type="button" aria-label="Dodaj u košaricu" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only"> {{ button_cart }}</span></button>
                                     {% endif %}
                                     <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img loading="lazy" src="{{ product.thumb }}" alt="{{ product.name }}"></div>
                                     {% if product.freeshipping and groupId < 3 %}
