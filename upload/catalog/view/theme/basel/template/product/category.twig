@@ -13,7 +13,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb flex-lg-nowrap justify-content-center justify-content-lg-start">
                         {% for breadcrumb in breadcrumbs %}
-                            <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                            <li class="breadcrumb-item"><a class="text-nowrap" aria-label="breadcrumbs" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
                         {% endfor %}
                     </ol>
                 </nav>
