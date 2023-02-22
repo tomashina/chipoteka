@@ -65,10 +65,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
         $this->document->setTitle($this->language->get('heading_title'));
 
-        $data['revision_products'] = LuceedProductForRevision::with('product')->get();
+        $data['revision_products']   = LuceedProductForRevision::with('product')->get();
         $data['price_zero_products'] = Product::where('price', 0)->get();
-        $data['rev_ids']           = $data['revision_products']->pluck('sku')->take(200)->flatten();
-        $last_rev                  = LuceedProductForRevisionData::orderBy('last_revision_date', 'desc')->first();
+        $data['rev_ids']             = $data['revision_products']->pluck('sku')->take(200)->flatten();
+        $last_rev                    = LuceedProductForRevisionData::orderBy('last_revision_date', 'desc')->first();
 
         $data['last_rev'] = 'Nepoznato';
         if ($last_rev) {
@@ -267,8 +267,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
     {
         $this->importLuceedProducts();
 
-        $count = 0;
-        $_loc_ps = new LOC_ProductSingle();
+        $count      = 0;
+        $_loc_ps    = new LOC_ProductSingle();
         $for_update = LuceedProductForUpdate::all();
 
         if ($for_update->count()) {
@@ -280,7 +280,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
                     $product = $this->resolveOldProductData($_loc_ps->product_to_update);
                     // first check known errors
-                    $product_for_update = $_loc_ps->makeForUpdate($product);
+                    $product_for_update                    = $_loc_ps->makeForUpdate($product);
+                    $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
+                    $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
 
                     if ($product_for_update['sku'] == '6129256300') {
                         return $this->output($_loc_ps->finishUpdate());
@@ -288,8 +290,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
                     $this->model_catalog_product->editProduct(
                         $_loc_ps->product_to_update['product_id'],
-                        $product_for_update,
-                        true
+                        $product_for_update
                     );
 
                     $_loc_ps->finishUpdate();
@@ -341,11 +342,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 $_loc_ps->setForUpdate($product);
 
                 if ($_loc_ps->product) {
-                    $product = $this->resolveOldProductData($_loc_ps->product_to_update);
+                    $product                               = $this->resolveOldProductData($_loc_ps->product_to_update);
+                    $product_for_update                    = $_loc_ps->makeForUpdate($product);
+                    $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
+                    $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
 
                     $this->model_catalog_product->editProduct(
                         $_loc_ps->product_to_update['product_id'],
-                        $_loc_ps->makeForUpdate($product),
+                        $product_for_update,
                         true
                     );
                 } else {
@@ -368,7 +372,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
             $product = $this->resolveOldProductData($_loc_ps->product_to_update);
             // first check known errors
-            $product_for_update = $_loc_ps->makeForUpdate($product);
+            $product_for_update                    = $_loc_ps->makeForUpdate($product);
+            $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
+            $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
 
             if ($product_for_update['sku'] == '6129256300') {
                 return $this->output($_loc_ps->finishUpdate());
@@ -465,7 +471,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
         foreach ($products as $product) {
             Product::where('sku', $product->artikl)->update([
-                'jm' => $product->jm,
+                'jm'        => $product->jm,
                 'pakiranje' => $product->pakiranje ?: 1
             ]);
         }
@@ -619,7 +625,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
     public function updateB2BPrices()
     {
         $updated = 0;
-        $lp = new LOC_Price();
+        $lp      = new LOC_Price();
 
         $lp->deleteProductDiscountDB();
 
@@ -642,7 +648,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
     public function updateVpcPrices()
     {
         $_loc = new LOC_Product(LuceedProduct::all());
-        $lp = new LOC_Price();
+        $lp   = new LOC_Price();
 
         $updated = $lp->collectAndStore($_loc->getProducts(), 'vpc');
 
@@ -775,16 +781,15 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $nhs_no                     = $order['order_id'] . date("ym");
             $data['mail_poziv_na_broj'] = $nhs_no . $this->mod11INI($nhs_no);
 
-
-            $data['oib'] = isset($order['custom_field'][1]) ? $order['custom_field'][1] : null;
+            $data['oib']    = isset($order['custom_field'][1]) ? $order['custom_field'][1] : null;
             $data['tvrtka'] = isset($order['custom_field'][2]) ? $order['custom_field'][2] : null;
 
             $data['b2b'] = $order['mail'];
 
-            $lc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Document();
-            $is_b2b = ($data['oib'] != '' && $data['customer_group_id'] > 2 ) ? true : false;
+            $lc     = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Document();
+            $is_b2b = ($data['oib'] != '' && $data['customer_group_id'] > 2) ? true : false;
 
-            $data['is_b2b'] = $is_b2b;
+            $data['is_b2b']       = $is_b2b;
             $data['b2b_products'] = [];
 
             if (isset($data['luceed_uid']) && $data['luceed_uid']) {
@@ -834,7 +839,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     private function sendRevisionMail()
     {
-        $data = [];
+        $data             = [];
         $data['products'] = LuceedProductForRevision::query()->select('sku', 'name', 'data', 'has_image', 'has_description')->get()->toArray();
 
         $mail                = new Mail($this->config->get('config_mail_engine'));
