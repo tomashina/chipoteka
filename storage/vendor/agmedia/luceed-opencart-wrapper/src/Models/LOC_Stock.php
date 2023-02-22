@@ -53,6 +53,8 @@ class LOC_Stock
 
     private $status;
 
+    private $log_name;
+
     /**
      * LOC_Product constructor.
      */
@@ -60,6 +62,7 @@ class LOC_Stock
     {
         $this->db = new Database(DB_DATABASE);
         $this->status = agconf('import.default_stock_empty');
+        $this->log_name = 'stock' . date('-d-H');
     }
 
 
@@ -96,7 +99,10 @@ class LOC_Stock
             }
 
             $this->skladista_sorted = true;
+
+            Log::store($this->skladista_stock->toArray(), $this->log_name . '-sorted');
         }
+
 
         // DOBAVLJAČI
         if ($this->dobavljaci && ! $this->dobavljaci_sorted) {
@@ -124,6 +130,8 @@ class LOC_Stock
             }
 
             $this->dobavljaci_sorted = true;
+
+            Log::store($this->dobavljaci_stock->toArray(), $this->log_name . '-sorted');
         }
 
         return $this;
@@ -169,6 +177,8 @@ class LOC_Stock
                 $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.quantity = p.quantity + pt.quantity, p.stock_status_id = pt.price");
             }
 
+            Log::store($this->log_name . '-UPDATED 1', $this->log_name);
+
             return 1;
         }
 
@@ -190,6 +200,8 @@ class LOC_Stock
 
         $this->dobavljaci = collect($json->result[0]->artikli_dobavljaci);
 
+        Log::store($this->dobavljaci->toArray(), $this->log_name . '-original');
+
         return $this;
     }
 
@@ -207,6 +219,8 @@ class LOC_Stock
         $json = json_decode($skladista);
 
         $this->skladista = collect($json->result[0]->stanje);
+
+        Log::store($this->skladista->toArray(), $this->log_name . '-original');
 
         return $this;
     }
