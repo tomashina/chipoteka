@@ -349,8 +349,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
                     $this->model_catalog_product->editProduct(
                         $_loc_ps->product_to_update['product_id'],
-                        $product_for_update,
-                        true
+                        $product_for_update
                     );
                 } else {
                     if ($_loc_ps->product_to_insert) {
@@ -382,8 +381,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
             $this->model_catalog_product->editProduct(
                 $_loc_ps->product_to_update['product_id'],
-                $product_for_update,
-                true
+                $product_for_update
             );
 
             LuceedProductForUpdate::where('uid', $_loc_ps->product_to_update['luceed_uid'])->delete();
