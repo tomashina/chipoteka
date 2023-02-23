@@ -1,0 +1,242 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/main.css" type="text/css">
+
+	
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  
+  <!-- Add fancyBox -->
+  <link rel="stylesheet" href="class/fancybox/jquery.fancybox.css" type="text/css" media="screen">
+  <script type="text/javascript" src="class/fancybox/jquery.fancybox.pack.js"></script>
+  <!-- Optionally add helpers - button, thumbnail and/or media -->
+  <link rel="stylesheet" href="class/fancybox/helpers/jquery.fancybox-buttons.css" type="text/css" media="screen">
+  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-buttons.js"></script>
+  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-media.js"></script>
+  <link rel="stylesheet" href="class/fancybox/helpers/jquery.fancybox-thumbs.css" type="text/css" media="screen">
+  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-thumbs.js"></script>
+  <script type="text/javascript">
+    beforeShow: function(){
+     $("body").css({'overflow-y':'hidden'});
+    },
+    afterClose: function(){
+     $("body").css({'overflow-y':'visible'});
+    }
+  </script>
+  <script type="text/javascript">
+    /*replacing <i> for robots to <a> for users*/
+        $('.fancybox-media').fancybox({
+    		openEffect : 'none',
+    		closeEffect : 'none',
+    		helpers : {
+    		media : {}
+    		}
+    	});
+    	$(document).ready(function () {
+    		
+            $("i.must_be_href[title]").each(function(){
+                var title = $(this).attr("title");
+                if (title.indexOf('/goods') == 0 || title.indexOf('/clickBanner') == 0) {
+                    $(this).replaceWith("<a href='" + title + "' target='_blank' class='"+$(this).attr("class")+"'>"+$(this).html()+"</a>");
+                } else {
+                    $(this).replaceWith("<a href='" + title + "' class='"+$(this).attr("class")+"'>"+$(this).html()+"</a>");
+                }
+            });
+    /*
+    */
+    
+    });
+  </script>
+
+</head>
+
+<body id="lp-dsn">
+    <div class="dsn-all">
+ <nav class="navbar navbar-inverse navbar-expand-md navbar-dark bg-primary">
+            <div class="container">
+              
+                <div class="nav-fix" id="navbarSupportedContent">
+                    <ul class="navbar-nav ">
+                        <a href="index.html"><img class="navbar-brand" src="images/index/logo.jpg"></a>
+                         <li class="nav-item">
+            <a class="nav-link" href="cf.html">Bežični štapni usisavači</a>
+          </li>
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="ec.html">Kontroliranje zraka u prostoriji</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="hc.html">Njega kose</a>
+          </li>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+  <div class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="txt-in white">
+         
+          </div>
+          <img class="center-block img-fluid d-block mob-fix deny" src="images/cf/cf_01.jpg"> 
+      <img class="d-block img-fluid allow" src="images/cf/cf_01m.jpg" > 
+      <a class="fancybox-media" href="https://www.youtube.com/watch?v=Yh_jmGso64E">
+            <img class="playbtn" src="images/playerButton.png"> </a>
+      </div>
+    </div>
+  </div>
+  
+
+   <div class="py-5" style="background-color:black;">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12" style="background-color:black;">
+          <h1 class="text-center pad-b white">Znanstveni dokaz dubinskog čišćenja.</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 matrix-2">
+          <img class="center-block img-fluid d-block brd" src="images/cf/s1.jpg">
+          <div class="txt-c-in white">
+            <p class="lead pad-b">Otkriva</p>
+            <p class="para-2">Laser Slim Fluffy™ četka za tvrde podove ima laser koji otkria čestice koje inače ne vidite -  tako da vam ništa ne promakne.</p>
+          </div>
+        </div>  <div class="col-md-4 matrix-2">
+          <img class="center-block img-fluid d-block brd" src="images/cf/s2.jpg">
+          <div class="txt-c-in white">
+            <p class="lead pad-b">Broji </p>
+            <p class="para-2">Piezo senzor broji i mjeri veličinu čestica prašine.</p>
+          </div>
+        </div>
+        <div class="col-md-4 matrix-2">
+          <img class="center-block img-fluid d-block brd" src="images/cf/s3.jpg">
+          <div class="txt-c-in white">
+            <p class="lead pad-b">Reagira</p>
+            <p class="para-2">Inteligentno prilagođava snagu razini prašine. </p>
+          </div>
+        </div>
+      
+      </div>
+  
+    </div>
+  </div>
+  
+  
+ <div class="py-5">
+    <div class="container">
+      <div class="row">
+       
+      </div>
+    </div>
+    </div>
+  
+  
+  
+ 
+  
+  
+  
+  
+
+  <div class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+    
+          <img class="center-block img-fluid d-block deny" src="images/cf/cf_05.jpg">
+      <img class="center-block img-fluid d-block mob-fix allow" src="images/cf/cf_05m.jpg">
+         
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+         
+          <img class="center-block img-fluid d-block mob-fix deny" src="images/cf/cf_06.jpg">
+<img class="center-block img-fluid d-block mob-fix allow" src="images/cf/cf_06m.jpg">     </div>
+      </div>
+    </div>
+  </div>
+   <div class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+         
+          <img class="center-block img-fluid d-block mob-fix deny" src="images/cf/cf_07.jpg">
+<img class="center-block img-fluid d-block mob-fix allow" src="images/cf/cf_07m.jpg">     </div>
+      </div>
+    </div>
+  </div>
+   <div class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+         
+          <img class="center-block img-fluid d-block mob-fix deny" src="images/cf/cf_08.jpg">
+<img class="center-block img-fluid d-block mob-fix allow" src="images/cf/cf_08m.jpg">     </div>
+      </div>
+    </div>
+  </div>
+   <div class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+         
+          <img class="center-block img-fluid d-block mob-fix deny" src="images/cf/cf_09.jpg">
+<img class="center-block img-fluid d-block mob-fix allow" src="images/cf/cf_09m.jpg">     </div>
+      </div>
+    </div>
+  </div>
+
+  
+  
+  
+ 
+  <div class="py-5" id="lp-dsn_s">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 index-pad-3">
+        <h1 class="text-center pad-b"><b></b></h1><br>
+        <div class="row"><a href="https://www.chipoteka.hr/usisavaci-i-cistaci/stapni-usisavaci&price%5Bmin%5D=79&price%5Bmax%5D=869&manufacturers%5Bmanufacturer%5D%5B%5D=624&ajax_digitalElephantFilter=1" class="btn btn-primary topup maxw">Odaberite svoj Dyson</a></div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+  
+  
+
+		
+		
+<div class="py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 topup2">
+                        
+                           
+              
+              <p class="caveat"><sup>1</sup>Laser napravljen za tvrde podove.  Na učinkovitost lasera utječu uvjeti osvjetljenja okoline, vrsta prljavštine i površine. </p>
+              <p class="caveat"><sup>2</sup>Testirano na ulazu u ASTM F558, pun prašine.</p>
+              <p class="caveat"><sup>3</sup>Točnost se može razlikovati. Najbolja preciznost je u Auto načinu rada. Značajka automatske rampe samo u Auto načinu rada.</p>
+              <p class="caveat"><sup>4</sup>U načinu Boost. Svi ostali načini postižu najmanje 99,97% filtracije. </p>
+              
+          
+
+            
+
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+</body>
+
+</html>

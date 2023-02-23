@@ -1,0 +1,143 @@
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/main.css" type="text/css">
+
+	
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  
+  <!-- Add fancyBox -->
+  <link rel="stylesheet" href="class/fancybox/jquery.fancybox.css" type="text/css" media="screen">
+  <script type="text/javascript" src="class/fancybox/jquery.fancybox.pack.js"></script>
+  <!-- Optionally add helpers - button, thumbnail and/or media -->
+  <link rel="stylesheet" href="class/fancybox/helpers/jquery.fancybox-buttons.css" type="text/css" media="screen">
+  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-buttons.js"></script>
+  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-media.js"></script>
+  <link rel="stylesheet" href="class/fancybox/helpers/jquery.fancybox-thumbs.css" type="text/css" media="screen">
+  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-thumbs.js"></script>
+  <script type="text/javascript">
+    beforeShow: function(){
+     $("body").css({'overflow-y':'hidden'});
+    },
+    afterClose: function(){
+     $("body").css({'overflow-y':'visible'});
+    }
+  </script>
+  <script type="text/javascript">
+    /*replacing <i> for robots to <a> for users*/
+        $('.fancybox-media').fancybox({
+    		openEffect : 'none',
+    		closeEffect : 'none',
+    		helpers : {
+    		media : {}
+    		}
+    	});
+    	$(document).ready(function () {
+    		
+            $("i.must_be_href[title]").each(function(){
+                var title = $(this).attr("title");
+                if (title.indexOf('/goods') == 0 || title.indexOf('/clickBanner') == 0) {
+                    $(this).replaceWith("<a href='" + title + "' target='_blank' class='"+$(this).attr("class")+"'>"+$(this).html()+"</a>");
+                } else {
+                    $(this).replaceWith("<a href='" + title + "' class='"+$(this).attr("class")+"'>"+$(this).html()+"</a>");
+                }
+            });
+    /*
+    */
+    
+    });
+  </script>
+
+</head>
+
+<body id="lp-dsn">
+    <div class="dsn-all">
+ <nav class="navbar navbar-inverse navbar-expand-md navbar-dark bg-primary">
+            <div class="container">
+              
+                <div class="nav-fix" id="navbarSupportedContent">
+                    <ul class="navbar-nav ">
+                        <a href="index.html"><img class="navbar-brand" src="images/index/logo.jpg"></a>
+                         <li class="nav-item">
+            <a class="nav-link" href="cf.html">Bežični štapni usisavači</a>
+          </li>
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="ec.html">Kontroliranje zraka u prostoriji</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="hc.html">Njega kose</a>
+          </li>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+		
+		
+		<div class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+         
+          <img class="center-block img-fluid d-block mob-fix deny" src="images/hc/hc_00.jpg">
+		  <img class="center-block img-fluid d-block mob-fix allow" src="images/hc/hc_00_mob.jpg">
+
+        </div>
+      </div>
+    </div>
+  </div>
+		
+    <div class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+         <a href="cr.html">
+          <img class="center-block img-fluid d-block mob-fix deny" src="images/hc/hc_01.jpg">
+		  <img class="center-block img-fluid d-block mob-fix allow" src="images/hc/hc_01_mob.jpg">
+		</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a href="aw.html">
+          <img class="center-block img-fluid d-block mob-fix deny" src="images/hc/hc_02.jpg">
+		  <img class="center-block img-fluid d-block mob-fix allow" src="images/hc/hc_02_mob.jpg">
+		  </a>
+         
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+        <a href="ss.html">
+          <img class="center-block img-fluid d-block mob-fix deny" src="images/hc/hc_03.jpg">
+		  <img class="center-block img-fluid d-block mob-fix allow" src="images/hc/hc_03_mob.jpg">
+		</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+   
+      </div>
+  
+   
+
+
+</body>
+
+</html>

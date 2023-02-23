@@ -1,0 +1,229 @@
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/main.css" type="text/css">
+
+	
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  
+  <!-- Add fancyBox -->
+  <link rel="stylesheet" href="class/fancybox/jquery.fancybox.css" type="text/css" media="screen">
+  <script type="text/javascript" src="class/fancybox/jquery.fancybox.pack.js"></script>
+  <!-- Optionally add helpers - button, thumbnail and/or media -->
+  <link rel="stylesheet" href="class/fancybox/helpers/jquery.fancybox-buttons.css" type="text/css" media="screen">
+  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-buttons.js"></script>
+  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-media.js"></script>
+  <link rel="stylesheet" href="class/fancybox/helpers/jquery.fancybox-thumbs.css" type="text/css" media="screen">
+  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-thumbs.js"></script>
+  <script type="text/javascript">
+    beforeShow: function(){
+     $("body").css({'overflow-y':'hidden'});
+    },
+    afterClose: function(){
+     $("body").css({'overflow-y':'visible'});
+    }
+  </script>
+  <script type="text/javascript">
+    /*replacing <i> for robots to <a> for users*/
+        $('.fancybox-media').fancybox({
+    		openEffect : 'none',
+    		closeEffect : 'none',
+    		helpers : {
+    		media : {}
+    		}
+    	});
+    	$(document).ready(function () {
+    		
+            $("i.must_be_href[title]").each(function(){
+                var title = $(this).attr("title");
+                if (title.indexOf('/goods') == 0 || title.indexOf('/clickBanner') == 0) {
+                    $(this).replaceWith("<a href='" + title + "' target='_blank' class='"+$(this).attr("class")+"'>"+$(this).html()+"</a>");
+                } else {
+                    $(this).replaceWith("<a href='" + title + "' class='"+$(this).attr("class")+"'>"+$(this).html()+"</a>");
+                }
+            });
+    /*
+    */
+    
+    });
+  </script>
+
+</head>
+
+<body id="lp-dsn">
+    <div class="dsn-all">
+<nav class="navbar navbar-inverse navbar-expand-md navbar-dark bg-primary">
+            <div class="container">
+              
+                <div class="nav-fix" id="navbarSupportedContent">
+                    <ul class="navbar-nav ">
+                        <a href="index.html"><img class="navbar-brand" src="images/index/logo.jpg"></a>
+                         <li class="nav-item">
+            <a class="nav-link" href="cf.html">Bežični štapni usisavači</a>
+          </li>
+          
+          
+          <li class="nav-item">
+            <a class="nav-link" href="ec.html">Kontroliranje zraka u prostoriji</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="hc.html">Njega kose</a>
+          </li>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+  
+  
+  
+   <a href="#" target="blank">
+        <div class="py-5" style="background:black;">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                
+                
+                <img class="center-block img-fluid d-block mob-fix deny" src="images/ec/ec_02.jpg">
+                
+                <img class="center-block img-fluid d-block mob-fix allow" src="images/ec/ec_02m.jpg">
+              </div>
+            </div>
+          </div>
+        </div></a>
+        <a href="#" target="blank"><div class="py-5" style="background:black;">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                
+                
+                <img class="center-block img-fluid d-block mob-fix deny" src="images/ec/ec_03.jpg">
+                
+                <img class="center-block img-fluid d-block mob-fix allow" src="images/ec/ec_03m.jpg">
+              </div>
+            </div>
+          </div>
+        </div></a>
+        <a href="#" target="blank"><div class="py-5" style="background:black;">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                
+                <img class="center-block img-fluid d-block mob-fix deny" src="images/ec/ec_05.jpg">
+                
+                <img class="center-block img-fluid d-block mob-fix allow" src="images/ec/ec_05m.jpg">
+              </div>
+            </div>
+          </div>
+        </div></a>
+
+         <div class="py-5" style="background:black;">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                
+                <img class="center-block img-fluid d-block mob-fix deny" src="images/ec/ec_06.jpg">
+                
+                <img class="center-block img-fluid d-block mob-fix allow" src="images/ec/ec_06m.jpg">
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="py-5" >
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                
+                <img class="center-block img-fluid d-block mob-fix deny" src="images/ec/ec_07.jpg">
+                
+                <img class="center-block img-fluid d-block mob-fix allow" src="images/ec/ec_07m.jpg">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="py-5">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                
+                <img class="center-block img-fluid d-block mob-fix deny" src="images/ec/ec_10.jpg">
+                <img class="center-block img-fluid d-block mob-fix allow" src="images/ec/ec_10m.jpg">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="py-5">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                
+                <img class="center-block img-fluid d-block mob-fix deny" src="images/ec/ec_15.jpg">
+                
+                <img class="center-block img-fluid d-block mob-fix allow" src="images/ec/ec_15m.jpg">
+              </div>
+            </div>
+          </div>
+        </div>
+ 
+    <div class="py-5" id="lp-dsn_s">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 index-pad-3">
+        <h1 class="text-center pad-b"><b></b></h1><br>
+        <div class="row"><a href="https://www.chipoteka.hr/tretman-zraka/prociscivaci-zraka&price%5Bmin%5D=139&price%5Bmax%5D=1261&manufacturers%5Bmanufacturer%5D%5B%5D=624&ajax_digitalElephantFilter=1" class="btn btn-primary topup maxw">Odaberite svoj Dyson</a></div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<div class="py-5 deny-2">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        
+<p class="caveat"><sup>*</sup>U usporedbi s Dyson Pure Cool pročišćivačem (TP01/AM11)</p>
+
+
+                            
+                            <p class="caveat"><sup>1</sup>Míra zachytávání plynů se liší.</p>
+                            <p class="caveat"><sup>2</sup>Da biste provjerili kompatibilnost svog uređaja, potražite Dyson Link aplikaciju u iOS App Store ili Google Play.</p>
+                            <p class="caveat"><sup>3</sup>U maksimalnoj postavci. Testirano za projekciju zraka (DTM801), pokrivenost pročišćavanjem u sobi od 80,98m3 (TM-003711) i performanse grijanja u sobi od 35m3 (DTM961).</p>
+
+
+
+                            
+                       
+                       
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+</div>
+        
+		
+		
+		
+		
+		
+		
+		
+		
+		
+      </div>
+    </div>
+	   
+	   
+    </div>
+
+  </div>
+</body>
+
+</html>
