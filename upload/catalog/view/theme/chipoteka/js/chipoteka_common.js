@@ -142,7 +142,7 @@ $(document).ready(function() {
 		}
 	});*/
 
-	$('#searchmobile input[name=\'search-mobile\']').parent().find('.fa-search').on('click', function() {
+	/*$('#searchmobile input[name=\'search-mobile\']').parent().find('.fa-search').on('click', function() {
 		var url = $('base').attr('href') + 'index.php?route=product/search';
 		var value = $('#searchmobile input[name=\'search-mobile\']').val();
 		if (value) {url += '&search=' + encodeURIComponent(value);}
@@ -150,7 +150,7 @@ $(document).ready(function() {
 	});
 	$('#searchmobile input[name=\'search-mobile\']').on('keydown', function(e) {
 	if (e.keyCode == 13) {$('#searchmobile input[name=\'search-mobile\']').parent().find('.fa-search').trigger('click');}
-	});
+	});*/
 	
 	// Keep Menu In Viewport
 	var menu_viewport = function(){
