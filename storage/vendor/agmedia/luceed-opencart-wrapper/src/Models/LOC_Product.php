@@ -253,6 +253,8 @@ class LOC_Product
         $count = 0;
         $db = new Database(DB_DATABASE);
 
+        $this->checkProductsToDeactivate();
+
         $luceed_products = $this->getProducts()
                                 ->where('artikl', '!=', '')
                                 ->where('naziv', '!=', '')
@@ -294,6 +296,36 @@ class LOC_Product
             'inserting' => max($count - $products_count, 0),
             'updating' => $res->num_rows,//floor($count - ($count - ($diff->num_rows / 2)))
         ];
+    }
+
+
+    /**
+     * @return int
+     */
+    public function checkProductsToDeactivate()
+    {
+        $luc = $this->getProducts()
+                    ->where('artikl', '!=', '')
+                    ->where('naziv', '!=', '')
+                    ->where('webshop', '!=', 'N')
+                    ->pluck('artikl')
+                    ->flatten();
+
+        $existing = Product::query()
+                           ->pluck('sku')
+                           ->flatten();
+
+        $diff = $existing->diff($luc);
+
+        Log::store($diff->count(), 'diff_p');
+        Log::store($diff, 'diff_p');
+
+        Product::query()->whereIn('sku', $diff)->update([
+            'status' => 0,
+            'hash' => 'rehash_on_status'
+        ]);
+
+        return $diff->count();
     }
 
 
