@@ -164,7 +164,7 @@ class LOC_Stock
      */
     public function update(): int
     {
-        $this->truncateProductsQuantity();
+     //   $this->truncateProductsQuantity();
 
         if ($this->skladista_query != '') {
             $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($this->skladista_query, 0, -1) . ";");
