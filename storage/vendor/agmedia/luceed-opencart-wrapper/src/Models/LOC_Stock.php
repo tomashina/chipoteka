@@ -154,7 +154,8 @@ class LOC_Stock
                 $this->dobavljaci_query .= '("' . $item['artikl'] . '", ' . $item['stanje_kol'] . ', ' . $item['stock_status'] . '),';
             }
         }
-
+        Log::store($this->skladista_query, $this->log_name . '-query');
+        Log::store($this->dobavljaci_query, $this->log_name . '-query');
         return $this;
     }
 
