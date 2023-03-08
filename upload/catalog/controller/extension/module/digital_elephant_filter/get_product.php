@@ -213,21 +213,21 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                     $specialeur = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')),  'HRK');
 
                 }
-                if($result['special'] >= FREESHIPPING){
+               /* if($result['special'] >= FREESHIPPING){
                     $freeshipping = true;
                 }
                 else{
                     $freeshipping = false;
-                }
+                }*/
             } else {
                 $special = false;
                 $specialeur  ='';
-                if($result['price'] >= FREESHIPPING){
+              /*  if($result['price'] >= FREESHIPPING){
                     $freeshipping = true;
                 }
                 else{
                     $freeshipping = false;
-                }
+                }*/
             }
 			
 			$image2 = $this->model_catalog_product->getProductImages($result['product_id']);
@@ -378,7 +378,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                 'pj' => $pj,
                 'vpc'       => $vpc,
                 'saljemodo'     => $saljemodo,
-                'freeshipping' => $freeshipping,
+               /* 'freeshipping' => $freeshipping,*/
 				'sale_badge'  => $sale_badge,
 				'new_label'   => $is_new,
                 'special'     => $special,

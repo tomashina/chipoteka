@@ -10,12 +10,7 @@
             <button class="btn btn-primary btn-basket "  type="button" aria-label="Dodaj u košaricu" onclick="cart.add('{{ product.product_id }}', '{{ product.pakiranje }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
             {% endif %}
             <div class="card-img-top d-block overflow-hidden" ><img {{ lazy }} src="{{ product.thumb }}" alt="{{ product.name }}  {{ product.categoryname }}" title="{{ product.name }} {{ product.categoryname }}"></div>
-            {% if product.freeshipping and groupId < 3 %}
-            <div class="product-badge-cpta product-badge-cpta__free-shipping">
-                <span> Besplatna dostava</span>
-                <i class="fas fa-shipping-fast"></i>
-            </div>
-            {% endif %}
+
         </div>
       <a class="stretched-link"  href="{{ product.href }}">
         <div class="card-body">

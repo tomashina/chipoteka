@@ -183,22 +183,22 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 
                         }
 						$date_end = $this->model_extension_basel_basel->getSpecialEndDate($result['product_id']);
-                        if($result['special'] >= FREESHIPPING){
+                     /*   if($result['special'] >= FREESHIPPING){
                             $freeshipping = true;
                         }
                         else{
                             $freeshipping = false;
-                        }
+                        }*/
 					} else {
 						$special = false;
                         $specialeur  ='';
 						$date_end = false;
-                        if($result['price'] >= FREESHIPPING){
+                       /* if($result['price'] >= FREESHIPPING){
                             $freeshipping = true;
                         }
                         else{
                             $freeshipping = false;
-                        }
+                        }*/
 					}
 					
 					if ( (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
@@ -336,7 +336,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 						'sale_badge' => $sale_badge,
                         'sale_percent' => $data['sale_percent'],
                         'saljemodo'     => $saljemodo,
-                        'freeshipping' => $freeshipping,
+                       /* 'freeshipping' => $freeshipping,*/
                         'pakiranje' => $result['pakiranje'] ?: 1,
 						'special' 	 => $special,
                         'pj' => $pj,

@@ -266,22 +266,22 @@ class ControllerProductSearch extends Controller {
 
                     }
 					$tax_price = (float)$result['special'];
-                    if($result['special'] >= FREESHIPPING){
+                   /* if($result['special'] >= FREESHIPPING){
                         $freeshipping = true;
                     }
                     else{
                         $freeshipping = false;
-                    }
+                    }*/
 				} else {
 					$special = false;
                     $specialeur  ='';
 					$tax_price = (float)$result['price'];
-                    if($result['price'] >= FREESHIPPING){
+                   /* if($result['price'] >= FREESHIPPING){
                         $freeshipping = true;
                     }
                     else{
                         $freeshipping = false;
-                    }
+                    }*/
 				}
 	
 				if ($this->config->get('config_tax')) {
@@ -315,7 +315,7 @@ class ControllerProductSearch extends Controller {
                     'specialeur'     => $specialeur,
                     'priceeur_2'       => $priceeur_2,
                     'lasteur_30'      => $lasteur_30,
-                    'freeshipping' => $freeshipping,
+                   /*'freeshipping' => $freeshipping,*/
                     'saljemodo'   => $saljemodo,
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,

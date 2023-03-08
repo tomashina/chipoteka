@@ -81,12 +81,7 @@
                             <div class="position-relative">
                                 <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
                                 <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img loading="lazy" src="{{ product.thumb }}" alt="{{ product.name }}"></div>
-                                {% if product.freeshipping %}
-                                    <div class="product-badge-cpta product-badge-cpta__free-shipping">
-                                        <span> Besplatna dostava</span>
-                                        <i class="fas fa-shipping-fast"></i>
-                                    </div>
-                                {% endif %}
+
                             </div>
                             <a class="stretched-link" href="{{ product.href }}">
                                 <div class="card-body">

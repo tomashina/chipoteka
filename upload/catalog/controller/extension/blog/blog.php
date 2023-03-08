@@ -244,21 +244,21 @@ class ControllerExtensionBlogBlog extends Controller {
                 if (!is_null($result['special']) && (float)$result['special'] >= 0) {
                     $special = $this->currency->format($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
                     $tax_price = (float)$result['special'];
-                    if($result['special'] >= FREESHIPPING){
+                  /*  if($result['special'] >= FREESHIPPING){
                         $freeshipping = true;
                     }
                     else{
                         $freeshipping = false;
-                    }
+                    }*/
                 } else {
                     $special = false;
 
-                    if($result['price'] >= FREESHIPPING){
+                  /*  if($result['price'] >= FREESHIPPING){
                         $freeshipping = true;
                     }
                     else{
                         $freeshipping = false;
-                    }
+                    }*/
                 }
 
 
@@ -300,7 +300,7 @@ class ControllerExtensionBlogBlog extends Controller {
 					'description' => utf8_substr(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8')), 0, $this->config->get('config_product_description_length')) . '..',
 					'price'       => $price,
                     'price_2'       => $price_2,
-                    'freeshipping' => $freeshipping,
+                   /* 'freeshipping' => $freeshipping,*/
 					'special'     => $special,
 					'tax'         => $tax,
 					'new_label'  => $is_new,

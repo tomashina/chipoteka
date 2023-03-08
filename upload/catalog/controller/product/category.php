@@ -243,22 +243,22 @@ class ControllerProductCategory extends Controller {
 
 
 					$tax_price = (float)$result['special'];
-                    if($result['special'] >= FREESHIPPING){
+                   /* if($result['special'] >= FREESHIPPING){
                         $freeshipping = true;
                     }
                     else{
                         $freeshipping = false;
-                    }
+                    }*/
 				} else {
 					$special = false;
                     $specialeur  ='';
 					$tax_price = (float)$result['price'];
-                    if($result['price'] >= FREESHIPPING){
+                   /* if($result['price'] >= FREESHIPPING){
                         $freeshipping = true;
                     }
                     else{
                         $freeshipping = false;
-                    }
+                    }*/
 				}
 
                 if ( (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
@@ -385,7 +385,7 @@ class ControllerProductCategory extends Controller {
                     'vpc'          => $vpc,
                     'pj'           => $pj,
                     'special'      => $special,
-                    'freeshipping' => $freeshipping,
+                    /*'freeshipping' => $freeshipping,*/
                     'categoryname' => ' - '.$category_info['name'],
                     'tax'          => $tax,
                     'minimum'      => $result['minimum'] > 0 ? $result['minimum'] : 1,

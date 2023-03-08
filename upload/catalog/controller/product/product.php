@@ -481,11 +481,11 @@ class ControllerProductProduct extends Controller {
                 }
 				$tax_price = (float)$product_info['special'];
 
-                if($product_info['special']>= FREESHIPPING){
+             /*   if($product_info['special']>= FREESHIPPING){
 
                     $data['freeshipping'] = true;
 
-                }
+                }*/
                 if($product_info['special']> RATEPRIKAZ){
 
                     $data['prikazrata'] = true;
@@ -496,11 +496,11 @@ class ControllerProductProduct extends Controller {
                 $data['specialeur']  ='';
 				$tax_price = (float)$product_info['price'];
 
-                if($product_info['price']>= FREESHIPPING){
+              /*  if($product_info['price']>= FREESHIPPING){
 
                     $data['freeshipping'] = true;
 
-                }
+                }*/
                 if($product_info['price']> RATEPRIKAZ){
 
                     $data['prikazrata'] = true;
@@ -668,23 +668,23 @@ class ControllerProductProduct extends Controller {
 
                     }
 					$tax_price = (float)$result['special'];
-                    if($result['special'] >= FREESHIPPING){
+                   /* if($result['special'] >= FREESHIPPING){
                         $freeshipping = true;
                     }
                     else{
                         $freeshipping = false;
-                    }
+                    }*/
 				} else {
 					$special = false;
                     $specialeur  ='';
 					$tax_price = (float)$result['price'];
 
-                    if($result['price'] >= FREESHIPPING){
+                  /*  if($result['price'] >= FREESHIPPING){
                         $freeshipping = true;
                     }
                     else{
                         $freeshipping = false;
-                    }
+                    }*/
 
 				}
 
@@ -731,7 +731,7 @@ class ControllerProductProduct extends Controller {
                     'specialeur'     => $specialeur,
                     'priceeur_2'       => $priceeur_2,
 					'pj' => $pj,
-					'freeshipping' => $freeshipping,
+					/*'freeshipping' => $freeshipping,*/
                     'saljemodo'     => $saljemodo,
 					'tax'         => $tax,
 					'minimum'     => $result['minimum'] > 0 ? $result['minimum'] : 1,

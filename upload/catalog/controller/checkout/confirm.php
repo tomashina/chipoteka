@@ -117,7 +117,7 @@ class ControllerCheckoutConfirm extends Controller {
 
 			$this->load->language('checkout/checkout');
 
-            if($data['groupId']>=2){
+         /*   if($data['groupId']>=2){
 
                 if ($this->cart->getTotal() < 1000 ) {
 
@@ -141,7 +141,7 @@ class ControllerCheckoutConfirm extends Controller {
                 } else {
                     $data['freeshipppingnotification'] = '';
                 }
-            }
+            }*/
 
 			$order_data['invoice_prefix'] = $this->config->get('config_invoice_prefix');
 			$order_data['store_id'] = $this->config->get('config_store_id');
