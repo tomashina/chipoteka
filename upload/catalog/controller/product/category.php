@@ -253,7 +253,7 @@ class ControllerProductCategory extends Controller {
 					$special = false;
                     $specialeur  ='';
 					$tax_price = (float)$result['price'];
-                   /* if($result['price'] >= FREESHIPPING){
+                  /*  if($result['price'] >= FREESHIPPING){
                         $freeshipping = true;
                     }
                     else{
@@ -385,7 +385,7 @@ class ControllerProductCategory extends Controller {
                     'vpc'          => $vpc,
                     'pj'           => $pj,
                     'special'      => $special,
-                    /*'freeshipping' => $freeshipping,*/
+                  /*  'freeshipping' => $freeshipping,*/
                     'categoryname' => ' - '.$category_info['name'],
                     'tax'          => $tax,
                     'minimum'      => $result['minimum'] > 0 ? $result['minimum'] : 1,

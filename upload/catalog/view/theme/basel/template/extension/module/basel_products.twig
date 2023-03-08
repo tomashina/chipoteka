@@ -16,7 +16,6 @@
                                     <button class="btn btn-primary btn-basket" type="button" aria-label="Dodaj u košaricu" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only"> {{ button_cart }}</span></button>
                                     {% endif %}
                                     <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img loading="lazy" src="{{ product.thumb }}" alt="{{ product.name }}"></div>
-
                                 </div>
                                 <a class="stretched-link" href="{{ product.href }}">
                                     <div class="card-body">

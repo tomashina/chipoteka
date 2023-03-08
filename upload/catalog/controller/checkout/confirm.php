@@ -117,11 +117,11 @@ class ControllerCheckoutConfirm extends Controller {
 
 			$this->load->language('checkout/checkout');
 
-         /*   if($data['groupId']>=2){
+            if($data['groupId']>2){
 
-                if ($this->cart->getTotal() < 1000 ) {
+                if ($this->cart->getTotal() < 132.74 ) {
 
-                    $razlika = 1000 - $this->cart->getTotal();
+                    $razlika = 132.74 - $this->cart->getTotal();
 
                     $razlika = number_format($razlika, 2, ',', '');
                     $data['freeshipppingnotification'] =   sprintf($this->language->get('freeshipppingnotificationb2b'), $razlika);
@@ -132,16 +132,10 @@ class ControllerCheckoutConfirm extends Controller {
             }
             else {
 
-                if ($this->cart->getTotal() < FREESHIPPING) {
-                    $razlika = FREESHIPPING - $this->cart->getTotal();
 
-                    $razlika = number_format($razlika, 2, ',', '');
-                    $data['freeshipppingnotification'] = sprintf($this->language->get('freeshipppingnotification'), $razlika);
-
-                } else {
                     $data['freeshipppingnotification'] = '';
-                }
-            }*/
+
+            }
 
 			$order_data['invoice_prefix'] = $this->config->get('config_invoice_prefix');
 			$order_data['store_id'] = $this->config->get('config_store_id');

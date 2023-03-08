@@ -92,7 +92,7 @@
                             <!-- Product details-->
                             <div class="col-md-7 col-xxxl-7" style="min-width: 1px;">
                                 <div class="product-features" id="product">
-                                    <div class="badges-wrapper {% if  special == '' %} mt-2 {% endif %} {% if groupId > 1 %}mt-2 {% endif %}">
+                                    <div class="badges-wrapper {% if special == '' %} mt-2 {% endif %} {% if groupId > 1 %}mt-2 {% endif %}">
 
                                         {% if price and special and sale_badge %}
                                             <div class="product-badge-cpta product-badge-cpta__discount">
@@ -438,7 +438,12 @@
                                         <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
                                     {% endif %}
                                     <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" loading="lazy" title="{{ product.name }}" alt="{{ product.name }}"></div>
-
+                                    {% if product.freeshipping and groupId < 3 %}
+                                        <div class="product-badge-cpta product-badge-cpta__free-shipping">
+                                            <span> Besplatna dostava</span>
+                                            <i class="fas fa-shipping-fast"></i>
+                                        </div>
+                                    {% endif %}
                                 </div>
                                 <a class="stretched-link" href="{{ product.href }}">
                                     <div class="card-body">

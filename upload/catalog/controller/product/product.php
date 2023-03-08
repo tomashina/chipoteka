@@ -668,23 +668,23 @@ class ControllerProductProduct extends Controller {
 
                     }
 					$tax_price = (float)$result['special'];
-                   /* if($result['special'] >= FREESHIPPING){
+                    if($result['special'] >= FREESHIPPING){
                         $freeshipping = true;
                     }
                     else{
                         $freeshipping = false;
-                    }*/
+                    }
 				} else {
 					$special = false;
                     $specialeur  ='';
 					$tax_price = (float)$result['price'];
 
-                  /*  if($result['price'] >= FREESHIPPING){
+                    if($result['price'] >= FREESHIPPING){
                         $freeshipping = true;
                     }
                     else{
                         $freeshipping = false;
-                    }*/
+                    }
 
 				}
 

@@ -3,6 +3,12 @@
 
   <h2 class="h6 pt-1 pb-3 mb-3 mt-3 border-bottom">{{ text_review }}</h2>
 
+    {% if freeshipppingnotification %}
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            {{ freeshipppingnotification }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button>
+        </div>
+    {% endif %}
     {{ notif }}
 
   {% for product in products %}
