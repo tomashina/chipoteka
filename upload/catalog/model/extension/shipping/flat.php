@@ -25,7 +25,7 @@ class ModelExtensionShippingFlat extends Model {
 		if ($status) {
 			$quote_data = array();
 
-            if($data['groupId']>2) {
+          /*  if($data['groupId']>2) {
 
 
                 if ($this->cart->getSubTotal() < 132.74) {
@@ -43,7 +43,7 @@ class ModelExtensionShippingFlat extends Model {
                 }
 
 
-            }
+            }*/
 
             if($this->session->data['currency']=='HRK'){
                 $text =  $this->currency->format($this->tax->calculate($shipping_price, $this->config->get('shipping_flat_tax_class_id'), $this->config->get('config_tax')), $this->session->data['currency']).' <small>('.$this->currency->format($this->tax->calculate($shipping_price, $this->config->get('shipping_flat_tax_class_id'), $this->config->get('config_tax')), 'EUR'). ')</small> ';
