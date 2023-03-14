@@ -1,242 +1,194 @@
-<html>
 
-<head>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/main.css" type="text/css">
+    <title>Dyson Digital Demozone</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery.fancybox.min.css">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
 
-	
-<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  
-  <!-- Add fancyBox -->
-  <link rel="stylesheet" href="class/fancybox/jquery.fancybox.css" type="text/css" media="screen">
-  <script type="text/javascript" src="class/fancybox/jquery.fancybox.pack.js"></script>
-  <!-- Optionally add helpers - button, thumbnail and/or media -->
-  <link rel="stylesheet" href="class/fancybox/helpers/jquery.fancybox-buttons.css" type="text/css" media="screen">
-  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-buttons.js"></script>
-  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-media.js"></script>
-  <link rel="stylesheet" href="class/fancybox/helpers/jquery.fancybox-thumbs.css" type="text/css" media="screen">
-  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-thumbs.js"></script>
-  <script type="text/javascript">
-    beforeShow: function(){
-     $("body").css({'overflow-y':'hidden'});
-    },
-    afterClose: function(){
-     $("body").css({'overflow-y':'visible'});
-    }
-  </script>
-  <script type="text/javascript">
-    /*replacing <i> for robots to <a> for users*/
-        $('.fancybox-media').fancybox({
-    		openEffect : 'none',
-    		closeEffect : 'none',
-    		helpers : {
-    		media : {}
-    		}
-    	});
-    	$(document).ready(function () {
-    		
-            $("i.must_be_href[title]").each(function(){
-                var title = $(this).attr("title");
-                if (title.indexOf('/goods') == 0 || title.indexOf('/clickBanner') == 0) {
-                    $(this).replaceWith("<a href='" + title + "' target='_blank' class='"+$(this).attr("class")+"'>"+$(this).html()+"</a>");
-                } else {
-                    $(this).replaceWith("<a href='" + title + "' class='"+$(this).attr("class")+"'>"+$(this).html()+"</a>");
-                }
-            });
-    /*
-    */
-    
-    });
-  </script>
+  <body id="dyddz">
+    <header class="container-fluid header">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container ps-md-5">
+          <div class="navbar-brand fw-bold position-relative ps-lg-0 ps-5">
+            <a href="index.html"><img class="logo" src="images/logo/dyson-logo.svg" alt="dyson-logo"></a>
+            <button class="burger d-block d-lg-none position-absolute start-0" type="button" data-bs-dismiss="offcanvas" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+            <span class="burger-line burger-line-first d-block"></span>
+            <span class="burger-line burger-line-fecond d-block"></span>
+            <span class="burger-line burger-line-fird d-block"></span>
+            <span class="burger-line burger-line-fourth d-block"></span>
+            </button>
+          </div>
+          <div class="offcanvas offcanvas-start bg-dark w-100 h-50" tabindex="-1" id="offcanvasExample" >
+            <div class="offcanvas-body offcanvas-body p-5 pt-0 fs-5">
+              <ul class="navbar-nav pt-4">
+                <li class="nav-item">
+                  <a class="nav-link" href="cf.html">Bežični štapni usisavači</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="ec.html">Ventilatori i pročišćivači</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="hc.html">Njega kose</a>
+                </li>
 
-</head>
 
-<body id="lp-dsn">
-    <div class="dsn-all">
- <nav class="navbar navbar-inverse navbar-expand-md navbar-dark bg-primary">
-            <div class="container">
-              
-                <div class="nav-fix" id="navbarSupportedContent">
-                    <ul class="navbar-nav ">
-                        <a href="index.html"><img class="navbar-brand" src="images/index/logo.jpg"></a>
-                         <li class="nav-item">
-            <a class="nav-link" href="cf.html">Bežični štapni usisavači</a>
-          </li>
-          
-          
-          <li class="nav-item">
-            <a class="nav-link" href="ec.html">Kontroliranje zraka u prostoriji</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="hc.html">Njega kose</a>
-          </li>
 
-                    </ul>
-                </div>
+              </ul>
             </div>
-        </nav>
-  <div class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="txt-in white">
-         
           </div>
-          <img class="center-block img-fluid d-block mob-fix deny" src="images/cf/cf_01.jpg"> 
-      <img class="d-block img-fluid allow" src="images/cf/cf_01m.jpg" > 
-      <a class="fancybox-media" href="https://www.youtube.com/watch?v=Yh_jmGso64E">
-            <img class="playbtn" src="images/playerButton.png"> </a>
-      </div>
-    </div>
-  </div>
-  
+          <div class="collapse navbar-collapse">
+            <ul class="navbar-nav fs-6">
+                <li class="nav-item">
+                  <a class="nav-link" href="cf.html">Bežični štapni usisavači</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="ec.html">Ventilatori i pročišćivači</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="hc.html">Njega kose</a>
 
-   <div class="py-5" style="background-color:black;">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12" style="background-color:black;">
-          <h1 class="text-center pad-b white">Znanstveni dokaz dubinskog čišćenja.</h1>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4 matrix-2">
-          <img class="center-block img-fluid d-block brd" src="images/cf/s1.jpg">
-          <div class="txt-c-in white">
-            <p class="lead pad-b">Otkriva</p>
-            <p class="para-2">Laser Slim Fluffy™ četka za tvrde podove ima laser koji otkria čestice koje inače ne vidite -  tako da vam ništa ne promakne.</p>
-          </div>
-        </div>  <div class="col-md-4 matrix-2">
-          <img class="center-block img-fluid d-block brd" src="images/cf/s2.jpg">
-          <div class="txt-c-in white">
-            <p class="lead pad-b">Broji </p>
-            <p class="para-2">Piezo senzor broji i mjeri veličinu čestica prašine.</p>
-          </div>
-        </div>
-        <div class="col-md-4 matrix-2">
-          <img class="center-block img-fluid d-block brd" src="images/cf/s3.jpg">
-          <div class="txt-c-in white">
-            <p class="lead pad-b">Reagira</p>
-            <p class="para-2">Inteligentno prilagođava snagu razini prašine. </p>
-          </div>
-        </div>
-      
-      </div>
-  
-    </div>
-  </div>
-  
-  
- <div class="py-5">
-    <div class="container">
-      <div class="row">
-       
-      </div>
-    </div>
-    </div>
-  
-  
-  
- 
-  
-  
-  
-  
 
-  <div class="py-5">
-    <div class="container">
+
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="container-fluid">
       <div class="row">
-        <div class="col-md-12">
-    
-          <img class="center-block img-fluid d-block deny" src="images/cf/cf_05.jpg">
-      <img class="center-block img-fluid d-block mob-fix allow" src="images/cf/cf_05m.jpg">
-         
+        <div class="col-12">
+          <div class="card border-0">
+          <video class="video d-block d-sm-none" autoplay="" muted="" playsinline="" loop="" src="videos/mobile-demozone-banner-video.mp4" ></video> <video class="video d-none d-sm-block" autoplay="" muted="" playsinline="" loop="" src="videos/web-demozone-banner-video.mp4" ></video>
+          <div class="col-md-6 card-img-overlay ps-md-5 pe-md-5 text-white">
+            <h5 class="mb-3 fs-1 pt-3"><img class="logo-product" src="images/logo/wh_logo---FC---v15-detect.png" alt="Dyson-V15-Detect"></h5>
+            <h3 class="col-12 fs-2  mb-2">Dyson otkriva nevidljivu prašinu</h3>
+            <p class="col-12 fs-5 mb-3 ">Dysonov najsnažniji inteligentni bežični usisavač<sup>1</sup></p>
+            <ul>
+          </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-         
-          <img class="center-block img-fluid d-block mob-fix deny" src="images/cf/cf_06.jpg">
-<img class="center-block img-fluid d-block mob-fix allow" src="images/cf/cf_06m.jpg">     </div>
-      </div>
-    </div>
-  </div>
-   <div class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-         
-          <img class="center-block img-fluid d-block mob-fix deny" src="images/cf/cf_07.jpg">
-<img class="center-block img-fluid d-block mob-fix allow" src="images/cf/cf_07m.jpg">     </div>
-      </div>
-    </div>
-  </div>
-   <div class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-         
-          <img class="center-block img-fluid d-block mob-fix deny" src="images/cf/cf_08.jpg">
-<img class="center-block img-fluid d-block mob-fix allow" src="images/cf/cf_08m.jpg">     </div>
-      </div>
-    </div>
-  </div>
-   <div class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-         
-          <img class="center-block img-fluid d-block mob-fix deny" src="images/cf/cf_09.jpg">
-<img class="center-block img-fluid d-block mob-fix allow" src="images/cf/cf_09m.jpg">     </div>
-      </div>
-    </div>
-  </div>
-
   
-  
-  
- 
-  <div class="py-5" id="lp-dsn_s">
-  <div class="container">
+  <div class="container-fluid">
     <div class="row">
-      <div class="col-md-12 index-pad-3">
-        <h1 class="text-center pad-b"><b></b></h1><br>
-        <div class="row"><a href="https://www.chipoteka.hr/usisavaci-i-cistaci/stapni-usisavaci&price%5Bmin%5D=79&price%5Bmax%5D=869&manufacturers%5Bmanufacturer%5D%5B%5D=624&ajax_digitalElephantFilter=1" class="btn btn-primary topup maxw">Odaberite svoj Dyson</a></div>
+      <div class="col-12">
+        <div class="card border-0">
+          <img class="img-fluid" srcset="images/cf/Mobile-FC-V15-1@2x.jpg 768w, images/cf/Web-FC-V15Detect-1@2x.jpg 1000w" sizes="(max-width: 768px) 200px,(max-width: 1000px) 1000px"  src="images/cf/Web-FC-V15Detect-1@2x.jpg" alt="v15-Detect">
+          <div class="dyson-content col-md-6 card-img-overlay ps-md-5 pe-md-5">
+            <h5 class="mb-3 fs-1 pt-3"><img class="logo-product" src="images/logo/logo-FC-v15detect@2x.png" alt="Dyson-V15-Detect"></h5>
+            <h3 class="col-12">Dysonov najsnažniji inteligentni bežični usisavač<sup>1</sup></h3>
+            <ul>
+              <li class="col-12 fs-5 mb-2 border-none">Dyson otkriva nevidljivu prašinu</li>
+              <li class="col-12 fs-5 mb-2 border-none">Do 60 minuta rada<sup>3</sup></li>
+              <li class="col-12 fs-5 mb-2 border-none">Znanstveno dokazano dubinsko čišćenje<sup>2</sup></li>
+            </ul><form action="https://www.chipoteka.hr/stapni-usisavac-dyson-v15-detect-absolute-new-8944002382"><button type="submit" class="hvr-radial-out py-3 col-6 btn btn-buy fs-5 rounded-0">Kupi sada</button></form>
+          </div>
+        </div>
       </div>
     </div>
-    
   </div>
-</div>
-  
-  
 
-		
-		
-<div class="py-5">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card border-0">
+          <img class="img-fluid" src="images/cf/Web-FC-V12-1@2x.jpg" sizes="(max-width: 768px) 200px,(max-width: 1000px) 1000px"  srcset="images/cf/Mobile-FC-V12-1@2x.jpg 768w, images/cf/Web-FC-V12-1@2x.jpg 1000w" alt="Web-FC-V12-1@2x">
+          <div class="dyson-content col-md-6 card-img-overlay ps-md-5 pe-md-5">
+            <h5 class="mb-3 fs-1 pt-3"><img class="logo-product" src="images/logo/logo-FC-V12slim@2x.png" alt="Dyson-V12"></h5>
+            <h3 class="col-12">Dysonov najsnažniji kompaktni bežični usisavač<sup>1</sup></h3>
+            <ul>
+              <li class="col-12 fs-5 mb-2 border-none">Dyson otkriva nevidljivu prašinu</li>
+              <li class="col-12 fs-5 mb-2 border-none">Do 60 minuta rada<sup>3</sup></li>
+              <li class="col-12 fs-5 mb-2 border-none">Znanstveno dokazano dubinsko čišćenje<sup>2</sup></li>
+            </ul><form action="https://www.chipoteka.hr/stapni-usisavac-dyson-v12-detect-slim-absolute-8944002381"><button type="submit" class="hvr-radial-out py-3 col-6 btn btn-buy fs-5 rounded-0">Kupi sada</button></form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card border-0">
+          <img class="img-fluid" src="images/cf/Web-FC-V10-1@2x.jpg" sizes="(max-width: 768px) 200px,(max-width: 1000px) 1000px" srcset="images/cf/Mobile-FC-V10-1@2x.jpg 768w, images/cf/Web-FC-V10-1@2x.jpg 1000w" alt="Web-FC-V10-1@2x">
+          <div class="dyson-content col-md-6 card-img-overlay ps-md-5 pe-md-5">
+            <h5 class="mb-3 fs-1 pt-3"><img class="logo-product-2" src="images/logo/logo-FC-V10Absolute@2x.png" alt="Dyson-V10"></h5>
+            <h3 class="col-12">Snažan bežični usisavač. Raspetljava. Za sve vrste podova.</h3>
+            <ul>
+              <li class="col-12 fs-5 mb-2 border-none">Do 60 minuta rada<sup>4</sup></li>
+              <li class="col-12 fs-5 mb-2 border-none">Do 40% veći spremnik s mehanizmom "naciljaj i isprazni" za higijensko pražnjenje</li>
+              <li class="col-12 fs-5 mb-2 border-none">Hvata 99,9% mikroskopski sitnih čestica prašine veličine 0,3 mikrona<sup>5</sup></li>
+            </ul><form action="https://www.chipoteka.hr/usisavaci-i-cistaci/stapni-usisavaci&price%5Bmin%5D=86&price%5Bmax%5D=869&manufacturers%5Bmanufacturer%5D%5B%5D=624&ajax_digitalElephantFilter=1"><button type="submit" class="hvr-radial-out py-3 col-6 btn btn-buy fs-5 rounded-0">Kupi sada</button></form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card border-0">
+          <img class="img-fluid" src="images/cf/Web-FC-V8-1@2x.jpg" sizes="(max-width: 768px) 200px,(max-width: 1000px) 1000px" srcset="images/cf/Mobile-FC-V8-1@2x.jpg 768w, images/cf/Web-FC-V8-1@2x.jpg 1000w" alt="Web-FC-V8-1@2x">
+          <div class="dyson-content col-md-6 card-img-overlay ps-md-5 pe-md-5">
+            <h5 class="mb-3 fs-1 pt-3"><img class="logo-product" src="images/logo/dyson-v8-logo.png" alt="Dyson-V8"></h5>
+            <h3 class="col-12">Snažan, svestran i tih.<sup>7</sup> S tehnologijom protiv petljanja. </h3>
+            <ul>
+              <li class="col-12 fs-5 mb-2 border-none">Do 40 minuta rada<sup>4</sup></li>
+              <li class="col-12 fs-5 mb-2 border-none">Higijensko pražnjenje spremnika</li>
+              <li class="col-12 fs-5 mb-2 border-none">Filtracija cijelog uređaja<sup>5</sup></li>
+            </ul><form action="https://www.chipoteka.hr/usisavaci-i-cistaci/stapni-usisavaci&price%5Bmin%5D=86&price%5Bmax%5D=869&manufacturers%5Bmanufacturer%5D%5B%5D=624&ajax_digitalElephantFilter=1"><button type="submit" class="hvr-radial-out py-3 col-6 btn btn-buy fs-5 rounded-0">Kupi sada</button></form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card border-0">
+          <img class="img-fluid" src="images/cf/WEB_CF.jpg" srcset="images/cf/MOB_CF.jpg 768w, images/cf/WEB_CF.jpg 1000w" sizes="(max-width: 768px) 200px,(max-width: 1000px) 1000px" alt="hero_01s">
+          <div class="col-md-6 card-img-overlay ps-md-5 pe-md-5 ">
+            
+            <h3 class="col-12 fs-3 pt-1 pt-lg-4 mb-4">Od čišćenja cijelog doma do rješavanja dlake kućnih ljubimaca, postoji Dyson usisavač za sve vaše potrebe.</h3>
+            <ul>
+  </ul><form action="https://www.chipoteka.hr/usisavaci-i-cistaci/stapni-usisavaci&price%5Bmin%5D=86&price%5Bmax%5D=869&manufacturers%5Bmanufacturer%5D%5B%5D=624&ajax_digitalElephantFilter=1"><button type="submit" class="hvr-radial-out py-3 col-6 btn btn-darks fs-5 rounded-0">Istraži</button></form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="py-5 deny-2">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-12 topup2">
-                        
-                           
-              
-              <p class="caveat"><sup>1</sup>Laser napravljen za tvrde podove.  Na učinkovitost lasera utječu uvjeti osvjetljenja okoline, vrsta prljavštine i površine. </p>
-              <p class="caveat"><sup>2</sup>Testirano na ulazu u ASTM F558, pun prašine.</p>
-              <p class="caveat"><sup>3</sup>Točnost se može razlikovati. Najbolja preciznost je u Auto načinu rada. Značajka automatske rampe samo u Auto načinu rada.</p>
-              <p class="caveat"><sup>4</sup>U načinu Boost. Svi ostali načini postižu najmanje 99,97% filtracije. </p>
-              
-          
-
-            
-
+                    <div class="col-md-12">
+  <p class="caveat"><sup>1</sup>Usisavanje testirano prema normi EN IEC62885-4 CL5.8 i CL5.9, testirano kod fleksibilnog ulaza, s punim spremnikom u načinu rada Boost.</p>
+  <p class="caveat"><sup>2</sup>Najbolja preciznost u načinu rada Auto. Funkcija automatske rampe samo u načinu rada Auto. Testiranje bazirano na prosječnoj kućnoj upotrebi prema podacima Dysonovih internih testova Pod prašinom mikroskopske veličine podrazumijevaju se čestice manje od 100 mikrona.</p>
+  <p class="caveat"><sup>3</sup>Odnosi se na Eco način rada na tvrdim podovima. Stvarno vrijeme rada razlikuje se ovisno o načinu rada i/ili korištenim nastavcima.</p>
+  <p class="caveat"><sup>4</sup>Navedeno vrijeme rada odnosi se na način usisavanja 1 s priključenim nemotoriziranim nastavkom. Stvarno vrijeme rada razlikuje se ovisno o načinu rada i/ili korištenim nastavcima.</p>
+ <p class="caveat"><sup>5</sup>Filtracija testirana prema ASTM F1977-04, testirana u Boost modu od strane neovisne treće strane, SGS IBR Laboratories u SAD-u, u laboratorijskom okruženju. </p>
+  <p class="caveat"><sup>6</sup>Usisavanje testirano prema normi EN 60312-1 CL 5.8 i CL5.9 kod cijevi/štapa, s punim spremnikom u načinu rada MAX.</p>
+  <p class="caveat"><sup>7</sup>Razina buke u usporedbi s drugim Dysonovim bežičnim usisavačima.</p>
                     </div>
                 </div>
             </div>
         </div>
-</div>
-</body>
 
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/jquery.fancybox.min.js"></script>
+  <script src="js/scripts.js"></script>
+</body>
 </html>

@@ -1,229 +1,186 @@
 
-<html>
 
-<head>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/main.css" type="text/css">
+    <title>Dyson Digital Demozone</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery.fancybox.min.css">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
 
-	
-<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  
-  <!-- Add fancyBox -->
-  <link rel="stylesheet" href="class/fancybox/jquery.fancybox.css" type="text/css" media="screen">
-  <script type="text/javascript" src="class/fancybox/jquery.fancybox.pack.js"></script>
-  <!-- Optionally add helpers - button, thumbnail and/or media -->
-  <link rel="stylesheet" href="class/fancybox/helpers/jquery.fancybox-buttons.css" type="text/css" media="screen">
-  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-buttons.js"></script>
-  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-media.js"></script>
-  <link rel="stylesheet" href="class/fancybox/helpers/jquery.fancybox-thumbs.css" type="text/css" media="screen">
-  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-thumbs.js"></script>
-  <script type="text/javascript">
-    beforeShow: function(){
-     $("body").css({'overflow-y':'hidden'});
-    },
-    afterClose: function(){
-     $("body").css({'overflow-y':'visible'});
-    }
-  </script>
-  <script type="text/javascript">
-    /*replacing <i> for robots to <a> for users*/
-        $('.fancybox-media').fancybox({
-    		openEffect : 'none',
-    		closeEffect : 'none',
-    		helpers : {
-    		media : {}
-    		}
-    	});
-    	$(document).ready(function () {
-    		
-            $("i.must_be_href[title]").each(function(){
-                var title = $(this).attr("title");
-                if (title.indexOf('/goods') == 0 || title.indexOf('/clickBanner') == 0) {
-                    $(this).replaceWith("<a href='" + title + "' target='_blank' class='"+$(this).attr("class")+"'>"+$(this).html()+"</a>");
-                } else {
-                    $(this).replaceWith("<a href='" + title + "' class='"+$(this).attr("class")+"'>"+$(this).html()+"</a>");
-                }
-            });
-    /*
-    */
-    
-    });
-  </script>
+  <body id="dyddz">
+    <header class="container-fluid header">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container ps-md-5">
+          <div class="navbar-brand fw-bold position-relative ps-lg-0 ps-5">
+            <a href="index.html"><img class="logo" src="images/logo/dyson-logo.svg" alt="dyson-logo"></a>
+            <button class="burger d-block d-lg-none position-absolute start-0" type="button" data-bs-dismiss="offcanvas" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+            <span class="burger-line burger-line-first d-block"></span>
+            <span class="burger-line burger-line-fecond d-block"></span>
+            <span class="burger-line burger-line-fird d-block"></span>
+            <span class="burger-line burger-line-fourth d-block"></span>
+            </button>
+          </div>
+          <div class="offcanvas offcanvas-start bg-dark w-100 h-50" tabindex="-1" id="offcanvasExample" >
+            <div class="offcanvas-body offcanvas-body p-5 pt-0 fs-5">
+              <ul class="navbar-nav pt-4">
+                <li class="nav-item">
+                  <a class="nav-link" href="cf.html">Bežični štapni usisavači</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="ec.html">Ventilatori i pročišćivači</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="hc.html">Njega kose</a>
+                </li>
 
-</head>
 
-<body id="lp-dsn">
-    <div class="dsn-all">
-<nav class="navbar navbar-inverse navbar-expand-md navbar-dark bg-primary">
-            <div class="container">
-              
-                <div class="nav-fix" id="navbarSupportedContent">
-                    <ul class="navbar-nav ">
-                        <a href="index.html"><img class="navbar-brand" src="images/index/logo.jpg"></a>
-                         <li class="nav-item">
-            <a class="nav-link" href="cf.html">Bežični štapni usisavači</a>
-          </li>
-          
-          
-          <li class="nav-item">
-            <a class="nav-link" href="ec.html">Kontroliranje zraka u prostoriji</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="hc.html">Njega kose</a>
-          </li>
 
-                    </ul>
-                </div>
-            </div>
-        </nav>
-  
-  
-  
-   <a href="#" target="blank">
-        <div class="py-5" style="background:black;">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-12">
-                
-                
-                <img class="center-block img-fluid d-block mob-fix deny" src="images/ec/ec_02.jpg">
-                
-                <img class="center-block img-fluid d-block mob-fix allow" src="images/ec/ec_02m.jpg">
-              </div>
+              </ul>
             </div>
           </div>
-        </div></a>
-        <a href="#" target="blank"><div class="py-5" style="background:black;">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-12">
-                
-                
-                <img class="center-block img-fluid d-block mob-fix deny" src="images/ec/ec_03.jpg">
-                
-                <img class="center-block img-fluid d-block mob-fix allow" src="images/ec/ec_03m.jpg">
-              </div>
-            </div>
-          </div>
-        </div></a>
-        <a href="#" target="blank"><div class="py-5" style="background:black;">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-12">
-                
-                <img class="center-block img-fluid d-block mob-fix deny" src="images/ec/ec_05.jpg">
-                
-                <img class="center-block img-fluid d-block mob-fix allow" src="images/ec/ec_05m.jpg">
-              </div>
-            </div>
-          </div>
-        </div></a>
+          <div class="collapse navbar-collapse">
+            <ul class="navbar-nav fs-6">
+                <li class="nav-item">
+                  <a class="nav-link" href="cf.html">Bežični štapni usisavači</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="ec.html">Ventilatori i pročišćivači</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="hc.html">Njega kose</a>
 
-         <div class="py-5" style="background:black;">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-12">
-                
-                <img class="center-block img-fluid d-block mob-fix deny" src="images/ec/ec_06.jpg">
-                
-                <img class="center-block img-fluid d-block mob-fix allow" src="images/ec/ec_06m.jpg">
-              </div>
-            </div>
+
+
+              </li>
+            </ul>
           </div>
         </div>
+      </nav>
+    </header>
 
-
-        <div class="py-5" >
-          <div class="container">
-            <div class="row">
-              <div class="col-md-12">
-                
-                <img class="center-block img-fluid d-block mob-fix deny" src="images/ec/ec_07.jpg">
-                
-                <img class="center-block img-fluid d-block mob-fix allow" src="images/ec/ec_07m.jpg">
-              </div>
-            </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card border-0">
+          <video class="video d-block d-sm-none" autoplay="" muted="" playsinline="" loop="" src="videos/mobile-ec-banner-video.mp4" ></video> <video class="video d-none d-sm-block" autoplay="" muted="" playsinline="" loop="" src="videos/web-ec-banner-video.mp4" ></video>
+          <div class="col-md-6 card-img-overlay ps-md-5 pe-md-5 text-white">
+<h5 class="mb-3 fs-1 pt-3"><img class="logo-product" src="images/logo/wh_logo---EC---Purifier-cool.png" alt="Purifier Cool"></h5>
+            <h3 class="col-12 fs-2  mb-2">Poboljšan za isporučivanje 50% čišćeg zraka</h3>
+            <p class="col-12 fs-6 mb-3 ">Automatski otkriva, hvata i zdržava zagađivače</p>
+            <ul>
           </div>
         </div>
-        <div class="py-5">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-12">
-                
-                <img class="center-block img-fluid d-block mob-fix deny" src="images/ec/ec_10.jpg">
-                <img class="center-block img-fluid d-block mob-fix allow" src="images/ec/ec_10m.jpg">
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="py-5">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-12">
-                
-                <img class="center-block img-fluid d-block mob-fix deny" src="images/ec/ec_15.jpg">
-                
-                <img class="center-block img-fluid d-block mob-fix allow" src="images/ec/ec_15m.jpg">
-              </div>
-            </div>
-          </div>
-        </div>
- 
-    <div class="py-5" id="lp-dsn_s">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12 index-pad-3">
-        <h1 class="text-center pad-b"><b></b></h1><br>
-        <div class="row"><a href="https://www.chipoteka.hr/tretman-zraka/prociscivaci-zraka&price%5Bmin%5D=139&price%5Bmax%5D=1261&manufacturers%5Bmanufacturer%5D%5B%5D=624&ajax_digitalElephantFilter=1" class="btn btn-primary topup maxw">Odaberite svoj Dyson</a></div>
       </div>
     </div>
-    
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card border-0">
+          <img class="img-fluid" src="images/ec/TP09_web.jpg" sizes="(max-width: 768px) 200px,(max-width: 1000px) 1000px" srcset="images/ec/TP09_mob.jpg 768w, images/ec/TP09_web.jpg 1000w" alt="Web-EC-PurifierCoolFormaldehyde-1@2x">
+          <div class="dyson-content col-md-6 card-img-overlay ps-md-5 pe-md-5">
+            <h5 class="mb-3 fs-1 pt-3"><img class="logo-product-2" src="images/logo/TP09_logo.png" alt="Purifier Cool Formaldehyde"></h5>
+            <h3 class="col-12">Pročišćava cijelu prostoriju i hladi vas snažnom cirkulacijom<sup>1</sup>. Uništava čak i formaldehid<sup>2</sup>.</h3>
+            <button type="submit" class="py-1 col-sm-6 col-xl-6 col-6 btn-purify fs-5 rounded-0 mb-2">Pročišćava</button>
+            <button type="submit" class="py-1 col-sm-6 col-xl-6 col-6 btn-cool fs-5 rounded-0 mb-4">Hladi</button>
+            </ul><form action="https://www.chipoteka.hr/tretman-zraka/prociscivaci-zraka/prociscivac-dyson-pure-hot-cool-formaldahyde-link-hp09-do-81m3-bijelo-srebrni-8944002394"><button type="submit" class="hvr-radial-out py-3 col-6 btn btn-buy fs-5 rounded-0">Kupi sada</button></form>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="py-5 deny-2">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card border-0">
+          <img class="img-fluid" src="images/ec/TP00_web.jpg" sizes="(max-width: 768px) 200px,(max-width: 1000px) 1000px" srcset="images/ec/TP00_mob.jpg 768w, images/ec/TP00_web.jpg 1000w" alt="Web-EC-PurifierCoolFormaldehyde-1@2x">
+          <div class="dyson-content col-md-6 card-img-overlay ps-md-5 pe-md-5">
+            <h5 class="mb-3 fs-1 pt-3"><img class="logo-product-2" src="images/logo/TP00_logo.png" alt="Purifier Cool Formaldehyde"></h5>
+            <h3 class="col-12">Samostojeći pročišćivač Dyson Pure Cool pročišćava zrak tijekom cijele godine, a ljeti vas hladi.</h3>
+            <button type="submit" class="py-1 col-sm-6 col-xl-6 col-6 btn-purify fs-5 rounded-0 mb-2">Pročišćava</button>
+            <button type="submit" class="py-1 col-sm-6 col-xl-6 col-6 btn-cool fs-5 rounded-0 mb-4">Hladi</button>
+            </ul><form action="https://www.chipoteka.hr/tretman-zraka/prociscivaci-zraka/prociscivac-dyson-pure-cool-link-tp09-bijelo-srebrni-8944002393"><button type="submit" class="hvr-radial-out py-3 col-6 btn btn-buy fs-5 rounded-0">Kupi sada</button></form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid">
+<div class="row">
+  <div class="col-12">
+    <div class="card border-0">
+          <img class="img-fluid" src="images/ec/PH04_web.jpg" sizes="(max-width: 768px) 200px,(max-width: 1000px) 1000px" srcset="images/ec/PH04_mob.jpg 768w, images/ec/PH04_web.jpg 1000w" alt="Web-EC-PurifierCoolFormaldehyde-1@2x">
+          <div class="dyson-content col-md-6 card-img-overlay ps-md-5 pe-md-5">
+            <h5 class="mb-3 fs-1 pt-3"><img class="logo-product-2" src="images/logo/PH04_logo.png" alt="Purifier Humidify+Cool"></h5>
+    <h3 class="col-12">Pročišćava i higijenski vlaži cijelu prostoriju<sup>4</sup>. Uništava čak i formaldehid<sup>2</sup>.</h3>
+            <button type="submit" class="py-1 col-sm-6 col-xl-6 col-6 btn-purify fs-5 rounded-0 mb-2">Pročišćava</button>
+            <button type="submit" class="py-1 col-sm-6 col-xl-6 col-6 btn-cool fs-5 rounded-0 mb-2">Hladi</button>
+          <button type="submit" class="py-1 col-sm-6 col-xl-6 col-6 btn-humidify fs-5 rounded-0 mb-4">Ovlažuje</button>
+            </ul><form action="https://www.chipoteka.hr/tretman-zraka/prociscivaci-zraka/prociscivac-dyson-pure-hot-cool-formaldahyde-link-hp09-do-81m3-bijelo-srebrni-8944002394"><button type="submit" class="hvr-radial-out py-3 col-6 btn btn-buy fs-5 rounded-0">Kupi sada</button></form>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="container-fluid">
+<div class="row">
+  <div class="col-12">
+    <div class="card border-0">
+          <img class="img-fluid" src="images/ec/PH03_web.jpg" sizes="(max-width: 768px) 200px,(max-width: 1000px) 1000px" srcset="images/ec/PH03_mob.jpg 768w, images/ec/PH03_web.jpg 1000w" alt="Web-EC-PurifierCoolFormaldehyde-1@2x">
+          <div class="dyson-content col-md-6 card-img-overlay ps-md-5 pe-md-5">
+            <h5 class="mb-3 fs-1 pt-3"><img class="logo-product-2" src="images/logo/PH03_logo.png" alt="Purifier Humidify+Cool"></h5>
+    <h3 class="col-12">Pročišćava i higijenski vlaži cijelu prostoriju<sup>4</sup>.</h3>
+            <button type="submit" class="py-1 col-sm-6 col-xl-6 col-6 btn-purify fs-5 rounded-0 mb-2">Pročišćava</button>
+            <button type="submit" class="py-1 col-sm-6 col-xl-6 col-6 btn-cool fs-5 rounded-0 mb-2">Hladi</button>
+            <button type="submit" class="py-1 col-sm-6 col-xl-6 col-6 btn-humidify fs-5 rounded-0 mb-4">Ovlažuje</button>
+            </ul><form action="https://www.chipoteka.hr/tretman-zraka/prociscivaci-zraka/prociscivac-i-ovlazivac-zraka-dyson-ph3a-8944002395"><button type="submit" class="hvr-radial-out py-3 col-6 btn btn-buy fs-5 rounded-0">Kupi sada</button></form>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="container-fluid">
+<div class="row">
+<div class="col-12">
+<div class="card border-0">
+          <img class="img-fluid" src="images/ec/WEB_EC.jpg" srcset="images/ec/MOB_EC.jpg 768w, images/ec/WEB_EC.jpg 1000w" sizes="(max-width: 768px) 200px,(max-width: 1000px) 1000px" alt="hero_01s">
+<div class="col-md-6 card-img-overlay ps-md-5 pe-md-5 ">
+  
+  <h3 class="col-12 fs-3 pt-1 pt-lg-4 mb-4">Dyson pročišćavači i ovlaživači kontroliraju zrak kojeg udišete.</h3>
+  <ul>
+  </ul><form action="https://www.chipoteka.hr/tretman-zraka/prociscivaci-zraka&price%5Bmin%5D=143&price%5Bmax%5D=1261&manufacturers%5Bmanufacturer%5D%5B%5D=624&ajax_digitalElephantFilter=1"><button type="submit" class="hvr-radial-out py-3 col-6 btn btn-darks fs-5 rounded-0">Istraži</button></form>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+ <div class="py-5 deny-2">
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        
-<p class="caveat"><sup>*</sup>U usporedbi s Dyson Pure Cool pročišćivačem (TP01/AM11)</p>
 
-
-                            
-                            <p class="caveat"><sup>1</sup>Míra zachytávání plynů se liší.</p>
-                            <p class="caveat"><sup>2</sup>Da biste provjerili kompatibilnost svog uređaja, potražite Dyson Link aplikaciju u iOS App Store ili Google Play.</p>
-                            <p class="caveat"><sup>3</sup>U maksimalnoj postavci. Testirano za projekciju zraka (DTM801), pokrivenost pročišćavanjem u sobi od 80,98m3 (TM-003711) i performanse grijanja u sobi od 35m3 (DTM961).</p>
-
-
-
-                            
-                       
-                       
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
+  <p class="caveat"><sup>1</sup>Na maksimalnoj postavci. Ispitana projekcija zraka i pokrivenost pročišćavanjem u prostoriji od 81 m³.</p>
+  <p class="caveat"><sup>2</sup>Ispitivanje cijelog uređaja kod treće strane na bazi masovnog testiranja GB/T 18801-2018 kumulativnog čišćenja formaldehida s neprekidnim ubrizgavanjem dok se ne dobije vršna vrijednost CADR formaldehida. Rezultati se u praksi mogu razlikovati.</p>
+  <p class="caveat"><sup>3</sup>Na maksimalnoj postavci. Ispitana projekcija zraka i pokrivenost pročišćavanjem u prostoriji od 81m3 i grijanje prostorije veličine 35m3.</p>
+  <p class="caveat"><sup>4</sup>Ispitana pokrivenost pročišćavanja u komori od 81 m³. Ispitana pokrivenost ovlaživanja u komori od 41 m³.</p>
 </div>
-        
-		
-		
-		
-		
-		
-		
-		
-		
-		
-      </div>
-    </div>
-	   
-	   
-    </div>
+</div>
+</div>
 
-  </div>
+<script src="js/jquery-3.4.1.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/jquery.fancybox.min.js"></script>
+<script src="js/scripts.js"></script> <!-- Option 2: Separate Popper and Bootstrap JS -->
 </body>
-
 </html>
+

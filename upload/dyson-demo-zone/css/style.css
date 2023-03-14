@@ -1,0 +1,489 @@
+@font-face {
+  font-family: 'FuturaPT-Bold';
+  src: url("../fonts/FuturaPT-Bold.eot?#iefix") format("embedded-opentype"), url("../fonts/FuturaPT-Bold.otf") format("opentype"), url("../fonts/FuturaPT-Bold.woff") format("woff"), url("../fonts/FuturaPT-Bold.ttf") format("truetype"), url("../fonts/FuturaPT-Bold.svg#FuturaPT-Bold") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'FuturaPT-DemiBold';
+  src: url("../fonts/FuturaPT-DemiBold.eot?#iefix") format("embedded-opentype"), url("../fonts/FuturaPT-DemiBold.otf") format("opentype"), url("../fonts/FuturaPT-DemiBold.woff") format("woff"), url("../fonts/FuturaPT-DemiBold.ttf") format("truetype"), url("../fonts/FuturaPT-DemiBold.svg#FuturaPT-DemiBold") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'FuturaPT-Book';
+  src: url("../fonts/FuturaPT-Book.eot?#iefix") format("embedded-opentype"), url("../fonts/FuturaPT-Book.woff") format("woff"), url("../fonts/FuturaPT-Book.ttf") format("truetype"), url("../fonts/FuturaPT-Book.svg#FuturaPT-Book") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'FuturaPT-Light';
+  src: url("../fonts/FuturaPT-Light.eot?#iefix") format("embedded-opentype"), url("../fonts/FuturaPT-Light.woff") format("woff"), url("../fonts/FuturaPT-Light.ttf") format("truetype"), url("../fonts/FuturaPT-Light.svg#FuturaPT-Light") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+body {
+  font-family: FuturaPT-Light, FuturaPT-Book, sans-serif;
+}
+#dyddz a:hover {
+  color: white !important;
+  text-decoration: none;
+}
+#dyddz li {
+  padding-left: 0px!important;
+}
+#dyddz ul {
+  list-style: none;
+  padding-left: 0px!important;
+}
+#dyddz .btn-darks {
+  background-color: #333333!important;
+  color: #fff;
+  border-color: #212529;
+}
+#dyddz .btn-darks:hover {
+  color: #ffffff;
+}
+#dyddz .btn-darks {
+  background-color: #333333;
+}
+#dyddz .btn-buy {
+  background-color: #79b928 !important;
+  color: #000;
+  border-color: #79b928;
+}
+#dyddz .btn-buy:hover {
+  color: black;
+}
+#dyddz .btn-buy {
+  background-color: #333333;
+}
+
+#dyddz sup {
+  font-size: 60%!important;
+}
+
+#dyddz .play-icon {
+  background: #fff;
+height: 96px;
+cursor: pointer;
+border: 2px solid #ebebeb;
+min-width: 290px;
+max-width: 300px;
+}
+
+#dyddz .play-icon-text {
+  display: inline-block;
+  padding: 20px 10px 10px 10px;
+  line-height: 27px;
+  width: 180px;
+}
+
+#dyddz .btn-purify {
+  background-color: #54ade1;
+  color: white;
+  border: 0px;
+  display: block;
+}
+
+#dyddz .btn-cool {
+  background-color: #316fb4;
+  color: white;
+  border: 0px;
+  display: block;
+}
+
+#dyddz .btn-humidify {
+  background-color: #11acc4;
+  color: white;
+  border: 0px;
+  display: block;
+}
+
+
+#dyddz .btn-heats {
+  background-color: #db4231;
+  color: white;
+  border: 0px;
+  display: block;
+}
+
+#dyddz .video {
+  object-fit: cover;
+  width: 100%;
+}
+#dyddz .reverse.card-img-overlay {
+  /*left: auto;*/
+}
+#dyddz .maintxt {
+  position: relative;
+}
+#dyddz .maintxt > img,
+#dyddz .overlay-text {
+  position: absolute;
+}
+#dyddz #lp-dsn .playbtn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 5%;
+  min-width: 70px;
+  cursor: pointer;
+}
+#dyddz .logo {
+  max-height: 42px;
+  margin-right: 10px;
+  margin-top: -3px;
+  display: inline-block;
+  min-height: 25px;
+  width: 70px;
+}
+
+
+#dyddz .caveat {
+font-size: 0.8rem;
+
+}
+
+
+
+#dyddz .logo-product {
+  max-width: 90%;
+  display: inline-block;
+  width: auto;
+  max-height: 3rem;
+}
+
+#dyddz .logo-product-2 {
+  max-width: 90%;
+  display: inline-block;
+  width: auto;
+  max-height: 5rem;
+}
+
+#dyddz .bg-dark {
+  background-color: #000 !important;
+}
+#dyddz .pb-6 {
+  padding-bottom: 4rem;
+}
+#dyddz .btn-light {
+  background-color: #ebebeb;
+}
+#dyddz .hvr-radial-out {
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-transform: perspective(1px) translateZ(0);
+  transform: perspective(1px) translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+  position: relative;
+  overflow: hidden;
+  background: #e1e1e1;
+  -webkit-transition-property: color;
+  transition-property: color;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+}
+#dyddz .hvr-radial-out:before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0%;
+  right: 0%;
+  bottom: 0;
+  background: #81838440;
+  border-radius: 100%;
+  -webkit-transform: scale(0);
+  transform: scale(0);
+  -webkit-transition-property: transform;
+  transition-property: transform;
+  -webkit-transition-duration: 0.3s;
+  transition-duration: 0.3s;
+  -webkit-transition-timing-function: ease-out;
+  transition-timing-function: ease-out;
+}
+#dyddz .hvr-radial-out:hover,
+#dyddz .hvr-radial-out:focus,
+#dyddz .hvr-radial-out:active {
+  /*! color: white; */
+}
+#dyddz .hvr-radial-out:hover:before,
+#dyddz .hvr-radial-out:focus:before,
+#dyddz .hvr-radial-out:active:before {
+  -webkit-transform: scale(2);
+  transform: scale(2);
+}
+#dyddz .btn-dark {
+  background-color: #333333;
+}
+#dyddz a {
+  text-decoration: none;
+  color: inherit;
+}
+#dyddz .text-dark {
+  color: #010101;
+}
+#dyddz .container-fluid {
+  max-width: 1000px!important;
+  padding-left: 0;
+  padding-right: 0;
+  overflow: hidden;
+}
+#dyddz .navbar-brand {
+  margin-right: 2.15rem;
+}
+#dyddz .navbar-expand-lg .navbar-nav .nav-link {
+  margin-left: 0rem;
+  margin-right: 2rem;
+}
+#dyddz .navbar {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+#dyddz .carousel-indicators [data-bs-target] {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 100%;
+  margin: 0 15px;
+  background-color: #4d4d4d;
+  opacity: 1;
+}
+#dyddz .offers-mobile .carousel-indicators [data-bs-target] {
+  background-color: #c1c1c1;
+}
+#dyddz .carousel-indicators .active {
+  background-color: #fff;
+}
+#dyddz .carousel-control-next,
+#dyddz .carousel-control-prev {
+  opacity: 1;
+}
+#dyddz .carousel-control-next::after {
+  content: '';
+  position: absolute;
+  right: calc(15%);
+  width: 80px;
+  height: 80px;
+  border-radius: 100%;
+  background-color: #333333;
+  z-index: -1;
+}
+#dyddz .carousel-control-prev::after {
+  content: '';
+  position: absolute;
+  right: calc(25%);
+  width: 80px;
+  height: 80px;
+  border-radius: 100%;
+  background-color: #333333;
+  z-index: -1;
+}
+#dyddz .offers-mobile .carousel-indicators .active {
+  background-color: #333333;
+}
+#dyddz .carousel-control-next,
+#dyddz .carousel-control-prev {
+  width: inherit;
+}
+#dyddz .hero {
+  text-align: left;
+}
+#dyddz .carousel-caption {
+  text-align: left;
+  left: 8px;
+  right: 0;
+  top: 10px;
+}
+#dyddz .slide-caption {
+  text-align: left;
+  top: 50px;
+  left: 0;
+  right: 0;
+}
+#dyddz .benefits {
+  color: #fff;
+  background-color: #333333;
+}
+#dyddz .play-btn {
+  width: 80px;
+  height: 80px;
+  background-color: rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  z-index: 1000;
+}
+#dyddz .players-item {
+  background: no-repeat center top;
+  background-image: none;
+  background-size: auto;
+  background-size: contain;
+  min-height: 30rem;
+  margin-bottom: 1px;
+}
+#dyddz .players-item2 {
+  background: no-repeat center top;
+  background-image: none;
+  background-size: auto;
+  background-size: cover;
+  min-height: 30rem;
+  margin-bottom: 1px;
+}
+#dyddz .players-item picture {
+  z-index: -1;
+}
+#dyddz .players-item2 picture {
+  z-index: -1;
+}
+#dyddz .card-img,
+#dyddz .card-img-bottom,
+#dyddz .card-img-top {
+  width: 225px;
+}
+#dyddz .ratings {
+  font-size: 12px;
+  line-height: 14px;
+}
+#dyddz .footer {
+  background-color: #333333;
+}
+#dyddz .benefits-item__img {
+  min-height: 80px;
+}
+#dyddz .burger {
+  width: 17px;
+  height: 14px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  bottom: 14px;
+}
+#dyddz .burger span {
+  width: 17px;
+  position: absolute;
+  background-color: #fff;
+  height: 2px;
+  transition: all .3s;
+}
+#dyddz .burger-line-first {
+  top: 0px;
+}
+#dyddz .burger-line-fecond,
+#dyddz .burger-line-fird {
+  top: 50%;
+  transform: translateY(-50%);
+}
+#dyddz .burger-line-fourth {
+  bottom: 0;
+}
+#dyddz .burger {
+  z-index: 3;
+}
+#dyddz .burger.burger--active .burger-line-fird {
+  transform: translateY(50%) rotate(45deg);
+}
+#dyddz .burger.burger--active .burger-line-fecond {
+  transform: translateY(50%) rotate(-45deg);
+}
+#dyddz .burger--active .burger-line-first,
+#dyddz .burger--active .burger-line-fourth {
+  opacity: 0;
+}
+@media (max-width: 992px) {
+  #dyddz .offcanvas {
+    top: 72px !important;
+  }
+  #dyddz .offcanvas-start {
+    top: 55px !important;
+  }
+  #dyddz .modal-backdrop {
+    z-index: 2;
+  }
+  #dyddz .navbar-brand {
+    z-index: 3;
+  }
+  #dyddz .nav-item {
+    border-bottom: 1px solid #fff;
+  }
+}
+@media (min-width: 768px) {
+  #dyddz .start-md-50 {
+    left: 50%;
+  }
+}
+@media (max-width: 768px) {
+  #dyddz .content {
+    text-align: center;
+  }
+  #dyddz .players-item picture {
+    top: calc(-44%);
+    left: calc(-320%) !important;
+  }
+  #dyddz .reverse {
+    flex-wrap: wrap-reverse;
+  }
+  #dyddz .dyson-content {
+    position: static;
+    max-width: none;
+  }
+#dyddz .play-icon {
+  margin: auto;
+}
+
+}
+@media (min-width: 768px) {
+  #dyddz .bordered {
+    width: calc(25.333333000000003%);
+  }
+}
+#dyddz .section1 {
+  background-image: linear-gradient(#dfdfdf, #dedede);
+  border-bottom: 1px solid #555;
+}
+#dyddz .show {
+  visibility: visible;
+}
+#dyddz .maximize {
+  max-width: 1150px;
+  margin: 0 auto;
+  width: 100%;
+}
+#dyddz .container {
+  max-width: 1000px;
+}
+#dyddz .accordion-button:not(.collapsed) {
+  color: #000;
+  background-color: #fff;
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.125);
+}
+#dyddz .accordion-button::after {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+  background-size: 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+#dyddz .accordion-button:not(.collapsed)::after {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23212529'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+  transform: rotate(-180deg);
+}
+#dyddz .accordion-button:not(.collapsed) {
+  color: #000;
+  background-color: #fff;
+  box-shadow: none;
+}
+#dyddz .accordion-button:focus {
+  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
+}
+#dyddz .dyson_accordion {
+  border-bottom: 1px solid #ebebeb;
+  border-top: 1px solid #ebebeb;
+}
+#dyddz .border-bottom {
+  border-bottom: 1px solid #0000003d !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  #dyddz .collapsing {
+    transition-property: height, visibility;
+    transition-duration: .35s;
+  }
+}

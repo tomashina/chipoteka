@@ -1,143 +1,160 @@
 
-<html>
 
-<head>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/main.css" type="text/css">
+    <title>Dyson Digital Demozone</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery.fancybox.min.css">
+    <link rel="stylesheet" href="css/style.css">
+  </head>
 
-	
-<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-  
-  <!-- Add fancyBox -->
-  <link rel="stylesheet" href="class/fancybox/jquery.fancybox.css" type="text/css" media="screen">
-  <script type="text/javascript" src="class/fancybox/jquery.fancybox.pack.js"></script>
-  <!-- Optionally add helpers - button, thumbnail and/or media -->
-  <link rel="stylesheet" href="class/fancybox/helpers/jquery.fancybox-buttons.css" type="text/css" media="screen">
-  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-buttons.js"></script>
-  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-media.js"></script>
-  <link rel="stylesheet" href="class/fancybox/helpers/jquery.fancybox-thumbs.css" type="text/css" media="screen">
-  <script type="text/javascript" src="class/fancybox/helpers/jquery.fancybox-thumbs.js"></script>
-  <script type="text/javascript">
-    beforeShow: function(){
-     $("body").css({'overflow-y':'hidden'});
-    },
-    afterClose: function(){
-     $("body").css({'overflow-y':'visible'});
-    }
-  </script>
-  <script type="text/javascript">
-    /*replacing <i> for robots to <a> for users*/
-        $('.fancybox-media').fancybox({
-    		openEffect : 'none',
-    		closeEffect : 'none',
-    		helpers : {
-    		media : {}
-    		}
-    	});
-    	$(document).ready(function () {
-    		
-            $("i.must_be_href[title]").each(function(){
-                var title = $(this).attr("title");
-                if (title.indexOf('/goods') == 0 || title.indexOf('/clickBanner') == 0) {
-                    $(this).replaceWith("<a href='" + title + "' target='_blank' class='"+$(this).attr("class")+"'>"+$(this).html()+"</a>");
-                } else {
-                    $(this).replaceWith("<a href='" + title + "' class='"+$(this).attr("class")+"'>"+$(this).html()+"</a>");
-                }
-            });
-    /*
-    */
+  <body id="dyddz">
+    <header class="container-fluid header">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container ps-md-5">
+          <div class="navbar-brand fw-bold position-relative ps-lg-0 ps-5">
+            <a href="index.html"><img class="logo" src="images/logo/dyson-logo.svg" alt="dyson-logo"></a>
+            <button class="burger d-block d-lg-none position-absolute start-0" type="button" data-bs-dismiss="offcanvas" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+            <span class="burger-line burger-line-first d-block"></span>
+            <span class="burger-line burger-line-fecond d-block"></span>
+            <span class="burger-line burger-line-fird d-block"></span>
+            <span class="burger-line burger-line-fourth d-block"></span>
+            </button>
+          </div>
+          <div class="offcanvas offcanvas-start bg-dark w-100 h-50" tabindex="-1" id="offcanvasExample" >
+            <div class="offcanvas-body offcanvas-body p-5 pt-0 fs-5">
+              <ul class="navbar-nav pt-4">
+                <li class="nav-item">
+                  <a class="nav-link" href="cf.html">Bežični štapni usisavači</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="ec.html">Ventilatori i pročišćivači</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="hc.html">Njega kose</a>
+                </li>
+
+
+
+              </ul>
+            </div>
+          </div>
+          <div class="collapse navbar-collapse">
+            <ul class="navbar-nav fs-6">
+                <li class="nav-item">
+                  <a class="nav-link" href="cf.html">Bežični štapni usisavači</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="ec.html">Ventilatori i pročišćivači</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="hc.html">Njega kose</a>
+
+
+
+                </li>
+              </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
     
-    });
-  </script>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card border-0">
+          <video class="video d-block d-sm-none" autoplay="" muted="" playsinline="" loop="" src="videos/mobile-pc-banner-video.mp4" ></video> <video class="video d-none d-sm-block" autoplay="" muted="" playsinline="" loop="" src="videos/web-pc-banner-video.mp4" ></video>
+          <div class="col-md-6 card-img-overlay ps-md-5 pe-md-5 text-white">
+            <h3 class="col-12 mb-12">Otkrijte Dysonov izbor njege kose</h3>
+            <p class="col-12 mb-6 fs-12">Pomaže u sprječavanju oštećenja od topline.</p>
+            <ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card border-0">
+          <img class="img-fluid" src="images/hc/DESKTOP_Airwrap.jpg" sizes="(max-width: 768px) 200px,(max-width: 1000px) 1000px" srcset="images/hc/MOBILE_Airwrap.jpg 768w, images/hc/DESKTOP_Airwrap.jpg 1000w" alt="Web-PC-Airwrap-1@2x">
+          <div class="dyson-content col-md-6 card-img-overlay ps-md-5 pe-md-5">
+            <h5 class="mb-3 fs-1 pt-3"><img class="logo-product" src="images/logo/logo-PC-Airwrap@2x.png" alt="Airwrap"></h5>
+            <h3 class="col-12">Kovrče. Valovi. Zaglađivanje. Sušenje. Bez ekstremne topline.</h3>
+            <ul>
+              <li class="col-12 fs-6 mb-2 border-none">Cijevi za kovrče ili valove</li>
+              <li class="col-12 fs-6 mb-2 border-none">Četke za zaglađivanje i volumen</li>
+              <li class="col-12 fs-6 mb-2 border-none">Napravljen za različite tipove kose</li>
+            </ul><form action="https://www.chipoteka.hr/osobna-njega/pegle-i-uvijaci-za-kosu&price%5Bmin%5D=7&price%5Bmax%5D=519&manufacturers%5Bmanufacturer%5D%5B%5D=624&ajax_digitalElephantFilter=1"><button type="submit" class="hvr-radial-out py-3 col-6 btn btn-buy fs-5 rounded-0">Kupi sada</button></form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-</head>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card border-0">
+          <img class="img-fluid" src="images/hc/DESKTOP_Supersonic.jpg" sizes="(max-width: 768px) 200px,(max-width: 1000px) 1000px" srcset="images/hc/MOBILE_Supersonic.jpg 768w, images/hc/DESKTOP_Supersonic.jpg 1000w" alt="Web-PC-Supersonic-1@2x">
+          <div class="dyson-content col-md-6 card-img-overlay ps-md-5 pe-md-5">
+            <h5 class="mb-3 fs-1 pt-3"><img class="logo-product" src="images/logo/logo-PC-Supersonic@2x.png" alt="Supersonic"></h5>
+            <h3 class="col-12">Brzo sušenje. Bez ekstremne vrućine. Osmišljen za njegu kose i vlasišta. </h3>
+            <ul>
+              <li class="col-12 fs-6 mb-2 border-none">Pet nastavaka za oblikovanje, uključujući novi Flyaway nastavak<sup>3</sup></li>
+              <li class="col-12 fs-6 mb-2 border-none">Magnetni nastavci za oblikovanje</li>
+              <li class="col-12 fs-6 mb-2 border-none">Osmišljen za različite tipove kose</li>
+            </ul><form action="https://www.chipoteka.hr/osobna-njega/pegle-i-uvijaci-za-kosu&price%5Bmin%5D=7&price%5Bmax%5D=519&manufacturers%5Bmanufacturer%5D%5B%5D=624&ajax_digitalElephantFilter=1"><button type="submit" class="hvr-radial-out py-3 col-6 btn btn-buy fs-5 rounded-0">Kupi sada</button></form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<body id="lp-dsn">
-    <div class="dsn-all">
- <nav class="navbar navbar-inverse navbar-expand-md navbar-dark bg-primary">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <div class="card border-0">
+          <img class="img-fluid" src="images/hc/DESKTOP_Corrale.jpg" sizes="(max-width: 768px) 200px,(max-width: 1000px) 1000px" srcset="images/hc/MOBILE_Corrale.jpg 768w, images/hc/DESKTOP_Corrale.jpg 1000w" alt="Web-PC-Corrale-1@2x">
+          <div class="dyson-content col-md-6 card-img-overlay ps-md-5 pe-md-5">
+            <h5 class="mb-3 fs-1 pt-3"><img class="logo-product" src="images/logo/logo-PC-Corrale@2x.png" alt="Corrale"></h5>
+            <h3 class="col-12">Zbogom pretjeranoj toplini. Pozdrav fleksibilnim pločama.</h3>
+            <ul>
+              <li class="col-12 fs-6 mb-2 border-none">Precizno oblikovanje s upola manje oštećivanja<sup>1</sup></li>
+              <li class="col-12 fs-6 mb-2 border-none">Sustav zagrijavanja s pametnom kontrolom</li>
+              <li class="col-12 fs-6 mb-2 border-none">Bežična svestranost, toplinske performanse kao s kabelom</li>
+            </ul><form action="https://www.chipoteka.hr/osobna-njega/pegle-i-uvijaci-za-kosu/pegla-za-kosu-dyson-corrale-165-210c-bezicna-nikal-fuksija-8944002383"><button type="submit" class="hvr-radial-out py-3 col-6 btn btn-buy fs-5 rounded-0">Kupi sada</button></form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="py-5 deny-2">
             <div class="container">
-              
-                <div class="nav-fix" id="navbarSupportedContent">
-                    <ul class="navbar-nav ">
-                        <a href="index.html"><img class="navbar-brand" src="images/index/logo.jpg"></a>
-                         <li class="nav-item">
-            <a class="nav-link" href="cf.html">Bežični štapni usisavači</a>
-          </li>
-          
-          
-          <li class="nav-item">
-            <a class="nav-link" href="ec.html">Kontroliranje zraka u prostoriji</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="hc.html">Njega kose</a>
-          </li>
-
-                    </ul>
+                <div class="row">
+                    <div class="col-md-12">
+  <p class="caveat"><sup>1</sup>Oštećenje uzrokovano toplinom mjereno jačinom kose prilikom oblikovanja iste frizure. Testirano na Corrale s fleksibilnim pločama u odnosu na Corrale s čvrstim pločama.</p>
+  <p class="caveat"><sup>2</sup>Točno vrijeme rada ovisi o vašoj kosi i navikama u oblikovanju.</p>
+  <p class="caveat"><sup>3</sup>Za upotrebu na suhoj i ravnoj kosi</p>
+                    </div>
                 </div>
             </div>
-        </nav>
-		
-		
-		<div class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-         
-          <img class="center-block img-fluid d-block mob-fix deny" src="images/hc/hc_00.jpg">
-		  <img class="center-block img-fluid d-block mob-fix allow" src="images/hc/hc_00_mob.jpg">
-
         </div>
-      </div>
-    </div>
-  </div>
-		
-    <div class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-         <a href="cr.html">
-          <img class="center-block img-fluid d-block mob-fix deny" src="images/hc/hc_01.jpg">
-		  <img class="center-block img-fluid d-block mob-fix allow" src="images/hc/hc_01_mob.jpg">
-		</a>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <a href="aw.html">
-          <img class="center-block img-fluid d-block mob-fix deny" src="images/hc/hc_02.jpg">
-		  <img class="center-block img-fluid d-block mob-fix allow" src="images/hc/hc_02_mob.jpg">
-		  </a>
-         
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-        <a href="ss.html">
-          <img class="center-block img-fluid d-block mob-fix deny" src="images/hc/hc_03.jpg">
-		  <img class="center-block img-fluid d-block mob-fix allow" src="images/hc/hc_03_mob.jpg">
-		</a>
-        </div>
-      </div>
-    </div>
-  </div>
 
-
-   
-      </div>
-  
-   
-
-
+  <script src="js/jquery-3.4.1.min.js"></script>
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/jquery.fancybox.min.js"></script>
+  <script src="js/scripts.js"></script> <!-- Option 2: Separate Popper and Bootstrap JS -->
 </body>
-
 </html>
+
+
+
+
+
+
