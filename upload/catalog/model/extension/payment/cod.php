@@ -30,10 +30,18 @@ class ModelExtensionPaymentCOD extends Model {
 
 		$method_data = array();
 
+        if($this->session->data['shipping_method']['code'] == 'flat.flat'){
+             $shippingtitle = $this->language->get('text_title');
+        }
+        else{
+            $shippingtitle = 'Plaćanje u poslovnici prilikom preuzimanja';
+        }
+
+
 		if ($status) {
 			$method_data = array(
 				'code'       => 'cod',
-				'title'      => $this->language->get('text_title'),
+				'title'      => $shippingtitle,
 				'terms'      => '',
 				'sort_order' => $this->config->get('payment_cod_sort_order')
 			);
