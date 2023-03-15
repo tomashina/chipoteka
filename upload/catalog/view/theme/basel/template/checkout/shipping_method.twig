@@ -17,7 +17,7 @@
       </tr>
       </thead>
       <tbody>
-  {% for shipping_method in shipping_methods %}
+  {% for shipping_method in shipping_methods |slice(0,2) %}
     {% if not shipping_method.error %}
       {% for quote in shipping_method.quote %}
         <tr >
