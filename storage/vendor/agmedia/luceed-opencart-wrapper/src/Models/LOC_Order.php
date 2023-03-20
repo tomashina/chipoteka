@@ -455,6 +455,14 @@ class LOC_Order
                     if ($key) {
                         if ($this->collection[$i]['status_from'] == $item['from'] && $this->collection[$i]['status_to'] == $item['to']) {
                             $this->collection[$i]['mail'] = $key;
+
+                            if ($this->pickup != '') {
+                                foreach (agconf('mail_pickup.' . $this->collection[$i]['payment']) as $p_key => $p_item) {
+                                    if ($this->collection[$i]['status_from'] == $p_item['from'] && $this->collection[$i]['status_to'] == $p_item['to']) {
+                                        $this->collection[$i]['mail'] = $p_key;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
