@@ -182,6 +182,8 @@ class ControllerCheckoutSuccess extends Controller {
 
         $data['shipping_method'] = $order_info['shipping_method'];
 
+        $data['shipping_code'] = $order_info['shipping_code'];
+
         $this->load->model('catalog/product');
         $this->load->model('tool/upload');
 
@@ -318,9 +320,15 @@ class ControllerCheckoutSuccess extends Controller {
         /// orderinoend
           if (isset($data['paymethod'])) {
 
-              if ($data['paymethod'] == 'cod') {
+              if ($data['paymethod'] == 'cod' && $data['shipping_code'] =='flat.flat') {
 
                   $data['text_message'] = sprintf($this->language->get('text_pouzece'), $order_id);
+
+              }
+
+              else if ($data['paymethod'] == 'cod' && $data['shipping_code'] !='flat.flat') {
+
+                  $data['text_message'] = sprintf($this->language->get('text_pouzece_poslovnica'), $order_id, $ukupno );
 
               }
               else if ($data['paymethod'] == 'bank_transfer') {

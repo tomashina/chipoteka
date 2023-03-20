@@ -53,11 +53,21 @@
 
   {% endfor %}
 
+
+    {% if shipping_code !='flat.flat' and payment_code =='cod' %}
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+           <small> Plaćanje na blagajni u iznosu od {{ total_amount }}.<br>
+
+            Kako Ugovor nije sklopljen na daljinu (preuzimanje i plaćanje narudžbe u poslovnici), jednostrani raskid ugovora unutar 14 dana od preuzimanja narudžbe nije moguć.</small>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button>
+        </div>
+    {% endif %}
+
     <!-- Client details-->
     <div class="bg-secondary rounded-3 px-4 pt-4 pb-2">
         <div class="row">
             <div class="col-sm-6">
-                <h4 class="h6">Adresa dostave:</h4>
+                <h4 class="h6">Adresa dostave: </h4>
 
                 {% if sfirst_name %}
                 <ul class="list-unstyled fs-sm">

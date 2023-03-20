@@ -517,6 +517,8 @@ class ControllerCheckoutConfirm extends Controller {
 
             $data['payment_name'] = $this->session->data['payment_method']['title'];
             $data['shipping_name'] = $this->session->data['shipping_method']['title'];
+            $data['shipping_code'] = $this->session->data['shipping_method']['code'];
+            $data['payment_code'] = $this->session->data['payment_method']['code'];
 			$data['payment'] = $this->load->controller('extension/payment/' . $this->session->data['payment_method']['code']);
 
 

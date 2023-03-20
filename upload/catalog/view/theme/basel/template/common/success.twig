@@ -5,7 +5,6 @@
     <div class="card py-3 mt-sm-3">
       <div class="card-body text-center">
         <h2 class="h4 pb-3">{{ text_tnx }}</h2>
-
         {% if groupId < 3  %}
               {{ text_message }}
              <div class="mb-3">
@@ -59,7 +58,7 @@
           <tr>
             <td class="text-left">{% if tvrtka %} Tvrtka:  {{ tvrtka }}<br> {% endif %} {% if oib %} OIB: {{ oib }}<br> {% endif %}{{ payment_address }}</td>
             {% if shipping_address %}
-              <td class="text-left">{% if tvrtka %} Tvrtka:  {{ tvrtka }}<br> {% endif %} {{ shipping_address }}</td>
+              <td class="text-left">{% if shipping_code =='flat.flat' %} {% if tvrtka %} Tvrtka:  {{ tvrtka }}<br> {% endif %} {{ shipping_address }} {% else %} {{ shipping_method }} {% endif %} </td>
             {% endif %}
           </tr>
           </tbody>

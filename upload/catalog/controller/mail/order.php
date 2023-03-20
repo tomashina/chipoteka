@@ -107,31 +107,7 @@ class ControllerMailOrder extends Controller {
 		$data['date_added'] = date($language->get('date_format_short'), strtotime($order_info['date_added']));
 		$data['payment_method'] = $order_info['payment_method'];
         $data['payment_code'] = $order_info['payment_code'];
-
-        if ($order_info['payment_code'] == 'cod') {
-
-            $data['text_message'] = sprintf($language->get('text_pouzece'), $order_info['order_id']);
-
-        }
-
-          else if ($order_info['payment_code'] == 'bank_transfer') {
-
-              $data['text_message'] = sprintf($language->get('text_bank'), $order_info['order_id'], $order_info['order_id']);
-
-              $data['scanimage'] = HTTP_SERVER.'image/tmp/'.$order_info['order_id'].'.png';
-
-
-
-          }
-
-          else if ($order_info['payment_code'] == 'wspay') {
-
-              $data['text_message'] = sprintf($language->get('text_wspay'),  $order_info['order_id']);
-
-          }
-
-
-
+        $data['shipping_code'] = $order_info['shipping_code'];
 
 		$data['shipping_method'] = $order_info['shipping_method'];
 		$data['email'] = $order_info['email'];
@@ -298,12 +274,46 @@ class ControllerMailOrder extends Controller {
                 $text =  $this->currency->format($order_total['value'], $order_info['currency_code'], $order_info['currency_value']).' <small>('.$this->currency->format($order_info['value'], 'HRK'). ')</small> ';
             }
 
+            if ($order_total['title']=='Ukupno'){
+
+                $order_info['ukupno'] = $this->currency->format($order_total['value'], $order_info['currency_code'], $order_info['currency_value']);
+
+            }
+
 
 			$data['totals'][] = array(
 				'title' => $order_total['title'],
 				'text'  => $text,
 			);
 		}
+
+        if ($order_info['payment_code'] == 'cod'  && $data['shipping_code'] =='flat.flat') {
+
+            $data['text_message'] = sprintf($language->get('text_pouzece'), $order_info['order_id']);
+
+        }
+
+        else if ($order_info['payment_code'] == 'cod' && $data['shipping_code'] !='flat.flat') {
+
+            $data['text_message'] = sprintf($this->language->get('text_pouzece_poslovnica'), $order_info['order_id'], $data['ukupno'] );
+
+        }
+
+        else if ($order_info['payment_code'] == 'bank_transfer') {
+
+            $data['text_message'] = sprintf($language->get('text_bank'), $order_info['order_id'], $order_info['order_id']);
+
+            $data['scanimage'] = HTTP_SERVER.'image/tmp/'.$order_info['order_id'].'.png';
+
+
+
+        }
+
+        else if ($order_info['payment_code'] == 'wspay') {
+
+            $data['text_message'] = sprintf($language->get('text_wspay'),  $order_info['order_id']);
+
+        }
 	
 		$this->load->model('setting/setting');
 		
@@ -336,12 +346,25 @@ class ControllerMailOrder extends Controller {
         }
 
 
-
-        if ($order_info['payment_code'] == 'cod') {
+        if ($order_info['payment_code'] == 'cod'  && $data['shipping_code'] =='flat.flat') {
 
             $order_info['mail'] = '7';
 
         }
+
+        else if ($order_info['payment_code'] == 'cod' && $data['shipping_code'] !='flat.flat') {
+
+            $order_info['mail'] = '71';
+
+        }
+
+
+
+     /*   if ($order_info['payment_code'] == 'cod') {
+
+            $order_info['mail'] = '7';
+
+        }*/
 
         else if ($order_info['payment_code'] == 'bank_transfer' &&  $data['groupId'] < 2) {
 
@@ -530,6 +553,8 @@ class ControllerMailOrder extends Controller {
 					'title' => $order_total['title'],
 					'value' => html_entity_decode($this->currency->format($order_total['value'], $order_info['currency_code'], $order_info['currency_value']), ENT_NOQUOTES, 'UTF-8')
 				);
+
+
 			}
 
 			$data['comment'] = strip_tags($order_info['comment']);
@@ -573,7 +598,14 @@ class ControllerMailOrder extends Controller {
         if ($order && isset($order['order_id']) && isset($order['mail'])) {
             $email = $this->loadEmails($order['mail']);
             $data = Order::where('order_id', $order['order_id'])->with('products', 'totals')->first()->toArray();
-            $data['mail_text'] = sprintf($email['text'], $order['order_id']);
+
+           if($order['mail'] =='71'){
+               $data['mail_text'] = sprintf($email['text'], $order['order_id'], $order['ukupno']);
+           }else{
+               $data['mail_text'] = sprintf($email['text'], $order['order_id']);
+           }
+
+
 
             for ($i = 0; $i < count($data['products']); $i++) {
                 $data['products'][$i]['image'] = HTTPS_SERVER.'image/'.Product::where('product_id', $data['products'][$i]['product_id'])->pluck('image')->first();
