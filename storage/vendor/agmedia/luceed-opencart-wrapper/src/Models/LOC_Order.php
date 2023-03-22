@@ -71,6 +71,13 @@ class LOC_Order
      */
     private $discount;
 
+    private $coupon;
+
+    /**
+     * @var string
+     */
+    private $pickup = '';
+
     /**
      * @var int
      */
@@ -99,6 +106,7 @@ class LOC_Order
 
         $this->checkInstallments();
         $this->resolveCouponDiscount();
+        $this->resolvePickup();
     }
 
 
@@ -235,10 +243,50 @@ class LOC_Order
             $this->order['cijene_s_porezom']  = 'N';
             $this->order['vrsta_placanja']  = '96-1063';
             $this->order['komercijalist__radnik_uid'] = '';
-
         }
 
-        $this->log('Order create method: $this->>order - LOC_Order #156', $this->order);
+        //
+        if ($this->pickup != '') {
+            $this->order['sa__skladiste'] = $this->pickup;
+            $this->order['na__skladiste'] = $this->pickup;
+            $this->order['skl_dokument']  = 'DP';
+            $this->order['vrsta_isporuke']  = '03';
+            $this->order['komercijalist__radnik_uid'] = 'WEBRadnik';
+            $this->order['napomena']  = 'Osobno preuzimanje: ' . $this->oc_order['comment'];
+
+            if ($this->oc_order['payment_code'] == 'cod') {
+                $this->order['placanja'] = '';
+            }
+        }
+
+        $this->log('Order create method: $this->>order - LOC_Order #262', $this->order);
+    }
+
+
+    /**
+     * @return $this
+     */
+    private function resolvePickup()
+    {
+        $shipping_code = substr($this->oc_order['shipping_code'], 0, -1);
+
+        $this->log('resolvePickup() - LOC_Order #269', $shipping_code);
+
+        if ($shipping_code == 'xshippingpro.xshippingpro1_') {
+            $xid = (int) substr($this->oc_order['shipping_code'], strpos($this->oc_order['shipping_code'], '_'));
+
+            $this->log($xid);
+
+            foreach (agconf('luceed.pickup') as $key => $item) {
+                if ($key == $xid) {
+                    $this->pickup = $item;
+                }
+            }
+
+            $this->log($this->pickup);
+        }
+
+        return $this;
     }
 
 
@@ -270,7 +318,6 @@ class LOC_Order
      */
     private function hasOIB(): bool
     {
-
         return ($this->oc_order['oib'] != '' && $this->oc_order['customer_group_id'] > 2) ? true : false;
     }
 
@@ -290,6 +337,10 @@ class LOC_Order
 
         if ($this->oc_order['payment_code'] == 'bank_transfer') {
             return '12';
+        }
+
+        if ($this->oc_order['payment_code'] == 'bank_transfer' && $this->pickup != '') {
+            return '01';
         }
 
         if ($this->oc_order['payment_code'] == 'wspay') {
@@ -404,6 +455,14 @@ class LOC_Order
                     if ($key) {
                         if ($this->collection[$i]['status_from'] == $item['from'] && $this->collection[$i]['status_to'] == $item['to']) {
                             $this->collection[$i]['mail'] = $key;
+
+                            if ($this->pickup != '') {
+                                foreach (agconf('mail_pickup.' . $this->collection[$i]['payment']) as $p_key => $p_item) {
+                                    if ($this->collection[$i]['status_from'] == $p_item['from'] && $this->collection[$i]['status_to'] == $p_item['to']) {
+                                        $this->collection[$i]['mail'] = $p_key;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -717,12 +776,12 @@ class LOC_Order
                 if ($item->code == 'coupon') {
                     preg_match('#\((.*?)\)#', $item->title, $code);
 
-                    $coupon = Coupon::where('code', $code[1])->first();
+                    $this->coupon = Coupon::where('code', $code[1])->first();
 
-                    if ($coupon) {
-                        $this->log('$coupon', $coupon->toArray());
+                    if ($this->coupon) {
+                        $this->log('$coupon', $this->coupon->toArray());
 
-                        $this->discount = $coupon->discount;
+                        $this->discount = $this->coupon->discount;
 
                         $this->log('$this->discount', $this->discount);
                     }
