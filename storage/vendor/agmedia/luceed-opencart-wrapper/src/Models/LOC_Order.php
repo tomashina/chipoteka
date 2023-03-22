@@ -567,6 +567,18 @@ class LOC_Order
                     }
                 }
             }
+
+            if ($this->pickup != '') {
+                foreach (agconf('mail_pickup.' . $this->collection[$i]['payment'])[0] as $key => $items) {
+                    if ($this->collection[$i]['status'] == $key) {
+                        foreach ($items as $hour => $mail) {
+                            if ($this->collection[$i]['longer_then'] == $hour) {
+                                $this->collection[$i]['mail'] = $mail;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         return count($this->collection);

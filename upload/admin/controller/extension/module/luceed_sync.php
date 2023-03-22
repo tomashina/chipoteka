@@ -773,6 +773,15 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 $data['products'][$i]['image'] = HTTPS_CATALOG . 'image/' . Product::where('product_id', $data['products'][$i]['product_id'])->pluck('image')->first();
             }
 
+            $data['pickup'] = \Agmedia\LuceedOpencartWrapper\Helpers\OrderHelper::resolvePickup($order);
+            $data['pickup_time'] = false;
+
+            if ($data['pickup']) {
+                if (isset(agconf('poslovnice_radno_vrijeme')[$data['pickup']])) {
+                    $data['pickup_time'] = agconf('poslovnice_radno_vrijeme')[$data['pickup']];
+                }
+            }
+
             $data['mail_logo']          = HTTPS_CATALOG . 'image/chipoteka-hd.png';
             $data['mail_title']         = sprintf($email['subject'], $order['order_id']);
             $data['mail_data']          = $email['data'];
