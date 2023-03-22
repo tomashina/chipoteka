@@ -97,6 +97,10 @@ class LOC_Order
         $this->oc_order = $order;
         $this->service  = new Luceed();
 
+        if ($order) {
+            $this->log('Cojela narudžba....................................', $order);
+        }
+
         $this->checkInstallments();
         $this->resolveCouponDiscount();
     }
@@ -536,6 +540,8 @@ class LOC_Order
      */
     private function getPaymentType()
     {
+        $loc_p = [];
+        
         if ($this->hasOIB()) {
             return '96-1063';
         }
