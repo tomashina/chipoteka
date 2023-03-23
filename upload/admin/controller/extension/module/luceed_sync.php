@@ -767,7 +767,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         if ($order && isset($order['order_id']) && isset($order['mail'])) {
             $email             = $this->loadEmails($order['mail']);
             $data              = Order::where('order_id', $order['order_id'])->with('products', 'totals')->first()->toArray();
-            $data['mail_text'] = sprintf($email['text'], $order['order_id']);
+           // $data['mail_text'] = sprintf($email['text'], $order['order_id']);
 
             for ($i = 0; $i < count($data['products']); $i++) {
                 $data['products'][$i]['image'] = HTTPS_CATALOG . 'image/' . Product::where('product_id', $data['products'][$i]['product_id'])->pluck('image')->first();
@@ -776,10 +776,24 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $data['pickup'] = \Agmedia\LuceedOpencartWrapper\Helpers\OrderHelper::resolvePickup($order);
             $data['pickup_time'] = false;
 
+            $this->log->write($data);
+
             if ($data['pickup']) {
                 if (isset(agconf('poslovnice_radno_vrijeme')[$data['pickup']])) {
                     $data['pickup_time'] = agconf('poslovnice_radno_vrijeme')[$data['pickup']];
                 }
+
+                foreach ($data['totals'] as $order_total) {
+                    if ($order_total['title']=='Ukupno'){
+                        $data['ukupno'] = $this->currency->format($order_total['value'], $order_info['currency_code'], $order_info['currency_value']);
+                    }
+                }
+
+
+                $data['mail_text'] = sprintf($email['text'], $order['order_id'], $data['shipping_method'],$data['pickup_time'], $data['ukupno']);
+            }else{
+
+                $data['mail_text'] = sprintf($email['text'], $order['order_id'] );
             }
 
             $data['mail_logo']          = HTTPS_CATALOG . 'image/chipoteka-hd.png';
