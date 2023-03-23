@@ -100,7 +100,7 @@ class LOC_Stock
 
             $this->skladista_sorted = true;
 
-            Log::store($this->skladista_stock->toArray(), $this->log_name . '-sorted');
+            //Log::store($this->skladista_stock->toArray(), $this->log_name . '-sorted');
         }
 
 
@@ -131,7 +131,7 @@ class LOC_Stock
 
             $this->dobavljaci_sorted = true;
 
-            Log::store($this->dobavljaci_stock->toArray(), $this->log_name . '-sorted');
+           // Log::store($this->dobavljaci_stock->toArray(), $this->log_name . '-sorted');
         }
 
         return $this;
@@ -154,8 +154,8 @@ class LOC_Stock
                 $this->dobavljaci_query .= '("' . $item['artikl'] . '", ' . $item['stanje_kol'] . ', ' . $item['stock_status'] . '),';
             }
         }
-        Log::store($this->skladista_query, $this->log_name . '-query');
-        Log::store($this->dobavljaci_query, $this->log_name . '-query');
+       // Log::store($this->skladista_query, $this->log_name . '-query');
+        //Log::store($this->dobavljaci_query, $this->log_name . '-query');
         return $this;
     }
 
@@ -178,7 +178,7 @@ class LOC_Stock
                 $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.quantity = p.quantity + pt.quantity, p.stock_status_id = pt.price");
             }
 
-            Log::store($this->log_name . '-UPDATED 1', $this->log_name);
+           // Log::store($this->log_name . '-UPDATED 1', $this->log_name);
 
             return 1;
         }
@@ -201,7 +201,7 @@ class LOC_Stock
 
         $this->dobavljaci = collect($json->result[0]->artikli_dobavljaci);
 
-        Log::store($this->dobavljaci->toArray(), $this->log_name . '-original');
+      //  Log::store($this->dobavljaci->toArray(), $this->log_name . '-original');
 
         return $this;
     }
@@ -221,7 +221,7 @@ class LOC_Stock
 
         $this->skladista = collect($json->result[0]->stanje);
 
-        Log::store($this->skladista->toArray(), $this->log_name . '-original');
+       // Log::store($this->skladista->toArray(), $this->log_name . '-original');
 
         return $this;
     }
