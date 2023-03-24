@@ -151,7 +151,7 @@ class ProductHelper
             }
         }
 
-        $short_description = preg_replace('/<iframe.*?\/iframe>/i','', $description);
+        $short_description = html_entity_decode(preg_replace('/<iframe.*?\/iframe>/i','', $description));
 
 
         $response[agconf('import.default_language')] = [
@@ -163,7 +163,7 @@ class ProductHelper
             'short_description' => static::setText($short_description),
             'tag' => '',
             'meta_title' => static::setText($naziv),
-            'meta_description' => static::setText($short_description),
+            'meta_description' => strip_tags(static::setText($short_description)),
             'meta_keyword' => static::setText(str_replace(' ', ',', $naziv)),
         ];
 
