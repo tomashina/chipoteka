@@ -616,9 +616,6 @@ class ControllerCatalogProduct extends Controller {
 			$data['sku'] = '';
 		}
 
-        if ($data['sku'] == '') {
-            $data['sku'] = $data['model'];
-        }
 
 		if (isset($this->request->post['upc'])) {
 			$data['upc'] = $this->request->post['upc'];
