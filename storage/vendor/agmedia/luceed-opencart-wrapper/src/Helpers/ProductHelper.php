@@ -160,7 +160,7 @@ class ProductHelper
             'short_description' => static::setText(preg_replace('/<iframe.*?\/iframe>/i','', $description)),
             'tag' => '',
             'meta_title' => static::setText($naziv),
-            'meta_description' => strip_tags(static::setText($description)),
+            'meta_description' => strip_tags(static::setText((preg_replace('/<iframe.*?\/iframe>/i','', $description)))),
             'meta_keyword' => static::setText(str_replace(' ', ',', $naziv)),
         ];
 
