@@ -151,9 +151,11 @@ class ProductHelper
             }
         }
 
-       // $short_description = html_entity_decode(preg_replace('/<iframe.*?\/iframe>/i','', $description));
+        $short_description = html_entity_decode($description);
 
-        $short_description = preg_replace('<iframe[^>]+>.*?<\/iframe>', '', $description);
+        $short_description = preg_replace('/<iframe.*?\/iframe>/i','', $short_description);
+
+
 
 
         $response[agconf('import.default_language')] = [
