@@ -151,6 +151,8 @@ class ProductHelper
             }
         }
 
+        Log::store($product['opis'], 'description_text');
+
         Log::store(static::setText(preg_replace('/<iframe.*?\/iframe>/i','', $description)), 'description_text');
         Log::store(static::setText(preg_replace("/<iframe.*?>(.*)?<\/iframe>/im","$1",$description)), 'description_text');
         Log::store(static::setText(str_replace(array("<iframe>","</iframe>"), "", $description)), 'description_text');
