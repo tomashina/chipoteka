@@ -153,10 +153,7 @@ class ProductHelper
 
         Log::store($product['opis'], 'description_text');
 
-        Log::store(static::setText(preg_replace('/<iframe.*?\/iframe>/i','', $description)), 'description_text');
-        Log::store(static::setText(preg_replace("/<iframe.*?>(.*)?<\/iframe>/im","$1",$description)), 'description_text');
-        Log::store(static::setText(str_replace(array("<iframe>","</iframe>"), "", $description)), 'description_text');
-        Log::store(static::setText(str_replace(array('<iframe>', '</iframe>'), array('', ''), $description)), 'description_text');
+        Log::store(static::setText(html_entity_decode(preg_replace('/<iframe.*?\/iframe>/i','', $description))), 'description_text');
 
         $response[agconf('import.default_language')] = [
             'name' => static::setText($naziv),
