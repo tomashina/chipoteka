@@ -151,9 +151,8 @@ class ProductHelper
             }
         }
 
-        Log::store($product['opis'], 'description_text');
+        $short_description = preg_replace('/<iframe.*?\/iframe>/i','', $description);
 
-        Log::store(static::setText(html_entity_decode(preg_replace('/<iframe.*?\/iframe>/i','', $description))), 'description_text');
 
         $response[agconf('import.default_language')] = [
             'name' => static::setText($naziv),
@@ -161,10 +160,10 @@ class ProductHelper
             'description' => static::setText($description),
             'update_description' => $old_description ? $old_description['update_description'] : 1,
             'spec_description' => $spec ?: '',
-            'short_description' => static::setText(preg_replace('/<iframe\s+.*?\s+src=(".*?").*?<\/iframe>/','', $description)),
+            'short_description' => static::setText($short_description),
             'tag' => '',
             'meta_title' => static::setText($naziv),
-            'meta_description' => strip_tags(static::setText(preg_replace('/<iframe\s+.*?\s+src=(".*?").*?<\/iframe>/','', $description))),
+            'meta_description' => static::setText($short_description),
             'meta_keyword' => static::setText(str_replace(' ', ',', $naziv)),
         ];
 
