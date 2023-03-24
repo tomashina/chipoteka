@@ -157,10 +157,10 @@ class ProductHelper
             'description' => static::setText($description),
             'update_description' => $old_description ? $old_description['update_description'] : 1,
             'spec_description' => $spec ?: '',
-            'short_description' => static::setText(preg_replace('/<iframe.*?\/iframe>/i','', $description)),
+            'short_description' => static::setText(preg_replace('/<iframe\s+.*?\s+src=(".*?").*?<\/iframe>/','', $description)),
             'tag' => '',
             'meta_title' => static::setText($naziv),
-            'meta_description' => strip_tags(static::setText((preg_replace('/<iframe.*?\/iframe>/i','', $description)))),
+            'meta_description' => strip_tags(static::setText(preg_replace('/<iframe\s+.*?\s+src=(".*?").*?<\/iframe>/','', $description))),
             'meta_keyword' => static::setText(str_replace(' ', ',', $naziv)),
         ];
 
