@@ -151,6 +151,11 @@ class ProductHelper
             }
         }
 
+        Log::store(static::setText(preg_replace('/<iframe.*?\/iframe>/i','', $description)), 'description_text');
+        Log::store(static::setText(preg_replace("/<iframe.*?>(.*)?<\/iframe>/im","$1",$description)), 'description_text');
+        Log::store(static::setText(str_replace(array("<iframe>","</iframe>"), "", $description)), 'description_text');
+        Log::store(static::setText(str_replace(array('<iframe>', '</iframe>'), array('', ''), $description)), 'description_text');
+
         $response[agconf('import.default_language')] = [
             'name' => static::setText($naziv),
             'update_name' => $old_description ? $old_description['update_name'] : 1,
@@ -160,7 +165,7 @@ class ProductHelper
             'short_description' => static::setText(preg_replace('/<iframe\s+.*?\s+src=(".*?").*?<\/iframe>/','', $description)),
             'tag' => '',
             'meta_title' => static::setText($naziv),
-            'meta_description' => '',
+            'meta_description' => strip_tags(static::setText(preg_replace('/<iframe\s+.*?\s+src=(".*?").*?<\/iframe>/','', $description))),
             'meta_keyword' => static::setText(str_replace(' ', ',', $naziv)),
         ];
 
