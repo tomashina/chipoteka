@@ -251,7 +251,6 @@ class LOC_Order
             $this->order['na__skladiste'] = $this->pickup;
             $this->order['skl_dokument']  = 'DP';
             $this->order['vrsta_isporuke']  = '03';
-            $this->order['komercijalist__radnik_uid'] = 'WEBRadnik';
             $this->order['napomena']  = 'Osobno preuzimanje: ' . $this->oc_order['comment'];
 
             if ($this->oc_order['payment_code'] == 'cod') {
