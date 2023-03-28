@@ -364,7 +364,6 @@ class LOC_Order
             'phone'             => $this->oc_order['telephone'],
             'fname'             => $this->oc_order['payment_firstname'],
             'lname'             => $this->oc_order['payment_lastname'],
-            'company'           => $this->oc_order['payment_company'],
             'address'           => $this->oc_order['payment_address_1'],
             'zip'               => $this->oc_order['payment_postcode'],
             'city'              => $this->oc_order['payment_city'],
@@ -389,7 +388,7 @@ class LOC_Order
      */
     public function recordError()
     {
-        return Order::where('order_id', $this->oc_order['order_id'])->update([
+        return Order::query()->where('order_id', $this->oc_order['order_id'])->update([
             'luceed_uid' => $this->response->error
         ]);
     }
@@ -637,7 +636,9 @@ class LOC_Order
         // Get the regular products from cart.
         $response = $this->getRegularProducts();
         // Apply shipping dummy product.
-        $response[] = $this->getShippingProduct();
+        if ($this->pickup == '') {
+            $response[] = $this->getShippingProduct();
+        }
 
         return $response;
     }
