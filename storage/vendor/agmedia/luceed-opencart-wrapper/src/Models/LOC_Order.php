@@ -288,8 +288,8 @@ class LOC_Order
         $this->order = [
             'nalog_prodaje_b2b'         => $this->oc_order['order_id']. '-' . Carbon::now()->year.'-101' . $nalog['broj_naloga'],
             'narudzba'                  => $this->oc_order['order_id'] . '-' . Carbon::now()->year . $nalog['broj_naloga'],
-            'vezani_poziv_na_broj'      => $this->oc_order['poziv_na_broj'],
             'datum'                     => Carbon::make($this->oc_order['date_added'])->format(agconf('luceed.date')),
+            'raspored'                  => Carbon::make($this->oc_order['date_added'])->format('d.m.Y H:i:s'),
             'skladiste'                 => $nalog['sa__skladiste'],
             'sa__skladiste'             => $nalog['na__skladiste'],
             'status'                    => $this->getStatus(),
@@ -312,6 +312,10 @@ class LOC_Order
             ],
             'stavke'                    => $nalog['stavke'],
         ];
+
+        if ($nalog['broj_naloga'] == '') {
+            $this->order['vezani_poziv_na_broj'] = $this->oc_order['poziv_na_broj'];
+        }
 
         if ($this->oc_order['payment_code'] == 'cod') {
             $this->order['placanja'] = '';
@@ -341,6 +345,12 @@ class LOC_Order
 
         // Check if all items are available in pickup store
         foreach ($this->items_available['items'] as $store_uid => $items) {
+            $store_sifra = $warehouse_list->where('skladiste_uid', '=', $store_uid)->first();
+
+            if (isset($store_sifra['skladiste'])) {
+                $store_sifra = $store_sifra['skladiste'];
+            }
+
             if ($store_uid == $this->pickup_warehouse['skladiste_uid']) {
 
                 // Ako ima sve u pickup poslovnici
@@ -359,8 +369,8 @@ class LOC_Order
                         $this->items_available['nalozi'][$store_uid] = [
                             'broj_naloga'    => '',
                             'iznos'          => $this->getIznos(),
-                            'sa__skladiste'  => $this->pickup_warehouse['skladiste_uid'],
-                            'na__skladiste'  => $this->pickup_warehouse['skladiste_uid'],
+                            'sa__skladiste'  => $this->pickup_warehouse['skladiste'],
+                            'na__skladiste'  => $this->pickup_warehouse['skladiste'],
                             'skl_dokument'   => 'DP',
                             'vrsta_isporuke' => '03',
                             'napomena'       => 'Osobno preuzimanje: ' . $this->oc_order['comment'],
@@ -393,17 +403,17 @@ class LOC_Order
 
                     //
                     if ($products_available) {
-                        $stavke = OrderHelper::getOrderItems($products_available, $this->oc_order['order_id']);
+                        //$stavke = OrderHelper::getOrderItems($products_available, $this->oc_order['order_id']);
 
                         $this->items_available['nalozi'][$store_uid] = [
                             'broj_naloga'    => '',
-                            'iznos'          => $stavke['iznos'],
-                            'sa__skladiste'  => $this->pickup_warehouse['skladiste_uid'],
-                            'na__skladiste'  => $this->pickup_warehouse['skladiste_uid'],
+                            'iznos'          => $this->getIznos(),
+                            'sa__skladiste'  => $this->pickup_warehouse['skladiste'],
+                            'na__skladiste'  => $this->pickup_warehouse['skladiste'],
                             'skl_dokument'   => 'DP',
                             'vrsta_isporuke' => '03',
                             'napomena'       => 'Osobno preuzimanje: ' . $this->oc_order['comment'],
-                            'stavke'         => $stavke['stavke']
+                            'stavke'         => $this->getItems()
                         ];
                     }
                 }
@@ -422,11 +432,17 @@ class LOC_Order
 
         //
         // Ako nema svih u pickup poslovnici i ako postoje koji fale.
-        if ( ! $this->items_available['has_all_in_pickup_store'] && ! empty($this->items_available['products_required'])) {
+        if (isset($this->items_available['products_required']) && ! empty($this->items_available['products_required'])) {
             $products_available = false;
             // Provjeri ostale trgovine za artikle koje fale.
             // Ali u ovoj iteraciji samo ako ih ima svih u jednoj poslovnici.
             foreach ($this->items_available['items'] as $store_uid => $items) {
+                $store_sifra = $warehouse_list->where('skladiste_uid', '=', $store_uid)->first();
+
+                if (isset($store_sifra['skladiste'])) {
+                    $store_sifra = $store_sifra['skladiste'];
+                }
+
                 $has_all_in_one_store = true;
 
                 $items = collect($items);
@@ -445,8 +461,8 @@ class LOC_Order
                     $this->items_available['nalozi'][$store_uid] = [
                         'broj_naloga'    => '-' . $nalog_count,
                         'iznos'          => $stavke['iznos'],
-                        'sa__skladiste'  => $store_uid,
-                        'na__skladiste'  => $this->pickup_warehouse['skladiste_uid'],
+                        'sa__skladiste'  => $store_sifra,
+                        'na__skladiste'  => $this->pickup_warehouse['skladiste'],
                         'skl_dokument'   => 'DP',
                         'vrsta_isporuke' => '03',
                         'napomena'       => 'Web shop',
@@ -489,8 +505,8 @@ class LOC_Order
                         $this->items_available['nalozi'][$store_uid] = [
                             'broj_naloga'    => '-' . $nalog_count,
                             'iznos'          => $stavke['iznos'],
-                            'sa__skladiste'  => $store_uid,
-                            'na__skladiste'  => $this->pickup_warehouse['skladiste_uid'],
+                            'sa__skladiste'  => $store_sifra,
+                            'na__skladiste'  => $this->pickup_warehouse['skladiste'],
                             'skl_dokument'   => 'DP',
                             'vrsta_isporuke' => '03',
                             'napomena'       => 'Web shop',
@@ -502,6 +518,7 @@ class LOC_Order
                 }
 
                 unset($this->items_available['items'][$store_uid]);
+                unset($this->items_available['products_required']);
 
                 $resolved_items = OrderHelper::resolveRequiredProducts(
                     $this->regular_products, $products_available
@@ -519,100 +536,119 @@ class LOC_Order
          * Cca linija 422..
          * if ( ! $this->items_available['has_all_in_pickup_store'] && ! empty($this->items_available['products_required'])) {
          */
-
-        if ( ! empty($this->items_available['products_required'])) {
-            $products_available = false;
-            // Provjeri ostale trgovine za artikle koje fale.
-            // Ali u ovoj iteraciji samo ako ih ima svih u jednoj poslovnici.
-            foreach ($this->items_available['items'] as $store_uid => $items) {
-                $has_all_in_one_store = true;
-
-                $items = collect($items);
-
-                foreach ($this->items_available['products_required'] as $uid => $product) {
-                    $item = $items->where('uid', $uid)->first();
-
-                    if ($item['qty'] < $product['qty']) {
-                        $has_all_in_one_store = false;
-                    }
-                }
-
-                if ($has_all_in_one_store) {
-                    $stavke = OrderHelper::getOrderItems($this->items_available['products_required'], $this->oc_order['order_id']);
-
-                    $this->items_available['nalozi'][$store_uid] = [
-                        'broj_naloga'    => '-' . $nalog_count,
-                        'iznos'          => $stavke['iznos'],
-                        'sa__skladiste'  => $store_uid,
-                        'na__skladiste'  => $this->pickup_warehouse['skladiste_uid'],
-                        'skl_dokument'   => 'DP',
-                        'vrsta_isporuke' => '03',
-                        'napomena'       => 'Web shop',
-                        'stavke'         => $stavke['stavke']
-                    ];
-
-                    return;
-                }
-
+        // Zavrti to 10 puta, ali bi trebalo zbrojiti koliko ima artikala
+        // i max. toliko puta zavrtiti.
+        if ( ! $this->items_available['has_all_in_pickup_store']) {
+            for ($i = 0; $i < 10; $i++) {
                 //
-                if ( ! $has_all_in_one_store) {
-                    $products_required = [];
+                if (isset($this->items_available['products_required']) && ! empty($this->items_available['products_required'])) {
+                    $products_available = false;
+                    // Provjeri ostale trgovine za artikle koje fale.
+                    // Ali u ovoj iteraciji samo ako ih ima svih u jednoj poslovnici.
+                    foreach ($this->items_available['items'] as $store_uid => $items) {
+                        $store_sifra = $warehouse_list->where('skladiste_uid', '=', $store_uid)->first();
 
-                    foreach ($this->items_available['products_required'] as $uid => $product) {
-                        $item = $items->where('uid', $uid)->first();
+                        if (isset($store_sifra['skladiste'])) {
+                            $store_sifra = $store_sifra['skladiste'];
+                        }
 
-                        if ($item['qty'] < $product['qty']) {
-                            $products_required[$item['uid']] = [
-                                'qty' => $product['qty'] - $item['qty']
-                            ];
-                            // Uzmi ako ima.
-                            if ($item['qty']) {
-                                $products_available[$item['uid']] = [
-                                    'qty' => $item['qty']
-                                ];
+                        $has_all_in_one_store = true;
+
+                        $items = collect($items);
+
+                        foreach ($this->items_available['products_required'] as $uid => $product) {
+                            $item = $items->where('uid', $uid)->first();
+
+                            if ($item['qty'] < $product['qty']) {
+                                $has_all_in_one_store = false;
                             }
                         }
 
-                        // Uzmi artikle kojih ima u pickup poslovnici.
-                        if ($item['qty'] >= $product['qty']) {
-                            $products_available[$item['uid']] = [
-                                'qty' => $product['qty']
+                        if ($has_all_in_one_store) {
+                            $stavke = OrderHelper::getOrderItems($this->items_available['products_required'], $this->oc_order['order_id']);
+
+                            $this->items_available['nalozi'][$store_uid] = [
+                                'broj_naloga'    => '-' . $nalog_count,
+                                'iznos'          => $stavke['iznos'],
+                                'sa__skladiste'  => $store_sifra,
+                                'na__skladiste'  => $this->pickup_warehouse['skladiste'],
+                                'skl_dokument'   => 'DP',
+                                'vrsta_isporuke' => '03',
+                                'napomena'       => 'Web shop',
+                                'stavke'         => $stavke['stavke']
                             ];
+
+                            return;
                         }
-                    }
 
-                    if ($products_available) {
-                        $stavke = OrderHelper::getOrderItems($products_available, $this->oc_order['order_id']);
+                        //
+                        if ( ! $has_all_in_one_store) {
+                            $products_required = [];
 
-                        $this->items_available['nalozi'][$store_uid] = [
-                            'broj_naloga'    => '-' . $nalog_count,
-                            'iznos'          => $stavke['iznos'],
-                            'sa__skladiste'  => $store_uid,
-                            'na__skladiste'  => $this->pickup_warehouse['skladiste_uid'],
-                            'skl_dokument'   => 'DP',
-                            'vrsta_isporuke' => '03',
-                            'napomena'       => 'Web shop',
-                            'stavke'         => $stavke['stavke']
-                        ];
+                            foreach ($this->items_available['products_required'] as $uid => $product) {
+                                $item = $items->where('uid', $uid)->first();
 
-                        $nalog_count++;
-                    }
+                                if ($item['qty'] < $product['qty']) {
+                                    $products_required[$item['uid']] = [
+                                        'qty' => $product['qty'] - $item['qty']
+                                    ];
+                                    // Uzmi ako ima.
+                                    if ($item['qty']) {
+                                        $products_available[$item['uid']] = [
+                                            'qty' => $item['qty']
+                                        ];
+                                    }
+                                }
 
-                    unset($this->items_available['products_required']);
+                                // Uzmi artikle kojih ima u pickup poslovnici.
+                                if ($item['qty'] >= $product['qty']) {
+                                    $products_available[$item['uid']] = [
+                                        'qty' => $product['qty']
+                                    ];
+                                }
+                            }
 
-                    if ($products_required) {
-                        $this->items_available['products_required'] = $products_required;
+                            if ($products_available) {
+                                $stavke = OrderHelper::getOrderItems($products_available, $this->oc_order['order_id']);
+
+                                $this->items_available['nalozi'][$store_uid] = [
+                                    'broj_naloga'    => '-' . $nalog_count,
+                                    'iznos'          => $stavke['iznos'],
+                                    'sa__skladiste'  => $store_sifra,
+                                    'na__skladiste'  => $this->pickup_warehouse['skladiste'],
+                                    'skl_dokument'   => 'DP',
+                                    'vrsta_isporuke' => '03',
+                                    'napomena'       => 'Web shop',
+                                    'stavke'         => $stavke['stavke']
+                                ];
+
+                                $nalog_count++;
+                            }
+
+                            unset($this->items_available['products_required']);
+
+                            if ($products_required) {
+                                $this->items_available['products_required'] = $products_required;
+                            }
+                        }
+
+                        unset($this->items_available['items'][$store_uid]);
                     }
                 }
-
-                unset($this->items_available['items'][$store_uid]);
             }
         }
+
     }
 
 
 
 
+    /**
+     * Trebam pogledati za RASPORED :: Staviti današnji datum.
+     * Prvi nalog uvijek mora sadržavati sve artikle i biti cjelokupan, bez obzira na dostupnost artikala.
+     *
+     * I završiti s ovim jednom za svagda. Prije nego poludim :)
+     */
 
 
 
