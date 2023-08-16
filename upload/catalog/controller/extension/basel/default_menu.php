@@ -79,7 +79,7 @@ class ControllerExtensionBaselDefaultMenu extends Controller
 
                 $total = $this->model_catalog_product->getTotalProducts($filter_data);
 
-                if ($category['name'] == 'OSOBNA NJEGA') {
+                if ($category['name'] == 'OSOBNA NJEGA' || $category['name'] == 'AKCIJE') {
                     $total = 1;
                 }
                 // Level 1
