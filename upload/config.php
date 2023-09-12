@@ -1,32 +1,33 @@
 <?php
 // HTTP
-define('HTTP_SERVER', 'http_server');
+define('HTTP_SERVER', 'http://localhost:8888/chipoteka/upload/');
 
 // HTTPS
-define('HTTPS_SERVER', 'https_server');
+define('HTTPS_SERVER', 'http://localhost:8888/chipoteka/upload/');
 
 // DIR
-define('DIR_APPLICATION', 'dir_application');
-define('DIR_SYSTEM', 'dir_system');
-define('DIR_IMAGE', 'dir_image');
-define('DIR_STORAGE', 'dir_storage');
-define('DIR_LANGUAGE', 'dir_language');
-define('DIR_TEMPLATE', 'dir_template');
-define('DIR_CONFIG', 'dir_config');
-define('DIR_CACHE', 'dir_cache');
-define('DIR_DOWNLOAD', 'dir_download');
-define('DIR_LOGS', 'dir_logs');
-define('DIR_MODIFICATION', 'dir_modification');
-define('DIR_SESSION', 'dir_session');
-define('DIR_UPLOAD', 'dir_upload');
+define('DIR_APPLICATION', '/Applications/MAMP/htdocs/chipoteka/upload/catalog/');
+define('DIR_SYSTEM', '/Applications/MAMP/htdocs/chipoteka/upload/system/');
+define('DIR_IMAGE', '/Applications/MAMP/htdocs/chipoteka/upload/image/');
+define('DIR_STORAGE', '/Applications/MAMP/htdocs/chipoteka/storage/');
+define('DIR_LANGUAGE', DIR_APPLICATION . 'language/');
+define('DIR_TEMPLATE', DIR_APPLICATION . 'view/theme/');
+define('DIR_CONFIG', DIR_SYSTEM . 'config/');
+define('DIR_CACHE', DIR_STORAGE . 'cache/');
+define('DIR_DOWNLOAD', DIR_STORAGE . 'download/');
+define('DIR_LOGS', DIR_STORAGE . 'logs/');
+define('DIR_MODIFICATION', DIR_STORAGE . 'modification/');
+define('DIR_SESSION', DIR_STORAGE . 'session/');
+define('DIR_UPLOAD', DIR_STORAGE . 'upload/');
+
 // DB
-define('DB_DRIVER', 'db_driver');
-define('DB_HOSTNAME', 'db_host');
-define('DB_USERNAME', 'db_username');
-define('DB_PASSWORD', 'db_password');
-define('DB_DATABASE', 'db_database');
-define('DB_PORT', 'db_port');
-define('DB_PREFIX', 'db_prefix');
+define('DB_DRIVER', 'mysqli');
+define('DB_HOSTNAME', 'localhost');
+define('DB_USERNAME', 'root');
+define('DB_PASSWORD', 'bakanal');
+define('DB_DATABASE', 'chipoteka');
+define('DB_PORT', '3306');
+define('DB_PREFIX', 'oc_');
 
 
 //cache redis
@@ -37,5 +38,6 @@ define('CACHE_PREFIX', 'cache_host_prefix');
 define('CACHE_PASSWORD', 'cache_host_password');
 
 
-define('FREESHIPPING', freeshipping);
-define('RATEPRIKAZ', rateprikaz);
+define('FREESHIPPING', '500');
+define('FREESHIPPINGB2B', '1000');
+define('RATEPRIKAZ', '1000');

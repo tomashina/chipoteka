@@ -175,7 +175,7 @@ class LOC_Warehouse
         foreach ($houses_stores as $house) {
             $has = $stores->where('skladiste_uid', $house['skladiste_uid'])->first();
 
-            if ($has) {
+            if ($has && $has->raspolozivo_kol >= 0) {
                 $qty_stores += $has->raspolozivo_kol;
             }
         }
