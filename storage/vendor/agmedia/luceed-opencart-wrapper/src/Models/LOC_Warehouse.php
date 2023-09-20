@@ -328,7 +328,11 @@ class LOC_Warehouse
     {
         $json = json_decode($warehouses);
 
-        return $json->result[0]->skladista;
+        if (isset($json->result[0]->skladista)) {
+            return $json->result[0]->skladista;
+        }
+
+        return [];
     }
 
     /**
@@ -340,7 +344,11 @@ class LOC_Warehouse
     {
         $json = json_decode($items);
 
-        return $json->result[0]->stanje;
+        if (isset($json->result[0]->stanje)) {
+            return $json->result[0]->stanje;
+        }
+
+        return [];
     }
 
 
@@ -353,6 +361,10 @@ class LOC_Warehouse
     {
         $json = json_decode($stock);
 
-        return $json->result[0]->artikli_dobavljaci;
+        if (isset($json->result[0]->artikli_dobavljaci)) {
+            return $json->result[0]->artikli_dobavljaci;
+        }
+
+        return [];
     }
 }
