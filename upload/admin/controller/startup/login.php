@@ -21,6 +21,8 @@ class ControllerStartupLogin extends Controller {
             'extension/module/luceed_sync/importRelatedProducts',
             'extension/module/luceed_sync/updateVpcPrices',
             'extension/module/luceed_sync/updateB2BPrices',
+            'extension/module/luceed_sync/importManufacturers',
+
 		);
 
 		// User
@@ -51,6 +53,7 @@ class ControllerStartupLogin extends Controller {
                 'extension/module/luceed_sync/importRelatedProducts',
                 'extension/module/luceed_sync/updateVpcPrices',
                 'extension/module/luceed_sync/updateB2BPrices',
+                'extension/module/luceed_sync/importManufacturers',
 
 
 			);

@@ -16,6 +16,7 @@ class ControllerStartupPermission extends Controller {
                                                        'checkRevision',
                                                         'updateB2BPrices',
                                                         'updateVpcPrices',
+                                                       'importManufacturers',
                                                        'importActionPricesLast30Days',
                                                        'importRelatedProducts'])) {
                 return;
