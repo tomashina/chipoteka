@@ -35,6 +35,7 @@ class ModelExtensionPaymentCOD extends Model {
         }
         else{
             $shippingtitle = 'Plaćanje u poslovnici prilikom preuzimanja';
+            $status = true;
         }
 
 
