@@ -686,7 +686,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $loc->setOrders(
             LuceedOrder::get(
                 $loc->collectStatuses(),
-                Carbon::now()->subWeek()->format('d.m.Y') //agconf('import.orders.from_date')
+                Carbon::now()->subMonth()->format('d.m.Y') //agconf('import.orders.from_date')
             )
         );
 
@@ -773,7 +773,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 $data['products'][$i]['image'] = HTTPS_CATALOG . 'image/' . Product::where('product_id', $data['products'][$i]['product_id'])->pluck('image')->first();
             }
 
-            $data['pickup'] = \Agmedia\LuceedOpencartWrapper\Helpers\OrderHelper::resolvePickup($order);
+            $data['pickup'] = \Agmedia\LuceedOpencartWrapper\Helpers\OrderHelper::resolvePickup($data);
             $data['pickup_time'] = false;
 
             $this->log->write($data);
@@ -785,14 +785,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
                 foreach ($data['totals'] as $order_total) {
                     if ($order_total['title']=='Ukupno'){
-                        $data['ukupno'] = $this->currency->format($order_total['value'], $order_info['currency_code'], $order_info['currency_value']);
+                        $data['ukupno'] = $this->currency->format($order_total['value'], $data['currency_code'], $data['currency_value']);
                     }
                 }
 
-
+                $data['hide_isporuka'] ='1';
                 $data['mail_text'] = sprintf($email['text'], $order['order_id'], $data['shipping_method'],$data['pickup_time'], $data['ukupno']);
             }else{
-
+                $data['hide_isporuka'] ='0';
                 $data['mail_text'] = sprintf($email['text'], $order['order_id'] );
             }
 
