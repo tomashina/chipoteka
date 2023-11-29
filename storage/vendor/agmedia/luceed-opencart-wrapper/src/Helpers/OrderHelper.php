@@ -4,6 +4,7 @@ namespace Agmedia\LuceedOpencartWrapper\Helpers;
 
 use Agmedia\Helpers\Log;
 use Agmedia\Models\Order\OrderProduct;
+use Illuminate\Support\Collection;
 
 /**
  * Class LOC_Product
@@ -18,7 +19,7 @@ class OrderHelper
         $shipping_code = substr($order['shipping_code'], 0, -1);
 
         if ($shipping_code == 'xshippingpro.xshippingpro1_') {
-            $xid = (int) substr($order['shipping_code'], strpos($order['shipping_code'], '_'));
+            $xid = substr($order['shipping_code'], strpos($order['shipping_code'], '_') + 1);
 
             foreach (agconf('luceed.pickup') as $key => $item) {
                 if ($key == $xid) {
@@ -86,28 +87,43 @@ class OrderHelper
     /**
      * @param array $products
      * @param       $store_uid
-     * @param       $br
+     * @param       $br_naloga
      * @param       $pickup
      *
      * @return array
      */
-    public static function getNalog(array $products, $store_uid, $br, $pickup): array
+    public static function getNalog(array $products, $order_id, $br_naloga, string $store, $pickup): array
     {
-        $response = [];
-        $stavke   = static::getOrderItems($products);
+        $stavke = static::getOrderItems($products, $order_id);
+        $vrsta  = static::getVrstaIsporuke($store, $pickup['skladiste']);
 
-        $response[$store_uid] = [
-            'broj_naloga'    => '-' . $br,
+        $response = [
+            'broj_naloga'    => '-' . $br_naloga,
             'iznos'          => $stavke['iznos'],
-            'sa__skladiste'  => $store_uid,
-            'na__skladiste'  => $pickup,
-            'skl_dokument'   => 'DP',
-            'vrsta_isporuke' => '03',
+            'sa__skladiste'  => $store,
+            'na__skladiste'  => $pickup['skladiste'],
+            'pj'             => $pickup['pj'],
+            'skl_dokument'   => 'MSI',
+            'vrsta_isporuke' => $vrsta,
             'napomena'       => 'Web shop',
             'stavke'         => $stavke['stavke']
         ];
 
         return $response;
+    }
+
+
+    private static function getVrstaIsporuke($sa, $na): string
+    {
+        if (in_array($sa, ['006', '101']) && $na == '001') {
+            return '00';
+        }
+
+        if (in_array($sa, ['006', '001']) && in_array($na, ['101', '099'])) {
+            return '00';
+        }
+
+        return '07';
     }
 
 
@@ -141,6 +157,82 @@ class OrderHelper
         return [
             'regular'  => $products,
             'required' => $required
+        ];
+    }
+
+
+    /**
+     * @param string     $store_uid
+     * @param Collection $warehouses
+     *
+     * @return mixed|null
+     */
+    public static function getStoreSifra(string $store_uid, Collection $warehouses)
+    {
+        $store_sifra = $warehouses->where('skladiste_uid', '=', $store_uid)->first();
+
+        if (isset($store_sifra['skladiste'])) {
+            return $store_sifra['skladiste'];
+        }
+
+        return null;
+    }
+
+
+    /**
+     * @param array $required
+     * @param array $availables
+     *
+     * @return bool
+     */
+    public static function hasAllInOneStore(array $required, array $availables): bool
+    {
+        $availables = collect($availables);
+
+        foreach ($required as $uid => $product) {
+            $item = $availables->where('uid', $uid)->first();
+
+            if ($item['qty'] < $product['qty']) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    public static function getAvailableItemsFromStore(array $required, array $availables)
+    {
+        $availables = collect($availables);
+        $products_required = [];
+        $products_available = [];
+
+        foreach ($required as $uid => $product) {
+            $item = $availables->where('uid', $uid)->first();
+
+            if ($item['qty'] < $product['qty']) {
+                $products_required[$item['uid']] = [
+                    'qty' => $product['qty'] - $item['qty']
+                ];
+                // Uzmi ako ima.
+                if ($item['qty']) {
+                    $products_available[$item['uid']] = [
+                        'qty' => $item['qty']
+                    ];
+                }
+            }
+
+            // Uzmi artikle kojih ima u pickup poslovnici.
+            if ($item['qty'] >= $product['qty']) {
+                $products_available[$item['uid']] = [
+                    'qty' => $product['qty']
+                ];
+            }
+        }
+
+        return [
+            'available' => $products_available,
+            'required'  => $products_required
         ];
     }
 }
