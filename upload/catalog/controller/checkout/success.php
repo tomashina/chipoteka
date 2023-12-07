@@ -288,7 +288,7 @@ class ControllerCheckoutSuccess extends Controller {
                // $ukupnohub = number_format($total['value'] * 100, 2, '.', '');
               //  $ukupnohub = str_replace('.', '', $ukupnohub);
 
-                $ukupnohub = number_format((float)$total['value'], 2, '.', '');
+                $ukupnohub = number_format((float)$total['value'], 4, '.', '');
                 $ukupnohub = $ukupnohub * 100;
 
 
