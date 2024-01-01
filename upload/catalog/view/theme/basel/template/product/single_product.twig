@@ -20,12 +20,12 @@
                     <div class="product-price">
                         {% if product.special and product.pj !='WEB'  %}
                             {% if product.last_30 %}
-                                <span><del>{{ product.last_30 }} <small> {{ product.lasteur_30 }}</small></del></span>
+                                <span><del>{{ product.last_30 }} </del></span>
                             {% else %}
-                                <span><del>{{ product.price_2 }} <small> {{ product.priceeur_2 }}</small></del></span>
+                                <span><del>{{ product.price_2 }} </del></span>
                             {% endif %}
                         {% else %}
-                            <span> {{ product.price_2 }} <small> {{ product.priceeur_2 }}</small></span>
+                            <span> {{ product.price_2 }} </span>
                         {% endif %}
                     </div><!-- .price -->
                 {% endif %}
@@ -45,9 +45,9 @@
                     </span>
                     <span>
                               {% if  product.special  %}
-                        {{ product.special }} <small> {{ product.specialeur }}</small>
+                        {{ product.special }}
                               {% else %}
-                        {% if product.price_2 != product.price %}   {{ product.price }}  <small> {{ product.priceeur }}</small>{% endif %}
+                        {% if product.price_2 != product.price %}   {{ product.price }}  {% endif %}
                         {% endif %}
                     </span>
                 </div>
