@@ -344,7 +344,7 @@ class ControllerCheckoutSuccess extends Controller {
                           ),
                       'data' =>
                           array (
-                              'amount' => (int)$ukupnohub,
+                              'amount' => (int)(string)$ukupnohub,
                               'currency' => 'EUR',
                               'sender' =>
                                   array (
