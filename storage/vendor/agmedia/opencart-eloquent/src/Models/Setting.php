@@ -18,6 +18,8 @@ class Setting extends Model
      * @var string
      */
     protected $primaryKey = 'setting_id';
+
+    public $timestamps = false;
     
     /**
      * @var array
