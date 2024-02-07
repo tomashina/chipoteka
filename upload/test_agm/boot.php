@@ -26,7 +26,7 @@ if ( ! function_exists('cron_range')) {
                 'store_id' => 0,
                 'code' => 'ag_cron_range',
                 'key' => $key,
-                'value' => json_encode(['offset' => 0, 'limit' => 20]),
+                'value' => json_encode(['offset' => 0, 'limit' => 200]),
                 'serialized' => 0
             ]);
 
