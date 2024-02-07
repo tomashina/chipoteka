@@ -7,7 +7,7 @@ include('test_agm/boot.php');
 $range = cron_range('clean_product_images');
 $total = \Agmedia\Models\Product\Product::query()->count();
 
-$products = \Agmedia\Models\Product\Product::query()->where('product_id', '>', 3265)
+$products = \Agmedia\Models\Product\Product::query()
     ->where('luceed_uid', '!=', '')
     ->where('image', '!=', '')
     ->offset($range['offset'])
