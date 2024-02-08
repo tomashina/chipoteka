@@ -16,7 +16,7 @@ $products = \Agmedia\Models\Product\Product::query()
 
 if ($range['offset'] > $total) {
     cron_range('clean_product_images', 0, $range['limit']);
-    
+
     return json_encode(['success' => 'Import je gotov..!']);
 }
 
@@ -43,19 +43,22 @@ foreach ($products as $product) {
                     //unlink(DIR_IMAGE . $replace_path . $file->getFilename());
                     //
                     $name = str_replace('.jpg', '', $file->getFilename());
-                    $path = DIR_IMAGE . 'cache/' . $replace_path . $name;
 
+                    $c1_path = DIR_IMAGE . 'cache/' . $replace_path . $name;
                     $c1_sizes = ['-50x50.jpg'];
                     foreach ($c1_sizes as $size) {
-                        if (file_exists($path . $size)) {
-                            unlink($path . $size);
+                        if (file_exists($c1_path . $size)) {
+                            \Agmedia\Helpers\Log::store($c1_path . $size, 'test_deleted');
+                            unlink($c1_path . $size);
                         }
                     }
 
+                    $c2_path = DIR_IMAGE . 'cachewebp/' . $replace_path . $name;
                     $c2_sizes = ['-1155x1155.webp', '-550x550.webp', '-400x400.webp', '-130x130.webp', '-120x120.webp', '-80x80.webp'];
                     foreach ($c2_sizes as $size) {
-                        if (file_exists($path . $size)) {
-                            unlink($path . $size);
+                        if (file_exists($c2_path . $size)) {
+                            \Agmedia\Helpers\Log::store($c2_path . $size, 'test_deleted');
+                            unlink($c2_path . $size);
                         }
                     }
                 }
