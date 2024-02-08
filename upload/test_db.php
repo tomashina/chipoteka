@@ -38,7 +38,7 @@ foreach ($products as $product) {
                 if ( ! in_array($file->getFilename(), $images) && ! $file->isDot()) {
                     \Agmedia\Helpers\Log::store(DIR_IMAGE . $replace_path . $file->getFilename(), 'test');
 
-                    unlink(DIR_IMAGE . $replace_path . $file->getFilename());
+                    //unlink(DIR_IMAGE . $replace_path . $file->getFilename());
                     unlink(DIR_IMAGE . 'cache/' . $replace_path . $file->getFilename());
                     unlink(DIR_IMAGE . 'cachewebp/' . $replace_path . $file->getFilename());
                 }
