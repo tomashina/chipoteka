@@ -60,8 +60,6 @@ class ControllerCommonHeader extends Controller {
                 );
             }
 
-            \Agmedia\Helpers\Log::store($parent_id, 'info');
-
             $data['informations'][] = array(
                 'title' => $result['title'],
                 'infoid' => $result['information_id'],
@@ -70,8 +68,6 @@ class ControllerCommonHeader extends Controller {
                 'informations_children'  => $data['informations_children'],
             );
         }
-
-        \Agmedia\Helpers\Log::store($data['informations'], 'info');
 
 		$data['title'] = $this->document->getTitle();
 
