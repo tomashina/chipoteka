@@ -15,6 +15,8 @@ $products = \Agmedia\Models\Product\Product::query()
                                            ->get();
 
 if ($range['offset'] > $total) {
+    cron_range('clean_product_images', 0, $range['limit']);
+    
     return json_encode(['success' => 'Import je gotov..!']);
 }
 
