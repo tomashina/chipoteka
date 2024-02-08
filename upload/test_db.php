@@ -39,6 +39,8 @@ foreach ($products as $product) {
                     \Agmedia\Helpers\Log::store(DIR_IMAGE . $replace_path . $file->getFilename(), 'test');
 
                     unlink(DIR_IMAGE . $replace_path . $file->getFilename());
+                    unlink(DIR_IMAGE . 'cache/' . $replace_path . $file->getFilename());
+                    unlink(DIR_IMAGE . 'cachewebp/' . $replace_path . $file->getFilename());
                 }
             }
         }
