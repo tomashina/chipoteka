@@ -29,9 +29,6 @@ define('DB_DATABASE', 'pluschip_2022');
 define('DB_PORT', '3306');
 define('DB_PREFIX', 'oc_');
 
-
-
-
 //cache redis
 
 //define('CACHE_HOSTNAME', 'cache_host_name');
