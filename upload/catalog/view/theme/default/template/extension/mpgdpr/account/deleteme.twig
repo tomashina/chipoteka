@@ -1,0 +1,288 @@
+{{ header }}
+<div class="container">
+  <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+    <li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+    {% endfor %}
+  </ul>
+  {% if success %}
+  <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }} <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+  {% endif %}
+  {% if error_warning %}
+  <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }} <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+  {% endif %}
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+    {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+    {% set class = 'col-sm-9' %}
+    {% else %}
+    {% set class = 'col-sm-12' %}
+    {% endif %}
+    <div id="content" class="{{ class }}">{{ content_top }}
+      <h1>{{ heading_title }}</h1>
+      <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-horizontal">
+        <p>{{ text_deleteme }}</p>
+        <ul class="list list-unstyled">
+          <li>{{ text_step1 }}</li>
+          <li>{{ text_step2 }}</li>
+          <li>{{ text_step3 }}</li>
+          <li>{{ text_step4 }}</li>
+        </ul>
+        <fieldset>
+          <div class="form-group required">
+            <label class="col-sm-2 control-label">{{ entry_email }}</label>
+            <div class="col-sm-10">
+              <input type="email" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-email" class="form-control" />
+              {% if error_email %}
+              <div class="text-danger">{{ error_email }}</div>
+              {% endif %}
+            </div>
+          </div>
+          {{ captcha }}
+        </fieldset>
+        <div class="buttons clearfix">
+          <div class="pull-left"><a href="{{ back }}" class="btn btn-default">{{ button_back }}</a></div>
+          <div class="pull-right">
+            <input type="submit" value="{{ button_continue }}" class="btn btn-primary" />
+          </div>
+        </div>
+      </form>
+      {% if customer_id %}
+      <!-- // 01-05-2022: updation start -->
+      <h1 class="text-center">{{ text_gdpr_deleteme_list }}</h1>
+      <div class="well">
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label class="control-label" for="input-request_id">{{ entry_request_id }}</label>
+              <input type="text" name="filter_request_id" value="{{ filter_request_id }}" placeholder="{{ entry_request_id }}" id="input-request_id" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="input-status">{{ entry_status }}</label>
+              <select name="filter_status" id="input-status" class="form-control">
+                <option value="*">{{ text_all }}</option>
+                {% for deletion_status in deletion_statuses %}
+                <option value="{{ deletion_status['value'] }}" {% if filter_status == deletion_status['value'] %}selected="selected"{% endif %}>{{ deletion_status['text'] }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-4">
+           <div class="form-group">
+              <label class="control-label" for="input-date_deletion">{{ entry_date_deletion }}</label>
+              <div class="input-group date">
+                <input type="text" name="filter_date_deletion" value="{{ filter_date_deletion }}" placeholder="{{ entry_date_deletion }}" data-date-format="YYYY-MM-DD" id="input-date_deletion" class="form-control" /><span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="row">
+                <div class="col-sm-6">
+                  <label class="control-label" for="input-time_lap_value">{{ entry_time_lap_value }}</label>
+                  <input type="text" name="filter_time_lap_value" value="{{ filter_time_lap_value }}" placeholder="{{ entry_time_lap_value }}" id="input-time_lap_value" class="form-control" />
+                </div>
+                <div class="col-sm-6">
+                  <label class="control-label" for="input-time_lap">{{ entry_time_lap }}</label>
+                  <select name="filter_time_lap" id="input-time_lap" class="form-control">
+                    <option value="*"></option>
+                    <option value="DAY" {% if filter_time_lap=='DAY' %}selected="selected"{% endif %}>{{ entry_days }}</option>
+                    <option value="WEEK" {% if filter_time_lap=='WEEK' %}selected="selected"{% endif %}>{{ entry_weeks }}</option>
+                    <option value="MONTH" {% if filter_time_lap=='MONTH' %}selected="selected"{% endif %}>{{ entry_months }}</option>
+                    <option value="YEAR" {% if filter_time_lap=='YEAR' %}selected="selected"{% endif %}>{{ entry_years }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label class="control-label" for="input-date_start">{{ entry_date_start }}</label>
+              <div class="input-group date">
+                <input type="text" name="filter_date_start" value="{{ filter_date_start }}" placeholder="{{ entry_date_start }}" data-date-format="YYYY-MM-DD" id="input-date_start" class="form-control" /><span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="control-label" for="input-date_end">{{ entry_date_end }}</label>
+              <div class="input-group date">
+                <input type="text" name="filter_date_end" value="{{ filter_date_end }}" placeholder="{{ entry_date_end }}" data-date-format="YYYY-MM-DD" id="input-date_end" class="form-control" /><span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12 text-right">
+            <button type="button" id="button-filter" class="btn btn-primary"><i class="fa fa-filter"></i> {{ button_filter }}</button>
+            <button type="button" id="button-reset" class="btn btn-danger"><i class="fa fa-refresh"></i> {{ button_reset }}</button>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table id="table-requestdeleteme" class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <td class="text-left"><a href="{{ sort_deleteme_id }}"{% if sort == 'd.mpgdpr_deleteme_id' %} class="{{ order|lower }}"{% endif %}>{{ column_request_id }}</a></td>
+              <td class="text-left">{{ column_email }}</td>
+              <td class="text-left"><a href="{{ sort_status }}"{% if sort == 'd.status' %} class="{{ order|lower }}"{% endif %}>{{ column_status }}</a></td>
+              <td class="text-left"><a href="{{ sort_date_deletion }}"{% if sort == 'd.date_deletion' %} class="{{ order|lower }}"{% endif %}>{{ column_date_deletion }}</a></td>
+              <td class="text-left">{{ column_date }}</td>
+              <td class="text-right">{{ column_action }}</td>
+            </tr>
+          </thead>
+          <tbody>
+            {% if requests %}
+            {% for request in requests %}
+            <tr class="requestid" id="requestid-{{ request['mpgdpr_deleteme_id'] }}">
+              <td class="text-left">{{ request['mpgdpr_deleteme_id'] }}</td>
+              <td class="text-left">{{ request['email'] }}</td>
+              <td class="text-left status_text">{{ request['status_text'] }}</td>
+              <td class="text-left date_deletion">{{ request['date_deletion'] }}</td>
+              <td class="text-left">
+                <!-- // 01-05-2022: updation start -->
+                <ul class="list-group">
+                  <li class="list-group-item"><strong><a href="{{ sort_date_added }}"{% if sort == 'd.date_added' %} class="{{ order|lower }}"{% endif %}>{{ text_date_added }} :</a></strong> {{ request['date_added'] }}</li>
+                  {#<li class="list-group-item"><strong>{{ text_date_modified }} :</strong> {{ request['date_modified'] }}</li> #}
+                  <li class="list-group-item"><strong><a href="{{ sort_expire_on }}"{% if sort == 'd.expire_on' %} class="{{ order|lower }}"{% endif %}>{{ text_expire_on }} :</a></strong> {{ request['expire_on'] }}</li>
+                </ul>
+                <!-- // 01-05-2022: updation end -->
+              </td>
+              <td class="text-right">
+                <!-- // 01-05-2022: updation start -->
+                {% if request['status'] == requestanonymouse_awating and request['expire'] %}
+                <button type="button" data-href="{{ request['resentcode'] }}" class="btn btn-primary resentcodeaction" data-toggle="tooltip" title="{{ button_resentcode }}"><i class="fa fa-refresh" data-class="fa fa-refresh"></i></button>
+                {% else %}
+                <button type="button" class="btn btn-primary" disabled="disabled"><i class="fa fa-refresh"></i></button>
+                {% endif %}
+                {% if request['status'] == requestanonymouse_awating and not request['expire'] %}
+                <a target="_blank" href="{{ request['approve'] }}" class="btn btn-success approveaction" data-toggle="tooltip" title="{{ button_approve }}"><i class="fa fa-thumbs-o-up" data-class="fa fa-thumbs-o-up"></i></a>
+                {% else %}
+                <button type="button" class="btn btn-success" disabled="disabled"><i class="fa fa-thumbs-o-up"></i></button>
+                {% endif %}
+                <!-- // 01-05-2022: updation end -->
+              </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+              <td class="text-center" colspan="9">{{ text_no_results }}</td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+      <div class="row">
+        <div class="col-sm-6 text-left">{{ pagination }}</div>
+        <div class="col-sm-6 text-right">{{ results }}</div>
+      </div>
+      <!-- // 01-05-2022: updation end -->
+      {% endif %}
+      {{ content_bottom }}</div>
+    {{ column_right }}</div>
+  {% if customer_id %}
+  <style type="text/css">
+    .list-group a {border: none;color: inherit;padding: 0px;}
+    .list-group a:hover {color: inherit;background: transparent;border: none;text-shadow: none;}
+  </style>
+  <!-- // 01-05-2022: updation start -->
+  <script type="text/javascript"><!--
+  $('#button-filter').on('click', function() {
+    var url = 'index.php?route={{ extension_path }}mpgdpr/account/deleteme';
+
+    var filter_status = $('select[name=\'filter_status\']').val();
+    if (filter_status != '*') {
+      url += '&filter_status=' + encodeURIComponent(filter_status);
+    }
+
+    var filter_request_id = $('input[name=\'filter_request_id\']').val();
+    if (filter_request_id) {
+      url += '&filter_request_id=' + encodeURIComponent(filter_request_id);
+    }
+
+    var filter_date_deletion = $('input[name=\'filter_date_deletion\']').val();
+    if (filter_date_deletion) {
+      url += '&filter_date_deletion=' + encodeURIComponent(filter_date_deletion);
+    }
+
+    var filter_date_start = $('input[name=\'filter_date_start\']').val();
+    if (filter_date_start) {
+      url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
+    }
+
+    var filter_date_end = $('input[name=\'filter_date_end\']').val();
+    if (filter_date_end) {
+      url += '&filter_date_end=' + encodeURIComponent(filter_date_end);
+    }
+
+    var filter_time_lap = $('select[name=\'filter_time_lap\']').val();
+    if (filter_time_lap != '*') {
+      url += '&filter_time_lap=' + encodeURIComponent(filter_time_lap);
+    }
+
+    var filter_time_lap_value = $('input[name=\'filter_time_lap_value\']').val();
+    if (filter_time_lap_value) {
+      url += '&filter_time_lap_value=' + encodeURIComponent(filter_time_lap_value);
+    }
+
+    location = url;
+  });
+  $('#button-reset').on('click', function() {
+    var url = 'index.php?route={{ extension_path }}mpgdpr/account/deleteme';
+    location = url;
+  });
+
+  $('.resentcodeaction').on('click', function() {
+    var $this = $(this);
+    var $i = $(this).find('i');
+
+    $('.alert, .text-danger').remove();
+
+    $.ajax({
+      url: $this.data('href'),
+      type: 'get',
+      data: '',
+      dataType: 'json',
+      beforeSend: function() {
+        // $this.button('loading');
+        $this.attr('disabled','disabled');
+        $i.attr('class','fa fa-spinner fa-spin');
+      },
+      complete: function() {
+        // $this.button('reset');
+        $this.removeAttr('disabled');
+        $i.attr('class', $i.attr('data-class'));
+      },
+      success: function(json) {
+        $('.alert, .text-danger').remove();
+
+        if (json['error']) {
+          $('#table-requestdeleteme').before('<div class="alert alert-danger alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+          $('html, body').animate({ scrollTop: ($('#table-requestdeleteme').offset().top - 50) }, 'slow');
+        }
+
+        if (json['success']) {
+          $('#table-requestdeleteme').before('<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+          $('html, body').animate({ scrollTop: ($('#table-requestdeleteme').offset().top - 50) }, 'slow');
+        }
+
+      },
+      error: function(xhr, ajaxOptions, thrownError) {
+        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+      }
+    });
+
+  });
+  //--></script>
+  {% for script in scripts %}
+  <script src="{{ script }}" type="text/javascript"></script>
+  {% endfor %}
+  {% for style in styles %}
+  <link href="{{ style }}" type="text/css" rel="stylesheet" media="screen" />
+  {% endfor %}
+  <script type="text/javascript"><!--
+  $('.date').datetimepicker({
+    pickTime: false
+  });
+  //--></script>
+  <!-- // 01-05-2022: updation end -->
+  {% endif %}
+</div>
+{{ footer }}
