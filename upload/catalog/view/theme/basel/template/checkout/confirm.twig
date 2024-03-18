@@ -3,10 +3,10 @@
   {% if shipping_code !='flat.flat' and payment_code =='cod' %}
   <h2 class="h6 pt-1 pb-3 mb-3 mt-3 border-bottom">Provjeri rezervaciju</h2>
 
-  {% endif %}
-    <h2 class="h6 pt-1 pb-3 mb-3 mt-3 border-bottom">{{ text_review }}</h2>
   {% else %}
+    <h2 class="h6 pt-1 pb-3 mb-3 mt-3 border-bottom">{{ text_review }}</h2>
 
+  {% endif %}
     {% if freeshipppingnotification %}
         <div class="alert alert-info alert-dismissible fade show" role="alert">
             {{ freeshipppingnotification }}
