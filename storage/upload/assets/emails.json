@@ -11,7 +11,7 @@
     },
     "3": {
         "subject": "Chipoteka.hr  - Vaša narudžba broj %s se obrađuje",
-        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">roba iz va&scaron;e narudžbe <strong>%s</strong> se obrađuje na na&scaron;em skladi&scaron;tu.</p>\n\n<p>Čim je predamo dostavnoj službi, poslat ćemo Vam informaciju na mail.</p>",
+        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">roba iz va&scaron;e narudžbe <strong>%s</strong> se obrađuje na na&scaron;em skladi&scaron;tu.</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Čim je predamo dostavnoj službi, poslat ćemo Vam informaciju na mail.</p>",
         "data": "0"
     },
     "4": {
@@ -35,8 +35,8 @@
         "data": "1"
     },
     "71": {
-        "subject": "Chipoteka.hr - Narudžba broj %s ",
-        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p><p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\"> zahvaljujemo Vam na Va&scaron;oj narudžbi broj %s koju smo uredno zaprimili i na&scaron; tim u webshopu će je obraditi u najbržem mogućem roku.</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Plaćanje na blagajni u iznosu od %s.\n\nKako Ugovor nije sklopljen na daljinu (preuzimanje i plaćanje narudžbe u poslovnici), jednostrani raskid ugovora unutar 14 dana od preuzimanja narudžbe nije moguć</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Hvala Vam</p>",
+        "subject": "Chipoteka.hr - Rezervacija broj %s ",
+        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p><p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\"> zahvaljujemo Vam na Va&scaron;oj rezervaciji broj %s koju smo uredno zaprimili i na&scaron; tim u webshopu će je obraditi u najbržem mogućem roku.</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Plaćanje na blagajni u iznosu od %s.\n\nKako Ugovor nije sklopljen na daljinu (preuzimanje i plaćanje rezervacije u poslovnici), jednostrani raskid ugovora unutar 14 dana od preuzimanja rezervacije se ne primjenjuju.</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Hvala Vam</p>",
         "data": "1"
     },
     "8": {
@@ -66,7 +66,7 @@
     },
     "14": {
         "subject": "Chipoteka.hr  - Vaša narudžba broj %s se obrađuje",
-        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">roba iz va&scaron;e narudžbe <strong>%s</strong> se obrađuje na na&scaron;em skladi&scaron;tu.</p>\n\n<p>Čim je predamo dostavnoj službi, poslat ćemo Vam informaciju na mail.</p>",
+        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">roba iz va&scaron;e narudžbe <strong>%s</strong> se obrađuje na na&scaron;em skladi&scaron;tu.</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Čim je predamo dostavnoj službi, poslat ćemo Vam informaciju na mail.</p>",
         "data": "0"
     },
     "100": {
@@ -76,7 +76,7 @@
     },
     "301": {
         "subject": "Chipoteka.hr  - Vaša narudžba broj %s se obrađuje",
-        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">roba iz va&scaron;e narudžbe <strong>%s</strong> se obrađuje na na&scaron;em skladi&scaron;tu.</p>\n\n<p>Čim je predamo dostavnoj službi, poslat ćemo Vam informaciju na mail.</p>",
+        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a,</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">roba iz va&scaron;e narudžbe <strong>%s</strong> se obrađuje na na&scaron;em skladi&scaron;tu.</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Čim je predamo dostavnoj službi, poslat ćemo Vam informaciju na mail.</p>",
         "data": "0"
     },
     "401": {
@@ -131,22 +131,27 @@
     },
     "843": {
         "subject": "Chipoteka.hr  - Vaša narudžba broj %s se obrađuje",
-        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a, roba iz vaše narudžbe  %s se obrađuje na našem skladištu.</p>\n\n<p>Čim bude spremna za preuzimanje u Chipoteka poslovnici, poslat ćemo Vam informaciju na e-mail.</p>",
+        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a, roba iz vaše narudžbe  %s se obrađuje na našem skladištu.</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Čim bude spremna za preuzimanje u Chipoteka poslovnici, poslat ćemo Vam informaciju na e-mail.</p>",
+        "data": "0"
+    },
+    "863": {
+        "subject": "Chipoteka.hr  - Vaša rezervacija broj %s se obrađuje",
+        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a, roba iz vaše rezervacije %s se obrađuje na našem skladištu.</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Čim bude spremna za preuzimanje u Chipoteka poslovnici, poslat ćemo Vam informaciju na e-mail.</p>",
         "data": "0"
     },
     "813": {
         "subject": "Chipoteka.hr - Vaš paket je spreman za preuzimanje u poslovnici",
-        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a, Vaš paket iz narudžbe  %s je spakiran i spreman za preuzimanje u Chipoteka poslovnici %s.</p>\n\n<p>Radno vrijeme poslovnice %s .</p><p>Zahvaljujemo Vam na povjerenju.</p>",
+        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a, Vaš paket iz rezervacije  %s je spakiran i spreman za  %s.</p>\n\n<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Radno vrijeme poslovnice %s .</p><p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Zahvaljujemo Vam na povjerenju.</p>",
         "data": "0"
     },
     "833": {
         "subject": "Chipoteka.hr - Vaš paket je spreman za plaćanje i preuzimanje u poslovnici",
-        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a, Vaš paket iz narudžbe  %s je spakiran i spreman za preuzimanje u Chipoteka poslovnici %s.</p>\n\n <p>Možete ga preuzeti unutar 4 radna dana, nakon čega će se narudžba stornirati.</p> <p>Kako Ugovor nije sklopljen na daljinu (preuzimanje i plaćanje narudžbe je u poslovnici),\njednostrani raskid ugovora unutar 14 dana od preuzimanja narudžbe nije moguć.</p><p>Radno vrijeme poslovnice %s .</p><p>Plaćanje na blagajni u iznosu od %s.</p><p>Zahvaljujemo Vam na povjerenju.</p>",
+        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a, Vaš paket iz rezervacije  %s je spakiran i spreman za %s.</p>\n\n <p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Možete ga preuzeti unutar 4 radna dana, nakon čega će se rezervacija stornirati.</p> <p>Kako Ugovor nije sklopljen na daljinu (preuzimanje i plaćanje rezervacije u poslovnici), uvjeti koji vrijede za jednostrani raskid ugovora unutar 14 dana od preuzimanja rezervacije se ne primjenjuju.</p><p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Radno vrijeme poslovnice %s .</p><p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Plaćanje na blagajni u iznosu od %s.</p><p>Zahvaljujemo Vam na povjerenju.</p>",
         "data": "0"
     },
     "853": {
         "subject": "Chipoteka.hr – Podsjećamo da je Vaš paket je spreman za plaćanje i preuzimanje u poslovnici",
-        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a, Vaš paket iz narudžbe  %s je spakiran i spreman za preuzimanje u Chipoteka poslovnici %s.</p>\n\n <p>Možete ga preuzeti unutar 4 radna dana, nakon čega će se narudžba stornirati.</p> <p>Kako Ugovor nije sklopljen na daljinu (preuzimanje i plaćanje narudžbe je u poslovnici),\njednostrani raskid ugovora unutar 14 dana od preuzimanja narudžbe nije moguć.</p><p>Radno vrijeme poslovnice %s .</p><p>Plaćanje na blagajni u iznosu od %s.</p><p>Zahvaljujemo Vam na povjerenju.</p>",
+        "text": "<p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Po&scaron;tovani/a, Vaš paket iz rezervacije  %s je spakiran i spreman za %s.</p>\n\n <p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Možete ga preuzeti još 2 radna dana, nakon čega će se rezervacija stornirati.</p> <p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Plaćanje na blagajni u iznosu od %s.</p><p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Kako Ugovor nije sklopljen na daljinu (preuzimanje i plaćanje rezervacije je u poslovnici),\njednostrani raskid ugovora unutar 14 dana od preuzimanja rezervacije nije moguć.</p><p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Radno vrijeme poslovnice %s .</p><p style=\"color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 15px;word-break: break-word;font-size: 16px;line-height: 26px;\">Zahvaljujemo Vam na povjerenju.</p>",
         "data": "0"
     }
 }

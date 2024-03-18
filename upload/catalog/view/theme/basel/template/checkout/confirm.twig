@@ -1,7 +1,11 @@
 {% if not redirect %}
 
+  {% if shipping_code !='flat.flat' and payment_code =='cod' %}
+  <h2 class="h6 pt-1 pb-3 mb-3 mt-3 border-bottom">Provjeri rezervaciju</h2>
 
-  <h2 class="h6 pt-1 pb-3 mb-3 mt-3 border-bottom">{{ text_review }}</h2>
+  {% endif %}
+    <h2 class="h6 pt-1 pb-3 mb-3 mt-3 border-bottom">{{ text_review }}</h2>
+  {% else %}
 
     {% if freeshipppingnotification %}
         <div class="alert alert-info alert-dismissible fade show" role="alert">
@@ -56,9 +60,9 @@
 
     {% if shipping_code !='flat.flat' and payment_code =='cod' %}
         <div class="alert alert-info alert-dismissible fade show" role="alert">
-           <small> Plaćanje na blagajni u iznosu od {{ total_amount }}.<br>
+           <small> Plaćanje na blagajni poslovnice u iznosu od {{ total_amount }}.<br>
 
-            Kako Ugovor nije sklopljen na daljinu (preuzimanje i plaćanje narudžbe u poslovnici), jednostrani raskid ugovora unutar 14 dana od preuzimanja narudžbe nije moguć.</small>
+               Kako Ugovor nije sklopljen na daljinu (preuzimanje i plaćanje rezervacije u poslovnici), uvjeti koji vrijede za jednostrani raskid ugovora unutar 14 dana od preuzimanja rezervacije se ne primjenjuju.</small>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button>
         </div>
     {% endif %}
