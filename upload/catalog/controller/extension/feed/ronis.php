@@ -23,66 +23,75 @@ class ControllerExtensionFeedRonis extends Controller {
 
 
 
-         if ($nabavna_cijena != '') {
+            if ($nabavna_cijena != '') {
 
 
-                     $url ='http://sechip.dyndns.org:8888/datasnap/rest/StanjeZalihe/Skladiste/[101,001,002,003,004,005,007,011,012]/'.$product['model'];
+                /*  $url ='http://sechip.dyndns.org:8888/datasnap/rest/StanjeZalihe/Skladiste/[101,001,002,003,004,005,007,011,012]/'.$product['model'];
 
 
-                     $username = 'webshop';
-                     $password = 'bJ8tn63Q';
-                     $ch       = curl_init($url);
-                     curl_setopt($ch, CURLOPT_USERPWD, $username . ":" . $password);
-                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                     $response = curl_exec($ch);
+                  $username = 'webshop';
+                  $password = 'bJ8tn63Q';
+                  $ch       = curl_init($url);
+                  curl_setopt($ch, CURLOPT_USERPWD, $username . ":" . $password);
+                  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                  $response = curl_exec($ch);
 
 
-                     header('Content-Type: application/json');
+                  header('Content-Type: application/json');
 
-                     $response =    json_decode($response, true);
+                  $response =    json_decode($response, true);
 
-                    $kol=0;
+                 $kol=0;
 
-                    foreach ($response['result'][0]['stanje'] as $item){
+                 foreach ($response['result'][0]['stanje'] as $item){
 
-                        $kol += $item['raspolozivo_kol'];
+                     $kol += $item['raspolozivo_kol'];
 
-                    }
+                 }
 
-                    $ukupna_kolicina = $kol;
+                 $ukupna_kolicina = $kol;*/
 
-                    $description = $product['description'];
-                    $description = $this->stripInvalidXml($description);
+                $description = $product['description'];
 
-                    $name = strip_tags(html_entity_decode($product['name']));
-                    $name = str_replace('&nbsp;', '', $name);
-                    $name = str_replace('', '', $name);
-                    $name = str_replace('', '', $name);
-                    $name = str_replace('&#44', '', $name);
-                    $name = str_replace("'", '', $name);
-                    $name = str_replace('', '', $name);
-                    $name = str_replace('', '', $name);
-                    $name = str_replace('>', '', $name);
-                    $name = str_replace('<', '', $name);
 
-                    $name = $this->stripInvalidXml($name);
+                $kratki = $this->elipsis($description);
 
-                    if ($product['special'] == '') {
-                        $price = $product['price'];
-                    } else {
-                        $price = $product['special'];
-                    }
 
-                    $vpc = $product['vpc'];
+                $kratki = $this->stripInvalidXml($kratki);
 
-                    if($ukupna_kolicina > 0){
+
+
+                $description = $this->stripInvalidXml($description);
+
+                $name = strip_tags(html_entity_decode($product['name']));
+                $name = str_replace('&nbsp;', '', $name);
+                $name = str_replace('', '', $name);
+                $name = str_replace('', '', $name);
+                $name = str_replace('&#44', '', $name);
+                $name = str_replace("'", '', $name);
+                $name = str_replace('', '', $name);
+                $name = str_replace('', '', $name);
+                $name = str_replace('>', '', $name);
+                $name = str_replace('<', '', $name);
+
+                $name = $this->stripInvalidXml($name);
+
+                if ($product['special'] == '') {
+                    $price = $product['price'];
+                } else {
+                    $price = $product['special'];
+                }
+
+                $vpc = $product['vpc'];
+
+                if($product['quantity'] > 0){
                     $output .= '<product>';
                     $output .= '<sifra>' . $product['model'] . '</sifra>';
                     $output .= '<ean>' . $product['upc'] . '</ean>';
-                    $output .= '<kolicina>' .  $ukupna_kolicina . '</kolicina>';
+                    $output .= '<kolicina>' .  $product['quantity'] . '</kolicina>';
                     $output .= '<name>' . $this->wrapInCDATA($name) . '</name>';
                     $output .= '<brand>' . $this->wrapInCDATA($product['manufacturer']) . '</brand>';
-                    $output .= '<kratki_opis>' . $this->wrapInCDATA($product['meta_description']) . '</kratki_opis>';
+                    $output .= '<kratki_opis>' . $this->wrapInCDATA($kratki) . '</kratki_opis>';
                     $output .= '<mpc>' . number_format($price, '2', '.', '') . '</mpc>';
                     $output .= '<vpc>' . number_format($vpc, '2', '.', '') . '</vpc>';
                     $output .= '<nabavna_cijena>' . number_format($nabavna_cijena, '2', '.', '') . '</nabavna_cijena>';
@@ -96,7 +105,7 @@ class ControllerExtensionFeedRonis extends Controller {
             }
 
         }
-       $output .= '</products>';
+        $output .= '</products>';
 
 
         $output = iconv('UTF-8', 'UTF-8//IGNORE', $output);
@@ -152,6 +161,32 @@ class ControllerExtensionFeedRonis extends Controller {
     private function removeChar($string, $char)
     {
         return str_replace($char, '', $string);
+    }
+
+     public function elipsis ($text, $words = 30) {
+        // Check if string has more than X words
+        if (str_word_count($text) > $words) {
+
+            // Extract first X words from string
+            preg_match("/(?:[^\s,\.;\?\!]+(?:[\s,\.;\?\!]+|$)){0,$words}/", $text, $matches);
+            $text = trim($matches[0]);
+
+            // Let's check if it ends in a comma or a dot.
+            if (substr($text, -1) == ',') {
+                // If it's a comma, let's remove it and add a ellipsis
+                $text = rtrim($text, ',');
+                $text .= '...';
+            } else if (substr($text, -1) == '.') {
+                // If it's a dot, let's remove it and add a ellipsis (optional)
+                $text = rtrim($text, '.');
+                $text .= '...';
+            } else {
+                // Doesn't end in dot or comma, just adding ellipsis here
+                $text .= '...';
+            }
+        }
+        // Returns "ellipsed" text, or just the string, if it's less than X words wide.
+        return $text;
     }
 
 
@@ -227,7 +262,7 @@ class ControllerExtensionFeedRonis extends Controller {
         foreach ($data as $item) {
 
             if ($item['customer_group_id'] == 4 ){
-            $cijena = $item['price'];
+                $cijena = $item['price'];
             }
 
         }
