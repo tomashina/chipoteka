@@ -57,7 +57,7 @@ class ControllerExtensionFeedRonis extends Controller {
                 $kratki = $this->elipsis($description);
 
 
-
+                $kratki = $this->stripInvalidXml($kratki);
 
 
 
