@@ -188,7 +188,7 @@ class LOC_Order
         $this->items_available = false;//$this->setAvailability();
 
         $this->order = [
-            'nalog_prodaje_b2b'         => $this->oc_order['order_id']. '-' . Carbon::now()->year.'-101',
+            'nalog_prodaje_b2b'         => $this->oc_order['order_id']. '-' . Carbon::now()->year,
             'narudzba'                   => $this->oc_order['order_id'] . '-' . Carbon::now()->year,
             'datum'                     => Carbon::make($this->oc_order['date_added'])->format(agconf('luceed.date')),
             'skladiste'                 => '099',// 001 -> 099
