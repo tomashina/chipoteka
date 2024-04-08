@@ -1603,7 +1603,20 @@
                                             <h2 class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 28px;line-height: 38px;font-weight: bold;">Isporuka pošiljki</h2>
                                             <p class="text_lead text_secondary mb_md" style="color: #959ba0;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 19px;line-height: 31px;">Robu šaljemo radnim danom od ponedjeljka do petka.
                                                 <br>
+
+
+                                                {% if  shipping_code !='flat.flat' and shipping_method =='CHIPOTEKA ZAGREB - Ulica grada Vukovara 269 E'%}
+                                                Za sva dodatna pitanja možete nas kontaktirati na <a style="color:#E31318;text-decoration:none;" href="mailto:z-el.hranjec@chipoteka.hr">z-el.hranjec@chipoteka.hr</a></p>
+                                                {% else %}
+
+
                                                 Za sva dodatna pitanja možete nas kontaktirati na <a style="color:#E31318;text-decoration:none;" href="mailto:webnarudzba@chipoteka.hr">webnarudzba@chipoteka.hr</a></p>
+
+
+                                                {% endif %}
+
+
+
                                             <table class="column" role="presentation" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;" width="100%" cellspacing="0" cellpadding="0" border="0" align="center">
                                                 <tbody>
                                                 <tr>
