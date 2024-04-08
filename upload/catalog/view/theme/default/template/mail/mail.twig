@@ -1039,7 +1039,7 @@
                                 <tbody>
                                 <tr>
                                     <td class="column_cell px text_secondary text_center" style="vertical-align: top;color: #959ba0;text-align: center;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
-                                        <h2 class="mb_xs" style="color: #333;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 18px;word-break: break-word;font-size: 24px;line-height: 38px;font-weight: bold;"> {% if shipping_code =='flat.flat' %}Rezervirani {% else %} Naručeni  {% endif %}proizvodi</h2>
+                                        <h2 class="mb_xs" style="color: #333;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 18px;word-break: break-word;font-size: 24px;line-height: 38px;font-weight: bold;"> {% if shipping_code !='flat.flat' %}Rezervirani {% else %} Naručeni  {% endif %}proizvodi</h2>
                                     </td>
                                 </tr>
                                 <tr>
@@ -1209,7 +1209,7 @@
                                     <td class="column_cell px text_dark text_right mobile_center" style="vertical-align: top;color: #333333;text-align: right;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                         {% for total in totals %}
                                             {% if total.title != 'Ukupno' %}
-                                                <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;"> {% if  shipping_code =='flat.flat' and total.title =='Vrijednost narudžbe'%}  Vrijednost rezervacije:   {% else %}   {{ total.title }}:   {% endif %} <strong style="font-weight: bold;">{{ total.value|number_format(2, '.', '') }} €    <small>{{ (total.value * 7.53450)|number_format(2, '.', '') }} kn</small></strong></p>
+                                                <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;"> {% if  shipping_code !='flat.flat' and total.title =='Vrijednost narudžbe'%}  Vrijednost rezervacije:   {% else %}   {{ total.title }}:   {% endif %} <strong style="font-weight: bold;">{{ total.value|number_format(2, '.', '') }} €    <small>{{ (total.value * 7.53450)|number_format(2, '.', '') }} kn</small></strong></p>
                                             {% else %}
                                                 <h4 class="mt_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 0px;word-break: break-word;font-size: 18px;line-height: 24px;font-weight: bold;">{{ total.title }}: <span class="text_primary" style="color: #E31318;">{{ total.value|number_format(2, '.', '') }} € <small>
 
@@ -1553,7 +1553,7 @@
                                         <td class="column_cell px text_dark text_right mobile_center" style="vertical-align: top;color: #333333;text-align: right;padding-left: 16px;padding-right: 16px;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">
                                             {% for total in totals %}
                                                 {% if total.title != 'Ukupno' %}
-                                                    <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">{% if  shipping_code =='flat.flat' and total.title =='Vrijednost narudžbe'%}  Vrijednost rezervacije:   {% else %}   {{ total.title }}:   {% endif %} <strong style="font-weight: bold;">{{ total.value|number_format(2, '.', '') }} kn</strong></p>
+                                                    <p class="mb_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 16px;line-height: 26px;">{% if  shipping_code !='flat.flat' and total.title =='Vrijednost narudžbe'%}  Vrijednost rezervacije:   {% else %}   {{ total.title }}:   {% endif %} <strong style="font-weight: bold;">{{ total.value|number_format(2, '.', '') }} kn</strong></p>
                                                 {% else %}
                                                     <h4 class="mt_xs" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 8px;margin-bottom: 0px;word-break: break-word;font-size: 18px;line-height: 24px;font-weight: bold;">{{ total.title }}: <span class="text_primary" style="color: #E31318;">{{ total.value|number_format(2, '.', '') }} kn</span></h4>
                                                 {% endif %}
