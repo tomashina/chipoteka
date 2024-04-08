@@ -337,7 +337,17 @@ class ControllerCheckoutSuccess extends Controller {
 
                   $pozivnabroj = $nhs_no.$this->mod11INI($nhs_no);
 
-                  $data['text_message'] = sprintf($this->language->get('text_bank'), $order_id, $ukupno, $pozivnabroj);
+                  if($data['shipping_code'] =='flat.flat'){
+
+                      $data['text_message'] = sprintf($this->language->get('text_bank'), $order_id, $ukupno, $pozivnabroj);
+
+                  }else{
+
+                      $data['text_message'] = sprintf($this->language->get('text_bank_rezervacija'), $order_id, $ukupno, $pozivnabroj);
+
+                  }
+
+
 
                   $hubstring = array (
                       'renderer' => 'image',
@@ -419,7 +429,17 @@ class ControllerCheckoutSuccess extends Controller {
               }
               else if ($data['paymethod'] == 'wspay') {
 
-                  $data['text_message'] = sprintf($this->language->get('text_wspay'), $order_id);
+                  if($data['shipping_code'] =='flat.flat'){
+
+                      $data['text_message'] = sprintf($this->language->get('text_wspay'), $order_id);
+
+                  }else{
+
+                      $data['text_message'] = sprintf($this->language->get('text_wspay_rezervacija'), $order_id);
+
+                  }
+
+
 
               }
 

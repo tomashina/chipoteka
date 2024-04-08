@@ -138,6 +138,7 @@ class ControllerCommonTotal extends Controller {
 				'text'  => $text,
 			);
 		}
+        $data['shipping_method'] = $this->session->data['shipping_method']['code'];
 
 		$data['cart'] = $this->url->link('checkout/cart');
 		$data['checkout'] = $this->url->link('checkout/checkout', '', true);

@@ -163,6 +163,8 @@ class ControllerCheckoutPaymentMethod extends Controller {
 
         }
 
+        $data['shipping_method'] = $this->session->data['shipping_method']['code'];
+
 
         unset($this->session->data['creditcardname']);
         unset($this->session->data['paymentplan']);
