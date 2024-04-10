@@ -241,9 +241,9 @@ class ControllerCheckoutCart extends Controller {
 
 			if($data['groupId']>2){
 
-                if ($this->cart->getTotal() < 132.74 ) {
+                if ($this->cart->getTotal() < 300 ) {
 
-                    $razlika = 132.74 - $this->cart->getTotal();
+                    $razlika = 300 - $this->cart->getTotal();
 
                     $razlika = number_format($razlika, 2, ',', '');
                     $data['freeshipppingnotification'] =   sprintf($this->language->get('freeshipppingnotificationb2b'), $razlika);

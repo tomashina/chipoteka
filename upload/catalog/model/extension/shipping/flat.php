@@ -28,7 +28,7 @@ class ModelExtensionShippingFlat extends Model {
             if($data['groupId']>2) {
 
 
-                if ($this->cart->getSubTotal() < 132.74) {
+                if ($this->cart->getSubTotal() < 300) {
                     $shipping_price = 5.17;
                 } else {
                     $shipping_price = 0;
