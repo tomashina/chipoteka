@@ -61,6 +61,13 @@ foreach ($products as $product) {
                             unlink($c2_path . $size);
                         }
                     }
+
+                    // Prave fotke
+                    $c_real_path = DIR_IMAGE . $replace_path . $name;
+                    if (file_exists($c_real_path)) {
+                        \Agmedia\Helpers\Log::store($c_real_path, 'real_deleted');
+                        unlink($c_real_path);
+                    }
                 }
             }
         }
