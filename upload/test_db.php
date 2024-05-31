@@ -64,9 +64,12 @@ foreach ($products as $product) {
 
                     // Prave fotke
                     $c_real_path = DIR_IMAGE . $replace_path . $name;
-                    if (file_exists($c_real_path)) {
-                        \Agmedia\Helpers\Log::store($c_real_path, 'real_deleted');
-                        unlink($c_real_path);
+                    $c_real_sizes = ['.jpg'];
+                    foreach ($c_real_sizes as $size) {
+                        if (file_exists($c_real_path . $size)) {
+                            \Agmedia\Helpers\Log::store($c_real_path . $size, 'real_deleted');
+                            unlink($c_real_path . $size);
+                        }
                     }
                 }
             }
