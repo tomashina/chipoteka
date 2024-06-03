@@ -5,6 +5,8 @@ class ControllerExtensionFeedRonis extends Controller {
     public function index()
     {
 
+        if (isset($_GET['pass']) && $_GET['pass'] = 'gNG_p]x7V[+I=uaIgjo=hTMQX~s') {
+
         $output = '<?xml version="1.0" encoding="UTF-8"?>';
         $output .= '<products>';
 
@@ -114,7 +116,7 @@ class ControllerExtensionFeedRonis extends Controller {
         $this->response->setOutput($output);
 
 
-
+}
 
     }
 
