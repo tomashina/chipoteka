@@ -96,7 +96,8 @@ class LOC_Related
             $count = count($items);
 
             if ($key == '9150048495') {
-                Log::store($main->toArray(), 'related_testing');
+                Log::store($key, 'related_testing');
+                Log::store($main, 'related_testing');
                 Log::store($count, 'related_testing');
             }
 
