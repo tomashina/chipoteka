@@ -96,7 +96,7 @@ class LOC_Related
             $main = Product::query()->where('sku', '=', $key)->first();
             $count = count($items);
 
-            if ($key == '9150048495') {
+            if ($key == '1099900923') {
                 Log::store($key, 'related_testing');
                 Log::store($main, 'related_testing');
                 Log::store($count, 'related_testing');
@@ -106,7 +106,7 @@ class LOC_Related
                 foreach ($items as $item) {
                     $related = Product::where('sku', $item->dodatak__artikl)->first();
 
-                    if ($key == '9150048495') {
+                    if ($key == '1099900923') {
                         Log::store($related->toArray(), 'related_testing');
                         Log::store($main->product_id, 'related_testing');
                     }
