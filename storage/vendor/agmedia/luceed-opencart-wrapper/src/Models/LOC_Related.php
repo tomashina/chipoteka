@@ -122,6 +122,8 @@ class LOC_Related
             }
         }
 
+        Log::store($this->active_related, 'active_related');
+        Log::store($this->insert_query, 'active_query');
         return $this;
     }
 
