@@ -92,7 +92,8 @@ class LOC_Related
         $this->insert_query = '';
 
         foreach ($this->active_related as $key => $items) {
-            $main = Product::where('sku', $key)->first();
+           // $main = Product::where('sku', $key)->first();
+            $main = Product::query()->where('sku', $key)->first();
             $count = count($items);
 
             if ($key == '9150048495') {
