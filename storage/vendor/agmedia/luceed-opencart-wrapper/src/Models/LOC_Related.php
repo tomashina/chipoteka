@@ -97,23 +97,18 @@ class LOC_Related
             $count = count($items);
 
             if ( ! $main) {
-                $main = Product::query()->where('model', '=', $key)->first();
+                Log::store($key, 'related_not');
             }
 
-            if ($key == '1099900923') {
-                Log::store($key, 'related_testing');
-                Log::store($main, 'related_testing');
-                Log::store($count, 'related_testing');
-            }
+
 
             if ($main) {
+
+                Log::store($key, 'related_yes');
                 foreach ($items as $item) {
                     $related = Product::where('sku', $item->dodatak__artikl)->first();
 
-                    if ($key == '1099900923') {
-                        Log::store($related->toArray(), 'related_testing');
-                        Log::store($main->product_id, 'related_testing');
-                    }
+
 
                     if ($related && isset($related->product_id) && $related->product_id) {
                         $this->insert_query .= '(' . $main->product_id . ', ' . $related->product_id . '),';
