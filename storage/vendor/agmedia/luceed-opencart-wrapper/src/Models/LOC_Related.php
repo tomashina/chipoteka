@@ -70,13 +70,15 @@ class LOC_Related
     public function collectActive()
     {
         $items = $this->getRelated()
-                      ->where('enabled', '!=', 'N')
-                      ->where('webshop', '!=', 'N')
-                      ->all();
+            ->where('enabled', '!=', 'N')
+            ->where('webshop', '!=', 'N')
+            ->all();
 
         foreach ($items as $item) {
             if ( ! empty($item->dodaci)) {
-                $this->active_related[$item->artikl] = $item->dodaci;
+                //$this->active_related[$item->artikl] = $item->dodaci;
+                $this->active_related[$item->artikl]['sku'] = $item->artikl;
+                $this->active_related[$item->artikl]['items'] = $item->dodaci;
             }
         }
 
@@ -92,23 +94,13 @@ class LOC_Related
         $this->insert_query = '';
 
         foreach ($this->active_related as $key => $items) {
-           // $main = Product::where('sku', $key)->first();
-            $main = Product::query()->where('sku', '=', $key)->first();
-            $count = count($items);
-
-            if ( ! $main) {
-                Log::store($key, 'related_not');
-            }
-
-
+            // $main = Product::where('sku', $key)->first();
+            $main = Product::query()->where('sku', $items['sku'])->first();
+            $count = count($items['items']);
 
             if ($main) {
-
-                Log::store($key, 'related_yes');
-                foreach ($items as $item) {
+                foreach ($items['items'] as $item) {
                     $related = Product::where('sku', $item->dodatak__artikl)->first();
-
-
 
                     if ($related && isset($related->product_id) && $related->product_id) {
                         $this->insert_query .= '(' . $main->product_id . ', ' . $related->product_id . '),';
