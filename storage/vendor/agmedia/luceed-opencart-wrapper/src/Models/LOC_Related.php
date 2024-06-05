@@ -96,6 +96,10 @@ class LOC_Related
             $main = Product::query()->where('sku', '=', $key)->first();
             $count = count($items);
 
+            if ( ! $main) {
+                $main = Product::query()->where('model', '=', $key)->first();
+            }
+
             if ($key == '1099900923') {
                 Log::store($key, 'related_testing');
                 Log::store($main, 'related_testing');
