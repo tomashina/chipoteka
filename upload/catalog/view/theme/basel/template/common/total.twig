@@ -21,7 +21,13 @@
               {% for total in totals %}
                 {% if total.title!='Ukupno'  %}
 
-                  <li class="d-flex justify-content-between align-items-center"><span class="me-2">{{ total.title }}</span><span class="text-end">{{ total.text }}</span></li>
+                    {% if total.title=='Vrijednost narudžbe'  %}
+
+                        <li class="d-flex justify-content-between align-items-center"><span class="me-2">Vrijednost {% if  shipping_method == 'flat.flat' %} narudžbe {% else %} rezervacije {% endif %}</span><span class="text-end">{{ total.text }}</span></li>
+                    {% else %}
+                        <li class="d-flex justify-content-between align-items-center"><span class="me-2">{{ total.title }}</span><span class="text-end">{{ total.text }}</span></li>
+                    {% endif %}
+
 
                 {% endif %}
               {% endfor %}
@@ -40,6 +46,8 @@
 
 
 </div>
+
+
 
 
 

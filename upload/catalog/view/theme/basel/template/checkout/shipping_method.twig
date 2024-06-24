@@ -76,3 +76,17 @@
 </div>
 
 
+<script>
+
+  $(' input:radio').click(function() {
+        if ($(this).val() === 'flat.flat') {
+            $("#mtext").text("Postupak narudžbe ");
+        } else if ($(this).val() === 'xshippingpro.xshippingpro1') {
+            $("#mtext").text("Postupak rezervacije");
+        }
+    });
+
+
+</script>
+
+
