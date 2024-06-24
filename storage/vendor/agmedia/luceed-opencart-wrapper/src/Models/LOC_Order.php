@@ -358,6 +358,7 @@ class LOC_Order
         foreach ($this->items_available['items'] as $store_uid => $items) {
             Log::store($store_uid . ' - store_uid', 'items');
             Log::store($this->pickup_warehouse['skladiste_uid'], 'items');
+            //
             if ($store_uid == $this->pickup_warehouse['skladiste_uid']) {
                 $has_any_items_in_pickup_store = true;
                 // Ako ima sve u pickup poslovnici
@@ -409,7 +410,7 @@ class LOC_Order
                         }
                     }
 
-                    //
+                    // Napravi nalog za pickup poslovnicu sa onim šta ima.
                     if ($products_available) {
                         //$stavke = OrderHelper::getOrderItems($products_available, $this->oc_order['order_id']);
 
@@ -456,7 +457,7 @@ class LOC_Order
         $this->log_items('resolveAvailability()::$items_available_2', $this->items_available);
         //
         // Ako nema svih u pickup poslovnici i ako postoje koji fale.
-        if (isset($this->items_available['products_required']) && ! empty($this->items_available['products_required'])) {
+        if ( ! empty($this->items_available['products_required'])) {
             $required_products = $this->items_available['products_required'];
             $loop = 1;
 
