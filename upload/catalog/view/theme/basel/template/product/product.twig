@@ -303,8 +303,19 @@
                         <!-- Specs table-->
                         <div class="row pt-2">
                             <div class="col-lg-7 mb-3">
-                                <h5>Opis</h5>
+                                <h5>Opis </h5>
                                 {{ description }}
+
+
+                                {% if  ean  %}
+                                    <div class="loadbeeTabContent"
+                                         data-loadbee-apikey="MPHH3Y5rRXABaP7KPuXGsZzXx9kgr8N3"
+                                         data-loadbee-gtin="{{ ean }}"
+                                         data-loadbee-locale="hr_HR"
+                                    ></div>
+                                    <script async src="https://cdn.loadbee.com/js/loadbee_integration.js"></script>                                {% endif %}
+
+
                                 {% if  ean  %}
                                     <div id="flix-inpage"></div><script type="text/javascript" src="//media.flixfacts.com/js/loader.js" data-flix-distributor="18103" data-flix-language="hr" data-flix-brand="{{ manufacturer }}" data-flix-mpn="{{ ean }}" data-flix-ean="" data-flix-sku=""  data-flix-inpage="flix-inpage" data-flix-button-image="" data-flix-price="" data-flix-fallback-language="" async></script>
                                 {% endif %}
