@@ -22,7 +22,7 @@
     "browser-sync": "^2.8.0",
     "compression-webpack-plugin": "^0.3.2",
     "preact": "^6.4.0",
-    "webpack": "^1.10.5",
+    "webpack": "^5.94.0",
     "webpack-dev-middleware": "^1.2.0",
     "webpack-hot-middleware": "^1.1.0"
   }
