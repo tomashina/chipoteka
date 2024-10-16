@@ -1,6 +1,6 @@
 <?php
 
-class ControllerExtensionFeedRonis extends Controller {
+class ControllerExtensionFeedBazzar extends Controller {
 
     public function index()
     {
