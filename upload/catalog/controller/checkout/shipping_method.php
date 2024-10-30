@@ -27,7 +27,7 @@ class ControllerCheckoutShippingMethod extends Controller {
                     }
                 }
 
-               if($dostupnost_skladiste == 'PROIZVOD NEDOSTUPAN' ){
+               if($dostupnost_skladiste != 'DOSTUPNO ODMAH' ){
                   break;
                }
 
