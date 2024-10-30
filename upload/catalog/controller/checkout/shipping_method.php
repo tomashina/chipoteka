@@ -13,11 +13,43 @@ class ControllerCheckoutShippingMethod extends Controller {
 
 			$results = $this->model_setting_extension->getExtensions('shipping');
 
+            $shipping_disable = 1;
+            foreach ($this->cart->getProducts() as $product) {
+                $loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse();
+                $skladista = $loc->getAvailabilityForProduct($product['model']);
+
+
+                $numItems = count($skladista);
+                $i = 0;
+                foreach($skladista as $key=>$skladiste) {
+                    if(++$i === $numItems) {
+                        $dostupnost_skladiste =  $skladiste ['address'];
+                    }
+                }
+
+               if($dostupnost_skladiste == 'PROIZVOD NEDOSTUPAN' ){
+                  break;
+               }
+
+                $shipping_disable = 0;
+            }
+
+
+
 			foreach ($results as $result) {
 				if ($this->config->get('shipping_' . $result['code'] . '_status')) {
 					$this->load->model('extension/shipping/' . $result['code']);
 
-					$quote = $this->{'model_extension_shipping_' . $result['code']}->getQuote($this->session->data['shipping_address']);
+                    if($result['code'] =='xshippingpro' && $shipping_disable == 1){
+                        $quote ='';
+                    }else{
+                        $quote = $this->{'model_extension_shipping_' . $result['code']}->getQuote($this->session->data['shipping_address']);
+                    }
+
+
+
+
+
 
 					if ($quote) {
 						$method_data[$result['code']] = array(
@@ -64,6 +96,8 @@ class ControllerCheckoutShippingMethod extends Controller {
 		} else {
 			$data['comment'] = '';
 		}
+
+
 		
 		$this->response->setOutput($this->load->view('checkout/shipping_method', $data));
 	}

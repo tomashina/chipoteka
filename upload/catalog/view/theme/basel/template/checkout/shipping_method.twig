@@ -86,6 +86,34 @@
         }
     });
 
+  $('input:radio[name=shipping_method]').click(function() {
+      if ($(this).val() === 'flat.flat') {
+          $("#tekstm").text("Sažetak narudžbe ");
+          $("#tekstn").text("Vrijednost narudžbe ");
+      } else if ($(this).val() === 'xshippingpro.xshippingpro1') {
+          $("#tekstm").text("Sažetak rezervacije");
+          $("#tekstn").text("Vrijednost rezervacije ");
+      }
+  });
+
+
+  $(function() {
+      var $radios = $('input:radio[name=shipping_method]');
+
+      if ($radios.val() === 'flat.flat') {
+          $("#tekstm").text("Sažetak narudžbe ");
+          $("#tekstn").text("Vrijednost narudžbe ");
+      } else if ($radios.val() === 'xshippingpro.xshippingpro1') {
+          $("#tekstm").text("Sažetak rezervacije");
+          $("#tekstn").text("Vrijednost rezervacije ");
+      }
+
+  });
+
+
+
+
+
 
 </script>
 
