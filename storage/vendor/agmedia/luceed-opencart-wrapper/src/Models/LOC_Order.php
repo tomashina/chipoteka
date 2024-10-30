@@ -6,6 +6,7 @@ use Agmedia\Helpers\Database;
 use Agmedia\Helpers\Log;
 use Agmedia\Kaonekad\Models\ShippingCollector;
 use Agmedia\Luceed\Luceed;
+use Agmedia\LuceedOpencartWrapper\Helpers\Availability;
 use Agmedia\LuceedOpencartWrapper\Helpers\OrderHelper;
 use Agmedia\Models\Coupon;
 use Agmedia\Models\Order\Order;
@@ -146,13 +147,13 @@ class LOC_Order
             // Set up availability.
             $this->availability = $this->resolveAvailability();
 
-            if ($this->items_available['has_all_in_pickup_store']) {
-                $this->createPickup($this->items_available['nalozi'][$this->pickup_warehouse['skladiste_uid']]);
+            if ($this->availability->has_all_in_pickup_store) {
+                $this->createPickup($this->availability->nalozi[$this->availability->pickup_warehouse['skladiste_uid']]);
 
                 return $this->sendOrder(true);
 
             } else {
-                foreach ($this->items_available['nalozi'] as $nalog) {
+                foreach ($this->availability->getNalozi() as $nalog) {
                     $this->createPickup($nalog);
 
                     $this->sendOrder(($nalog['broj_naloga'] == '') ? true : false);
@@ -338,7 +339,24 @@ class LOC_Order
 
     private function resolveAvailability()
     {
-        $this->regular_products = $this->getRegularProducts();
+        $availability = new Availability($this->getRegularProducts(), $this->getShippingProduct(), $this->oc_order, $this->pickup);
+
+        $availability->checkPickupStore();
+
+        if ( ! $availability->has_all_in_pickup_store) {
+            $availability->checkWarehouse('101');
+
+            if ($availability->items_required) {
+                $availability->collectBy('sum');
+            }
+        }
+
+        return $availability;
+
+        //
+        //
+        //
+        /*$this->regular_products = $this->getRegularProducts();
         $this->items_available  = $this->resolveAvailabilityForCart();
         $warehouse_list         = (new LOC_Warehouse())->getList();
         $this->pickup_warehouse = $warehouse_list->where('skladiste', '=', $this->pickup)->first();
@@ -516,7 +534,7 @@ class LOC_Order
             $this->log_items('End 2...');
 
             $this->log_items('resolveAvailability()::$items_available_3', $this->items_available);
-        }
+        }*/
 
     }
 
@@ -1080,6 +1098,8 @@ class LOC_Order
             }
         }
 
+        $this->log_items('getRegularProducts()::LEAVE');
+
         return $response;
     }
 
@@ -1104,6 +1124,8 @@ class LOC_Order
                 }
             }
         }
+
+        $this->log_items('getShippingProduct()::LEAVE');
 
         return [
             'artikl'   => agconf('luceed.shipping_article_uid'),
@@ -1138,7 +1160,7 @@ class LOC_Order
      *
      * @return array
      */
-    private function getItemPrices(int $product_id, float $price): array
+    /*private function getItemPrices(int $product_id, float $price): array
     {
         $product = Product::find($product_id);
 
@@ -1156,7 +1178,7 @@ class LOC_Order
             'cijena' => number_format($price, 2, '.', ''),
             'rabat'  => 0
         ];
-    }
+    }*/
 
 
     /**
@@ -1211,14 +1233,14 @@ class LOC_Order
      *
      * @return int
      */
-    private function applyCouponDiscount()
+    /*private function applyCouponDiscount()
     {
         if ($this->discount) {
             return abs($this->discount);
         }
 
         return 0;
-    }
+    }*/
 
 
     /**
@@ -1237,7 +1259,7 @@ class LOC_Order
     /**
      * @return array
      */
-    private function setAvailability()
+    /*private function setAvailability()
     {
         $has      = true;
         $iterator = $this->getRegularProducts();
@@ -1266,20 +1288,20 @@ class LOC_Order
 
         return $has;
 
-    }
+    }*/
 
 
     /**
      * @return int|string
      */
-    private function getIznos()
+    /*private function getIznos()
     {
         if ($this->hasOIB()) {
             return $this->getSubTotal();
         }
 
         return number_format($this->oc_order['total'], 2, '.', '');
-    }
+    }*/
 
 
     /**

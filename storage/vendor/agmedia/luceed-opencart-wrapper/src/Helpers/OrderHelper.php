@@ -13,6 +13,11 @@ use Illuminate\Support\Collection;
 class OrderHelper
 {
 
+    /**
+     * @param $order
+     *
+     * @return false|mixed
+     */
     public static function resolvePickup($order)
     {
         $pickup        = false;
@@ -55,6 +60,7 @@ class OrderHelper
 
     /**
      * @param array $products
+     * @param       $order_id
      *
      * @return array
      */
@@ -85,27 +91,29 @@ class OrderHelper
 
 
     /**
-     * @param array $products
-     * @param       $store_uid
-     * @param       $br_naloga
-     * @param       $pickup
+     * @param array  $products
+     * @param        $order_id
+     * @param string $br_naloga
+     * @param string $store
+     * @param array  $pickup
+     * @param string $comment
      *
      * @return array
      */
-    public static function getNalog(array $products, $order_id, $br_naloga, string $store, $pickup): array
+    public static function getNalog(array $products, $order_id, string $br_naloga, string $store, array $pickup, string $comment = ''): array
     {
         $stavke = static::getOrderItems($products, $order_id);
         $vrsta  = static::getVrstaIsporuke($store, $pickup['skladiste']);
 
         $response = [
-            'broj_naloga'    => '-' . $br_naloga,
+            'broj_naloga'    => ($br_naloga != '') ? '-' . $br_naloga : '',
             'iznos'          => $stavke['iznos'],
             'sa__skladiste'  => $store,
             'na__skladiste'  => $pickup['skladiste'],
             'pj'             => $pickup['pj'],
             'skl_dokument'   => 'MSI',
             'vrsta_isporuke' => $vrsta,
-            'napomena'       => 'Web shop',
+            'napomena'       => $comment ?: 'Web shop',
             'stavke'         => $stavke['stavke']
         ];
 
@@ -113,6 +121,12 @@ class OrderHelper
     }
 
 
+    /**
+     * @param $sa
+     * @param $na
+     *
+     * @return string
+     */
     private static function getVrstaIsporuke($sa, $na): string
     {
         if (in_array($sa, ['006', '101']) && $na == '001') {
@@ -201,38 +215,50 @@ class OrderHelper
     }
 
 
-    public static function getAvailableItemsFromStore(array $required, array $availables)
+    /**
+     * @param array $required
+     * @param array $availables
+     *
+     * @return array[]
+     */
+    public static function getAvailableItemsFromStore(array $required, array $availables): array
     {
-        $availables = collect($availables);
-        $products_required = [];
+        $availables         = collect($availables);
+        $products_required  = [];
         $products_available = [];
 
         foreach ($required as $uid => $product) {
             $item = $availables->where('uid', $uid)->first();
 
-            if ($item['qty'] < $product['qty']) {
-                $products_required[$item['uid']] = [
-                    'qty' => $product['qty'] - $item['qty']
-                ];
-                // Uzmi ako ima.
-                if ($item['qty']) {
-                    $products_available[$item['uid']] = [
-                        'qty' => $item['qty']
+            if ($item && isset($item['qty'])) {
+                if ($item['qty'] < $product['qty']) {
+                    $products_required[$uid] = [
+                        'qty' => $product['qty'] - $item['qty']
+                    ];
+                    // Uzmi ako ima.
+                    if ($item['qty']) {
+                        $products_available[$uid] = [
+                            'qty' => $item['qty']
+                        ];
+                    }
+                }
+
+                // Uzmi artikle kojih ima u pickup poslovnici.
+                if ($item['qty'] >= $product['qty']) {
+                    $products_available[$uid] = [
+                        'qty' => $product['qty']
                     ];
                 }
-            }
-
-            // Uzmi artikle kojih ima u pickup poslovnici.
-            if ($item['qty'] >= $product['qty']) {
-                $products_available[$item['uid']] = [
-                    'qty' => $product['qty']
-                ];
+            } else {
+                $products_required[$uid] = ['qty' => $product['qty']];
             }
         }
 
-        return [
+        $response = [
             'available' => $products_available,
             'required'  => $products_required
         ];
+
+        return $response;
     }
 }
