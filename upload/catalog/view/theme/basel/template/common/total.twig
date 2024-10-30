@@ -23,7 +23,7 @@
 
                     {% if total.title=='Vrijednost narudžbe' %}
 
-                        <li class="d-flex justify-content-between align-items-center"><span id="tekstn" class="me-2">{{ shipping_method }} Vrijednost {% if  shipping_method != 'flat.flat' %} rezervacije {% else %} narudžbe {% endif %}</span><span class="text-end">{{ total.text }}</span></li>
+                        <li class="d-flex justify-content-between align-items-center"><span id="tekstn" class="me-2"> Vrijednost {% if  shipping_method != 'flat.flat' %} rezervacije {% else %} narudžbe {% endif %}</span><span class="text-end">{{ total.text }}</span></li>
                     {% else %}
                         <li class="d-flex justify-content-between align-items-center"><span class="me-2">{{ total.title }}</span><span class="text-end">{{ total.text }}</span></li>
                     {% endif %}
