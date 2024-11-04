@@ -27,6 +27,13 @@ class ControllerExtensionPaymentBankTransfer extends Controller {
 
 			$this->load->model('checkout/order');
 
+            if(!$this->cart->hasStock()){
+                $json['redirect'] = $this->url->link('checkout/cart');
+                $this->response->addHeader('Content-Type: application/json');
+                $this->response->setOutput(json_encode($json));
+                return '';
+            }
+
 			$comment  = '';
 
             if ($this->customer->isLogged()) {
@@ -42,6 +49,7 @@ class ControllerExtensionPaymentBankTransfer extends Controller {
             else{
                 $this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_bank_transfer_order_status_id'), $comment, true);
             }
+
 
 
 
