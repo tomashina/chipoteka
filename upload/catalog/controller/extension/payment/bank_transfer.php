@@ -33,7 +33,7 @@ class ControllerExtensionPaymentBankTransfer extends Controller {
                 $this->response->setOutput(json_encode($json));
                 return '';
             }
-
+ 
 
             $comment  = '';
 

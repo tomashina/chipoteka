@@ -76,6 +76,7 @@ class ControllerExtensionPaymentWSPay extends Controller {
 
 
 
+
       return $this->load->view('extension/payment/wspay', $data);
      
         
