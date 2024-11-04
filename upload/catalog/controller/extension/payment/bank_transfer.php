@@ -27,7 +27,15 @@ class ControllerExtensionPaymentBankTransfer extends Controller {
 
 			$this->load->model('checkout/order');
 
-			$comment  = '';
+            if(!$this->cart->hasStock()){
+                $json['redirect'] = $this->url->link('checkout/cart');
+                $this->response->addHeader('Content-Type: application/json');
+                $this->response->setOutput(json_encode($json));
+                return '';
+            }
+
+
+            $comment  = '';
 
             if ($this->customer->isLogged()) {
                 $data['groupId'] = $this->customer->getGroupId();

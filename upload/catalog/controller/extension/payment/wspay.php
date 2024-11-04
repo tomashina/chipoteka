@@ -69,7 +69,13 @@ class ControllerExtensionPaymentWSPay extends Controller {
             
       $data['md5']  = md5($keym.$wpass.$data['order_id'].$wpass.$b.$wpass);
 
-     
+      if(!$this->cart->hasStock()){
+          $redirect = $this->url->link('checkout/cart');
+          return '';
+      }
+
+
+
       return $this->load->view('extension/payment/wspay', $data);
      
         
