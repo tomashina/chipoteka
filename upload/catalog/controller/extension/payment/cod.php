@@ -11,12 +11,7 @@ class ControllerExtensionPaymentCod extends Controller {
 		if (isset($this->session->data['payment_method']['code']) && $this->session->data['payment_method']['code'] == 'cod') {
 			$this->load->model('checkout/order');
 
-            if(!$this->cart->hasStock()){
-                $json['redirect'] = $this->url->link('checkout/cart');
-                $this->response->addHeader('Content-Type: application/json');
-                $this->response->setOutput(json_encode($json));
-                return '';
-            }
+
 
 
 
