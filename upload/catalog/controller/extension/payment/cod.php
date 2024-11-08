@@ -11,7 +11,14 @@ class ControllerExtensionPaymentCod extends Controller {
 		if (isset($this->session->data['payment_method']['code']) && $this->session->data['payment_method']['code'] == 'cod') {
 			$this->load->model('checkout/order');
 
+            $loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse();
 
+            if ( ! $loc->itemHasStock($this->request->get['sku'])) {
+                $json['redirect'] = $this->url->link('checkout/cart');
+                $this->response->addHeader('Content-Type: application/json');
+                $this->response->setOutput(json_encode($json));
+                return;
+            }
 
 
 

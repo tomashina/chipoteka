@@ -69,6 +69,13 @@ class ControllerExtensionPaymentWSPay extends Controller {
             
       $data['md5']  = md5($keym.$wpass.$data['order_id'].$wpass.$b.$wpass);
 
+      $loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse();
+
+      if ( ! $loc->itemHasStock($this->request->get['sku'])) {
+          $this->response->redirect($this->url->link('checkout/cart'));
+          return '';
+      }
+
 
       return $this->load->view('extension/payment/wspay', $data);
      
