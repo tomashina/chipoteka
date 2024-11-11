@@ -299,6 +299,28 @@ class LOC_Warehouse
 
 
     /**
+     * @param string $sku
+     *
+     * @return bool
+     */
+    public function itemHasStock(string $sku): bool
+    {
+        $warehouses = $this->getAvailabilityForProduct($sku);
+
+        foreach ($warehouses as $warehouse) {
+            if ($warehouse['title'] == 'Web' && $warehouse['qty'] > 0) {
+                return true;
+            }
+            if ($warehouse['title'] == 'Dobavljač' && $warehouse['qty'] > 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
      * @param $units
      *
      * @return string
