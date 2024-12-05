@@ -127,6 +127,11 @@ class ControllerExtensionFeedRonis extends Controller {
 
         $str = str_replace("<", "&lt;", $in);
 
+
+        $str = str_replace(">", "&gt;", $str);
+
+
+
         return str_replace("<br>", "\n", $str);
     }
 
