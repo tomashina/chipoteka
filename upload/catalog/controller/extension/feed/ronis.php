@@ -124,7 +124,11 @@ class ControllerExtensionFeedRonis extends Controller {
     private function wrapInCDATA($in)
     {
         //return "<![CDATA[ " . $in . " ]]>";
-        return str_replace("<br>", "\n", $in);
+
+        $str = htmlentities($in,ENT_QUOTES,'UTF-8');
+
+
+        return str_replace("<br>", "\n", $str);
     }
 
 
