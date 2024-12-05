@@ -239,7 +239,7 @@ class ControllerExtensionFeedRonis extends Controller {
 
             if (isset($category['parent_id']) && $category['parent_id'] != 0) {
                 $parent = $this->model_catalog_category->getCategory($category['parent_id']);
-                $ime   = $parent['name'] . ' > ' . $category['name'];
+                $ime   = $parent['name'] . ' / ' . $category['name'];
             }
 
 
