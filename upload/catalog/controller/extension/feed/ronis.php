@@ -123,7 +123,7 @@ class ControllerExtensionFeedRonis extends Controller {
 
     private function wrapInCDATA($in)
     {
-        return "<![CDATA[ " . $in . " ]]>";
+        return $in;
         //return $in;
     }
 
