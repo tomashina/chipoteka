@@ -125,10 +125,9 @@ class ControllerExtensionFeedRonis extends Controller {
     {
         //return "<![CDATA[ " . $in . " ]]>";
 
-        $str = htmlentities($in,ENT_QUOTES,'UTF-8');
+        $str = str_replace("<", "&lt;", $in);
 
-
-        return $str;
+        return str_replace("<br>", "\n", $str);
     }
 
 
