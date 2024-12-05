@@ -128,7 +128,7 @@ class ControllerExtensionFeedRonis extends Controller {
         $str = htmlentities($in,ENT_QUOTES,'UTF-8');
 
 
-        return str_replace("<br>", "\n", $str);
+        return $str;
     }
 
 
