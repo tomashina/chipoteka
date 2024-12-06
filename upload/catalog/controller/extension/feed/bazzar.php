@@ -86,11 +86,11 @@ class ControllerExtensionFeedBazzar extends Controller {
 
                 $vpc = $product['vpc'];
 
-                if($product['quantity'] > 0){
+                if($product['quantityws'] > 0){
                     $output .= '<product>';
                     $output .= '<sifra>' . $product['model'] . '</sifra>';
                     $output .= '<ean>' . $product['upc'] . '</ean>';
-                    $output .= '<kolicina>' .  $product['quantity'] . '</kolicina>';
+                    $output .= '<kolicina>' .  $product['quantityws'] . '</kolicina>';
                     $output .= '<name>' . $this->wrapInCDATA($name) . '</name>';
                     $output .= '<brand>' . $this->wrapInCDATA($product['manufacturer']) . '</brand>';
                     $output .= '<kratki_opis>' . $this->wrapInCDATA($kratki) . '</kratki_opis>';
