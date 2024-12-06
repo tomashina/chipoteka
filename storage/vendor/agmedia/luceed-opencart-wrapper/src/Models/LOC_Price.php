@@ -73,7 +73,7 @@ class LOC_Price
             [
                 'id' => '5',
                 'title' => 'bazzar',
-                'url' => '00833730'
+                'url' => '80045'
             ]
         ];
     }
