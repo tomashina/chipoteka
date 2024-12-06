@@ -8,7 +8,7 @@ class ControllerStartupPermission extends Controller {
 
             if (isset($part[3]) && in_array($part[3], ['updatePrices',
                                                        'updateQuantities',
-                                                        'updateWithoutSupliers',
+                                                        'updateQuantitiesWithoutSupliers',
                                                        'updateOrderStatuses',
                                                        'checkOrderStatusDuration',
                                                        'importActions',
