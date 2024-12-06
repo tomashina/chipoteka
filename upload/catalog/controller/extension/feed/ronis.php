@@ -86,7 +86,7 @@ class ControllerExtensionFeedRonis extends Controller {
 
                 $vpc = $product['vpc'];
 
-                if($product['quantity'] > 0){
+                if($product['quantityws'] > 0){
                     $output .= '<product>';
                     $output .= '<sifra>' . $product['model'] . '</sifra>';
                     $output .= '<ean>' . $product['upc'] . '</ean>';
