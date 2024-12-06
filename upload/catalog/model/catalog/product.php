@@ -37,6 +37,7 @@ class ModelCatalogProduct extends Model {
                 'vpc'              => $query->row['vpc'],
 				'location'         => $query->row['location'],
 				'quantity'         => $query->row['quantity'],
+                'quantityws'         => $query->row['quantityws'],
 				'stock_status'     => $query->row['stock_status'],
 				'image'            => $query->row['image'],
 				'manufacturer_id'  => $query->row['manufacturer_id'],

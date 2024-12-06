@@ -678,6 +678,25 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
     /**
      * @return mixed
+     * @throws Exception
+     */
+    public function updateQuantitiesWithoutSupliers()
+    {
+        $_loc = new LOC_Stock();
+
+        $_loc->setSkladista(
+            LuceedProduct::getWarehouseStock(agconf('import.warehouse.default'))
+        )->sort();
+
+
+        $updated = $_loc->createQuery()->updateWithoutSupliers();
+
+        return $this->response($updated, 'update_stock');
+    }
+
+
+    /**
+     * @return mixed
      */
     public function updateOrderStatuses()
     {

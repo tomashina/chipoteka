@@ -188,6 +188,30 @@ class LOC_Stock
 
 
     /**
+     * @return int
+     */
+    public function updateWithoutSupliers(): int
+    {
+        //   $this->truncateProductsQuantity();
+
+        if ($this->skladista_query != '') {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($this->skladista_query, 0, -1) . ";");
+            $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.luceed_uid = pt.uid SET p.quantityws = pt.quantity");
+
+            $this->deleteProductTempDB();
+
+
+
+            // Log::store($this->log_name . '-UPDATED 1', $this->log_name);
+
+            return 1;
+        }
+
+        return 0;
+    }
+
+
+    /**
      * Return the corrected response from luceed service.
      * Without unnecessary tags.
      *
