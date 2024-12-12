@@ -166,6 +166,9 @@ class LOC_Customer
             $this->service->getCustomerByEmail($this->customer['e_mail'])
         );
 
+        Log::store('$this->customer', 'test_customers');
+        Log::store($this->customer, 'test_customers');
+        Log::store($this->order_customer, 'test_customers');
         Log::store($exist, 'test_customers');
 
         $customer_exist = false;
