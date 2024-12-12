@@ -166,6 +166,8 @@ class LOC_Customer
             $this->service->getCustomerByEmail($this->customer['e_mail'])
         );
 
+        Log::store($exist, 'test_customers');
+
         $customer_exist = false;
 
         if ( ! empty($exist)) {
@@ -182,6 +184,9 @@ class LOC_Customer
                         $this->customer['partner_uid'] = $l_customer->partner_uid;
                         $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
                     }
+
+                    Log::store('1', 'test_customers');
+                    Log::store($this->customer, 'test_customers');
                 }
             }
             /**
@@ -200,6 +205,9 @@ class LOC_Customer
 
                         $has = true;
                         $customer_exist = true;
+
+                        Log::store('2', 'test_customers');
+                        Log::store($this->customer, 'test_customers');
                     }
                 }
 
@@ -215,6 +223,9 @@ class LOC_Customer
                         $this->customer['uid'] = $response->result[0];
                         $this->customer['partner_uid'] = $response->result[0];
                     }
+
+                    Log::store('3', 'test_customers');
+                    Log::store($this->customer, 'test_customers');
                 }
             }
             /**
@@ -236,6 +247,10 @@ class LOC_Customer
                         }
                     }
                 }
+
+                Log::store('4', 'test_customers');
+                Log::store($this->customer, 'test_customers');
+                Log::store($this->alter_customer, 'test_customers');
             }
 
             // Ima kupca, ali nema korisnika
@@ -270,6 +285,10 @@ class LOC_Customer
                 } else {
                     $this->alter_customer['uid'] = $this->customer['uid'];
                 }
+
+                Log::store('5', 'test_customers');
+                Log::store($this->customer, 'test_customers');
+                Log::store($this->alter_customer, 'test_customers');
             }
         }
         /**
@@ -307,6 +326,10 @@ class LOC_Customer
                         }
                     }
                 }
+
+                Log::store('6', 'test_customers');
+                Log::store($this->customer, 'test_customers');
+                Log::store($this->alter_customer, 'test_customers');
             }
         }
 
