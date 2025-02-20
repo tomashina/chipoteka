@@ -295,6 +295,8 @@ class ProductHelper
         $response = [];
         $docs = collect($product['dokumenti']);
 
+        self::deleteAllFiles(DIR_IMAGE . agconf('import.image_path') . $product['artikl_uid'] . '/');
+
         if ($docs->count()) {
             foreach ($docs as $doc) {
                 $doc = collect($doc)->toArray();
@@ -313,6 +315,25 @@ class ProductHelper
         }
 
         return $response;
+    }
+
+    /**
+     * @param $folderPath
+     *
+     * @return void
+     */
+    public static function deleteAllFiles($folderPath)
+    {
+        $files = scandir($folderPath);
+        foreach ($files as $file) {
+            if ($file !== '.' && $file !== '..') {
+                $filePath = $folderPath . '/' . $file;
+
+                if (is_file($filePath)) {
+                    unlink($filePath);
+                }
+            }
+        }
     }
 
 

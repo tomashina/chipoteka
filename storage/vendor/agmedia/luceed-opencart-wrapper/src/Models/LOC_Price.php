@@ -199,7 +199,7 @@ class LOC_Price
             $product = Product::where('luceed_uid', $sifra)->first();
 
             if ($product) {
-                $this->addForUpdate($product, $item['discount'], true);
+                $this->addForUpdate($product, $discount, true);
             }
         }
 
