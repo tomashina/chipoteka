@@ -297,6 +297,10 @@ class ProductHelper
 
         self::deleteAllFiles(DIR_IMAGE . agconf('import.image_path') . $product['artikl_uid'] . '/');
 
+        self::deleteAllFiles(DIR_IMAGE .'cachewebp/'. agconf('import.image_path') . $product['artikl_uid'] . '/');
+
+        self::deleteAllFiles(DIR_IMAGE .'cache/'. agconf('import.image_path') . $product['artikl_uid'] . '/');
+
         if ($docs->count()) {
             foreach ($docs as $doc) {
                 $doc = collect($doc)->toArray();
