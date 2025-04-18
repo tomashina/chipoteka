@@ -59,6 +59,8 @@ class ControllerCheckoutShippingMethod extends Controller {
 			$data['code'] = '';
 		}
 
+
+
 		if (isset($this->session->data['comment'])) {
 			$data['comment'] = $this->session->data['comment'];
 		} else {
@@ -126,4 +128,16 @@ class ControllerCheckoutShippingMethod extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+
+    public function saveBranchOrder() {
+        $json = array();
+        if(!empty($this->request->post['boxnow'])){
+            $this->session->data['boxnow'] = $this->request->post['boxnow'];
+
+        }
+
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json));
+
+    }
 }

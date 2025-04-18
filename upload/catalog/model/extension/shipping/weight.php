@@ -9,6 +9,10 @@ class ModelExtensionShippingWeight extends Model {
 
         $weight = $this->cart->getWeight();
 
+        $kosarica = $this->cart->getProducts();
+
+        print_r($kosarica);
+
 		foreach ($query->rows as $result) {
 			if ($this->config->get('shipping_weight_' . $result['geo_zone_id'] . '_status')) {
 				$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "zone_to_geo_zone WHERE geo_zone_id = '" . (int)$result['geo_zone_id'] . "' AND country_id = '" . (int)$address['country_id'] . "' AND (zone_id = '" . (int)$address['zone_id'] . "' OR zone_id = '0')");
@@ -42,7 +46,7 @@ class ModelExtensionShippingWeight extends Model {
 				if ((string)$cost != '') {
 					$quote_data['weight_' . $result['geo_zone_id']] = array(
 						'code'         => 'weight.weight_' . $result['geo_zone_id'],
-						'title'        => $result['name'] . '  (' . $this->language->get('text_weight') . ' ' . $this->weight->format($weight, $this->config->get('config_weight_class_id')) . ')',
+						'title'        => 'BOXNOW',
 						'cost'         => $cost,
 						'tax_class_id' => $this->config->get('shipping_weight_tax_class_id'),
 						'text'         => $this->currency->format($this->tax->calculate($cost, $this->config->get('shipping_weight_tax_class_id'), $this->config->get('config_tax')), $this->session->data['currency'])

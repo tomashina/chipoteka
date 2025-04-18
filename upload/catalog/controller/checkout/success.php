@@ -34,6 +34,8 @@ class ControllerCheckoutSuccess extends Controller {
             unset($this->session->data['creditcardname']);
             unset($this->session->data['paymentplan']);
 
+            if (!empty($this->session->data['boxnow'])) { unset($this->session->data['boxnow']); }
+
             /*******************************************************************************
              *                                Copyright : AGmedia                           *
              *                              email: filip@agmedia.hr                         *
