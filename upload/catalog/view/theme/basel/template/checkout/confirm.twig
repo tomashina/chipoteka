@@ -91,6 +91,9 @@
                 <h4 class="h6 mt-2">Način dostave:</h4>
                 <ul class="list-unstyled fs-sm">
                     <li><span class="text-muted">{{ shipping_name }}</li>
+                    {% if boxnow %}
+                        <li><span class="text-muted">{{ boxnow }}</li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

@@ -44,6 +44,19 @@ class ControllerCheckoutConfirm extends Controller {
             $data['groupId'] ='0';
         }
 
+        //boxnow
+        if($this->session->data['shipping_method']['code'] == 'weight.weight_5' ){
+
+            if(empty($this->session->data['boxnow']) || $this->session->data['boxnow'] == 'undefined, undefined;undefined'){
+
+                $redirect = $this->url->link('checkout/checkout', '', true);
+            }
+
+
+        } else{
+            $this->session->data['boxnow']= '';
+        }
+
 
 
 		// Validate minimum quantity requirements.
@@ -217,6 +230,12 @@ class ControllerCheckoutConfirm extends Controller {
 				$order_data['shipping_country_id'] = $this->session->data['shipping_address']['country_id'];
 				$order_data['shipping_address_format'] = $this->session->data['shipping_address']['address_format'];
 				$order_data['shipping_custom_field'] = (isset($this->session->data['shipping_address']['custom_field']) ? $this->session->data['shipping_address']['custom_field'] : array());
+
+
+                $order_data['boxnow'] = '';
+                if (!empty($this->session->data['shipping_method']['code']) && $this->session->data['shipping_method']['code'] == 'weight.weight_5'  ) {
+                    $order_data['boxnow'] = (!empty($this->session->data['boxnow'])) ? $this->session->data['boxnow'] : '';
+                }
 
 				if (isset($this->session->data['shipping_method']['title'])) {
 					$order_data['shipping_method'] = $this->session->data['shipping_method']['title'];
@@ -518,6 +537,9 @@ class ControllerCheckoutConfirm extends Controller {
             $data['payment_name'] = $this->session->data['payment_method']['title'];
             $data['shipping_name'] = $this->session->data['shipping_method']['title'];
 			$data['payment'] = $this->load->controller('extension/payment/' . $this->session->data['payment_method']['code']);
+
+
+            $data['boxnow'] = (!empty($this->session->data['boxnow'])) ? $this->session->data['boxnow'] : '';
 
 
 
