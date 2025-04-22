@@ -35,7 +35,7 @@ class ModelExtensionShippingWeight extends Model {
             }
         }
 
-        if( $user_id != '6429'){
+        if( $user_id != '3412'){
             $box = false;
         }
 
