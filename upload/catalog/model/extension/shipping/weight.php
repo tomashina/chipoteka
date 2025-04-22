@@ -9,9 +9,79 @@ class ModelExtensionShippingWeight extends Model {
 
         $weight = $this->cart->getWeight();
 
-        $kosarica = $this->cart->getProducts();
+        $box = true;
 
-        print_r($kosarica);
+        $forbiden = ['900440',
+            '900411',
+            '900413',
+            '900412',
+            '900600',
+            '9004ZG',
+            '9004MP',
+            '9004MZ',
+            '9004MH',
+            '9004OS',
+            '9004PU',
+            '9004RI',
+            '9004ST',
+            '9004SI',
+            '9004ZD',
+            '900400',
+            '033204',
+            '011902',
+            '052601',
+            '011906',
+            '011907',
+            '011928',
+            '011926',
+            '011925',
+            '100000',
+            '020201',
+            '023103',
+            '023104',
+            '052704',
+            '011914',
+            '011935',
+            '052901',
+            '020608',
+            '100002',
+            '020501',
+            '020203',
+            '011802',
+            '020202',
+            '052701',
+            '052204',
+            '021302',
+            '052802',
+            '052702',
+            '043204',
+            '052801',
+            '052201',
+            '011905',
+            '100001',
+            '011805',
+            '900006',
+            '033406',
+            '052202',
+            '011801',
+            '000001',
+            '000002',
+            '052703'];
+
+        foreach ($this->cart->getProducts() as $product) {
+            $this->load->model('catalog/product');
+            $this->load->model('catalog/category');
+
+            $catids = $this->model_catalog_product->getCategories($product['product_id']);
+
+            foreach ($catids as $catid) {
+                $cat = $this->model_catalog_category->getCategory($catid['category_id']);
+
+                if (in_array($cat['luceed_uid'], $forbiden)) {
+                    $box = false;
+                }
+            }
+        }
 
 		foreach ($query->rows as $result) {
 			if ($this->config->get('shipping_weight_' . $result['geo_zone_id'] . '_status')) {
@@ -25,6 +95,12 @@ class ModelExtensionShippingWeight extends Model {
 			} else {
 				$status = false;
 			}
+
+            if($box){
+                $status = true;
+            }else{
+                $status = false;
+            }
 
 			if ($status) {
 				$cost = '';
@@ -57,7 +133,7 @@ class ModelExtensionShippingWeight extends Model {
 
 		$method_data = array();
 
-		if ($quote_data) {
+		if ($box) {
 			$method_data = array(
 				'code'       => 'weight',
 				'title'      => $this->language->get('text_title'),
