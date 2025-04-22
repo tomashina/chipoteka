@@ -9,6 +9,9 @@ class ModelExtensionShippingWeight extends Model {
 
         $weight = $this->cart->getWeight();
 
+       $user_id = $this->customer->getId();
+
+
         $box = true;
 
         $forbiden = ['900440',
@@ -81,6 +84,10 @@ class ModelExtensionShippingWeight extends Model {
                     $box = false;
                 }
             }
+        }
+
+        if( $user_id != '6429'){
+            $box = false;
         }
 
 		foreach ($query->rows as $result) {
