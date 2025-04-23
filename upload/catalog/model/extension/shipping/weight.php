@@ -22,15 +22,19 @@ class ModelExtensionShippingWeight extends Model {
 
             $catids = $this->model_catalog_product->getCategories($product['product_id']);
 
-            $lastcat = array();
+            $lastcat = 0;
 
 
             foreach ($catids as $catid) {
-                $lastcat = $catid;
+                $cat = $this->model_catalog_category->getCategory($catid['category_id']);
+                if(!in_array($cat['category_id'], ['308','303']) or !in_array($cat['parent_id'], ['308','303']) ) {
+                    $lastcat = $cat['luceed_uid'];
+                }
+
             }
 
-            $cat = $this->model_catalog_category->getCategory($lastcat['category_id']);
-            if (in_array($cat['luceed_uid'], $forbiden)) {
+
+            if ($lastcat and in_array($lastcat, $forbiden)) {
                 $box = false;
             }
         }
