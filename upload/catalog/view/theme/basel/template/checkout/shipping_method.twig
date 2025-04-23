@@ -55,9 +55,9 @@
           {% if  quote.code == 'weight.weight_5' %}
 
           <tr>
-            <td colspan="3">
+            <td colspan="3"  style="border-bottom-width: 0px;">
 
-              <div class="shipping-data shipping_info shipping_info_1" style="display: block;">
+              <div class="shipping-data shipping_info shipping_info_1" >
             <div id="drop-parcel-shop">
               <a href="javascript:" class="boxnow-map-widget-button btn btn-primary" style="color: #fff;padding: 10px 20px;margin-bottom: 10px;display: block;">Odaberite BOX NOW lokaciju</a>
               <div id="boxnowmap" style="z-index:1880;position:fixed"></div>
@@ -69,6 +69,34 @@
             </div>
           </td>
          </tr>
+
+      <script>
+        jQuery(function($) {
+
+          var radioButtons = document.querySelectorAll('input[name="shipping_method"]');
+
+          for(var radioButton of radioButtons){
+            radioButton.addEventListener('change', showSelected);
+
+            if (radioButton.checked) {
+              let mook_event = { currentTarget: { value: radioButton.value }};
+              showSelected(mook_event);
+            }
+          }
+
+          function showSelected(e) {
+            let selected = e.currentTarget.value;
+
+            if (selected != 'weight.weight_5') {
+              $('#drop-parcel-shop').hide();
+            } else {
+              $('#drop-parcel-shop').show();
+            }
+          }
+
+
+        });
+      </script>
 
           {% endif %}
 
