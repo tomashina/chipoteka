@@ -24,7 +24,7 @@ class ModelExtensionShippingWeight extends Model {
 
             foreach ($catids as $catid) {
                 $cat = $this->model_catalog_category->getCategory($catid['category_id']);
-                if (in_array((string)$cat['luceed_uid'], $forbiden)) {
+                if (in_array((string)$cat['luceed_uid'], $forbiden, true)) {
                     $box = false;
                 }
 
