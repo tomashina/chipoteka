@@ -73,12 +73,15 @@
       <script>
         jQuery(function($) {
 
+
+
           var radioButtons = document.querySelectorAll('input[name="shipping_method"]');
 
           for(var radioButton of radioButtons){
             radioButton.addEventListener('change', showSelected);
 
             if (radioButton.checked) {
+
               let mook_event = { currentTarget: { value: radioButton.value }};
               showSelected(mook_event);
             }
@@ -91,6 +94,8 @@
               $('#drop-parcel-shop').hide();
             } else {
               $('#drop-parcel-shop').show();
+              $('.dizb').prop('disabled', true);
+              $('#errorbox').html('<div style="color: red">Morate odabrati dostavno mjesto!</div>')
             }
           }
 
@@ -131,12 +136,14 @@
 
 <div class="d-flex pt-4 mt-3">
   <div class="w-50 pe-3"><a class="btn btn-outline-primary d-flex align-items-center justify-content-center w-100" href="{{ checkout }}"><i class="fal fa-chevron-left mt-sm-0 me-1"></i><span class="d-none d-sm-inline">Vaši podaci</span><span class="d-inline d-sm-none">Vaši podaci</span></a></div>
-  <div class="w-50 ps-2"><button type="button" value="{{ button_continue }}" id="button-shipping-method" onclick="window.scrollTo(0, 0)" class="btn btn-primary d-flex align-items-center justify-content-center w-100" ><span class="d-none d-sm-inline">Način plaćanja</span><span class="d-inline d-sm-none">Način plaćanja</span><i class="fal fa-chevron-right mt-sm-0 ms-1"></i></button></div>
+  <div class="w-50 ps-2"><button type="button"  value="{{ button_continue }}" id="button-shipping-method" onclick="window.scrollTo(0, 0)" class="btn btn-primary d-flex align-items-center justify-content-center w-100 dizb" ><span class="d-none d-sm-inline">Način plaćanja</span><span class="d-inline d-sm-none">Način plaćanja</span><i class="fal fa-chevron-right mt-sm-0 ms-1"></i></button></div>
 </div>
 
 
 <!--BOXNOW -->
 <script type="text/javascript">
+
+
 
   var _bn_map_widget_config = {
     type: "popup",
@@ -158,6 +165,8 @@
           dataType: 'json'
         });
         $('#errorbox').html('<div style="color: green">Uspješno ste odabrali mjesto dostave!</div>')
+
+        $('.dizb').prop('disabled', false);
 
       }
 
