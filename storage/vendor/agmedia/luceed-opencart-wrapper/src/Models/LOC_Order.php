@@ -248,7 +248,7 @@ class LOC_Order
             $this->order['dropoff_sifra']      = $data[1] ?: '';
             $this->order['dropoff_naziv']      = $data[0] ?: '';
             $this->order['vrsta_isporuke'] = '11';
-            $this->order['vrsta_placanja']  = '134-1063';
+
 
 
         }
@@ -559,6 +559,10 @@ class LOC_Order
 
         if (in_array($this->oc_order['payment_code'], ['cod', 'bank_transfer'])) {
             $loc_p = (new LOC_Payment())->getList(agconf('luceed.payment.' . $this->oc_order['payment_code']))->first();
+        }
+
+        if ($this->oc_order['shipping_code'] == 'weight.weight_5' && $this->oc_order['boxnow'] != '') {
+            return '134-1063';
         }
 
         if ($this->oc_order['payment_code'] == 'wspay') {
