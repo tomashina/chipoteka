@@ -19,6 +19,13 @@ class ControllerCheckoutPaymentMethod extends Controller {
             $data['paymentplan'] ='';
         }
 
+
+        //set var for payment box now
+       if(isset($this->session->data['shipping_method']['code'])){
+           $data['shipping_method'] = $this->session->data['shipping_method']['code'];
+       }
+
+
 		if (isset($this->session->data['payment_address'])) {
 			// Totals
 			$totals = array();
