@@ -15,6 +15,7 @@ class ControllerCheckoutSuccess extends Controller {
             $order_info = $this->model_checkout_order->getOrder($order_id);
 
             $data['paymethod'] = $order_info['payment_code'];
+            $data['shmethod'] = $order_info['shipping_code'];
             $data['order_id'] = $order_id;
 
             $this->cart->clear();
@@ -320,17 +321,20 @@ class ControllerCheckoutSuccess extends Controller {
         /// orderinoend
           if (isset($data['paymethod'])) {
 
-              if ($data['paymethod'] == 'cod' &&  $order_info['shipping_code'] != 'weight.weight_5') {
+              if ($data['paymethod'] == 'cod') {
 
-                  $data['text_message'] = sprintf($this->language->get('text_pouzece'), $order_id);
+                  if( $data['shmethod'] == 'weight.weight_5') {
+                      $data['text_message'] = sprintf($this->language->get('text_pouzeceboxnow'), $order_id);
+
+                  } else {
+                      $data['text_message'] = sprintf($this->language->get('text_pouzece'), $order_id);
+                  }
+
+
 
               }
 
-              elseif ($data['paymethod'] == 'cod' &&  $order_info['shipping_code'] == 'weight.weight_5') {
 
-                  $data['text_message'] = sprintf($this->language->get('text_pouzeceboxnow'), $order_id);
-
-              }
               elseif ($data['paymethod'] == 'bank_transfer') {
 
                   $nhs_no = $order_id.date("ym");
