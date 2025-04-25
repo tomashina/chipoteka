@@ -654,7 +654,7 @@ class LOC_Order
         }
 
         return [
-            'artikl'   => ($this->oc_order['shipping_code'] == 'boxnow') ? agconf('luceed.shipping_boxnow_article_uid') : agconf('luceed.shipping_article_uid'),
+            'artikl'   => ($this->oc_order['shipping_code'] == 'weight.weight_5') ? agconf('luceed.shipping_boxnow_article_uid') : agconf('luceed.shipping_article_uid'),
             'kolicina' => (int) 1,
             'cijena'   => (float) $shipping_amount,
             'rabat'    => (int) 0,
