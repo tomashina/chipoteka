@@ -337,9 +337,15 @@ class ControllerMailOrder extends Controller {
 
 
 
-        if ($order_info['payment_code'] == 'cod') {
+        if ($order_info['payment_code'] == 'cod' && $order_info['shipping_code'] != 'weight.weight_5') {
 
             $order_info['mail'] = '7';
+
+        }
+
+        else if ($order_info['payment_code'] == 'cod' &&  $order_info['shipping_code'] == 'weight.weight_5') {
+
+            $order_info['mail'] = '711';
 
         }
 
