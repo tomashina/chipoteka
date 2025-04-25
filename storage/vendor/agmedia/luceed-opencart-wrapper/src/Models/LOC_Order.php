@@ -248,6 +248,7 @@ class LOC_Order
             $this->order['dropoff_sifra']      = $data[1] ?: '';
             $this->order['dropoff_naziv']      = $data[0] ?: '';
             $this->order['vrsta_isporuke'] = '11';
+            $this->order['vrsta_placanja']  = '134-1063';
 
 
         }

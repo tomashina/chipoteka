@@ -81,7 +81,6 @@
             radioButton.addEventListener('change', showSelected);
 
             if (radioButton.checked) {
-
               let mook_event = { currentTarget: { value: radioButton.value }};
               showSelected(mook_event);
             }
@@ -92,6 +91,8 @@
 
             if (selected != 'weight.weight_5') {
               $('#drop-parcel-shop').hide();
+              $('#boxnow').val('');
+              $('.dizb').prop('disabled', false);
             } else {
               $('#drop-parcel-shop').show();
               $('.dizb').prop('disabled', true);
