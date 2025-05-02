@@ -54,6 +54,11 @@ class ModelExtensionShippingWeight extends Model {
                 $status = false;
             }
 
+
+            if ($this->cart->getSubTotal() > 500) {
+                $status = false;
+            }
+
 			if ($status) {
 				$cost = '';
 
