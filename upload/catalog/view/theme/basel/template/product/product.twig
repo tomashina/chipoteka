@@ -103,6 +103,7 @@
                                                     <span> </span>
                                                 {% endif %}
                                             </div>
+
                                         {% endif %}
                                     </div>
 
@@ -122,7 +123,7 @@
                                                 {% else %}
                                                     {% if not price_last_30 %}
                                                         <span> {% if pj !='WEB' %} <del> {% endif %} {{ price_2 }}  {% if pj !='WEB' %} </del> {% endif %}</span>
-                                                        <span id="special_countdown"></span>
+
                                                     {% else %}
                                                         <span><del>{{ price_last_30 }}  *</del></span>
                                                     {% endif %}
@@ -138,6 +139,9 @@
                                             </div>
 
                                         </div>
+
+                                        <span id="special_countdown"></span>
+
                                     {% else %}
 
                                         <div class="price-wrapper">
@@ -166,6 +170,10 @@
                                         </div>
 
                                     {% endif %}
+
+
+
+
                                     {% if qty < 5 and qty > 0 %}
                                         <div class="text-danger mb-3" >
                                             Dostupno manje od 5 kom
@@ -595,6 +603,23 @@
             });
         });
     </script>
+
+    {% if sale_end_date and product_page_countdown %}
+        <script>
+            $(function() {
+                $('#special_countdown').countdown('{{ sale_end_date }}').on('update.countdown', function(event) {
+                    var $this = $(this).html(event.strftime(''
+                        + '<div class=\"special_countdown\" style=\"margin:-25px 0 15px 0\"></span><p><span class=\"icon-clock\"></span> {{ basel_text_offer_ends }}</p><div>'
+                        + '%D<i>{{ basel_text_days }}</i></div><div>'
+                        + '%H <i>{{ basel_text_hours }}</i></div><div>'
+                        + '%M <i>{{ basel_text_mins }}</i></div><div>'
+                        + '%S <i>{{ basel_text_secs }}</i></div></div>'));
+                });
+            });
+        </script>
+    {% endif %}
+
+
     <script>
         $('#input-quantity').change(function() {
             var newVal = parseFloat($('#input-quantity').val());
