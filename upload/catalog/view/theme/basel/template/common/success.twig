@@ -38,7 +38,15 @@
               <b>{{ text_date_added }}</b> {{ date_added }}</td>
             <td class="text-left" style="width: 50%;">
               {% if payment_method %}
-                <b>{{ text_payment_method }}</b> {{ payment_method }}<br />
+
+                {% if payment_method == 'Plaćanje pouzećem' and shipping_method =='BOX NOW paketomat' %}
+                  <b>{{ text_payment_method }}</b> PAY ON THE GO <br />
+                {% else %}
+                  <b>{{ text_payment_method }}</b> {{ payment_method }}<br />
+                {% endif %}
+
+
+
               {% endif %}
               {% if shipping_method %}
                 <b>{{ text_shipping_method }}</b> {{ shipping_method }}

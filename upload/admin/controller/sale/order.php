@@ -509,6 +509,7 @@ class ControllerSaleOrder extends Controller {
             $data['shipping_zone_id'] = $order_info['shipping_zone_id'];
             $data['shipping_custom_field'] = $order_info['shipping_custom_field'];
             $data['shipping_method'] = $order_info['shipping_method'];
+            $data['boxnow'] = $order_info['boxnow'];
             $data['shipping_code'] = $order_info['shipping_code'];
 
             // Products
@@ -595,6 +596,7 @@ class ControllerSaleOrder extends Controller {
             $data['shipping_zone_id'] = '';
             $data['shipping_custom_field'] = array();
             $data['shipping_method'] = '';
+            $data['boxnow'] = '';
             $data['shipping_code'] = '';
 
             $data['order_products'] = array();
@@ -838,6 +840,8 @@ class ControllerSaleOrder extends Controller {
 
             $data['shipping_method'] = $order_info['shipping_method'];
             $data['payment_method'] = $order_info['payment_method'];
+
+            $data['boxnow'] = $order_info['boxnow'];
 
             $data['payment_code'] = $order_info['payment_code'];
             $data['payment_card'] = $order_info['payment_card'];
@@ -1661,6 +1665,7 @@ class ControllerSaleOrder extends Controller {
                     'telephone'        => $order_info['telephone'],
                     'shipping_address' => $shipping_address,
                     'shipping_method'  => $order_info['shipping_method'],
+                    'boxnow'  => $order_info['boxnow'],
                     'payment_address'  => $payment_address,
                     'payment_method'   => $order_info['payment_method'],
                     'product'          => $product_data,
@@ -1834,6 +1839,7 @@ class ControllerSaleOrder extends Controller {
                     'telephone'        => $order_info['telephone'],
                     'shipping_address' => $shipping_address,
                     'shipping_method'  => $order_info['shipping_method'],
+                    'boxnow'  => $order_info['boxnow'],
                     'product'          => $product_data,
                     'comment'          => nl2br($order_info['comment'])
                 );
