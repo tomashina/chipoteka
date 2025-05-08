@@ -927,11 +927,7 @@
                                             </p>
                                             <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Način plaćanja</h6>
                                             <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
-                                                {% if payment_method == 'Plaćanje pouzećem' and shipping_method ='BOX NOW paketomat' %}
-                                                    PAY ON THE GO
-                                                {% else %}
-                                                    {{ payment_method }}
-                                                {% endif %}
+                                                {{ payment_method }}
                                             </p>
                                         </td>
                                         <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
@@ -1285,14 +1281,7 @@
                                                 </p>
                                                 <h6 class="mb_xs" style="color: #E31318;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 8px;word-break: break-word;font-size: 12px;line-height: 14px;text-transform: uppercase;letter-spacing: 1px;font-weight: bold;">Način plaćanja</h6>
                                                 <p class="text_xs mb_md" style="color: inherit;font-family: Arial, Helvetica, sans-serif;margin-top: 0px;margin-bottom: 32px;word-break: break-word;font-size: 14px;line-height: 22px;">
-
-                                                    {% if payment_method == 'Plaćanje pouzećem' and shipping_method ='BOX NOW paketomat' %}
-                                                      PAY ON THE GO
-                                                    {% else %}
-                                                        {{ payment_method }}
-                                                    {% endif %}
-
-
+                                                    {{ payment_method }}
                                                 </p>
                                             </td>
                                             <td class="column_cell" width="16" style="vertical-align: top;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;mso-table-lspace: 0pt;mso-table-rspace: 0pt;">&nbsp; </td>
