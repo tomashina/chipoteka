@@ -561,7 +561,7 @@ class LOC_Order
             $loc_p = (new LOC_Payment())->getList(agconf('luceed.payment.' . $this->oc_order['payment_code']))->first();
         }
 
-        if ($this->oc_order['shipping_code'] == 'weight.weight_5' && $this->oc_order['boxnow'] != '') {
+        if ($this->oc_order['shipping_code'] == 'weight.weight_5' && $this->oc_order['boxnow'] != '' && $this->oc_order['payment_code'] == 'cod') {
             return '134-1063';
         }
 
