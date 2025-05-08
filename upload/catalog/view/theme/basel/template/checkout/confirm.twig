@@ -85,7 +85,12 @@
             <div class="col-sm-6">
                 <h4 class="h6">Način plaćanja:</h4>
                 <ul class="list-unstyled fs-sm">
-                    <li><span class="text-muted">{{ payment_name }}</li>
+
+                    {% if payment_name == 'Plaćanje pouzećem' and boxnow %}
+                        <li><span class="text-muted">PAY ON THE GO </span></li>
+                    {% else %}
+                        <li><span class="text-muted">{{ payment_name }}</span></li>
+                    {% endif %}
                 </ul>
 
                 <h4 class="h6 mt-2">Način dostave:</h4>

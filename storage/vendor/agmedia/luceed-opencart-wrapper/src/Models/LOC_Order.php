@@ -242,7 +242,7 @@ class LOC_Order
 
         }
 
-        if ($this->oc_order['shipping_method'] == 'BOXNOW paketomat' && $this->oc_order['boxnow'] != '') {
+        if ($this->oc_order['shipping_method'] == 'BOX NOW paketomat' && $this->oc_order['boxnow'] != '') {
             $data = explode(';', $this->oc_order['boxnow']);
 
             $this->order['dropoff_sifra']      = $data[1] ?: '';

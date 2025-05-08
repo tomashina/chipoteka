@@ -31,9 +31,9 @@ class ModelExtensionShippingWeight extends Model {
             }
         }
 
-      if( $user_id != '3412'){
+     /* if( $user_id != '3412'){
             $box = false;
-        }
+        }*/
 
 		foreach ($query->rows as $result) {
 			if ($this->config->get('shipping_weight_' . $result['geo_zone_id'] . '_status')) {
@@ -79,7 +79,7 @@ class ModelExtensionShippingWeight extends Model {
 				if ((string)$cost != '') {
 					$quote_data['weight_' . $result['geo_zone_id']] = array(
 						'code'         => 'weight.weight_' . $result['geo_zone_id'],
-						'title'        => 'BOXNOW paketomat',
+						'title'        => 'BOX NOW paketomat',
 						'cost'         => $cost,
 						'tax_class_id' => $this->config->get('shipping_weight_tax_class_id'),
 						'text'         => $this->currency->format($this->tax->calculate($cost, $this->config->get('shipping_weight_tax_class_id'), $this->config->get('config_tax')), $this->session->data['currency'])
