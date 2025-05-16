@@ -47,6 +47,11 @@ class ModelExtensionPaymentCOD extends Model {
 			$status = false;
 		}
 
+     
+
+        if (isset($this->session->data['shipping_method']['code']) && $this->session->data['shipping_method']['code'] == 'weight.weight_5' and ($this->cart->getSubTotal() > 200)) {
+            $status = false;
+        }
 
 
 
