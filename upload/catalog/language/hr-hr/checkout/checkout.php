@@ -27,7 +27,7 @@ $_['text_forgotten']                 = 'Zaboravljena lozinka';
 $_['text_your_details']              = 'Vaši osobni podaci';
 $_['text_your_address']              = 'Adresa';
 $_['text_your_password']             = 'Vaša lozinka';
-$_['text_agree']                     = '<span><span> Pročitao sam i slažem se s </span> <a href="%s" class="agree"><b>%s</b></a></span>';
+$_['text_agree']                     = '<span><span> Potvrđujem da sam pročitao/la i prihvaćam </span> <a href="%s" class="agree"><b>%s</b></a></span>';
 $_['text_address_new']               = 'Želim koristiti novu adresu';
 $_['text_address_existing']          = 'Želim koristiti postojeću adresu';
 $_['text_shipping_method']           = 'Odaberite način dostave ';
@@ -72,7 +72,7 @@ $_['entry_postcode']                 = 'Poštanski broj';
 $_['entry_city']                     = 'Grad';
 $_['entry_country']                  = 'Država';
 $_['entry_zone']                     = 'Županija (regija)';
-$_['entry_newsletter']               = 'Želim se pretplatiti na %s newsletter.';
+$_['entry_newsletter']               = 'Želim primati newsletter s ekskluzivnim ponudama, novostima i savjetima iz Chipoteke';
 $_['entry_shipping'] 	             = ' Moja adresa za isporuku (dostavu) robe i za dostavu računa je ista.';
 
 // Error
