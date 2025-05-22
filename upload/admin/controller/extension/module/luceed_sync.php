@@ -705,7 +705,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $loc->setOrders(
             LuceedOrder::get(
                 $loc->collectStatuses(),
-                Carbon::now()->subWeek()->format('d.m.Y') //agconf('import.orders.from_date')
+                Carbon::now()->subDays(2)->format('d.m.Y') //agconf('import.orders.from_date')
             )
         );
 
@@ -731,7 +731,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $loc->setOrders(
             LuceedOrder::get(
                 $loc->collectStatuses(),
-                Carbon::now()->subWeek()->format('d.m.Y'), //agconf('import.orders.from_date')
+                Carbon::now()->subDays(2)->format('d.m.Y'), //agconf('import.orders.from_date')
                 true
             )
         );
