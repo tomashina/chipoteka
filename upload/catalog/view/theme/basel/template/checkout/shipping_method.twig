@@ -28,7 +28,7 @@
 
                 {% set code = quote.code %}
               <label class="form-check-label" for="{{ quote.code }}">
-                <input class="form-check-input" type="radio" name="shipping_method" id="{{ quote.code }}" value="{{ quote.code }}" checked="checked" />
+                <input class="form-check-input" type="radio" name="shipping_method" id="{{ quote.code }}" value="{{ quote.code }}"  />
                 <span class="text-dark fw-medium me-3">{{ quote.title }}</span>
               </label>
 
@@ -54,7 +54,7 @@
 
           {% if  quote.code == 'weight.weight_5' %}
 
-          <tr>
+          <tr id="boxbox" style="display:none">
             <td colspan="3"  style="border-bottom-width: 0px;">
 
               <div class="shipping-data shipping_info shipping_info_1" >
@@ -91,11 +91,14 @@
 
             if (selected != 'weight.weight_5') {
               $('#drop-parcel-shop').hide();
+
               $('#boxnow').val('');
               $('.dizb').prop('disabled', false);
             } else {
               $('#drop-parcel-shop').show();
+              $('#boxbox').show();
               $('.dizb').prop('disabled', true);
+
               $('#errorbox').html('<div style="color: red">Morate odabrati dostavno mjesto!</div>')
             }
           }

@@ -192,7 +192,7 @@ class ControllerCheckoutGuest extends Controller {
 
                 // END ::: fj.agmedia.hr
 
-            if( !preg_match("/^\+?[0-9]{3}-?[0-9]{6,12}$/", $this->request->post['telephone']) ) {
+            if( !preg_match("/^\+?[0|+]{1}-?[0-9]{6,12}$/", $this->request->post['telephone']) ) {
                 $json['error']['telephone'] = $this->language->get('error_telephone');
             }
 
