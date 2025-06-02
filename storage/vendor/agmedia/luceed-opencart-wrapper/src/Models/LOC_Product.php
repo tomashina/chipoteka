@@ -305,28 +305,33 @@ class LOC_Product
     public function checkProductsToDeactivate()
     {
         $luc = $this->getProducts()
-                    ->where('artikl', '!=', '')
-                    ->where('naziv', '!=', '')
-                    ->where('webshop', '!=', 'N')
-                    ->pluck('artikl')
-                    ->flatten();
+            ->where('artikl', '!=', '')
+            ->where('naziv', '!=', '')
+            ->where('webshop', '!=', 'N')
+            ->pluck('artikl')
+            ->flatten();
 
-        $existing = Product::query()
-                           ->pluck('sku')
-                           ->flatten();
+        if ($luc->count() > 0) {
+            $existing = Product::query()
+                ->pluck('sku')
+                ->flatten();
 
-        $diff = $existing->diff($luc);
+            $diff = $existing->diff($luc);
 
-        Log::store($diff->count(), 'diff_p');
-        Log::store($diff, 'diff_p');
+            Log::store($diff->count(), 'diff_p');
+            Log::store($diff, 'diff_p');
 
-        Product::query()->whereIn('sku', $diff)->update([
-            'status' => 0,
-            'hash' => 'rehash_on_status'
-        ]);
+            Product::query()->whereIn('sku', $diff)->update([
+                'status' => 0,
+                'hash' => 'rehash_on_status'
+            ]);
 
-        return $diff->count();
+            return $diff->count();
+        }
+
+        return 0;
     }
+
 
 
     /**
