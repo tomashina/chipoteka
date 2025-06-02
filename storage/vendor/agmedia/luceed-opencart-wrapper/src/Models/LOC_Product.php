@@ -312,6 +312,7 @@ class LOC_Product
             ->flatten();
 
         if ($luc->count() > 0) {
+            $all = Product::query()->get()->count();
             $existing = Product::query()
                 ->pluck('sku')
                 ->flatten();
@@ -321,10 +322,12 @@ class LOC_Product
             Log::store($diff->count(), 'diff_p');
             Log::store($diff, 'diff_p');
 
-            Product::query()->whereIn('sku', $diff)->update([
-                'status' => 0,
-                'hash' => 'rehash_on_status'
-            ]);
+            if ($diff->count() < $all) {
+                Product::query()->whereIn('sku', $diff)->update([
+                    'status' => 0,
+                    'hash' => 'rehash_on_status'
+                ]);
+            }
 
             return $diff->count();
         }
