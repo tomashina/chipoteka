@@ -260,8 +260,7 @@ class LOC_Product
                                 ->where('naziv', '!=', '')
                                 ->where('webshop', '!=', 'N')
                                 //->all();
-
-                                ->take(100)->get();
+                                ->take(1)->get();
 
 
         $query_str = '';
