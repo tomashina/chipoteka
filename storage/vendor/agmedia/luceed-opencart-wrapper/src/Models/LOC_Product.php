@@ -261,7 +261,8 @@ class LOC_Product
                                 ->where('webshop', '!=', 'N')
                                 //->all();
 
-                                ->limit(100);
+                                ->take(100)->get();
+
 
         $query_str = '';
 
