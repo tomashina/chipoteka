@@ -284,6 +284,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
                     $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
                     $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
 
+                    Log::info($product_for_update['sku'], 'log2025');
+
                     if ($product_for_update['sku'] == '6129256300') {
                         return $this->output($_loc_ps->finishUpdate());
                     }
@@ -432,6 +434,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function finishUpdateProduct()
     {
+
+        Log::info($this->request->post, 'log2025');
         if (isset($this->request->post['data'])) {
             $inserted = LuceedProductForRevisionData::insert([
                 'last_revision_date' => Carbon::now(),
@@ -705,7 +709,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $loc->setOrders(
             LuceedOrder::get(
                 $loc->collectStatuses(),
-                Carbon::now()->subDay()->format('d.m.Y') //agconf('import.orders.from_date')
+                Carbon::now()->subDay(2)->format('d.m.Y') //agconf('import.orders.from_date')
             )
         );
 
