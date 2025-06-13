@@ -109,13 +109,13 @@ class LOC_Product
         // List of product identifiers without
         // existing products.
         $list_diff = $this->getProducts()
-                          ->where('artikl', '!=', '')
-                          ->where('naziv', '!=', '')
-                          ->where('enabled', '!=', 'N')
-                          ->where('webshop', '!=', 'N')
-                          ->pluck('artikl')
-                          ->diff($this->existing)
-                          ->flatten();
+            ->where('artikl', '!=', '')
+            ->where('naziv', '!=', '')
+            ->where('enabled', '!=', 'N')
+            ->where('webshop', '!=', 'N')
+            ->pluck('artikl')
+            ->diff($this->existing)
+            ->flatten();
 
         // Full list of products to add to DB.
         $this->products_to_add = $this->getProducts()->whereIn('artikl', $list_diff);
@@ -256,10 +256,10 @@ class LOC_Product
         $this->checkProductsToDeactivate();
 
         $luceed_products = $this->getProducts()
-                                ->where('artikl', '!=', '')
-                                ->where('naziv', '!=', '')
-                                ->where('webshop', '!=', 'N')
-                                ->all();
+            ->where('artikl', '!=', '')
+            ->where('naziv', '!=', '')
+            ->where('webshop', '!=', 'N')
+            ->all();
 
         $query_str = '';
 
@@ -325,7 +325,7 @@ class LOC_Product
             if ($diff->count() < $all) {
                 Product::query()->whereIn('sku', $diff)->update([
                     'status' => 0,
-                    //'hash' => 'rehash_on_status'
+
                 ]);
             }
 
