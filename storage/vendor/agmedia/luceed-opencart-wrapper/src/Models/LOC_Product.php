@@ -325,7 +325,7 @@ class LOC_Product
             if ($diff->count() < $all) {
                 Product::query()->whereIn('sku', $diff)->update([
                     'status' => 0,
-                    'hash' => 'rehash_on_status'
+                    //'hash' => 'rehash_on_status'
                 ]);
             }
 
