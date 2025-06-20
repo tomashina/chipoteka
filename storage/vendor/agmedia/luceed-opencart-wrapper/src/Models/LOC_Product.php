@@ -476,7 +476,7 @@ class LOC_Product
 
         return $prod;
     }
-
+ 
 
     /**
      * Return the corrected response from luceed service.
