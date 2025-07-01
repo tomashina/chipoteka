@@ -201,50 +201,90 @@ class ControllerExtensionModuleLuceedSync extends Controller
     public function importEprelModel()
     {
 
+        Log::info($target, 'eprel');
+
+
         $api_key = "EJIHIAziLs86nUV0rs7V08u5XTg1m8LF16uXJ9J4";
 
-        $category_id= '320';
+        $target = $this->request->get['target'];
 
-        $ids = ProductCategory::where('category_id', $category_id)->pluck('product_id')->unique();
+
+
+
+        if($target =='electronicdisplays'){
+             $category_id= ['320', '396'];
+        }
+
+        elseif ($target =='smartphonestablets20231669'){
+
+            $category_id = ['378', '380', '389'];
+        }
+
+        elseif ($target =='lightsources'){
+
+            $category_id= ['538'];
+        }
+
+
+
+
+        $ids = ProductCategory::whereIn('category_id', $category_id)->pluck('product_id')->unique();
 
         foreach ($ids as $id) {
 
-            $product = Product::find($id);
-            $url = "https://eprel.ec.europa.eu/api/products/electronicdisplays?modelIdentifier=".$product['ean']."";
+           sleep(1);
 
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_USERAGENT, "curl/7.88.1");
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                "x-api-key: $api_key"
-            ));
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // -L equivalent
+            $product = Product::query()->where('product_id', $id)->where('ean', '!=', '')->first();
 
-            header('Content-Type: application/json');
+            Log::info($id, 'eprel');
 
-            $response = curl_exec($ch);
-            if (curl_errno($ch)) {
-               // Log::info(curl_error($ch), 'eprel');
-            } else {
+            if($product  and $product['jan'] == ''){
+                $url = "https://eprel.ec.europa.eu/api/products/".$target."?modelIdentifier=".$product['ean']."";
 
-                $result = json_decode($response);
+                Log::info($url, 'eprel');
 
-                foreach ($result->hits as $hit) {
 
-                    if($product['ean'] = $hit->modelIdentifier ){
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_USERAGENT, "curl/7.88.1");
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                    "x-api-key: $api_key"
+                ));
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // -L equivalent
 
-                        $product->update(['jan' => '{"0":"'.$hit->energyClassImage.'","1":"'.$hit->eprelRegistrationNumber.'"}']);
+                header('Content-Type: application/json');
 
+                $response = curl_exec($ch);
+                if (curl_errno($ch)) {
+                    Log::info(curl_error($ch), 'eprel');
+                } else {
+
+                    $result = json_decode($response);
+
+                    foreach ($result->hits as $hit) {
+
+                        if($product['ean'] = $hit->modelIdentifier ){
+
+
+
+                            $product->update(['jan' => '{"0":"'.$hit->energyClassImage.'","1":"'.$hit->eprelRegistrationNumber.'","2":"'.$hit->productGroup.'"}']);
+
+
+                        }
 
                     }
 
+
+                    Log::info($response, 'eprel');
                 }
+                curl_close($ch);
 
 
-               // Log::info($response, 'eprel');
+
             }
-            curl_close($ch);
+
+
 
 
 
@@ -427,6 +467,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
             return $this->response($for_update->count(), 'products');
         }
+
+
+
+
 
         // Ako ima proizvoda za UPDATE
         if ($_loc_ps->hasForUpdate()) {

@@ -242,6 +242,21 @@
                                   <!--  <p class="col-sm-7">Import EPREL modela</p> -->
                                 </div>
 
+                                <div class="form-group">
+                                    <div class="col-sm-5 ">
+                                        <label for="cars">Odaberite kategoriju:</label>
+
+                                        <select name="eprel_group" class="form-control" id="eprel_group">
+                                            <option value="">Odaberite grupu </option>
+                                            <option value="electronicdisplays">Electronic displays </option>
+                                            <option value="smartphonestablets20231669">Smartphones and tablets</option>
+                                            <option value="lightsources">Light sources</option>
+
+                                        </select>
+                                    </div>
+                                    <!--  <p class="col-sm-7">Import EPREL modela</p> -->
+                                </div>
+
 
                             </div>
                         </div>
@@ -465,7 +480,28 @@
 
             $('#import-initial-manufacturer').on('click', e => { callApi(e, 'importInitialManufacturers'); });
             $('#import-initial-customers')   .on('click', e => { callApi(e, 'importInitialCustomers'); });
-            $('#import-eprel-model')       .on('click', e => { callApi(e, 'importEprelModel'); });
+        //    $('#import-eprel-model')       .on('click', e => { callApi(e, 'importEprelModel'); });
+
+            $('#import-eprel-model').on('click', (e) => {    let val = $("#eprel_group").val();
+
+                console.log(val);
+                if (val == 'electronicdisplays') {
+                    callApi(e, 'importEprelModel&target=electronicdisplays');
+                }
+                else if
+                (val == 'smartphonestablets20231669') {
+                    callApi(e, 'importEprelModel&target=smartphonestablets20231669');
+                }
+
+                else if
+                (val == 'lightsources') {
+                    callApi(e, 'importEprelModel&target=lightsources');
+                }
+                else
+                    {
+                        alert('Morate odabrati element!');
+                    }
+            });
         });
 
 

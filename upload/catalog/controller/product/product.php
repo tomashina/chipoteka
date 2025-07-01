@@ -320,6 +320,7 @@ class ControllerProductProduct extends Controller {
 
                 $data['energy_label'] = isset($jan[0]) ? $jan[0] : null;
                 $data['energy_model'] = isset($jan[1]) ? $jan[1] : null;
+                $data['energy_category'] = isset($jan[2]) ? $jan[2] : null;
 
             }
 

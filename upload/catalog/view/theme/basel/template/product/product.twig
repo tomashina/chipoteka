@@ -260,15 +260,17 @@
                                     {% if jan %}
                                     <div class="energy-class-wrapper">
                                         <div class="energy-class-image-wrapper">
-                                            <a href="https://eprel.ec.europa.eu/labels/electronicdisplays/Label_1946076.pdf" target="_blank" rel="noopener">
+                                            <a href="https://eprel.ec.europa.eu/labels/{{ energy_category }}/Label_1946076.pdf" target="_blank" rel="noopener">
                                                 <img class="product-image-energy-stickers-img" src="https://ec.europa.eu/assets/move-ener/eprel/EPREL%20Public/Nested-labels%20thumbnails/{{ energy_label }}" alt="{{ energy_label }}">        </a>
                                         </div>
                                         <div class="energy-class-links-wrapper">
                                             <div class="energy-class-link">
-                                              <a href="https://eprel.ec.europa.eu/labels/electronicdisplays/Label_{{ energy_model }}.pdf" target="_blank" rel="noopener">Energetska naljepnica</a>
+                                              <a href="https://eprel.ec.europa.eu/api/products/{{ energy_category }}/{{ energy_model }}/labels?format=PDF" target="_blank" rel="noopener">Energetska naljepnica</a>
+
+
                                             </div>
                                                 <div class="energy-class-link">
-                                               <a href="https://eprel.ec.europa.eu/fiches/electronicdisplays/Fiche_{{ energy_model }}_HR.pdf" target="_blank" rel="noopener">Informacijski list</a>
+                                               <a href="https://eprel.ec.europa.eu/fiches/{{ energy_category }}/Fiche_{{ energy_model }}_HR.pdf" target="_blank" rel="noopener">Informacijski list</a>
                                             </div>
                                         </div>
                                     </div>
