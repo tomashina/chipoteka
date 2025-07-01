@@ -201,7 +201,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
     public function importEprelModel()
     {
 
-        Log::info($target, 'eprel');
+
 
 
         $api_key = "EJIHIAziLs86nUV0rs7V08u5XTg1m8LF16uXJ9J4";
@@ -701,14 +701,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
      * @return mixed
      * @throws Exception
      */
-    public function updatePricesAndQuantities()
+   /* public function updatePricesAndQuantities()
     {
         $_loc = new LOC_Product(LuceedProduct::all());
 
         $updated = $_loc->sortForUpdate()->update();
 
         return $this->response($updated, 'update');
-    }
+    }*/
 
 
     /**
