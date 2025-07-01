@@ -194,6 +194,69 @@ class ControllerExtensionModuleLuceedSync extends Controller
     }
 
 
+
+    /**
+     * @return mixed
+     */
+    public function importEprelModel()
+    {
+
+        $api_key = "EJIHIAziLs86nUV0rs7V08u5XTg1m8LF16uXJ9J4";
+
+        $category_id= '320';
+
+        $ids = ProductCategory::where('category_id', $category_id)->pluck('product_id')->unique();
+
+        foreach ($ids as $id) {
+
+            $product = Product::find($id);
+            $url = "https://eprel.ec.europa.eu/api/products/electronicdisplays?modelIdentifier=".$product['ean']."";
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_USERAGENT, "curl/7.88.1");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                "x-api-key: $api_key"
+            ));
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // -L equivalent
+
+            header('Content-Type: application/json');
+
+            $response = curl_exec($ch);
+            if (curl_errno($ch)) {
+               // Log::info(curl_error($ch), 'eprel');
+            } else {
+
+                $result = json_decode($response);
+
+                foreach ($result->hits as $hit) {
+
+                    if($product['ean'] = $hit->modelIdentifier ){
+
+                        $product->update(['jan' => '{"0":"'.$hit->energyClassImage.'","1":"'.$hit->eprelRegistrationNumber.'"}']);
+
+
+                    }
+
+                }
+
+
+               // Log::info($response, 'eprel');
+            }
+            curl_close($ch);
+
+
+
+
+           // Log::info($product['ean'], 'eprel');
+        }
+
+
+        return $this->response($ids, 'eprel model');
+    }
+
+
     /**
      * @return mixed
      */

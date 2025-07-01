@@ -311,6 +311,20 @@ class ControllerProductProduct extends Controller {
 			$data['points'] = $product_info['points'];
             $data['upc'] = $product_info['upc'];
             $data['ean'] = $product_info['ean'];
+
+            if($product_info['jan']){
+
+                $data['jan'] = $product_info['jan'];
+
+                $jan = json_decode($product_info['jan'], true);
+
+                $data['energy_label'] = isset($jan[0]) ? $jan[0] : null;
+                $data['energy_model'] = isset($jan[1]) ? $jan[1] : null;
+
+            }
+
+
+
             $data['pricevaliduntil'] = Date('Y-m-d', strtotime('+30 days'));
             $data['pakiranje'] = $product_info['pakiranje'] ?: 1;
 
