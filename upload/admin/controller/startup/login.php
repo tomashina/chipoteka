@@ -23,6 +23,7 @@ class ControllerStartupLogin extends Controller {
             'extension/module/luceed_sync/updateVpcPrices',
             'extension/module/luceed_sync/updateB2BPrices',
             'extension/module/luceed_sync/importManufacturers',
+            'extension/module/luceed_sync/importEprelModel'
 
 		);
 
@@ -56,8 +57,7 @@ class ControllerStartupLogin extends Controller {
                 'extension/module/luceed_sync/updateVpcPrices',
                 'extension/module/luceed_sync/updateB2BPrices',
                 'extension/module/luceed_sync/importManufacturers',
-
-
+                'extension/module/luceed_sync/importEprelModel'
 			);
 
 			if (!in_array($route, $ignore) && (!isset($this->request->get['user_token']) || !isset($this->session->data['user_token']) || ($this->request->get['user_token'] != $this->session->data['user_token']))) {
