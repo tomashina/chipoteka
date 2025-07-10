@@ -872,6 +872,24 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
         return $this->response($updated, 'orders');
     }
+    
+    
+    /**
+     * @return void
+     */
+    public function checkRevisionTable()
+    {
+        $prods = LuceedProductForRevision::query()->get();
+        foreach ($prods as $prod) {
+            $act = Product::query()->where('sku', $prod->sku)->first();
+            
+            if ($act) {
+                if ($act->status == 0) {
+                    $prod->delete();
+                }
+            }
+        }
+    }
 
 
     /**
