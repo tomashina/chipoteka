@@ -889,6 +889,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 }
             }
         }
+
+        return $this->response('200', 'success');
     }
 
 
