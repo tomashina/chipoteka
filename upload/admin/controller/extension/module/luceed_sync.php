@@ -293,7 +293,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
 
-        return $this->response($ids, 'eprel model');
+        return $this->response(200, 'success');
     }
 
 
