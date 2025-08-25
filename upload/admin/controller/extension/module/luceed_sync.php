@@ -823,7 +823,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $updated = $loc->sort()->updateStatuses();
 
         foreach ($loc->collection as $order) {
-         //   $this->sendMail($order);
+            $this->sendMail($order);
         }
 
         $updated += $this->updateB2BOrderStatuses();
@@ -850,7 +850,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $updated = $loc->sort()->updateStatuses();
 
         foreach ($loc->collection as $order) {
-          //  $this->sendMail($order);
+            $this->sendMail($order);
         }
 
         return $updated;
