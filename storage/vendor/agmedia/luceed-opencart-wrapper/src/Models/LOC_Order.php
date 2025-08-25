@@ -389,7 +389,7 @@ class LOC_Order
         $statuses = OrderStatus::where('luceed_status_id', '!=', '')->get();
         $orders   = Order::select('order_id', 'luceed_uid', 'email', 'payment_code', 'order_status_id', 'order_status_changed')
                          ->where('order_status_id', '!=', 0)
-                         ->where('date_added', '>=', Carbon::now()->subMonth(2)->toDateTimeString())
+                         ->where('date_added', '>=', Carbon::now()->subMonth(4)->toDateTimeString())
                          ->get();
 
         // Check if status have changed.
