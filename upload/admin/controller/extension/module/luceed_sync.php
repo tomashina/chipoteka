@@ -816,14 +816,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $loc->setOrders(
             LuceedOrder::get(
                 $loc->collectStatuses(),
-                Carbon::now()->subWeek()->format('d.m.Y') //agconf('import.orders.from_date')
+                Carbon::now()->subMonth(4)->format('d.m.Y') //agconf('import.orders.from_date')
             )
         );
 
         $updated = $loc->sort()->updateStatuses();
 
         foreach ($loc->collection as $order) {
-            $this->sendMail($order);
+         //   $this->sendMail($order);
         }
 
         $updated += $this->updateB2BOrderStatuses();
@@ -842,7 +842,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $loc->setOrders(
             LuceedOrder::get(
                 $loc->collectStatuses(),
-                Carbon::now()->subWeek()->format('d.m.Y'), //agconf('import.orders.from_date')
+                Carbon::now()->subMonth(4)->format('d.m.Y'), //agconf('import.orders.from_date')
                 true
             )
         );
@@ -850,7 +850,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $updated = $loc->sort()->updateStatuses();
 
         foreach ($loc->collection as $order) {
-            $this->sendMail($order);
+          //  $this->sendMail($order);
         }
 
         return $updated;
