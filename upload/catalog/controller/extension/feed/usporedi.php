@@ -91,7 +91,7 @@ class ControllerExtensionFeedUsporedi extends Controller {
                     $output .= '<sku_id>' . $product['model'] . '</sku_id>';
                     $output .= '<name>' . $this->wrapInCDATA($name) . '</name>';
                     $output .= '<description>' . $this->wrapInCDATA($description) . '</description>';
-                    $output .= '<brand>' . $this->wrapInCDATA($product['manufacturer']) . '</brand>';
+                    $output .= '<manufacturer>' . $this->wrapInCDATA($product['manufacturer']) . '</manufacturer>';
                     $output .= '<category>' . $this->wrapInCDATA($this->getCategoriesName($product['product_id'])) . '</category>';
                     $output .= '<price>' . number_format($price, '2', '.', '') . '</price>';
                     $output .= '<delivery_price>4.99</delivery_price>';
