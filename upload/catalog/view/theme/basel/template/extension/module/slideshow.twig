@@ -2,7 +2,7 @@
   <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 1, &quot;mode&quot;: &quot;gallery&quot;, &quot;nav&quot;: true, &quot;autoplay&quot;:  &quot;3000&quot;, &quot;responsive&quot;: {&quot;0&quot;: {&quot;nav&quot;: true, &quot;controls&quot;: true}, &quot;576&quot;: {&quot;nav&quot;: true, &quot;controls&quot;: true}}}">
     {% for banner in banners %}
     <div>
-      <div class="rounded-3  text-center text-xl-start">
+      <div class="rounded-3  text-center text-xl-start" style="overflow: hidden;">
 
 
                  {% if banner.link %}  <a  href="{{ banner.link }}" >   {% endif %}
