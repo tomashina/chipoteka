@@ -338,29 +338,41 @@ class ControllerDesignBanner extends Controller {
 
 		$data['banner_images'] = array();
 
-		foreach ($banner_images as $key => $value) {
-			foreach ($value as $banner_image) {
-				if (is_file(DIR_IMAGE . $banner_image['image'])) {
-					$image = $banner_image['image'];
-					$thumb = $banner_image['image'];
-				} else {
-					$image = '';
-					$thumb = 'no_image.png';
-				}
+        foreach ($banner_images as $key => $value) {
+            foreach ($value as $banner_image) {
+                // Glavna slika
+                if (!empty($banner_image['image']) && is_file(DIR_IMAGE . $banner_image['image'])) {
+                    $image = $banner_image['image'];
+                    $thumb = $banner_image['image'];
+                } else {
+                    $image = '';
+                    $thumb = 'no_image.png';
+                }
 
-				$data['banner_images'][$key][] = array(
-					'title'      => $banner_image['title'],
-                    'actiontitle'      => $banner_image['actiontitle'],
-                    'buttontitle'      => $banner_image['buttontitle'],
-                    'text'      => $banner_image['text'],
-					'link'       => $banner_image['link'],
-                    'bojapozadine'       => $banner_image['bojapozadine'],
-					'image'      => $image,
-					'thumb'      => $this->model_tool_image->resize($thumb, 100, 100),
-					'sort_order' => $banner_image['sort_order']
-				);
-			}
-		}
+                // Responsive slika
+                if (!empty($banner_image['image_responsive']) && is_file(DIR_IMAGE . $banner_image['image_responsive'])) {
+                    $image_responsive = $banner_image['image_responsive'];
+                    $thumb_responsive = $banner_image['image_responsive'];
+                } else {
+                    $image_responsive = '';
+                    $thumb_responsive = 'no_image.png';
+                }
+
+                $data['banner_images'][$key][] = array(
+                    'title'         => $banner_image['title'],
+                    'actiontitle'   => $banner_image['actiontitle'],
+                    'buttontitle'   => $banner_image['buttontitle'],
+                    'text'          => $banner_image['text'],
+                    'link'          => $banner_image['link'],
+                    'bojapozadine'  => $banner_image['bojapozadine'],
+                    'image'         => $image,
+                    'thumb'         => $this->model_tool_image->resize($thumb, 100, 100),
+                    'image_responsive' => $image_responsive,
+                    'thumb_responsive' => $this->model_tool_image->resize($thumb_responsive, 100, 100),
+                    'sort_order'    => $banner_image['sort_order']
+                );
+            }
+        }
 
 		$data['placeholder'] = $this->model_tool_image->resize('no_image.png', 100, 100);
 
