@@ -107,6 +107,16 @@
                                         {% endif %}
                                     </div>
 
+                                    {% if product_tabs %}
+                                        {% for tab in product_tabs %}
+                                            <div  class="description-short  card ">
+                                                <div class="card-body">
+                                                {{ tab.description }}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+
 
                                     <div class="description-short   ">
                                         {% if short_description %}
