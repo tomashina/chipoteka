@@ -109,13 +109,68 @@
 
                                     {% if product_tabs %}
                                         {% for tab in product_tabs %}
-                                            <div  class="description-short  card ">
-                                                <div class="card-body">
-                                                {{ tab.description }}
+                                            <div class="description-short card promo-highlight">
+                                                <div class="card-body promo-body">
+                                                    <div class="promo-text">
+                                                        {{ tab.description }}
+                                                    </div>
+
+                                                    <!-- ikona koja prelazi preko ruba desno -->
+                                                    <img
+                                                            class="promo-icon"
+                                                            src="{{ config_url }}image/chipoteka-znak.png"
+                                                            alt="info icon"
+                                                    />
                                                 </div>
                                             </div>
+                                            <style>
+                                                /* okvir bloka */
+                                                .promo-highlight{
+                                                    position: relative;
+                                                    border: 2px solid #e60000;     /* crvena crta */
+                                                    border-radius: 20px;
+                                                    padding: 10px;
+                                                    margin-bottom: 20px;
+                                                    background: #fff;
+                                                    overflow: visible;              /* da ikona smije “izići” van */
+                                                }
+
+                                                /* unutarnji layout */
+                                                .promo-body{ position: relative; }
+
+                                                /* tekst */
+                                                .promo-text{
+                                                    color:#333;
+
+                                                    margin-right:72px;              /* da tekst ne ide ispod ikone */
+                                                }
+
+                                                /* ikona desno, “preko crte” */
+                                                .promo-icon{
+                                                    position:absolute;
+                                                    top:50%;
+                                                    right:-40px;                    /* negativna vrijednost = izvan okvira */
+                                                    transform:translateY(-50%);
+                                                    width:60px;                     /* prilagodi po želji */
+                                                    height:auto;
+                                                          /* mali “badge” efekt preko ruba */
+                                                    border-radius:50%;
+                                                    padding:0px;
+
+                                                    pointer-events:none;            /* da ne smeta klikovima na tekst */
+                                                    z-index:2;
+                                                }
+
+                                                /* responsive: vrati ikonu malo unutra na uskim ekranima */
+                                                @media (max-width:576px){
+                                                    .promo-text{ margin-right:56px; }
+                                                    .promo-icon{ right:-35px; width:48px; padding:5px; }
+                                                }
+
+                                            </style>
                                         {% endfor %}
                                     {% endif %}
+
 
 
                                     <div class="description-short   ">
