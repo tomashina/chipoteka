@@ -30,7 +30,7 @@ class ControllerExtensionFeedUsporedi extends Controller {
         ini_set('display_startup_errors', 1);
         error_reporting(E_ALL);
 
-        if (isset($_GET['pass']) && $_GET['pass'] === 'gNG_p-x7V-+I=uaIgjo=hTMQX~s') {
+        if (isset($_GET['pass']) && $_GET['pass'] === 'gNGpx7VIuaIgjohTMQXs') {
 
             $output = '<?xml version="1.0" encoding="UTF-8"?>';
             $output .= '<products>';
