@@ -2,78 +2,78 @@
 
 class ControllerExtensionFeedUsporedi extends Controller {
 
+    // Polyfill za array_column za starije PHP verzije
+    public function __construct($registry) {
+        parent::__construct($registry);
+        if (!function_exists('array_column')) {
+            function array_column($input, $column_key, $index_key = null) {
+                $arr = array();
+                foreach ($input as $row) {
+                    if (!is_array($row)) continue;
+                    $value = isset($row[$column_key]) ? $row[$column_key] : null;
+                    if ($index_key !== null && isset($row[$index_key])) {
+                        $arr[$row[$index_key]] = $value;
+                    } else {
+                        $arr[] = $value;
+                    }
+                }
+                return $arr;
+            }
+        }
+    }
+
+    private $categoryMapByProduct = array();
+
     public function index()
     {
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
 
         if (isset($_GET['pass']) && $_GET['pass'] === 'gNG_p-x7V-+I=uaIgjo=hTMQX~s') {
 
             $output = '<?xml version="1.0" encoding="UTF-8"?>';
             $output .= '<products>';
 
-
-
             $this->load->model('catalog/product');
             $this->load->model('catalog/category');
 
-
-
             $products = $this->model_catalog_product->getProducts();
-
             $productIds = array_column($products, 'product_id');
             $this->preloadCategoryNamesForProducts($productIds);
 
             foreach ($products as $product) {
 
-
-                $description = $product['description'];
-
-
-                $kratki = $this->elipsis($description);
-
-
-                $kratki = $this->stripInvalidXml($kratki);
-
-
-
-                $description = $this->stripInvalidXml($description);
+                $description = $this->stripInvalidXml($product['description']);
+                $kratki = $this->stripInvalidXml($this->elipsis($description));
 
                 $name = strip_tags(html_entity_decode($product['name']));
-                $name = str_replace('&nbsp;', '', $name);
-                $name = str_replace('', '', $name);
-                $name = str_replace('', '', $name);
-                $name = str_replace('&#44', '', $name);
-                $name = str_replace("'", '', $name);
-                $name = str_replace('', '', $name);
-                $name = str_replace('', '', $name);
-                $name = str_replace('>', '', $name);
-                $name = str_replace('<', '', $name);
-
+                $name = str_replace(
+                    array('&nbsp;', '', '', '&#44', "'", '', '', '>', '<'),
+                    '',
+                    $name
+                );
                 $name = $this->stripInvalidXml($name);
 
-                if ($product['special'] == '') {
-                    $price = $product['price'];
-                } else {
-                    $price = $product['special'];
-                }
+                $price = ($product['special'] == '') ? $product['price'] : $product['special'];
 
-                $vpc = $product['vpc'];
-
-                if($product['quantity'] > 0){
+                if ($product['quantity'] > 0) {
                     $output .= '<product>';
                     $output .= '<sku_id>' . $product['model'] . '</sku_id>';
                     $output .= '<name>' . $this->wrapInCDATA($name) . '</name>';
                     $output .= '<description>' . $this->wrapInCDATA($description) . '</description>';
                     $output .= '<manufacturer>' . $this->wrapInCDATA($product['manufacturer']) . '</manufacturer>';
                     $output .= '<category>' . $this->wrapInCDATA($this->getCategoriesNameFast($product['product_id'])) . '</category>';
-                    $output .= '<price>' . number_format($price, '2', '.', '') . '</price>';
+                    $output .= '<price>' . number_format($price, 2, '.', '') . '</price>';
                     $output .= '<delivery_price>4.99</delivery_price>';
                     $output .= '<product_url>' . $this->url->link('product/product', 'product_id=' . $product['product_id']) . '</product_url>';
                     $output .= '<gallery>';
                     $output .= '<image>';
-                    $output .= '<image_url>' . $this->wrapInCDATA('https://www.chipoteka.hr/image/' . $product['image']) . '</image_url>';
+                    if (!empty($product['image'])) {
+                        $output .= '<image_url>' . $this->wrapInCDATA('https://www.chipoteka.hr/image/' . $product['image']) . '</image_url>';
+                    }
                     $output .= '</image>';
                     $output .= '</gallery>';
-
 
                     $output .= '<availability>';
                     $output .= '<branch>';
@@ -83,208 +83,89 @@ class ControllerExtensionFeedUsporedi extends Controller {
                     $output .= '</availability>';
 
                     $output .= '</product>';
-
                 }
-
-
             }
-            $output .= '</products>';
 
+            $output .= '</products>';
 
             $output = iconv('UTF-8', 'UTF-8//IGNORE', $output);
 
             $this->response->addHeader('Content-Type: application/xml');
             $this->response->setOutput($output);
-
-
         }
-
     }
-
 
     private function wrapInCDATA($in)
     {
         return "<![CDATA[ " . $in . " ]]>";
-        //return $in;
     }
-
 
     private function stripInvalidXml($value)
     {
         $ret = "";
-        $current;
-        if (empty($value))
-        {
-            return $ret;
-        }
+        if (empty($value)) return $ret;
 
         $length = strlen($value);
-        for ($i=0; $i < $length; $i++)
-        {
+        for ($i = 0; $i < $length; $i++) {
             $current = ord($value[$i]);
             if (($current == 0x9) ||
                 ($current == 0xA) ||
                 ($current == 0xD) ||
-
-                (($current >= 0x28) && ($current <= 0xD7FF)) ||
+                (($current >= 0x20) && ($current <= 0xD7FF)) ||
                 (($current >= 0xE000) && ($current <= 0xFFFD)) ||
-                (($current >= 0x10000) && ($current <= 0x10FFFF)))
-            {
+                (($current >= 0x10000) && ($current <= 0x10FFFF))) {
                 $ret .= chr($current);
-            }
-            else
-            {
+            } else {
                 $ret .= " ";
             }
         }
         return $ret;
     }
 
-
-    private function removeChar($string, $char)
+    public function elipsis($text, $words = 30)
     {
-        return str_replace($char, '', $string);
-    }
-
-    public function elipsis ($text, $words = 30) {
-        // Check if string has more than X words
         if (str_word_count($text) > $words) {
-
-            // Extract first X words from string
             preg_match("/(?:[^\s,\.;\?\!]+(?:[\s,\.;\?\!]+|$)){0,$words}/", $text, $matches);
             $text = trim($matches[0]);
-
-            // Let's check if it ends in a comma or a dot.
-            if (substr($text, -1) == ',') {
-                // If it's a comma, let's remove it and add a ellipsis
-                $text = rtrim($text, ',');
-                $text .= '...';
-            } else if (substr($text, -1) == '.') {
-                // If it's a dot, let's remove it and add a ellipsis (optional)
-                $text = rtrim($text, '.');
-                $text .= '...';
-            } else {
-                // Doesn't end in dot or comma, just adding ellipsis here
-                $text .= '...';
+            if (substr($text, -1) == ',' || substr($text, -1) == '.') {
+                $text = rtrim($text, ',.');
             }
+            $text .= '...';
         }
-        // Returns "ellipsed" text, or just the string, if it's less than X words wide.
         return $text;
     }
 
-
-    protected function getPath($parent_id, $current_path = '') {
-        $category_info = $this->model_catalog_category->getCategory($parent_id);
-
-        if ($category_info) {
-            if (!$current_path) {
-                $new_path = $category_info['category_id'];
-            } else {
-                $new_path = $category_info['category_id'] . '_' . $current_path;
-            }
-
-            $path = $this->getPath($category_info['parent_id'], $new_path);
-
-            if ($path) {
-                return $path;
-            } else {
-                return $new_path;
-            }
-        }
-    }
-
-
-    /**
-     * Construct category and parent name
-     * and return it
-     *
-     * @param $id
-     *
-     * @return string
-     */
-    public function getCategoriesName($id)
-    {
-        $this->load->model('catalog/category');
-        $data = $this->model_catalog_product->getCategories($id);
-        $ime = '';
-        $category = array();
-
-        foreach ($data as $item) {
-
-            $category = $this->model_catalog_category->getCategory($item['category_id']);
-
-            if (isset($category['name'])){
-                $ime = $category['name'];
-            }
-
-
-            if (isset($category['parent_id']) && $category['parent_id'] != 0) {
-                $parent = $this->model_catalog_category->getCategory($category['parent_id']);
-                $ime   = $parent['name'] . ' > ' . $category['name'];
-            }
-
-
-
-        }
-
-        return $ime;
-    }
-
-
-    public function getNabavnacijena($id)
-    {
-        $this->load->model('catalog/product');
-
-
-        $data = $this->getProductDiscounts($id);
-
-
-
-
-        $cijena ='';
-        foreach ($data as $item) {
-
-            if ($item['customer_group_id'] == 5 ){
-                $cijena = $item['price'];
-            }
-
-        }
-
-        return $cijena;
-    }
-
-    public function getProductDiscounts($product_id) {
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_discount WHERE product_id = '" . (int)$product_id . "' ORDER BY quantity, priority, price");
-
-        return $query->rows;
-    }
-
-
-    private $categoryMapByProduct = [];
-
-    private function preloadCategoryNamesForProducts(array $productIds)
+    private function preloadCategoryNamesForProducts($productIds)
     {
         if (empty($productIds)) return;
+
+        $ids = array();
+        foreach ($productIds as $pid) {
+            $pid = (int)$pid;
+            if ($pid > 0) $ids[] = $pid;
+        }
+        if (empty($ids)) return;
 
         $language_id = (int)$this->config->get('config_language_id');
 
         $sql = "
-        SELECT 
-            p2c.product_id,
-            GROUP_CONCAT(cat.full_name SEPARATOR ' | ') AS categories
-        FROM " . DB_PREFIX . "product_to_category p2c
-        JOIN (
             SELECT 
-                cp.category_id,
-                GROUP_CONCAT(cd2.name ORDER BY cp.level SEPARATOR ' > ') AS full_name
-            FROM " . DB_PREFIX . "category_path cp
-            JOIN " . DB_PREFIX . "category_description cd2 
-                ON cd2.category_id = cp.path_id AND cd2.language_id = " . $language_id . "
-            GROUP BY cp.category_id
-        ) cat ON cat.category_id = p2c.category_id
-        WHERE p2c.product_id IN (" . implode(',', array_map('intval', $productIds)) . ")
-        GROUP BY p2c.product_id
-    ";
+                p2c.product_id,
+                GROUP_CONCAT(cat.full_name SEPARATOR ' | ') AS categories
+            FROM " . DB_PREFIX . "product_to_category p2c
+            JOIN (
+                SELECT 
+                    cp.category_id,
+                    GROUP_CONCAT(cd2.name ORDER BY cp.level SEPARATOR ' > ') AS full_name
+                FROM " . DB_PREFIX . "category_path cp
+                JOIN " . DB_PREFIX . "category_description cd2 
+                    ON cd2.category_id = cp.path_id AND cd2.language_id = " . $language_id . "
+                GROUP BY cp.category_id
+            ) cat ON cat.category_id = p2c.category_id
+            WHERE p2c.product_id IN (" . implode(',', $ids) . ")
+            GROUP BY p2c.product_id
+        ";
+
         $q = $this->db->query($sql);
         foreach ($q->rows as $row) {
             $this->categoryMapByProduct[(int)$row['product_id']] = $row['categories'];
@@ -296,7 +177,26 @@ class ControllerExtensionFeedUsporedi extends Controller {
         return isset($this->categoryMapByProduct[$product_id]) ? $this->categoryMapByProduct[$product_id] : '';
     }
 
+    public function getNabavnacijena($id)
+    {
+        $data = $this->getProductDiscounts($id);
+        $cijena = '';
+        foreach ($data as $item) {
+            if ($item['customer_group_id'] == 5) {
+                $cijena = $item['price'];
+            }
+        }
+        return $cijena;
+    }
 
+    public function getProductDiscounts($product_id)
+    {
+        $query = $this->db->query(
+            "SELECT * FROM " . DB_PREFIX . "product_discount 
+             WHERE product_id = '" . (int)$product_id . "' 
+             ORDER BY quantity, priority, price"
+        );
+        return $query->rows;
+    }
 }
-
 ?>
