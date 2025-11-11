@@ -21,37 +21,6 @@ class ControllerExtensionFeedUsporedi extends Controller {
 
         foreach ($products as $product) {
 
-            $nabavna_cijena = $this->getNabavnacijena($product['product_id']);
-
-
-
-            if ($nabavna_cijena != '') {
-
-
-                /*  $url ='http://sechip.dyndns.org:8888/datasnap/rest/StanjeZalihe/Skladiste/[101,001,002,003,004,005,007,011,012]/'.$product['model'];
-
-
-                  $username = 'webshop';
-                  $password = 'bJ8tn63Q';
-                  $ch       = curl_init($url);
-                  curl_setopt($ch, CURLOPT_USERPWD, $username . ":" . $password);
-                  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                  $response = curl_exec($ch);
-
-
-                  header('Content-Type: application/json');
-
-                  $response =    json_decode($response, true);
-
-                 $kol=0;
-
-                 foreach ($response['result'][0]['stanje'] as $item){
-
-                     $kol += $item['raspolozivo_kol'];
-
-                 }
-
-                 $ukupna_kolicina = $kol;*/
 
                 $description = $product['description'];
 
@@ -113,7 +82,7 @@ class ControllerExtensionFeedUsporedi extends Controller {
                     $output .= '</product>';
 
                 }
-            }
+
 
         }
         $output .= '</products>';
