@@ -86,7 +86,7 @@ class ControllerExtensionFeedUsporedi extends Controller {
 
                 $vpc = $product['vpc'];
 
-                if($product['quantityws'] > 0){
+                if($product['quantity'] > 0){
                     $output .= '<product>';
                     $output .= '<sku_id>' . $product['model'] . '</sku_id>';
                     $output .= '<name>' . $this->wrapInCDATA($name) . '</name>';
