@@ -139,6 +139,7 @@ class ControllerExtensionFeedUsporedi extends Controller {
     {
         if (empty($productIds)) return;
 
+        // Filtriraj i sanitiziraj ID-eve
         $ids = array();
         foreach ($productIds as $pid) {
             $pid = (int)$pid;
@@ -148,29 +149,39 @@ class ControllerExtensionFeedUsporedi extends Controller {
 
         $language_id = (int)$this->config->get('config_language_id');
 
+        // Uzmi SVE candidate-pathove po proizvodu, poredaj po dubini i duljini opisa, pa u PHP-u zadrži prvi (najdublji/najduži)
         $sql = "
+        SELECT 
+            p2c.product_id,
+            cat.full_name,
+            cat.depth
+        FROM " . DB_PREFIX . "product_to_category p2c
+        JOIN (
             SELECT 
-                p2c.product_id,
-                GROUP_CONCAT(cat.full_name SEPARATOR ' | ') AS categories
-            FROM " . DB_PREFIX . "product_to_category p2c
-            JOIN (
-                SELECT 
-                    cp.category_id,
-                    GROUP_CONCAT(cd2.name ORDER BY cp.level SEPARATOR ' > ') AS full_name
-                FROM " . DB_PREFIX . "category_path cp
-                JOIN " . DB_PREFIX . "category_description cd2 
-                    ON cd2.category_id = cp.path_id AND cd2.language_id = " . $language_id . "
-                GROUP BY cp.category_id
-            ) cat ON cat.category_id = p2c.category_id
-            WHERE p2c.product_id IN (" . implode(',', $ids) . ")
-            GROUP BY p2c.product_id
-        ";
+                cp.category_id,
+                GROUP_CONCAT(cd2.name ORDER BY cp.level SEPARATOR ' > ') AS full_name,
+                COUNT(*) AS depth
+            FROM " . DB_PREFIX . "category_path cp
+            JOIN " . DB_PREFIX . "category_description cd2 
+                ON cd2.category_id = cp.path_id
+               AND cd2.language_id = " . $language_id . "
+            GROUP BY cp.category_id
+        ) cat ON cat.category_id = p2c.category_id
+        WHERE p2c.product_id IN (" . implode(',', $ids) . ")
+        ORDER BY p2c.product_id, cat.depth DESC, LENGTH(cat.full_name) DESC
+    ";
 
         $q = $this->db->query($sql);
+
+        // U mapu upiši SAMO prvi red za svaki product_id (jer je već poredano po najdubljem/najdužem)
         foreach ($q->rows as $row) {
-            $this->categoryMapByProduct[(int)$row['product_id']] = $row['categories'];
+            $pid = (int)$row['product_id'];
+            if (!isset($this->categoryMapByProduct[$pid])) {
+                $this->categoryMapByProduct[$pid] = $row['full_name'];
+            }
         }
     }
+
 
     private function getCategoriesNameFast($product_id)
     {
