@@ -5,21 +5,24 @@ class ControllerExtensionFeedUsporedi extends Controller {
     public function index()
     {
 
-        if (isset($_GET['pass']) && $_GET['pass'] = 'gNG_p-x7V-+I=uaIgjo=hTMQX~s') {
+        if (isset($_GET['pass']) && $_GET['pass'] === 'gNG_p-x7V-+I=uaIgjo=hTMQX~s') {
 
-        $output = '<?xml version="1.0" encoding="UTF-8"?>';
-        $output .= '<products>';
-
-
-
-        $this->load->model('catalog/product');
-        $this->load->model('catalog/category');
+            $output = '<?xml version="1.0" encoding="UTF-8"?>';
+            $output .= '<products>';
 
 
 
-        $products = $this->model_catalog_product->getProducts();
+            $this->load->model('catalog/product');
+            $this->load->model('catalog/category');
 
-        foreach ($products as $product) {
+
+
+            $products = $this->model_catalog_product->getProducts();
+
+            $productIds = array_column($products, 'product_id');
+            $this->preloadCategoryNamesForProducts($productIds);
+
+            foreach ($products as $product) {
 
 
                 $description = $product['description'];
@@ -61,7 +64,7 @@ class ControllerExtensionFeedUsporedi extends Controller {
                     $output .= '<name>' . $this->wrapInCDATA($name) . '</name>';
                     $output .= '<description>' . $this->wrapInCDATA($description) . '</description>';
                     $output .= '<manufacturer>' . $this->wrapInCDATA($product['manufacturer']) . '</manufacturer>';
-                    $output .= '<category>' . $this->wrapInCDATA($this->getCategoriesName($product['product_id'])) . '</category>';
+                    $output .= '<category>' . $this->wrapInCDATA($this->getCategoriesNameFast($product['product_id'])) . '</category>';
                     $output .= '<price>' . number_format($price, '2', '.', '') . '</price>';
                     $output .= '<delivery_price>4.99</delivery_price>';
                     $output .= '<product_url>' . $this->url->link('product/product', 'product_id=' . $product['product_id']) . '</product_url>';
@@ -84,17 +87,17 @@ class ControllerExtensionFeedUsporedi extends Controller {
                 }
 
 
+            }
+            $output .= '</products>';
+
+
+            $output = iconv('UTF-8', 'UTF-8//IGNORE', $output);
+
+            $this->response->addHeader('Content-Type: application/xml');
+            $this->response->setOutput($output);
+
+
         }
-        $output .= '</products>';
-
-
-        $output = iconv('UTF-8', 'UTF-8//IGNORE', $output);
-
-        $this->response->addHeader('Content-Type: application/xml');
-        $this->response->setOutput($output);
-
-
-}
 
     }
 
@@ -143,7 +146,7 @@ class ControllerExtensionFeedUsporedi extends Controller {
         return str_replace($char, '', $string);
     }
 
-     public function elipsis ($text, $words = 30) {
+    public function elipsis ($text, $words = 30) {
         // Check if string has more than X words
         if (str_word_count($text) > $words) {
 
@@ -255,6 +258,44 @@ class ControllerExtensionFeedUsporedi extends Controller {
 
         return $query->rows;
     }
+
+
+    private $categoryMapByProduct = [];
+
+    private function preloadCategoryNamesForProducts(array $productIds)
+    {
+        if (empty($productIds)) return;
+
+        $language_id = (int)$this->config->get('config_language_id');
+
+        $sql = "
+        SELECT 
+            p2c.product_id,
+            GROUP_CONCAT(cat.full_name SEPARATOR ' | ') AS categories
+        FROM " . DB_PREFIX . "product_to_category p2c
+        JOIN (
+            SELECT 
+                cp.category_id,
+                GROUP_CONCAT(cd2.name ORDER BY cp.level SEPARATOR ' > ') AS full_name
+            FROM " . DB_PREFIX . "category_path cp
+            JOIN " . DB_PREFIX . "category_description cd2 
+                ON cd2.category_id = cp.path_id AND cd2.language_id = " . $language_id . "
+            GROUP BY cp.category_id
+        ) cat ON cat.category_id = p2c.category_id
+        WHERE p2c.product_id IN (" . implode(',', array_map('intval', $productIds)) . ")
+        GROUP BY p2c.product_id
+    ";
+        $q = $this->db->query($sql);
+        foreach ($q->rows as $row) {
+            $this->categoryMapByProduct[(int)$row['product_id']] = $row['categories'];
+        }
+    }
+
+    private function getCategoriesNameFast($product_id)
+    {
+        return isset($this->categoryMapByProduct[$product_id]) ? $this->categoryMapByProduct[$product_id] : '';
+    }
+
 
 }
 
