@@ -199,10 +199,8 @@ class ControllerProductProduct extends Controller {
                         "https://ec.europa.eu/assets/move-ener/eprel/EPREL%20Public/Nested-labels%20thumbnails/" . $energy_label_thumb;
 
                     // URL za fiche (putem tvog proxy route-a)
-                    $data['energy_fiche_pdf'] = $this->url->link(
-                        'product/eprel/fiche',
-                        'category=' . $energy_category . '&model=' . $energy_model
-                    );
+                    $data['energy_fiche_pdf'] =
+                        "https://eprel.ec.europa.eu/fiches/$energy_category/Fiche_{$energy_model}_HR.pdf";
                 }
             }
 
