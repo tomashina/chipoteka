@@ -324,29 +324,32 @@
 
                                     {% if jan %}
                                         <div class="energy-class-wrapper">
+
                                             <div class="energy-class-image-wrapper">
-                                                <a href="https://eprel.ec.europa.eu/api/products/{{ energy_category }}/{{ energy_model }}/labels?format=PDF"
+                                                <a href="{{ energy_label_pdf }}"
                                                    target="_blank" rel="noopener">
                                                     <img class="product-image-energy-stickers-img"
-                                                         src="https://ec.europa.eu/assets/move-ener/eprel/EPREL%20Public/Nested-labels%20thumbnails/{{ energy_label }}"
+                                                         src="{{ energy_label_thumb }}"
                                                          alt="{{ energy_label }}">
                                                 </a>
                                             </div>
 
                                             <div class="energy-class-links-wrapper">
+
                                                 <div class="energy-class-link">
-                                                    <a href="https://eprel.ec.europa.eu/api/products/{{ energy_category }}/{{ energy_model }}/labels?format=PDF"
+                                                    <a href="{{ energy_label_pdf }}"
                                                        target="_blank" rel="noopener">
                                                         Energetska naljepnica
                                                     </a>
                                                 </div>
 
                                                 <div class="energy-class-link">
-                                                    <a href="https://eprel.ec.europa.eu/api/products/{{ energy_category }}/{{ energy_model }}/fiche?language=HR"
+                                                    <a href="{{ energy_fiche_pdf }}"
                                                        target="_blank" rel="noopener">
                                                         Informacijski list
                                                     </a>
                                                 </div>
+
                                             </div>
                                         </div>
                                     {% endif %}

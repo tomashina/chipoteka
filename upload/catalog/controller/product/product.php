@@ -180,6 +180,33 @@ class ControllerProductProduct extends Controller {
 		$product_info = $this->model_catalog_product->getProduct($product_id);
 
 		if ($product_info) {
+
+            if (!empty($product_info['jan'])) {
+
+                $eprelData = json_decode($product_info['jan'], true);
+
+                if ($eprelData) {
+                    $energy_label_thumb = isset($eprelData[0]) ? $eprelData[0] : '';
+                    $energy_model       = isset($eprelData[1]) ? $eprelData[1] : '';
+                    $energy_category    = isset($eprelData[2]) ? $eprelData[2] : '';
+
+                    // URL za energetsku naljepnicu (PDF)
+                    $data['energy_label_pdf'] =
+                        "https://eprel.ec.europa.eu/api/products/" . $energy_category . "/" . $energy_model . "/labels?format=PDF";
+
+                    // URL za thumbnail (ako ga želiš prikazivati)
+                    $data['energy_label_thumb'] =
+                        "https://ec.europa.eu/assets/move-ener/eprel/EPREL%20Public/Nested-labels%20thumbnails/" . $energy_label_thumb;
+
+                    // URL za fiche (putem tvog proxy route-a)
+                    $data['energy_fiche_pdf'] = $this->url->link(
+                        'product/eprel/fiche',
+                        'category=' . $energy_category . '&model=' . $energy_model
+                    );
+                }
+            }
+
+
             $this->load->model('extension/module/recently_viewed');
             if($this->model_extension_module_recently_viewed->isEnabled()){
                 if ($this->customer->isLogged()) {

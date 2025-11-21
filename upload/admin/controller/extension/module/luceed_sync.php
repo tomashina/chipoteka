@@ -203,11 +203,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
 
 
-
         $api_key = "EJIHIAziLs86nUV0rs7V08u5XTg1m8LF16uXJ9J4";
 
         $target = $this->request->get['target'];
-
 
 
 
@@ -224,7 +222,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
             $category_id= ['538'];
         }
-
 
 
 
