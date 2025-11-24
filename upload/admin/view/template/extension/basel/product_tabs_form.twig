@@ -118,7 +118,48 @@
                   </select>
                 </div>
               </div>
-		</div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-active-from">Aktivno od</label>
+            <div class="col-sm-10">
+              <div class="input-group date">
+                <input type="text"
+                       name="active_from"
+                       value="{{ active_from }}"
+                       placeholder="YYYY-MM-DD"
+                       data-date-format="YYYY-MM-DD"
+                       id="input-active-from"
+                       class="form-control" />
+                <span class="input-group-btn">
+        <button type="button" class="btn btn-default">
+          <i class="fa fa-calendar"></i>
+        </button>
+      </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-active-to">Aktivno do</label>
+            <div class="col-sm-10">
+              <div class="input-group date">
+                <input type="text"
+                       name="active_to"
+                       value="{{ active_to }}"
+                       placeholder="YYYY-MM-DD"
+                       data-date-format="YYYY-MM-DD"
+                       id="input-active-to"
+                       class="form-control" />
+                <span class="input-group-btn">
+        <button type="button" class="btn btn-default">
+          <i class="fa fa-calendar"></i>
+        </button>
+      </span>
+              </div>
+            </div>
+          </div>
+
+      </div>
       </form>
     </div>
   </div>
@@ -194,5 +235,11 @@ $('#category-related').delegate('.fa-minus-circle', 'click', function() {
 });
 
 //--></script>
+
+  <script type="text/javascript"><!--
+    $('.date').datetimepicker({
+      pickTime: false
+    });
+    //--></script>
 </div>
 {{ footer }}

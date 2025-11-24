@@ -1,11 +1,15 @@
 <?php
 class ModelExtensionBaselProductTabs extends Model {
 	public function addTab($data) {
-		
-		$this->db->query("INSERT INTO " . DB_PREFIX . "product_tabs SET 
-		sort_order = '" . (int)$data['sort_order'] . "', 
-		global = '" . (int)$data['global'] . "', 
-		status = '" . (int)$data['status'] . "'");
+
+        $this->db->query("INSERT INTO " . DB_PREFIX . "product_tabs SET 
+    sort_order = '" . (int)$data['sort_order'] . "', 
+    global = '" . (int)$data['global'] . "', 
+    status = '" . (int)$data['status'] . "',
+    active_from = '" . $this->db->escape($data['active_from']) . "',
+    active_to = '" . $this->db->escape($data['active_to']) . "'
+");
+
 		
 		$tab_id = $this->db->getLastId();
 			
@@ -31,8 +35,15 @@ class ModelExtensionBaselProductTabs extends Model {
 	}
 
 	public function editTab($tab_id, $data) {
-		
-		$this->db->query("UPDATE " . DB_PREFIX . "product_tabs SET sort_order = '" . (int)$data['sort_order'] . "', global = '" . (int)$data['global'] . "', status = '" . (int)$data['status'] . "' WHERE tab_id = '" . (int)$tab_id . "'");
+
+        $this->db->query("UPDATE " . DB_PREFIX . "product_tabs SET 
+    sort_order = '" . (int)$data['sort_order'] . "', 
+    global = '" . (int)$data['global'] . "', 
+    status = '" . (int)$data['status'] . "',
+    active_from = '" . $this->db->escape($data['active_from']) . "',
+    active_to = '" . $this->db->escape($data['active_to']) . "'
+    WHERE tab_id = '" . (int)$tab_id . "'
+");
 			
 		$this->db->query("DELETE FROM " . DB_PREFIX . "product_tabs_description WHERE tab_id = '" . (int)$tab_id . "'");
 

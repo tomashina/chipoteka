@@ -7,7 +7,14 @@ class ModelExtensionBaselProductTabs extends Model {
 		$products = $this->getProducts($product_id);
 		
 		// Grab all tab_ids
-		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_tabs WHERE status = '1' ORDER BY sort_order, tab_id ASC");
+        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_tabs 
+    WHERE status = '1'
+    AND (
+        (active_from IS NULL OR active_from = '0000-00-00' OR active_from = '' OR active_from <= CURDATE())
+        AND
+        (active_to IS NULL OR active_to = '0000-00-00' OR active_to = '' OR active_to >= CURDATE())
+    )
+    ORDER BY sort_order, tab_id ASC");
 		
 			if($query->rows){
 			

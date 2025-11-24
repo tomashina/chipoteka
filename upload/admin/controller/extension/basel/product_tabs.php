@@ -301,6 +301,8 @@ class ControllerExtensionBaselProductTabs extends Controller {
 	protected function getForm() {
 		
 		if ((float)VERSION >= 3.0) {$token_prefix = 'user_token';} else {$token_prefix = 'token';}
+
+
 		
 		$ocb_languages_form = array(
 			'heading_title',
@@ -326,8 +328,26 @@ class ControllerExtensionBaselProductTabs extends Controller {
 		foreach ($ocb_languages_form as $lang_form) {
 			$data[$lang_form] = $this->language->get($lang_form);
 		}
-		
-		if (isset($this->error['warning'])) {
+
+
+        if (isset($this->request->post['active_from'])) {
+            $data['active_from'] = $this->request->post['active_from'];
+        } elseif (!empty($tab_info)) {
+            $data['active_from'] = $tab_info['active_from'];
+        } else {
+            $data['active_from'] = '';
+        }
+
+        if (isset($this->request->post['active_to'])) {
+            $data['active_to'] = $this->request->post['active_to'];
+        } elseif (!empty($tab_info)) {
+            $data['active_to'] = $tab_info['active_to'];
+        } else {
+            $data['active_to'] = '';
+        }
+
+
+        if (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
 		} else {
 			$data['error_warning'] = '';
