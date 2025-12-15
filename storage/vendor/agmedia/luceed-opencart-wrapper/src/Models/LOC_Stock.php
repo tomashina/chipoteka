@@ -55,6 +55,15 @@ class LOC_Stock
 
     private $log_name;
 
+    private $skladista_valid = true;
+    private $dobavljaci_valid = true;
+
+    public function isValid(): bool
+    {
+        return $this->skladista_valid && $this->dobavljaci_valid;
+    }
+
+
     /**
      * LOC_Product constructor.
      */
@@ -143,6 +152,16 @@ class LOC_Stock
      */
     public function createQuery()
     {
+        if (!$this->skladista_valid) {
+            return $this;
+        }
+
+        // ako nema ničega za upis -> neće se ni update dogoditi
+        if ($this->skladista_sorted && $this->skladista_stock && $this->skladista_stock->isEmpty()) {
+            $this->skladista_query = '';
+            return $this;
+        }
+
         if ($this->skladista_sorted && $this->skladista_stock) {
             foreach ($this->skladista_stock as $item) {
                 $this->skladista_query .= '("' . $item['artikl_uid'] . '", ' . $item['stanje_kol'] . ', ' . $item['stock_status'] . '),';
@@ -154,8 +173,10 @@ class LOC_Stock
                 $this->dobavljaci_query .= '("' . $item['artikl'] . '", ' . $item['stanje_kol'] . ', ' . $item['stock_status'] . '),';
             }
         }
+
         Log::store($this->skladista_query, $this->log_name . '-query');
         Log::store($this->dobavljaci_query, $this->log_name . '-query');
+
         return $this;
     }
 
@@ -166,6 +187,11 @@ class LOC_Stock
     public function update(): int
     {
         //   $this->truncateProductsQuantity();
+
+        if (!$this->skladista_valid) {
+            Log::store('SKIP UPDATE: invalid skladista feed', $this->log_name . '-SKIP');
+            return 0;
+        }
 
         if ($this->skladista_query != '') {
             $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($this->skladista_query, 0, -1) . ";");
@@ -221,12 +247,19 @@ class LOC_Stock
     {
         $json = json_decode($dobavljaci);
 
-        $this->dobavljaci = collect($json->result[0]->artikli_dobavljaci);
+        if (!$json || !isset($json->result[0]->artikli_dobavljaci) || !is_array($json->result[0]->artikli_dobavljaci)) {
+            $this->dobavljaci_valid = false;
+            $this->dobavljaci = collect();
 
-        //Log::store($this->dobavljaci->toArray(), $this->log_name . '-original');
+            Log::store($dobavljaci, $this->log_name . '-DOBAVLJACI-INVALID');
+            return $this;
+        }
+
+        $this->dobavljaci = collect($json->result[0]->artikli_dobavljaci);
 
         return $this;
     }
+
 
 
     /**
@@ -241,12 +274,26 @@ class LOC_Stock
     {
         $json = json_decode($skladista);
 
+        // JSON nije validan ili nema očekivanu strukturu
+        if (!$json || !isset($json->result[0]->stanje) || !is_array($json->result[0]->stanje)) {
+            $this->skladista_valid = false;
+            $this->skladista = collect();
+
+            Log::store($skladista, $this->log_name . '-SKLADISTA-INVALID');
+            return $this;
+        }
+
         $this->skladista = collect($json->result[0]->stanje);
 
-        //Log::store($this->skladista->toArray(), $this->log_name . '-original');
+        // Ako očekuješ da batch feed nikad ne smije biti prazan:
+        if ($this->skladista->isEmpty()) {
+            $this->skladista_valid = false;
+            Log::store($skladista, $this->log_name . '-SKLADISTA-EMPTY');
+        }
 
         return $this;
     }
+
 
 
     /**
