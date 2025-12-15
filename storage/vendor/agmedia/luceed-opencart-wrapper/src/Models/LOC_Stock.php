@@ -204,6 +204,7 @@ class LOC_Stock
                 $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.quantity = p.quantity + pt.quantity, p.stock_status_id = pt.price");
             }
 
+            $this->deleteProductTempDB();
             //Log::store($this->log_name . '-UPDATED 1', $this->log_name);
 
             return 1;
