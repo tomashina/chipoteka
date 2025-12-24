@@ -330,21 +330,7 @@ class ControllerExtensionBaselProductTabs extends Controller {
 		}
 
 
-        if (isset($this->request->post['active_from'])) {
-            $data['active_from'] = $this->request->post['active_from'];
-        } elseif (!empty($tab_info)) {
-            $data['active_from'] = $tab_info['active_from'];
-        } else {
-            $data['active_from'] = '';
-        }
 
-        if (isset($this->request->post['active_to'])) {
-            $data['active_to'] = $this->request->post['active_to'];
-        } elseif (!empty($tab_info)) {
-            $data['active_to'] = $tab_info['active_to'];
-        } else {
-            $data['active_to'] = '';
-        }
 
 
         if (isset($this->error['warning'])) {
@@ -419,6 +405,22 @@ class ControllerExtensionBaselProductTabs extends Controller {
 		} else {
 			$data['sort_order'] = 0;
 		}
+
+        if (isset($this->request->post['active_from'])) {
+            $data['active_from'] = $this->request->post['active_from'];
+        } elseif (!empty($tab_info)) {
+            $data['active_from'] = $tab_info['active_from'];
+        } else {
+            $data['active_from'] = '';
+        }
+
+        if (isset($this->request->post['active_to'])) {
+            $data['active_to'] = $this->request->post['active_to'];
+        } elseif (!empty($tab_info)) {
+            $data['active_to'] = $tab_info['active_to'];
+        } else {
+            $data['active_to'] = '';
+        }
 
 		if (isset($this->request->post['status'])) {
 			$data['status'] = $this->request->post['status'];
