@@ -11,53 +11,60 @@ class ControllerCheckoutSuccess extends Controller {
 
 		if (isset($this->session->data['order_id'])) {
             $this->load->model('checkout/order');
-            $order_id = $this->session->data['order_id'];
+            $order_id = (int) $this->session->data['order_id'];
             $order_info = $this->model_checkout_order->getOrder($order_id);
 
-            $data['paymethod'] = $order_info['payment_code'];
-            $data['shmethod'] = $order_info['shipping_code'];
-            $data['order_id'] = $order_id;
 
-            $this->cart->clear();
+            if (!$order_info || empty($order_info['order_id'])) {
+                $this->log->write('[Luceed] OC3 success hit but order missing. session order_id=' . $order_id);
+            } else {
 
-			unset($this->session->data['shipping_method']);
-			unset($this->session->data['shipping_methods']);
-			unset($this->session->data['payment_method']);
-			unset($this->session->data['payment_methods']);
-			unset($this->session->data['guest']);
-			unset($this->session->data['comment']);
-			unset($this->session->data['order_id']);
-			unset($this->session->data['coupon']);
-			unset($this->session->data['reward']);
-			unset($this->session->data['voucher']);
-			unset($this->session->data['vouchers']);
-			unset($this->session->data['totals']);
-            unset($this->session->data['creditcardname']);
-            unset($this->session->data['paymentplan']);
+                    $data['paymethod'] = $order_info['payment_code'];
+                    $data['shmethod'] = $order_info['shipping_code'];
+                    $data['order_id'] = $order_id;
 
-            if (!empty($this->session->data['boxnow'])) { unset($this->session->data['boxnow']); }
+                    $this->cart->clear();
 
-            /*******************************************************************************
-             *                                Copyright : AGmedia                           *
-             *                              email: filip@agmedia.hr                         *
-             *******************************************************************************/
-            $nhs_no = $order_id . date("ym");
-            $poziv_nb = $nhs_no . $this->mod11INI($nhs_no);
+                    unset($this->session->data['shipping_method']);
+                    unset($this->session->data['shipping_methods']);
+                    unset($this->session->data['payment_method']);
+                    unset($this->session->data['payment_methods']);
+                    unset($this->session->data['guest']);
+                    unset($this->session->data['comment']);
+                    unset($this->session->data['order_id']);
+                    unset($this->session->data['coupon']);
+                    unset($this->session->data['reward']);
+                    unset($this->session->data['voucher']);
+                    unset($this->session->data['vouchers']);
+                    unset($this->session->data['totals']);
+                    unset($this->session->data['creditcardname']);
+                    unset($this->session->data['paymentplan']);
 
-            $this->load->model('checkout/order');
-            $oc_order = $this->model_checkout_order->getOrder($order_id);
-            $oc_order['poziv_na_broj'] = $poziv_nb;
-            $order    = new LOC_Order($oc_order);
-            $customer = new LOC_Customer($order->getCustomerData());
+                    if (!empty($this->session->data['boxnow'])) { unset($this->session->data['boxnow']); }
 
-            if ( ! $customer->exist()) {
-                $customer->store();
-            }
+                    /*******************************************************************************
+                     *                                Copyright : AGmedia                           *
+                     *                              email: filip@agmedia.hr                         *
+                     *******************************************************************************/
+                    $nhs_no = $order_id . date("ym");
+                    $poziv_nb = $nhs_no . $this->mod11INI($nhs_no);
 
-            $sent = $order->setCustomerUid($customer->getUid())->store();
+                    $this->load->model('checkout/order');
+                    $oc_order = $order_info;
+                    $oc_order['poziv_na_broj'] = $poziv_nb;
+                    $order    = new LOC_Order($oc_order);
+                    $customer = new LOC_Customer($order->getCustomerData());
 
-            if ( ! $sent) {
-                $order->recordError();
+                    if ( ! $customer->exist()) {
+                        $customer->store();
+                    }
+
+                    $sent = $order->setCustomerUid($customer->getUid())->store();
+
+                    if ( ! $sent) {
+                        $order->recordError();
+             }
+
             }
 
             /*******************************************************************************
@@ -90,7 +97,7 @@ class ControllerCheckoutSuccess extends Controller {
 		);
 
         ///orderinfo
-        if (isset($order_id)) {
+        if (!empty($order_info) && !empty($order_info['order_id'])) {
             $this->load->language('account/order');
             $this->load->model('account/order');
         $data['order_id'] = (int)$order_id;
