@@ -1,46 +1,60 @@
 <?php
 class ControllerExtensionModuleSlideshow extends Controller {
-	public function index($setting) {
-		static $module = 0;		
+    public function index($setting) {
+        static $module = 0;
 
-		$this->load->model('design/banner');
-		$this->load->model('tool/image');
+        $this->load->model('design/banner');
+        $this->load->model('tool/image');
 
-		//$this->document->addStyle('catalog/view/javascript/jquery/swiper/css/swiper.min.css');
-		//$this->document->addStyle('catalog/view/javascript/jquery/swiper/css/opencart.css');
-		//$this->document->addScript('catalog/view/javascript/jquery/swiper/js/swiper.jquery.js');
-		
-		$data['banners'] = array();
+        $data['banners'] = array();
 
-		$results = $this->model_design_banner->getBanner($setting['banner_id']);
+        // U OC catalog model/design/banner->getBanner(banner_id) obično vraća banner_image zapise
+        $results = $this->model_design_banner->getBanner($setting['banner_id']);
 
-		foreach ($results as $result) {
+        $today = date('Y-m-d'); // dovoljno jer radimo samo s DATE (bez vremena)
+
+        foreach ($results as $result) {
+
+            // --- FILTER PO DATUMU (NOVO) ---
+            $date_from = !empty($result['date_from']) ? $result['date_from'] : '';
+            $date_to   = !empty($result['date_to']) ? $result['date_to'] : '';
+
+            // Ako su oba popunjena, mora biti u intervalu (uključivo)
+            if ($date_from && $date_to) {
+                if ($today < $date_from || $today > $date_to) {
+                    continue; // preskoči banner izvan intervala
+                }
+            }
+            // Ako je jedan popunjen a drugi nije (ne bi se smjelo događati zbog validacije),
+            // možeš odlučiti: preskoči ili prikaži. Ja preskačem zbog sigurnosti:
+            if (($date_from && !$date_to) || (!$date_from && $date_to)) {
+                continue;
+            }
+            // --- /FILTER ---
 
             // Responsive slika
             if (!empty($result['image_responsive']) && is_file(DIR_IMAGE . $result['image_responsive'])) {
                 $image_responsive = $this->model_tool_image->resize($result['image_responsive'], 500, 500);
             } else {
-                // fallback na no_image.png ako nema responsive
                 $image_responsive = $this->model_tool_image->resize('no_image.png', 500, 500);
             }
 
+            if (!empty($result['image']) && is_file(DIR_IMAGE . $result['image'])) {
+                $data['banners'][] = array(
+                    'title'          => $result['title'],
+                    'actiontitle'    => isset($result['actiontitle']) ? $result['actiontitle'] : '',
+                    'buttontitle'    => isset($result['buttontitle']) ? $result['buttontitle'] : '',
+                    'text'           => isset($result['text']) ? $result['text'] : '',
+                    'link'           => $result['link'],
+                    'bojapozadine'   => isset($result['bojapozadine']) ? $result['bojapozadine'] : '',
+                    'image'          => $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height']),
+                    'image_responsive' => $image_responsive
+                );
+            }
+        }
 
-			if (is_file(DIR_IMAGE . $result['image'])) {
-				$data['banners'][] = array(
-					'title' => $result['title'],
-                    'actiontitle' => $result['actiontitle'],
-                    'buttontitle' => $result['buttontitle'],
-                    'text' => $result['text'],
-					'link'  => $result['link'],
-                    'bojapozadine'  => $result['bojapozadine'],
-					'image' => $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height']),
-                    'image_responsive'        => $image_responsive // koristi se samo responsive
-				);
-			}
-		}
+        $data['module'] = $module++;
 
-		$data['module'] = $module++;
-
-		return $this->load->view('extension/module/slideshow', $data);
-	}
+        return $this->load->view('extension/module/slideshow', $data);
+    }
 }

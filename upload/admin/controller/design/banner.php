@@ -369,7 +369,10 @@ class ControllerDesignBanner extends Controller {
                     'thumb'         => $this->model_tool_image->resize($thumb, 100, 100),
                     'image_responsive' => $image_responsive,
                     'thumb_responsive' => $this->model_tool_image->resize($thumb_responsive, 100, 100),
-                    'sort_order'    => $banner_image['sort_order']
+                    'sort_order'    => $banner_image['sort_order'],
+                    // NOVO:
+                    'date_from'        => isset($banner_image['date_from']) ? $banner_image['date_from'] : '',
+                    'date_to'          => isset($banner_image['date_to']) ? $banner_image['date_to'] : ''
                 );
             }
         }
@@ -392,15 +395,44 @@ class ControllerDesignBanner extends Controller {
 			$this->error['name'] = $this->language->get('error_name');
 		}
 
-		if (isset($this->request->post['banner_image'])) {
-			foreach ($this->request->post['banner_image'] as $language_id => $value) {
-				foreach ($value as $banner_image_id => $banner_image) {
-					if ((utf8_strlen($banner_image['title']) < 2) || (utf8_strlen($banner_image['title']) > 64)) {
-						$this->error['banner_image'][$language_id][$banner_image_id] = $this->language->get('error_title');
-					}
-				}
-			}
-		}
+        if (isset($this->request->post['banner_image'])) {
+            foreach ($this->request->post['banner_image'] as $language_id => $value) {
+                foreach ($value as $banner_image_id => $banner_image) {
+
+                    // postojeća validacija title-a
+                    if ((utf8_strlen($banner_image['title']) < 2) || (utf8_strlen($banner_image['title']) > 64)) {
+                        $this->error['banner_image'][$language_id][$banner_image_id] = $this->language->get('error_title');
+                    }
+
+                    // NOVO: validacija datuma
+                    $date_from = isset($banner_image['date_from']) ? trim($banner_image['date_from']) : '';
+                    $date_to   = isset($banner_image['date_to']) ? trim($banner_image['date_to']) : '';
+
+                    // ako su oba prazna -> ok (znači "uvijek prikazuj")
+                    // ako je jedan upisan, drugi nije -> greška
+                    if (($date_from && !$date_to) || (!$date_from && $date_to)) {
+                        $this->error['banner_image'][$language_id][$banner_image_id]['date'] = 'Oba datuma moraju biti unesena (od i do), ili oba prazna.';
+                    }
+
+                    // ako su oba upisana, provjeri format i redoslijed
+                    if ($date_from && $date_to) {
+                        $df = date_create_from_format('Y-m-d', $date_from);
+                        $dt = date_create_from_format('Y-m-d', $date_to);
+
+                        $df_ok = $df && $df->format('Y-m-d') === $date_from;
+                        $dt_ok = $dt && $dt->format('Y-m-d') === $date_to;
+
+                        if (!$df_ok || !$dt_ok) {
+                            $this->error['banner_image'][$language_id][$banner_image_id]['date'] = 'Neispravan format datuma. Koristi YYYY-MM-DD.';
+                        } else {
+                            if (strtotime($date_from) > strtotime($date_to)) {
+                                $this->error['banner_image'][$language_id][$banner_image_id]['date'] = 'Datum "od" ne može biti nakon datuma "do".';
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
 		return !$this->error;
 	}
