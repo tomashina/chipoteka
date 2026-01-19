@@ -1,5 +1,5 @@
 <?php
-Class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Controller
+class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Controller
 {
     /**
      * @var ControllerExtensionModuleDigitalElephantFilterGetProduct
@@ -18,89 +18,220 @@ Class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
     public function __construct($registry) {
         parent::__construct($registry);
         $this->getProduct = $this->load->controller('extension/module/digital_elephant_filter/get_product/prototype');
-        $this->helperUrl = $this->load->controller('extension/module/digital_elephant_filter/helper_url/prototype');
+        $this->helperUrl  = $this->load->controller('extension/module/digital_elephant_filter/helper_url/prototype');
     }
 
     public function getSectionGroups($setting, $category_id)
     {
+        $category_id = (int)$category_id;
+
         $section_groups = $this->cache->get('DEF_panel_attr_' . $category_id);
+
         if (($this->helperUrl->isAjaxRequest() || !$section_groups || !isset($setting['DEF_settings']['cache']['isset']))) {
+
             $args = array(
                 'category_id' => $category_id,
                 'filter_sub_category' => true
             );
+
             $attributes_groups = $this->model_extension_module_digitalElephantFilter->getAttributes($setting['DEF_settings'], $args);
-			
-			$attributes_type_by_setting = '';
-			if (isset($setting['DEF_settings']['attributes'])) {
-            $attributes_type_by_setting = $setting['DEF_settings']['attributes'];
-			}
+
+            // ===================== URL STATE + PRIMARY CONTEXT =====================
+            $urlBase = $this->helperUrl->getUrlData();
+
+            // SVI trenutno odabrani atributi (primarni + sekundarni)
+            $activeAttributes = [];
+            if (!empty($urlBase['attribute']) && is_array($urlBase['attribute'])) {
+                $activeAttributes = $urlBase['attribute'];
+            }
+
+            // def_primary iz URL-a (npr. "attribute:301" ili "manufacturer")
+            $primary = isset($urlBase['def_primary']) ? (string)$urlBase['def_primary'] : '';
+
+            // fallback: ako nema def_primary, uzmi prvi odabrani atribut
+            if (!$primary && !empty($urlBase['attribute']) && is_array($urlBase['attribute'])) {
+                $firstAttrId = array_key_first($urlBase['attribute']);
+                if ($firstAttrId) {
+                    $primary = 'attribute:' . (int)$firstAttrId;
+                }
+            }
+
+            // fallback: ako nema atributa, a ima manufacturer odabir
+            if (!$primary && !empty($urlBase['manufacturers']) && !empty($urlBase['manufacturers']['manufacturer'])) {
+                $primary = 'manufacturer';
+            }
+
+            $primaryIsManufacturer = ($primary === 'manufacturer');
+
+            // izvući ID primarnog atributa
+            $primaryId = 0;
+            if ($primary && strpos($primary, 'attribute:') === 0) {
+                $primaryId = (int)str_replace('attribute:', '', $primary);
+            }
+
+            // FORCE totals čim postoji primary (attribute ili manufacturer)
+            $forceTotals = ($primaryId > 0 || $primaryIsManufacturer);
+
+            // želiš li prikazivati (x) uz vrijednost
+            $showTotalsInLabel = false;
+            // ======================================================================
+
+            $attributes_type_by_setting = '';
+            if (isset($setting['DEF_settings']['attributes'])) {
+                $attributes_type_by_setting = $setting['DEF_settings']['attributes'];
+            }
 
             $section_groups = [];
+
             foreach ($attributes_groups as $attribute_groups_id => $attribute_group) {
 
                 $sections = [];
+
                 foreach ($attribute_group['attribute_values'] as $attribute_value_id => $attribute_value) {
 
-                    if (!isset($attributes_type_by_setting[$attribute_value_id]['hide'])) {
+                    $attribute_value_id = (int)$attribute_value_id;
 
-                        $values = [];
-                        foreach ($attribute_value['values'] as $value) {
-                            if (!empty($value) || $value === '0') {
+                    if (isset($attributes_type_by_setting[$attribute_value_id]['hide'])) {
+                        continue;
+                    }
 
-                                $input_label = $value;
-                                $is_enable = true;
-                                if (isset($setting['DEF_settings']['is_display_total'])) {
-                                    $url = $this->helperUrl->getUrlData();
-                                    $url['category_id'] = $category_id;
-                                    $url['attribute'][$attribute_value_id] = [];
-                                    $url['attribute'][$attribute_value_id][] = $value;
-                                    $filter_data = $this->getProduct->getFilterDataByUrl($url);
-                                    $totalProducts = $this->getProduct->getTotalProducts($filter_data);
+                    $values = [];
 
-                                    $input_label = $value . ' <span>(' . $totalProducts . ')</span>';
-                                    $is_enable = (isset($totalProducts) && $totalProducts > 0);
+                    foreach ($attribute_value['values'] as $value) {
+
+                        // normalizacija vrijednosti
+                        $value = is_string($value) ? trim($value) : $value;
+
+                        // ne prikazuj prazne (ali dozvoli '0')
+                        if ($value === '' || $value === null) {
+                            continue;
+                        }
+
+                        $input_label = $value;
+                        $is_enable = true;
+
+                        // računaj totals ako je:
+                        // - forceTotals (postoji primary)
+                        // ili
+                        // - originalna opcija is_display_total
+                        if ($forceTotals || isset($setting['DEF_settings']['is_display_total'])) {
+
+                            // start: trenutni URL state
+                            $url = $urlBase;
+                            $url['category_id'] = $category_id;
+
+                            /**
+                             * Pravilo:
+                             * - Primarni definira bazni skup
+                             * - Ostali se računaju unutar tog skupa
+                             */
+
+                            // CASE A: primarni je MANUFACTURER -> totals za atribute unutar branda
+                            if ($primaryIsManufacturer) {
+
+                                // zadrži samo manufacturer selekciju
+                                $keepMan = [];
+                                if (isset($url['manufacturers']) && is_array($url['manufacturers'])) {
+                                    $keepMan = $url['manufacturers'];
                                 }
+                                $url['manufacturers'] = $keepMan;
 
-                                $values[] = array(
-                                    'input_value' => $value,
-                                    'input_name' => 'attribute',
-                                    'input_label' => $input_label,
-                                    'value_id' => $value,
-                                    'image' => '',
-                                    'is_enable' => $is_enable
-                                );
+                                // makni sekundarne da ne guše enable logiku
+                                $url['attribute'] = [];
+                                $url['option'] = [];
+                            }
+
+                            // CASE B: primarni je ATTRIBUTE -> totals za ostale atribute unutar kombinacije (primarni + sekundarni)
+                            else if ($primaryId > 0) {
+
+                                // zadrži sve odabrane atribute, ali izbaci trenutni atribut (čist test)
+                                $tmpAttrs = $activeAttributes;
+                                unset($tmpAttrs[$attribute_value_id]);
+                                $url['attribute'] = $tmpAttrs;
+
+                                // makni ostale sekundarne
+                                $url['option'] = [];
+                                // $url['manufacturers'] = []; // po želji: makni brand kad je primarni atribut
+                            }
+
+                            // Dodaj ovu test vrijednost
+                            if (!isset($url['attribute'][$attribute_value_id]) || !is_array($url['attribute'][$attribute_value_id])) {
+                                $url['attribute'][$attribute_value_id] = [];
+                            }
+
+                            // spriječi duplikate
+                            if (!in_array($value, $url['attribute'][$attribute_value_id], true)) {
+                                $url['attribute'][$attribute_value_id][] = $value;
+                            }
+
+                            $filter_data = $this->getProduct->getFilterDataByUrl($url);
+                            $totalProducts = $this->getProduct->getTotalProducts($filter_data);
+
+                            $is_enable = ((int)$totalProducts > 0);
+
+                            // Label: po želji pokaži (total)
+                            if ($showTotalsInLabel || isset($setting['DEF_settings']['is_display_total'])) {
+                                $input_label = $value . ' <span>(' . (int)$totalProducts . ')</span>';
+                            } else {
+                                $input_label = $value;
                             }
                         }
 
-                        if ($values) {
-                            //type
-                            $type = '';
-                            if (isset($attributes_type_by_setting[$attribute_value_id]['type'])) {
-                                $type = $attributes_type_by_setting[$attribute_value_id]['type'];
-                            }
+                        // ✅ SAKRIJ vrijednosti koje ne postoje u nasljednim atributima
 
-                            //open
-                            $opened = true;
-                            if (isset($attributes_type_by_setting[$attribute_value_id]['close'])) {
-                                $opened = false;
-                            }
-
-                            $sections[] = array(
-                                'id' => $attribute_value_id,
-                                'name' => $attribute_value['name'],
-                                'values' => $values,
-                                'type' => $type,
-                                'open' => $opened,
-                            );
+                        // 1) primarni manufacturer -> sakrij SVE attribute vrijednosti s 0
+                        if ($primaryIsManufacturer && !$is_enable) {
+                            continue;
                         }
+
+                        // 2) primarni attribute -> sakrij sekundarne atribute s 0
+                        if ($primaryId > 0 && (int)$attribute_value_id !== $primaryId && !$is_enable) {
+                            continue;
+                        }
+
+                        // 3) ako postoji sekundarni atribut (više od 1 odabran), suzi i primarni po kombinaciji
+                        if ($primaryId > 0 && count($activeAttributes) > 1 && !$primaryIsManufacturer && !$is_enable) {
+                            continue;
+                        }
+
+                        $values[] = array(
+                            'input_value' => $value,
+                            'input_name'  => 'attribute',
+                            'input_label' => $input_label,
+                            'value_id'    => $value,
+                            'image'       => '',
+                            'is_enable'   => $is_enable
+                        );
+                    }
+
+                    if ($values) {
+
+                        // type
+                        $type = '';
+                        if (isset($attributes_type_by_setting[$attribute_value_id]['type'])) {
+                            $type = $attributes_type_by_setting[$attribute_value_id]['type'];
+                        }
+
+                        // open
+                        $opened = true;
+                        if (isset($attributes_type_by_setting[$attribute_value_id]['close'])) {
+                            $opened = false;
+                        }
+
+                        $sections[] = array(
+                            'id'     => $attribute_value_id,
+                            'name'   => $attribute_value['name'],
+                            'values' => $values,
+                            'type'   => $type,
+                            'open'   => $opened,
+                        );
                     }
                 }
 
                 if ($sections) {
                     $section_groups[] = array(
                         'group_name' => $attribute_group['name'],
-                        'sections' => $sections,
+                        'sections'   => $sections,
                     );
                 }
             }

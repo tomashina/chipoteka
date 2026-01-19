@@ -129,6 +129,8 @@ class ControllerExtensionModuleDigitalElephantFilterHelperUrl extends Controller
             $data_url['start'] = ($page - 1) * $limit;
             $data_url['opencart_filter'] = $opencart_filter;
 
+            $data_url['def_primary'] = isset($this->request->get['def_primary']) ? (string)$this->request->get['def_primary'] : '';
+
             $this->storageUrlData = $data_url;
         }
 

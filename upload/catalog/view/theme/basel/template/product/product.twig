@@ -54,7 +54,7 @@
             <ul class="nav nav-tabs" role="tablist">
                 <li class="nav-item"><a class="nav-link active" href="#general" data-bs-toggle="tab" role="tab">Info</a></li>
                 <li class="nav-item"><a class="nav-link" href="#description" data-bs-toggle="tab" role="tab">Opis  </a></li>
-                {% if attribute_groups %}   <li class="nav-item"><a class="nav-link" href="#specs" data-bs-toggle="tab" role="tab">Specifikacije </a></li>  {% endif %}
+                {% if attribute_groups %}   <li class="nav-item"><a class="nav-link" href="#specs" data-bs-toggle="tab" role="tab">Detalji proizvoda </a></li>  {% endif %}
             </ul>
             <div class="pb-3 mb-5">
                 <div class="tab-content px-3">
@@ -498,7 +498,7 @@
                             <!-- Specs table-->
                             <div class="row pt-2">
                                 <div class="col-lg-7 mb-3">
-                                    <h5>{{ text_spec_description }}</h5>
+                                    <h5>Detalji proizvoda prema odabiru filtera</h5>
                                     <!--<p class="fs-md">{{ spec_description }}</p>-->
 
                                     {% if attribute_groups %}
@@ -507,16 +507,35 @@
                                                 {% for attribute_group in attribute_groups %}
                                                     <tbody>
                                                     {% for attribute in attribute_group.attribute %}
-                                                        <tr>
-                                                            <td class="text-left"><b>{{ attribute.name }}</b></td>
-                                                            <td class="text-right">{{ attribute.text }}</td>
-                                                        </tr>
+
+                                                        {% set raw = attribute.text|trim %}
+
+                                                        {# preskoči prazno, N i 0 #}
+                                                        {% if raw != '' and raw|upper != 'N' and raw != '0' %}
+
+                                                            {# normalizacija decimalnog broja #}
+                                                            {% if raw matches '/^[0-9]+([,.][0-9]+)?$/' %}
+                                                                {% set normalized = raw|replace({',': '.'}) %}
+                                                                {% set value = normalized + 0 %}
+                                                            {% else %}
+                                                                {% set value = raw %}
+                                                            {% endif %}
+
+                                                            <tr>
+                                                                <td class="text-left"><b>{{ attribute.name }}</b></td>
+                                                                <td class="text-right">{{ value }}</td>
+                                                            </tr>
+
+                                                        {% endif %}
+
                                                     {% endfor %}
                                                     </tbody>
                                                 {% endfor %}
                                             </table>
                                         </div>
                                     {% endif %}
+
+
 
 
                                 </div>

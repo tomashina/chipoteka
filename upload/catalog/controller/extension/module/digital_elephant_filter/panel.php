@@ -61,7 +61,7 @@ Class ControllerExtensionModuleDigitalElephantFilterPanel extends Controller
         $this->urlData = $this->helperUrl->getUrlData();
 
         $data = $this->getText();
-
+        $data['def_primary'] = isset($this->urlData['def_primary']) ? (string)$this->urlData['def_primary'] : '';
         $data['filter_data'] = $this->getFilterData($setting, $this->urlData['category_id']);
         $data['is_filter_show'] = $this->isFilterShow();
         $data['check_data_on_active'] = $this->urlData;

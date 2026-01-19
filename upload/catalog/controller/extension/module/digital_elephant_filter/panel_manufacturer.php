@@ -23,84 +23,161 @@ Class ControllerExtensionModuleDigitalElephantFilterPanelManufacturer extends Co
 
     public function getSectionGroups($setting, $category_id)
     {
-        //manufacturers setting
+        // manufacturers setting
         $manufacturers_setting = $setting['DEF_settings']['manufacturers'][0];
         $manufacturers_setting_advance = $setting['DEF_settings']['advance']['manufacturers'];
 
         $section_groups = $this->cache->get('DEF_panel_man_' . $category_id);
-        if (($this->helperUrl->isAjaxRequest() || !$section_groups || !isset($setting['DEF_settings']['cache']['isset'])) && !isset($manufacturers_setting['hide'])) {
+
+        if (($this->helperUrl->isAjaxRequest() || !$section_groups || !isset($setting['DEF_settings']['cache']['isset']))
+            && !isset($manufacturers_setting['hide'])) {
+
             $args = array(
                 'category_id' => $category_id,
                 'filter_sub_category' => true
             );
+
             $manufacturers = $this->model_extension_module_digitalElephantFilter->getManufacturers($setting['DEF_settings'], $args);
+
+            // --- NOVO: base URL state + primarni kontekst ---
+            $urlBase = $this->helperUrl->getUrlData();
+
+            $primary = isset($urlBase['def_primary']) ? (string)$urlBase['def_primary'] : '';
+
+            // fallback: prvi odabrani atribut postaje primarni
+            if (!$primary && !empty($urlBase['attribute']) && is_array($urlBase['attribute'])) {
+                $firstAttrId = array_key_first($urlBase['attribute']);
+                if ($firstAttrId) {
+                    $primary = 'attribute:' . (int)$firstAttrId;
+                }
+            }
+
+            // fallback: ako nema atributa, a ima brand odabir
+            if (!$primary && !empty($urlBase['manufacturers']) && !empty($urlBase['manufacturers']['manufacturer'])) {
+                $primary = 'manufacturer';
+            }
+
+            $primaryAttrId = 0;
+            if ($primary && strpos($primary, 'attribute:') === 0) {
+                $primaryAttrId = (int)str_replace('attribute:', '', $primary);
+            }
+            // --- NOVO END ---
+
             $section_groups = [];
             $sections = [];
-            //if (count($manufacturers) > 1) {
-                //conversion of the interface
-                $values = [];
-                $this->load->model('tool/image');
-                $this->load->language('extension/module/digitalElephantFilter');
-                foreach ($manufacturers as $manufacturer) {
-                    $image = '';
-                    if ($manufacturer['image'] && is_file(DIR_IMAGE . $manufacturer['image'])) {
-                        $image_width = $manufacturers_setting_advance['image']['width'];
-                        $image_height = $manufacturers_setting_advance['image']['height'];
-                        $image = $this->model_tool_image->resize($manufacturer['image'], $image_width, $image_height);
+            $values = [];
+
+            $this->load->model('tool/image');
+            $this->load->language('extension/module/digitalElephantFilter');
+
+            foreach ($manufacturers as $manufacturer) {
+
+                $image = '';
+                if (!empty($manufacturer['image']) && is_file(DIR_IMAGE . $manufacturer['image'])) {
+                    $image_width = $manufacturers_setting_advance['image']['width'];
+                    $image_height = $manufacturers_setting_advance['image']['height'];
+                    $image = $this->model_tool_image->resize($manufacturer['image'], $image_width, $image_height);
+                }
+
+                $input_label = $manufacturer['name'];
+                $is_enable = true;
+
+                if (isset($setting['DEF_settings']['is_display_total'])) {
+
+                    // start: trenutni URL state
+                    $url = $urlBase;
+                    $url['category_id'] = $category_id;
+
+                    /**
+                     * Pravilo:
+                     * - Primarni definira bazni skup
+                     * - Nasljedni (manufacturer ovdje) se računa unutar primarnog skupa
+                     */
+
+                    // CASE A: manufacturer je PRIMARNI
+                    if ($primary === 'manufacturer') {
+
+                        // brendovi se računaju "čisto" (bez sekundarnih filtera)
+                        $url['attribute'] = [];
+                        $url['option'] = [];
+
+                        // postavi test brand
+                        $url['manufacturers'] = [];
+                        $url['manufacturers']['manufacturer'] = [(int)$manufacturer['manufacturer_id']];
                     }
 
-                    $input_label = $manufacturer['name'];
-                    $is_enable = true;
-                    if (isset($setting['DEF_settings']['is_display_total'])) {
-                        $url = $this->helperUrl->getUrlData();
-                        $url['category_id'] = $category_id;
-                        $url['manufacturers']['manufacturer'] = [];
-                        $url['manufacturers']['manufacturer'][] = $manufacturer['manufacturer_id'];
-                        $filter_data = $this->getProduct->getFilterDataByUrl($url);
-                        $totalProducts = $this->getProduct->getTotalProducts($filter_data);
+                    // CASE B: primarni je ATTRIBUTE
+                    elseif ($primaryAttrId > 0) {
 
-                        $input_label = $manufacturer['name'] . ' <span>(' . $totalProducts . ')</span>';
+                        // ostavi samo primarni atribut (njegove odabrane vrijednosti)
+                        $keepAttr = [];
+                        if (isset($url['attribute'][$primaryAttrId]) && is_array($url['attribute'][$primaryAttrId])) {
+                            $keepAttr[$primaryAttrId] = $url['attribute'][$primaryAttrId];
+                        }
+                        $url['attribute'] = $keepAttr;
 
-                        $is_enable = (isset($totalProducts) && $totalProducts > 0);
+                        // makni ostale sekundarne koji ne bi smjeli diktirati enable logiku
+                        $url['option'] = [];
+
+                        // postavi test brand (nasljedni)
+                        $url['manufacturers'] = [];
+                        $url['manufacturers']['manufacturer'] = [(int)$manufacturer['manufacturer_id']];
                     }
 
-                    $values[] = array(
-                        'input_value' => $manufacturer['manufacturer_id'],
-                        'input_name' => 'manufacturers',
-                        'input_label' => $input_label,
-                        'value_id' => $manufacturer['manufacturer_id'],
-                        'image' => $image,
-                        'is_enable' => $is_enable
-                    );
+                    // CASE C: nema primarnog (prije prvog odabira)
+                    else {
+                        $url['manufacturers'] = [];
+                        $url['manufacturers']['manufacturer'] = [(int)$manufacturer['manufacturer_id']];
+                    }
+
+                    $filter_data = $this->getProduct->getFilterDataByUrl($url);
+                    $totalProducts = $this->getProduct->getTotalProducts($filter_data);
+
+                    $input_label = $manufacturer['name'] . ' <span>(' . (int)$totalProducts . ')</span>';
+                    $is_enable = ((int)$totalProducts > 0);
                 }
 
-                //type
-                $type = 'none';
-                if (isset($manufacturers_setting['type']) && $manufacturers_setting['type']) {
-                    $type = $manufacturers_setting['type'];
+                // ✅ OVDJE UBACI
+                if ($primary && $primary !== 'manufacturer' && !$is_enable) {
+                    continue;
                 }
 
-                //open
-                $opened = true;
-                if (isset($manufacturers_setting['close'])) {
-                    $opened = false;
-                }
-
-                $section_name = $this->language->get('text_manufacturers');
-                $section_id = 'manufacturer';
-
-                $sections[] = array(
-                    'id' => $section_id,
-                    'name' => $section_name,
-                    'values' => $values,
-                    'type' => $type,
-                    'open' => $opened,
+                $values[] = array(
+                    'input_value' => (int)$manufacturer['manufacturer_id'],
+                    'input_name'  => 'manufacturers',
+                    'input_label' => $input_label,
+                    'value_id'    => (int)$manufacturer['manufacturer_id'],
+                    'image'       => $image,
+                    'is_enable'   => $is_enable
                 );
-            //}
+            }
+
+            // type
+            $type = 'none';
+            if (isset($manufacturers_setting['type']) && $manufacturers_setting['type']) {
+                $type = $manufacturers_setting['type'];
+            }
+
+            // open
+            $opened = true;
+            if (isset($manufacturers_setting['close'])) {
+                $opened = false;
+            }
+
+            $section_name = $this->language->get('text_manufacturers');
+            $section_id = 'manufacturer';
+
+            $sections[] = array(
+                'id'     => $section_id,
+                'name'   => $section_name,
+                'values' => $values,
+                'type'   => $type,
+                'open'   => $opened,
+            );
 
             $section_groups[] = array(
                 'group_name' => '',
-                'sections' => $sections,
+                'sections'   => $sections,
             );
         }
 

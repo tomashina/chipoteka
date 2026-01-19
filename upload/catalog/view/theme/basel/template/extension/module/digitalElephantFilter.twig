@@ -80,39 +80,47 @@
 
                             {% for section in section_group['sections'] %}
 
-                                {% if section['type'] and section['values'] %}
-                                    <div class="col-lg-4 col-sm-6">
-                                    <!-- Price range-->
-                                    <div class="card mb-grid-gutter">
-                                    <div class="card-body px-4">
-                                    <div class="widget widget-filter">
-                                    <div class="filter_element_wrap ">
-
-                                        <div
-                                                class="filter_element_title {% if is_show_group_attributes and section_group['group_name'] %}is-attribute-child{% endif %}"
-                                                data-section-name="{{ section['name'] }}"
-                                                data-section-id="{{ section['id'] }}"
-                                        > <h3 class="widget-title">{{ section['name'] }}</h3></div>
-
-                                        {% set display = 'none' %}
-                                        {% if section['open'] %}
-                                            {% set display = 'block' %}
+                                {# --- filtriraj vrijednosti koje će se STVARNO ispisati u include-u --- #}
+                                {% set visible_values = [] %}
+                                {% if section['values'] %}
+                                    {% for v in section['values'] %}
+                                        {# isto pravilo kao u checkbox twig-u: sakrij N #}
+                                        {% if v['is_enable'] and (v['input_value'] is not defined or v['input_value'] != 'N') %}
+                                            {% set visible_values = visible_values|merge([v]) %}
                                         {% endif %}
+                                    {% endfor %}
+                                {% endif %}
 
+                                {# renderaj panel samo ako ima bar 1 vidljivu vrijednost #}
+                                {% if section['type'] and visible_values|length > 0 %}
+                                    <div class="col-lg-4 col-sm-6">
+                                        <div class="card mb-grid-gutter">
+                                            <div class="card-body px-4">
+                                                <div class="widget widget-filter">
+                                                    <div class="filter_element_wrap">
 
+                                                        <div
+                                                                class="filter_element_title {% if is_show_group_attributes and section_group['group_name'] %}is-attribute-child{% endif %}"
+                                                                data-section-name="{{ section['name'] }}"
+                                                                data-section-id="{{ section['id'] }}"
+                                                        >
+                                                            <h3 class="widget-title">{{ section['name'] }}</h3>
+                                                        </div>
 
-                                        <div class="filter_element_content" style="display: {{ display }}">
+                                                        {% set display = section['open'] ? 'block' : 'none' %}
 
-                                            {% set inputs_data = section['values'] %}
-                                            {% include "basel/template/extension/module/digitalElephantFilter/%s.twig"|format(section['type']) %}
+                                                        <div class="filter_element_content" style="display: {{ display }}">
+                                                            {% set inputs_data = visible_values %}
+                                                            {% include "basel/template/extension/module/digitalElephantFilter/%s.twig"|format(section['type']) %}
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    </div>
-                                    </div>
-                                    </div>
-                                    </div>
                                 {% endif %}
+
 
                             {% endfor %}
 
@@ -128,12 +136,12 @@
                     <table width="100%" class="digitalElephantFilter_btn">
                         <tr>
                             {% if is_button_apply and is_button_clear %}
-                                <td width="50%" style="padding-right:2px;"><input type="reset" id="digitalElephantFilter_button_clear"
-                                                                                  class="btn btn-outline"
+                                <td width="50%" style="padding-right:5px;"><input type="reset" id="digitalElephantFilter_button_clear"
+                                                                                  class="btn btn-block btn-outline-primary w-100 text-center"
                                                                                   value="{{ text_clear }}"/></td>
-                                <td width="50%" style="padding-left:2px;"><input type="button" id="digitalElephantFilter_button_apply"
-                                                                                 class="btn btn-contrast"
-                                                                                 value="{{ text_ok }}"/></td>
+                                <td width="50%" style="padding-left:5px;"><input type="button" id="digitalElephantFilter_button_apply"
+                                                                                 class="btn btn-block btn-primary w-100 text-center"
+                                                                                 value="Filtriraj"/></td>
                             {% elseif is_button_apply %}
                                 <td width="100%"><input type="button" id="digitalElephantFilter_button_apply"
                                                         class="btn btn-contrast"
@@ -146,8 +154,9 @@
                         </tr>
                     </table>
                 </div>
+                    <input type="hidden" name="def_primary" id="def_primary" value="{{ def_primary|default('') }}"/>
 
-                <input type="hidden" name="ajax_digitalElephantFilter" value="1"/>
+                    <input type="hidden" name="ajax_digitalElephantFilter" value="1"/>
                 </div>
             </form>
 

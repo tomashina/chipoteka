@@ -1,35 +1,53 @@
-<div class="digitalElephantFilter_type_checkbox">
-    <ul class="widget-list widget-filter-list list-unstyled pt-1" style="max-height: 11rem;" data-simplebar data-simplebar-auto-hide="false">
-    {% for input_data in inputs_data %}
+{# filtriraj: makni N #}
+{% set visible_inputs = [] %}
+{% for v in inputs_data %}
+    {% if v['input_value'] != 'N' %}
+        {% set visible_inputs = visible_inputs|merge([v]) %}
+    {% endif %}
+{% endfor %}
 
-        <li class="widget-filter-item d-flex justify-content-between align-items-center mb-1">
-            <div class="form-check">
-        <label class="form-check-label widget-filter-item-text" >
-            {% set attr_checked = '' %}
+{% if visible_inputs|length > 0 %}
+    <div class="digitalElephantFilter_type_checkbox">
+        <ul class="widget-list widget-filter-list list-unstyled pt-1" style="max-height: 11rem;" data-simplebar data-simplebar-auto-hide="false">
+            {% for input_data in visible_inputs %}
 
-            {% if check_data_on_active[input_data['input_name']][section['id']] and input_data['input_value'] in check_data_on_active[input_data['input_name']][section['id']] %}
-                {% set attr_checked = 'checked="checked"' %}
-            {% endif %}
+                {# D -> DA #}
+                {% set display_label = input_data['input_label'] %}
+                {% if input_data['input_value'] == 'D' %}
+                    {% set display_label = 'DA' %}
+                {% endif %}
 
-            {% if input_data['is_enable'] %}
-                {% set attr_disabled = '' %}
-            {% else %}
-                {% set attr_disabled = 'disabled="disabled"' %}
-            {% endif %}
+                {% set attr_checked = '' %}
+                {% if check_data_on_active[input_data['input_name']][section['id']]
+                    and input_data['input_value'] in check_data_on_active[input_data['input_name']][section['id']] %}
+                    {% set attr_checked = 'checked="checked"' %}
+                {% endif %}
 
-            {{ input_data['input_label'] }}
-        </label>
+                {% if input_data['is_enable'] %}
+                    {% set attr_disabled = '' %}
+                {% else %}
+                    {% set attr_disabled = 'disabled="disabled"' %}
+                {% endif %}
 
-                <input id="{{ input_data['input_label'] }}"
-                        type="checkbox" class="form-check-input"
-                        name="{{ input_data['input_name'] }}[{{ section['id'] }}][]"
-                        value="{{ input_data['input_value'] }}"
-                        {{ attr_checked }}
-                        {{ attr_disabled }}
-                >
-            </div>
-        </li>
-    {% endfor %}
+                <li class="widget-filter-item d-flex justify-content-between align-items-center mb-1">
+                    <div class="form-check">
+                        {% set input_id = 'def-' ~ section['id'] ~ '-' ~ loop.index %}
 
-    </ul>
-</div>
+                        <label class="form-check-label widget-filter-item-text" for="{{ input_id }}">
+                            {{ display_label }}
+                        </label>
+
+                        <input id="{{ input_id }}"
+                               type="checkbox"
+                               class="form-check-input"
+                               name="{{ input_data['input_name'] }}[{{ section['id'] }}][]"
+                               value="{{ input_data['input_value'] }}"
+                                {{ attr_checked }}
+                                {{ attr_disabled }}>
+                    </div>
+                </li>
+
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}

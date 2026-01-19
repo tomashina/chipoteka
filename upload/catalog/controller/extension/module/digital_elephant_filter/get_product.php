@@ -28,6 +28,8 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
     {
         $data_url = $this->helperUrl->getUrlData();
 
+        $data_url['def_primary'] = isset($this->request->get['def_primary']) ? $this->request->get['def_primary'] : '';
+
         $this->loadModel();
         $this->loadLanguage();
 
@@ -120,6 +122,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
             'order'              => $data_url['order'],
             'start'              => ($data_url['page'] - 1) * $data_url['limit'],
             'limit'              => $data_url['limit'],
+            'def_primary' => isset($data_url['def_primary']) ? $data_url['def_primary'] : '',
         );
 
         return $filter_data;

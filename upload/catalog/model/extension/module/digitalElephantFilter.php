@@ -443,8 +443,12 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                     }
 
                     if (!empty($attribute_ids[$key])) {
-                        $sql .= " LEFT JOIN " . DB_PREFIX . "product_attribute pa" . $key . " ON (pa.product_id = pa" . $key . ".product_id)";
-//                    $sql .= " AND text IN (" . implode(',', $attribute_value_ids) . ")";
+                        $k = (int)$key;
+
+                        $sql .= " INNER JOIN " . DB_PREFIX . "product_attribute pa" . $k . "
+              ON (pa.product_id = pa" . $k . ".product_id
+                  AND pa" . $k . ".attribute_id = " . $k . "
+                  AND pa" . $k . ".language_id = " . (int)$this->config->get('config_language_id') . ")";
                     }
                 }
 
@@ -457,7 +461,8 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
 
                 if ($attribute_ids) {
                     foreach ($attribute_ids as $key => $ids) {
-                        $sql .= " AND pa" . $key . ".text IN (" . implode(',', $ids) . ")";
+                        $k = (int)$key;
+                        $sql .= " AND TRIM(pa" . $k . ".text) IN (" . implode(',', $ids) . ")";
                     }
                 }
 
