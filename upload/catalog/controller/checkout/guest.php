@@ -147,7 +147,14 @@ class ControllerCheckoutGuest extends Controller {
 
 		$json = array();
 
-		// Validate if customer is logged in.
+        $this->log->write('GUEST SAVE POST keys: ' . implode(',', array_keys($this->request->post)));
+        $this->log->write('GUEST SAVE R1_needed: ' . (isset($this->request->post['R1_needed']) ? $this->request->post['R1_needed'] : 'NOT_SENT'));
+
+// uvijek postavi session (1 ili 0)
+        $this->session->data['eracun'] = (!empty($this->request->post['R1_needed']) && $this->request->post['R1_needed'] == 'on') ? 1 : 0;
+
+
+        // Validate if customer is logged in.
 		if ($this->customer->isLogged()) {
 			$json['redirect'] = $this->url->link('checkout/checkout', '', true);
 		}
@@ -178,7 +185,13 @@ class ControllerCheckoutGuest extends Controller {
 			/*if ((utf8_strlen($this->request->post['telephone']) < 3) || (utf8_strlen($this->request->post['telephone']) > 32)) {
 				$json['error']['telephone'] = $this->language->get('error_telephone');
 			}*/
+            $eracun = (!empty($this->request->post['R1_needed']) && $this->request->post['R1_needed'] == 'on') ? 1 : 0;
 
+// spremi i u guest (stabilnije kroz checkout flow)
+            $this->session->data['guest']['eracun'] = $eracun;
+
+// opcionalno ostavi i ovo ako negdje drugdje čitaš
+            $this->session->data['eracun'] = $eracun;
             // fj.agmedia.hr
             if (isset($this->request->post['R1_needed']) && $this->request->post['R1_needed'] == 'on') {
                 if ((utf8_strlen(trim($this->request->post['custom_field']['account'][2])) < 2) || (utf8_strlen(trim($this->request->post['custom_field']['account'][2])) > 128)) {

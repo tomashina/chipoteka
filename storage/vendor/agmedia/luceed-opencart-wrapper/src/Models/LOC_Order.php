@@ -253,6 +253,23 @@ class LOC_Order
 
         }
 
+        // ---------------------------------------------------------------------
+// eRačun: samo za B2B + (wspay/cod) + ako je kupac označio na webshopu
+// ---------------------------------------------------------------------
+        $wants_eracun = !empty($this->oc_order['eracun']) && (int)$this->oc_order['eracun'] === 1;
+
+        if (
+            $this->hasOIB() &&
+            $wants_eracun &&
+            in_array($this->oc_order['payment_code'], ['wspay', 'cod'])
+        ) {
+            // TODO: ovdje ide TOČAN Luceed key za checkbox "Kupac želi eRačun"
+            // npr. 'kupac_zeli_eracun' => 'D' (placeholder)
+            $this->order['kupac_zeli_eracun'] = 'D';
+        }
+
+
+
         $this->log('Order create method: $this->>order - LOC_Order #156', $this->order);
     }
 

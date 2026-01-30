@@ -394,7 +394,23 @@ class ControllerCheckoutConfirm extends Controller {
 
 			$this->load->model('checkout/order');
 
+            $is_b2b = (!empty($order_data['oib']) && (int)$order_data['customer_group_id'] > 2);
+
+// default: 0
+            $order_data['eracun'] = 0;
+
+// ako je registrirani B2B s OIB-om -> uvijek 1
+            if ($this->customer->isLogged() && $is_b2b) {
+                $order_data['eracun'] = 1;
+            } else {
+                // guest / ostali -> uzmi iz sessiona (checkbox flow)
+                $order_data['eracun'] = !empty($this->session->data['guest']['eracun'])
+                    ? (int)$this->session->data['guest']['eracun']
+                    : (!empty($this->session->data['eracun']) ? (int)$this->session->data['eracun'] : 0);
+            }
+
 			$this->session->data['order_id'] = $this->model_checkout_order->addOrder($order_data);
+
 
 			$this->load->model('tool/upload');
 

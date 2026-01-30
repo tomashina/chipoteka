@@ -1,0 +1,3 @@
+ALTER TABLE `oc_order`
+    ADD COLUMN `eracun` TINYINT(1) NOT NULL DEFAULT 0
+AFTER `oib`;
