@@ -300,7 +300,13 @@ class LOC_Customer
         if (empty($this->customer['uid']) && $this->isB2B()) {
             //$alter = Customer::where('oib', $this->customer['oib'])->first();
 
-            $alter = Customer::where('custom_field->1', $this->customer['oib'])->first();
+          //  $alter = Customer::where('custom_field->1', $this->customer['oib'])->first();
+
+            $alter = Customer::whereRaw(
+                "JSON_EXTRACT(custom_field, '$.\"1\"') = ?",
+                [$this->customer['oib']]
+            )->first();
+
 
 
             Log::store('6', 'test_alter');
