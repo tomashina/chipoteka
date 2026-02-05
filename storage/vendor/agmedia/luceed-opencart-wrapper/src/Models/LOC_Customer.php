@@ -298,7 +298,12 @@ class LOC_Customer
          * @B2B
          */
         if (empty($this->customer['uid']) && $this->isB2B()) {
-            $alter = Customer::where('email', $this->customer['e_mail'])->first();
+            //$alter = Customer::where('oib', $this->customer['oib'])->first();
+
+            $alter = Customer::where('custom_field->1', $this->customer['oib'])->first();
+
+
+            Log::store('6', 'test_alter');
 
             if ($alter) {
                 // Namjesti kupca koji kupuje kao Alter Customer
@@ -314,12 +319,12 @@ class LOC_Customer
 
                 if ($main) {
                     $main_exist = $this->setResponseData(
-                        $this->service->getCustomerByEmail($main->email)
+                        $this->service->getCustomerByOib($this->customer['oib'])
                     );
 
                     if ( ! empty($main_exist)) {
                         foreach ($main_exist as $l_customer) {
-                            if ($l_customer->enabled == 'D') {
+                            if ($l_customer->enabled == 'D' ) {
                                 if ( ! $l_customer->grupacija) {
                                     $this->customer['uid'] = $l_customer->partner_uid;
                                     $this->customer['partner_uid'] = $l_customer->partner_uid;
@@ -454,6 +459,7 @@ class LOC_Customer
                 'e_mail'              => $this->customer['e_mail'],
                 'postanski_broj'      => $collection['postanski_broj'],
                 'mjesto_uid'          => $collection['mjesto_uid'],
+                'oib'                  => $collection['oib'],
             ];
         }
 
@@ -473,6 +479,7 @@ class LOC_Customer
             'postanski_broj'      => $collection['zip'],
             'mjesto_uid'          => $this->setCityUid($collection['zip'], $collection['city']),
             'has_oib'             => $collection['has_oib'],
+            'oib'                 => $collection['oib'],
         ];
 
         return $data;

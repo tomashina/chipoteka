@@ -65,6 +65,7 @@ class LuceedEndPoints
             'product_image'     => 'artikli/dokumenti/',
             'manufacturer_uid'  => 'partneri/uid/',
             'customer_email'    => 'partneri/email/',
+            'customer_oib'    => 'partneri/oib/',
             'customer_create'   => 'partneri/snimi/',
             'order_create'      => 'NaloziProdaje/snimi/',
             'orders_get'        => 'NaloziProdaje/statusi/',

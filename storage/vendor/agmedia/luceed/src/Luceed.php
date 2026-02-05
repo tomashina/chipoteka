@@ -316,6 +316,17 @@ class Luceed
     }
 
 
+    /**
+     * @param array $customer
+     *
+     * @return mixed
+     */
+    public function getCustomerByOib(string $oib)
+    {
+        return $this->service->get($this->end_points['customer_oib'], $oib);
+    }
+
+
     /*******************************************************************************
      *                                Copyright : AGmedia                           *
      *                              email: filip@agmedia.hr                         *
