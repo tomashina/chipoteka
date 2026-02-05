@@ -200,8 +200,8 @@ class LOC_Order
             'komercijalist__radnik_uid' => '206-1063',
             'placa_porez'               => 'D',
             'cijene_s_porezom'          => agconf('luceed.with_tax'),
-            'partner_uid'               => $this->customer['main'],
-            'korisnik__partner_uid'     => $this->customer['alter'] ?: $this->customer['main'],
+           // 'partner_uid'               => $this->customer['main'],
+           // 'korisnik__partner_uid'     => $this->customer['alter'] ?: $this->customer['main'],
             'iznos'                     => (float) $iznos,
             'vrsta_isporuke'            => '10',
             'rezervacija_do_datuma'     => $this->getReservation(),
@@ -213,6 +213,17 @@ class LOC_Order
             ],
             'stavke'                    => $this->getItems(),
         ];
+
+        // Partner (sprječava duplo otvaranje u Luceedu)
+        $this->order['partner_uid'] = $this->customer['main'];
+
+        if (
+            !empty($this->customer['alter']) &&
+            $this->customer['alter'] !== $this->customer['main']
+        ) {
+            $this->order['korisnik__partner_uid'] = $this->customer['alter'];
+        }
+
 
         if ($this->oc_order) {
             $this->order['vezani_poziv_na_broj'] = $this->oc_order['poziv_na_broj'];
