@@ -175,7 +175,7 @@ class LOC_Warehouse
         foreach ($houses_stores as $house) {
             $has = $stores->where('skladiste_uid', $house['skladiste_uid'])->first();
 
-            if ($has && $has->raspolozivo_kol >= 0) {
+            if ($has) {
                 $qty_stores += $has->raspolozivo_kol;
             }
         }
@@ -297,6 +297,7 @@ class LOC_Warehouse
         return [];
     }
 
+
     /**
      * @param string $sku
      *
@@ -349,7 +350,7 @@ class LOC_Warehouse
     {
         $json = json_decode($warehouses);
 
-        if (isset($json->result[0]->skladista)) {
+        if (isset($json->result[0]->skladista) && is_array($json->result[0]->skladista)) {
             return $json->result[0]->skladista;
         }
 
@@ -365,7 +366,7 @@ class LOC_Warehouse
     {
         $json = json_decode($items);
 
-        if (isset($json->result[0]->stanje)) {
+        if (isset($json->result[0]->stanje) && is_array($json->result[0]->stanje)) {
             return $json->result[0]->stanje;
         }
 
@@ -382,7 +383,7 @@ class LOC_Warehouse
     {
         $json = json_decode($stock);
 
-        if (isset($json->result[0]->artikli_dobavljaci)) {
+        if (isset($json->result[0]->artikli_dobavljaci) && is_array($json->result[0]->artikli_dobavljaci)) {
             return $json->result[0]->artikli_dobavljaci;
         }
 

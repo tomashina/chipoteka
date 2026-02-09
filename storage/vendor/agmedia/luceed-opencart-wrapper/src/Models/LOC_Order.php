@@ -6,6 +6,8 @@ use Agmedia\Helpers\Database;
 use Agmedia\Helpers\Log;
 use Agmedia\Kaonekad\Models\ShippingCollector;
 use Agmedia\Luceed\Luceed;
+use Agmedia\LuceedOpencartWrapper\Helpers\Availability;
+use Agmedia\LuceedOpencartWrapper\Helpers\OrderHelper;
 use Agmedia\Models\Coupon;
 use Agmedia\Models\Order\Order;
 use Agmedia\Models\Order\OrderProduct;
@@ -62,14 +64,24 @@ class LOC_Order
     private $customer = null;
 
     /**
-     * @var array
-     */
-    private $items_available;
-
-    /**
      * @var int
      */
     private $discount;
+
+    private $coupon;
+
+    /**
+     * @var string
+     */
+    private $pickup = '';
+    private $pickup_warehouse = [];
+    private $availability = false;
+    private $regular_products = [];
+
+    /**
+     * @var bool|array
+     */
+    private $items_available = false;
 
     /**
      * @var int
@@ -97,12 +109,9 @@ class LOC_Order
         $this->oc_order = $order;
         $this->service  = new Luceed();
 
-        if ($order) {
-            $this->log('Cojela narudžba....................................', $order);
-        }
-
         $this->checkInstallments();
         $this->resolveCouponDiscount();
+        $this->resolvePickup();
     }
 
 
@@ -133,33 +142,57 @@ class LOC_Order
      */
     public function store()
     {
-        // Create luceed order data.
+        // Check if it's a pickup
+        if ($this->pickup != '') {
+            // Set up availability.
+            $this->availability = $this->resolveAvailability();
+
+            if ($this->availability->has_all_in_pickup_store) {
+                $this->createPickup($this->availability->nalozi[$this->availability->pickup_warehouse['skladiste_uid']]);
+
+                return $this->sendOrder(true);
+
+            } else {
+                foreach ($this->availability->getNalozi() as $nalog) {
+                    $this->createPickup($nalog);
+
+                    $this->sendOrder(($nalog['broj_naloga'] == '') ? true : false);
+                }
+
+                return 1;
+            }
+        }
+
         $this->create();
 
+        return $this->sendOrder(true);
+    }
+
+
+    /**
+     * @param bool $save
+     *
+     * @return false|mixed
+     * @throws \Exception
+     */
+    private function sendOrder(bool $save = false)
+    {
         // Send order to luceed service.
         $this->response = json_decode(
             $this->service->createOrder(['nalozi_prodaje' => [$this->order]], $this->hasOIB())
         );
 
-        $this->log('Store order response: $this->response - LOC_Order #98.', $this->response);
+        /*$this->log('Store order response: $this->response - LOC_Order #98.', $this->response);
+        $this->log($this->oc_order['order_id'] . ' Order sent...');
+
+        return 1;*/
 
         // If response ok.
         // Update order uid.
-        if (isset($this->response->result[0])) {
-            /*if ( ! $this->items_available) {
-                $raspis = json_decode(
-                    $this->service->orderWrit($this->response->result[0])
-                );
-
-                $this->log('Raspis response: $raspis - LOC_Order #110.', $raspis);
-            }*/
+        if (isset($this->response->result[0]) && $save) {
 
             $this->log($this->oc_order['order_id']);
             $this->log($this->response->result[0]);
-
-            /*$updated = Order::where('order_id', $this->oc_order['order_id'])->update([
-                'luceed_uid' => $this->response->result[0]
-            ]);*/
 
             $this->db = new Database(DB_DATABASE);
             $updated = $this->db->query("UPDATE " . DB_PREFIX . "order o SET o.luceed_uid = '" . $this->db->escape($this->response->result[0]) . "' WHERE o.order_id = " . $this->oc_order['order_id'] . ";");
@@ -185,14 +218,16 @@ class LOC_Order
             $iznos = $this->getSubTotal();
         }
 
-        $this->items_available = false;//$this->setAvailability();
+        //$this->items_available = $this->getItemsAvailability();
 
         $this->order = [
             'nalog_prodaje_b2b'         => $this->oc_order['order_id']. '-' . Carbon::now()->year,
-            'narudzba'                   => $this->oc_order['order_id'] . '-' . Carbon::now()->year,
+            'narudzba'                  => $this->oc_order['order_id'] . '-' . Carbon::now()->year,
+            'vezani_poziv_na_broj'      => $this->oc_order['poziv_na_broj'],
             'datum'                     => Carbon::make($this->oc_order['date_added'])->format(agconf('luceed.date')),
             'skladiste'                 => '099',// 001 -> 099
             'sa__skladiste'             => '101',// 001 -> 101
+            //'pj_id'                     => '00',
             'status'                    => $this->getStatus(),
             'napomena'                  => $this->oc_order['comment'],
             'poruka_dolje'              => $this->oc_order['comment'],
@@ -214,31 +249,10 @@ class LOC_Order
             'stavke'                    => $this->getItems(),
         ];
 
-        // Partner (sprječava duplo otvaranje u Luceedu)
-      /*  $this->order['partner_uid'] = $this->customer['main'];
-
-        if (
-            !empty($this->customer['alter']) &&
-            $this->customer['alter'] !== $this->customer['main']
-        ) {
-            $this->order['korisnik__partner_uid'] = $this->customer['alter'];
-        }*/
-
-
-        if ($this->oc_order) {
-            $this->order['vezani_poziv_na_broj'] = $this->oc_order['poziv_na_broj'];
-        }
-
         if ( ! $this->hasOIB()) {
             $this->order['na__skladiste'] = '099'; // agconf('luceed.default_warehouse_uid') -> 099
             $this->order['skl_dokument']  = 'MSM'; // MS -> MSM
             $this->order['raspored'] = Carbon::make($this->oc_order['date_added'])->format('d.m.Y H:i:s');
-        }
-
-        if ($this->items_available) {
-            $this->order['sa__skladiste'] = agconf('luceed.stock_warehouse_uid');
-            /*$this->order['na__skladiste'] = '099'; // agconf('luceed.default_warehouse_uid') -> 099
-            $this->order['skl_dokument']  = 'MSM'; // MS -> MSM*/
         }
 
         if ($this->hasOIB()) {
@@ -250,38 +264,440 @@ class LOC_Order
             $this->order['cijene_s_porezom']  = 'N';
             $this->order['vrsta_placanja']  = '96-1063';
             $this->order['komercijalist__radnik_uid'] = '';
-
         }
 
         if ($this->oc_order['shipping_method'] == 'BOX NOW paketomat' && $this->oc_order['boxnow'] != '') {
             $data = explode(';', $this->oc_order['boxnow']);
 
-            $this->order['dropoff_sifra']      = $data[1] ?: '';
-            $this->order['dropoff_naziv']      = $data[0] ?: '';
+            $this->order['dropoff_sifra'] = $data[1] ?: '';
+            $this->order['dropoff_naziv'] = $data[0] ?: '';
             $this->order['vrsta_isporuke'] = '11';
-
-
-
         }
 
-        // ---------------------------------------------------------------------
-// eRačun: samo za B2B + (wspay/cod) + ako je kupac označio na webshopu
-// ---------------------------------------------------------------------
-        $wants_eracun = !empty($this->oc_order['eracun']) && (int)$this->oc_order['eracun'] === 1;
+        $wants_eracun = ! empty($this->oc_order['eracun']) && (int) $this->oc_order['eracun'] === 1;
 
         if (
             $this->hasOIB() &&
             $wants_eracun &&
             in_array($this->oc_order['payment_code'], ['wspay', 'cod'])
         ) {
-            // TODO: ovdje ide TOČAN Luceed key za checkbox "Kupac želi eRačun"
-            // npr. 'kupac_zeli_eracun' => 'D' (placeholder)
             $this->order['kupac_zeli_eracun'] = 'D';
         }
 
+        //
+        /*if ($this->pickup != '' && $this->items_available['has_all_in_pickup_store']) {
+            $this->order['sa__skladiste'] = $this->pickup;
+            $this->order['na__skladiste'] = $this->pickup;
+            $this->order['skl_dokument']  = 'DP';
+            $this->order['vrsta_isporuke']  = '03';
+            $this->order['napomena']  = 'Osobno preuzimanje: ' . $this->oc_order['comment'];
+
+            if ($this->oc_order['payment_code'] == 'cod') {
+                $this->order['placanja'] = '';
+            }
+        }*/
+
+        $this->log('Order create method: $this->>order - LOC_Order #262', $this->order);
+    }
 
 
-        $this->log('Order create method: $this->>order - LOC_Order #156', $this->order);
+    /**
+     * Create luceed order data.
+     */
+    public function createPickup(array $nalog): void
+    {
+        $this->log('createPickup() ---> $nalog ::::: ', $nalog);
+
+        $this->order = [
+            'nalog_prodaje_b2b'         => $this->oc_order['order_id']. '-' . Carbon::now()->year . $nalog['broj_naloga'],
+            'narudzba'                  => $this->oc_order['order_id'] . '-' . Carbon::now()->year . $nalog['broj_naloga'],
+            'datum'                     => Carbon::make($this->oc_order['date_added'])->format(agconf('luceed.date')),
+            'raspored'                  => Carbon::make($this->oc_order['date_added'])->format('d.m.Y H:i:s'),
+            'skladiste'                 => $nalog['na__skladiste'],
+            'sa__skladiste'             => $nalog['sa__skladiste'],
+            'na__skladiste'             => $nalog['na__skladiste'],
+            //'pj_id'                     => $nalog['pj'],
+            'status'                    => $this->getStatus(),
+            'napomena'                  => $nalog['napomena'],
+            'poruka_dolje'              => $nalog['napomena'],
+            'komercijalist__radnik_uid' => '206-1063',
+            'placa_porez'               => 'D',
+            'cijene_s_porezom'          => agconf('luceed.with_tax'),
+            'partner_uid'               => $this->customer['main'],
+            'korisnik__partner_uid'     => $this->customer['alter'] ?: $this->customer['main'],
+            'iznos'                     => (float) $nalog['iznos'],
+            'vrsta_isporuke'            => $nalog['vrsta_isporuke'],
+            'skl_dokument'              => $nalog['skl_dokument'],
+            'rezervacija_do_datuma'     => $this->getReservation(),
+            'placanja'                  => [
+                [
+                    'vrsta_placanja_uid' => $this->getPaymentType(),
+                    'iznos'              => (float) $nalog['iznos'],
+                ]
+            ],
+            'stavke'                    => $nalog['stavke'],
+        ];
+
+        if ($nalog['broj_naloga'] == '') {
+            $this->order['vezani_poziv_na_broj'] = $this->oc_order['poziv_na_broj'];
+        }
+
+        if ($this->oc_order['payment_code'] == 'cod') {
+            $this->order['placanja'] = '';
+        }
+
+        $this->log('createPickup() ::::: ', $this->order);
+    }
+
+
+    /*******************************************************************************
+    *                                Copyright : AGmedia                           *
+    *                              email: filip@agmedia.hr                         *
+    *******************************************************************************/
+
+    private function resolveAvailability()
+    {
+        $availability = new Availability($this->getRegularProducts(), $this->getShippingProduct(), $this->oc_order, $this->pickup);
+
+        $availability->checkPickupStore();
+
+        if ( ! $availability->has_all_in_pickup_store) {
+            $availability->checkWarehouse('101');
+
+            if ($availability->items_required) {
+                $availability->collectBy('sum');
+            }
+        }
+
+        return $availability;
+
+        //
+        //
+        //
+        /*$this->regular_products = $this->getRegularProducts();
+        $this->items_available  = $this->resolveAvailabilityForCart();
+        $warehouse_list         = (new LOC_Warehouse())->getList();
+        $this->pickup_warehouse = $warehouse_list->where('skladiste', '=', $this->pickup)->first();
+
+        $this->items_available['has_all_in_pickup_store'] = 0;
+        $this->items_available['products_required']       = [];
+
+        $products_available = false;
+        $nalog_count        = 1;
+        $has_any_items_in_pickup_store = false;
+
+        $this->log_items('resolveAvailability()::$this->pickup_warehouse', $this->pickup_warehouse);
+        $this->log_items('resolveAvailability()::$this->regular_products', $this->regular_products);
+        $this->log_items('resolveAvailability()::$items_available', $this->items_available);
+
+        // Check if all items are available in pickup store
+        foreach ($this->items_available['items'] as $store_uid => $items) {
+            Log::store($store_uid . ' - store_uid', 'items');
+            Log::store($this->pickup_warehouse['skladiste_uid'], 'items');
+            //
+            if ($store_uid == $this->pickup_warehouse['skladiste_uid']) {
+                $has_any_items_in_pickup_store = true;
+                // Ako ima sve u pickup poslovnici
+                if (count($this->regular_products) == count($items)) {
+                    $has_all_in_pickup_store = true;
+
+                    foreach ($items as $item) {
+                        if ($item['qty'] < $item['req']) {
+                            $has_all_in_pickup_store = false;
+                        }
+                    }
+
+                    if ($has_all_in_pickup_store) {
+                        $this->items_available['has_all_in_pickup_store'] = 1;
+
+                        $this->items_available['nalozi'][$store_uid] = [
+                            'broj_naloga'    => '',
+                            'iznos'          => $this->getIznos(),
+                            'sa__skladiste'  => $this->pickup_warehouse['skladiste'],
+                            'na__skladiste'  => $this->pickup_warehouse['skladiste'],
+                            'pj'             => $this->pickup_warehouse['pj'],
+                            'skl_dokument'   => 'DP',
+                            'vrsta_isporuke' => '03',
+                            'napomena'       => 'Osobno preuzimanje: ' . $this->oc_order['comment'],
+                            'stavke'         => $this->getItems()
+                        ];
+
+                        return;
+                    }
+                }
+
+                // Ako ima dio u pickup poslovnici.
+                if ( ! $this->items_available['has_all_in_pickup_store']) {
+                    foreach ($items as $item) {
+                        // Provjeri koji artikli fale i koliko.
+                        if ($item['qty'] < $item['req']) {
+                            // Uzmi koliko ima.
+                            if ($item['qty']) {
+                                $products_available[$item['uid']] = [
+                                    'qty' => $item['qty']
+                                ];
+                            }
+                        }
+                        // Uzmi artikle kojih ima u pickup poslovnici.
+                        if ($item['qty'] >= $item['req']) {
+                            $products_available[$item['uid']] = [
+                                'qty' => $item['req']
+                            ];
+                        }
+                    }
+
+                    // Napravi nalog za pickup poslovnicu sa onim šta ima.
+                    if ($products_available) {
+                        //$stavke = OrderHelper::getOrderItems($products_available, $this->oc_order['order_id']);
+
+                        $this->items_available['nalozi'][$store_uid] = [
+                            'broj_naloga'    => '',
+                            'iznos'          => $this->getIznos(),
+                            'sa__skladiste'  => $this->pickup_warehouse['skladiste'],
+                            'na__skladiste'  => $this->pickup_warehouse['skladiste'],
+                            'pj'             => $this->pickup_warehouse['pj'],
+                            'skl_dokument'   => 'DP',
+                            'vrsta_isporuke' => '03',
+                            'napomena'       => 'Osobno preuzimanje: ' . $this->oc_order['comment'],
+                            'stavke'         => $this->getItems()
+                        ];
+                    }
+                }
+
+                unset($this->items_available['items'][$store_uid]);
+            }
+            //
+
+            $resolved_items = OrderHelper::resolveRequiredProducts(
+                $this->regular_products, $products_available ?: []
+            );
+
+            $this->regular_products = $resolved_items['regular'];
+            $this->items_available['products_required'] = $resolved_items['required'];
+        }
+
+        if ( ! $has_any_items_in_pickup_store) {
+            $this->items_available['nalozi'][$this->pickup_warehouse['skladiste_uid']] = [
+                'broj_naloga'    => '',
+                'iznos'          => $this->getIznos(),
+                'sa__skladiste'  => $this->pickup_warehouse['skladiste'],
+                'na__skladiste'  => $this->pickup_warehouse['skladiste'],
+                'pj'             => $this->pickup_warehouse['pj'],
+                'skl_dokument'   => 'DP',
+                'vrsta_isporuke' => '03',
+                'napomena'       => 'Osobno preuzimanje: ' . $this->oc_order['comment'],
+                'stavke'         => $this->getItems()
+            ];
+        }
+
+        $this->log_items('resolveAvailability()::$items_available_2', $this->items_available);
+        //
+        // Ako nema svih u pickup poslovnici i ako postoje koji fale.
+        if ( ! empty($this->items_available['products_required'])) {
+            $required_products = $this->items_available['products_required'];
+            $loop = 1;
+
+            $this->log_items('Start 2...');
+
+            // Provjeri ostale trgovine za artikle koje fale.
+            // Ali u ovoj iteraciji samo ako ih ima svih u jednoj poslovnici.
+            foreach ($this->items_available['items'] as $store_uid => $items) {
+                if ($loop) {
+                    $this->log_items($loop);
+                    $this->log_items($store_uid);
+                    $loop++;
+
+                    $store_sifra = OrderHelper::getStoreSifra($store_uid, $warehouse_list);
+                    $has_all_in_one_store = OrderHelper::hasAllInOneStore($required_products, $items);
+
+                    if ($has_all_in_one_store) {
+                        $this->log_items('$has_all_in_one_store');
+                        $this->items_available['nalozi'][$store_uid] = OrderHelper::getNalog(
+                            $required_products,
+                            $this->oc_order['order_id'],
+                            $nalog_count,
+                            $store_sifra,
+                            $this->pickup_warehouse
+                        );
+
+                        $this->log_items('resolveAvailability()::$items_available_3', $this->items_available);
+
+                        return;
+                    }
+
+                    $resolved_products = OrderHelper::getAvailableItemsFromStore($required_products, $items);
+
+                    if ( ! empty($resolved_products['available'])) {
+                        $this->items_available['nalozi'][$store_uid] = OrderHelper::getNalog(
+                            $resolved_products['available'],
+                            $this->oc_order['order_id'],
+                            $nalog_count,
+                            $store_sifra,
+                            $this->pickup_warehouse
+                        );
+                    }
+
+                    $required_products = $resolved_products['required'];
+
+                    $this->log_items($resolved_products);
+
+                    if (empty($required_products)) {
+                        $loop = false;
+                    }
+
+                    $nalog_count++;
+                }
+            }
+
+            $this->log_items('End 2...');
+
+            $this->log_items('resolveAvailability()::$items_available_3', $this->items_available);
+        }*/
+
+    }
+
+
+    /**
+     * @return array
+     */
+    private function resolveAvailabilityForCart()
+    {
+        $availables = [];
+        $warehouse_query = OrderHelper::getAvailabilityPickupQuery(agconf('import.warehouse.pickup'));
+
+        // Collect availability for all items
+        foreach ($this->regular_products as $product) {
+            $service   = $this->service->getStock($warehouse_query, $product['artikl']);
+            $json      = json_decode($service)->result[0]->stanje;
+            $available = collect($json)->where('raspolozivo_kol', '>', 0);
+
+            if ($available->count()) {
+                foreach ($available as $warehouse) {
+                    $availables['items'][$warehouse->skladiste_uid][] = [
+                        'uid' => $product['artikl'],
+                        'qty' => $warehouse->raspolozivo_kol,
+                        'req' => $product['kolicina']
+                    ];
+                }
+            }
+        }
+
+        return $availables;
+    }
+
+
+
+
+
+    private function getItemsAvailability()
+    {
+        $availables = [];
+
+        $products        = $this->getRegularProducts();
+        $warehouse_query = OrderHelper::getAvailabilityPickupQuery(agconf('import.warehouse.pickup'));
+        $warehouse_list  = (new LOC_Warehouse())->getList();
+
+        $this->log_items('getItemsAvailability() -> $products...', $products);
+        $this->log_items('count $products', count($products));
+
+        // Collect availability for all items
+        foreach ($products as $product) {
+            $service   = $this->service->getStock($warehouse_query, $product['artikl']);
+            $json      = json_decode($service)->result[0]->stanje;
+            $available = collect($json)->where('raspolozivo_kol', '>', 0);
+
+            //$this->log_items('$available()..................', $available);
+            //$this->log('$available()->count()', $available->count());
+
+            if ($available->count()) {
+                foreach ($available as $warehouse) {
+                    $availables['items'][$warehouse->skladiste_uid][] = [
+                        'uid' => $product['artikl'],
+                        'qty' => $warehouse->raspolozivo_kol,
+                        'req' => $product['kolicina']
+                    ];
+                }
+            }
+        }
+
+        $this->log_items('getItemsAvailability() -> $availables...', $availables);
+
+        $available_warehouses = [];
+
+        foreach ($availables['items'] as $store_uid => $items) {
+            // Check if all items are available in pickup store
+            if (count($products) == count($items)) {
+
+                $has_all_in_pickup_store = $warehouse_list->where('skladiste_uid', '=', $store_uid . '-1063')
+                                                          ->where('skladiste', '=', $this->pickup)
+                                                          ->first();
+
+                $this->log_items('getItemsAvailability() -> $has_all_in_pickup_store...', $has_all_in_pickup_store);
+
+                if ($has_all_in_pickup_store) {
+                    $availables['has_all_in_pickup_store'] = $has_all_in_pickup_store;
+                }
+                /* else {
+                    $has_all_in_one_store = $warehouse_list->where('skladiste_uid', '=', $store_uid)
+                                                           ->first();
+                    if ($has_all_in_one_store) {
+                        $availables['has_all_in_one_store'] = $has_all_in_one_store;
+                    }
+                }*/
+            }
+        }
+
+        // If all items are NOT available in pickup store
+        if ( ! isset($availables['has_all_in_pickup_store'])) {
+            // Collect items form pickup store
+            $pickup_store = $warehouse_list->where('skladiste', '=', $this->pickup)->first();
+
+            $this->log_items('getItemsAvailability() -> $pickup_store...', $pickup_store);
+
+            foreach ($availables['items'] as $store_uid => $items) {
+                if ($store_uid == $pickup_store['skladiste_uid']) {
+                    $availables['pickup_store_items'] = $items;
+
+                    foreach ($items as $item) {
+                        if ($item['req'] > $item['qty']) {
+                            for ($i = 0; $i < count($products); $i++) {
+                                if ($products[$i]['artikl'] == $item['uid']) {
+                                    $products[$i]['kolicina'] = $item['qty'] - $item['req'];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        // Collect from available stores
+
+        $this->log_items('getItemsAvailability() -> $products...', $products);
+        $this->log_items('getItemsAvailability() -> $availables_#2...', $availables);
+    }
+
+
+    /**
+     * @return $this
+     */
+    private function resolvePickup(string $code = null)
+    {
+        $this->pickup = '';
+        $shipping_uid = $code ?: $this->oc_order['shipping_code'];
+        $shipping_code = substr($shipping_uid, 0, -1);
+
+        if ($shipping_code == 'xshippingpro.xshippingpro1_') {
+            $xid = substr($shipping_uid, strpos($shipping_uid, '_') + 1);
+
+            foreach (agconf('luceed.pickup') as $key => $item) {
+                if ($key == $xid) {
+                    $this->pickup = $item;
+                }
+            }
+        }
+
+        return $this;
     }
 
 
@@ -313,7 +729,6 @@ class LOC_Order
      */
     private function hasOIB(): bool
     {
-
         return ($this->oc_order['oib'] != '' && $this->oc_order['customer_group_id'] > 2) ? true : false;
     }
 
@@ -329,6 +744,10 @@ class LOC_Order
 
         if ($this->oc_order['payment_code'] == 'cod') {
             return '02';
+        }
+
+        if ($this->oc_order['payment_code'] == 'bank_transfer' && $this->pickup != '') {
+            return '01';
         }
 
         if ($this->oc_order['payment_code'] == 'bank_transfer') {
@@ -357,7 +776,6 @@ class LOC_Order
             'phone'             => $this->oc_order['telephone'],
             'fname'             => $this->oc_order['payment_firstname'],
             'lname'             => $this->oc_order['payment_lastname'],
-            'company'           => $this->oc_order['payment_company'],
             'address'           => $this->oc_order['payment_address_1'],
             'zip'               => $this->oc_order['payment_postcode'],
             'city'              => $this->oc_order['payment_city'],
@@ -382,7 +800,7 @@ class LOC_Order
      */
     public function recordError()
     {
-        return Order::where('order_id', $this->oc_order['order_id'])->update([
+        return Order::query()->where('order_id', $this->oc_order['order_id'])->update([
             'luceed_uid' => $this->response->error
         ]);
     }
@@ -415,9 +833,8 @@ class LOC_Order
     public function sort()
     {
         $statuses = OrderStatus::where('luceed_status_id', '!=', '')->get();
-        $orders   = Order::select('order_id', 'luceed_uid', 'email', 'payment_code', 'order_status_id', 'order_status_changed')
+        $orders   = Order::select('order_id', 'luceed_uid', 'email', 'payment_code', 'shipping_code', 'order_status_id', 'order_status_changed')
                          ->where('order_status_id', '!=', 0)
-            ->where('date_added', '>=', Carbon::now()->subWeek(2)->toDateTimeString())
                          ->get();
 
         // Check if status have changed.
@@ -428,6 +845,10 @@ class LOC_Order
                 $old_status = $statuses->where('order_status_id', $order->order_status_id)->first();
                 $new_status = $statuses->where('luceed_status_id', $l_order->status)->first();
 
+                if ( ! $old_status || ! $new_status) {
+                    continue;
+                }
+
                 if ($l_order->status != $old_status->luceed_status_id) {
                     $this->collection[] = [
                         'order_id'     => $order->order_id,
@@ -435,6 +856,7 @@ class LOC_Order
                         'status_to'    => $l_order->status,
                         'oc_status_to' => $new_status->order_status_id,
                         'payment'      => $order->payment_code,
+                        'shipping'     => $order->shipping_code,
                         'email'        => $order->email
                     ];
                 }
@@ -444,10 +866,22 @@ class LOC_Order
         if ( ! empty($this->collection)) {
             // Get the apropriate mail.
             for ($i = 0; $i < count($this->collection); $i++) {
-                foreach (agconf('mail.' . $this->collection[$i]['payment']) as $key => $item) {
-                    if ($key) {
-                        if ($this->collection[$i]['status_from'] == $item['from'] && $this->collection[$i]['status_to'] == $item['to']) {
-                            $this->collection[$i]['mail'] = $key;
+                $this->resolvePickup($this->collection[$i]['shipping']);
+
+                if ($this->pickup != '') {
+                    foreach (agconf('mail_pickup.' . $this->collection[$i]['payment']) as $p_key => $p_item) {
+                        if ($p_key) {
+                            if ($this->collection[$i]['status_from'] == $p_item['from'] && $this->collection[$i]['status_to'] == $p_item['to']) {
+                                $this->collection[$i]['mail'] = $p_key;
+                            }
+                        }
+                    }
+                } else {
+                    foreach (agconf('mail.' . $this->collection[$i]['payment']) as $key => $item) {
+                        if ($key) {
+                            if ($this->collection[$i]['status_from'] == $item['from'] && $this->collection[$i]['status_to'] == $item['to']) {
+                                $this->collection[$i]['mail'] = $key;
+                            }
                         }
                     }
                 }
@@ -492,49 +926,58 @@ class LOC_Order
         $this->collection = [];
 
         $statuses = OrderStatus::where('luceed_status_id', '!=', '')->get();
-        $orders   = Order::select('order_id', 'email', 'payment_code', 'order_status_id', 'order_status_changed')
+        $orders   = Order::query()->select('order_id', 'email', 'payment_code', 'shipping_code', 'order_status_id', 'order_status_changed')
                          ->where('order_status_id', '!=', 0)
+                         ->where('date_added', '>=', Carbon::now()->subMonth()->toDateTimeString())
                          ->get();
 
         foreach ($orders as $order) {
             $status = $statuses->where('order_status_id', $order->order_status_id)->first();
 
-            if ($order->order_status_changed < Carbon::now()->subHour(168) && $order->order_status_changed > Carbon::now()->subHour(72) && $status->luceed_status_id == '11') {
-                $this->collection[] = [
-                    'order_id'    => $order->order_id,
-                    'longer_then' => 168,
-                    'status'      => $status->luceed_status_id,
-                    'payment'     => $order->payment_code,
-                    'email'       => $order->email
-                ];
+            if ( ! $status) {
+                continue;
             }
 
-            if ($order->order_status_changed < Carbon::now()->subHour(72) && $order->order_status_changed > Carbon::now()->subHour(48) && in_array($status->luceed_status_id, ['02', '05'])) {
+            if ($order->order_status_changed > Carbon::now()->subHour(168)->toDateTimeString() && $order->order_status_changed < Carbon::now()->subHour(72)->toDateTimeString() && in_array($status->luceed_status_id, ['11', '09'])) {
                 $this->collection[] = [
                     'order_id'    => $order->order_id,
                     'longer_then' => 72,
                     'status'      => $status->luceed_status_id,
                     'payment'     => $order->payment_code,
+                    'shipping'    => $order->shipping_code,
                     'email'       => $order->email
                 ];
             }
 
-            if ($order->order_status_changed < Carbon::now()->subHour(48) && $order->order_status_changed > Carbon::now()->subHour(24) && in_array($status->luceed_status_id, ['12', '01'])) {
+            if ($order->order_status_changed > Carbon::now()->subHour(72)->toDateTimeString() && $order->order_status_changed < Carbon::now()->subHour(48)->toDateTimeString() && in_array($status->luceed_status_id, ['02', '05', '09'])) {
                 $this->collection[] = [
                     'order_id'    => $order->order_id,
                     'longer_then' => 48,
                     'status'      => $status->luceed_status_id,
                     'payment'     => $order->payment_code,
+                    'shipping'    => $order->shipping_code,
                     'email'       => $order->email
                 ];
             }
 
-            if ($order->order_status_changed < Carbon::now()->subHour(24) && $order->order_status_changed > Carbon::now() && in_array($status->luceed_status_id, ['02', '05', '12', '01'])) {
+            if ($order->order_status_changed > Carbon::now()->subHour(48)->toDateTimeString() && $order->order_status_changed < Carbon::now()->subHour(24)->toDateTimeString() && in_array($status->luceed_status_id, ['12', '01', '09'])) {
                 $this->collection[] = [
                     'order_id'    => $order->order_id,
                     'longer_then' => 24,
                     'status'      => $status->luceed_status_id,
                     'payment'     => $order->payment_code,
+                    'shipping'    => $order->shipping_code,
+                    'email'       => $order->email
+                ];
+            }
+
+            if ($order->order_status_changed > Carbon::now()->subHour(24)->toDateTimeString() && $order->order_status_changed < Carbon::now()->toDateTimeString() && in_array($status->luceed_status_id, ['02', '05', '12', '01'])) {
+                $this->collection[] = [
+                    'order_id'    => $order->order_id,
+                    'longer_then' => 0,
+                    'status'      => $status->luceed_status_id,
+                    'payment'     => $order->payment_code,
+                    'shipping'    => $order->shipping_code,
                     'email'       => $order->email
                 ];
             }
@@ -543,11 +986,25 @@ class LOC_Order
 
         // Get the apropriate mail.
         for ($i = 0; $i < count($this->collection); $i++) {
-            foreach (agconf('mail.' . $this->collection[$i]['payment'])[0] as $key => $items) {
-                if ($this->collection[$i]['status'] == $key) {
-                    foreach ($items as $hour => $mail) {
-                        if ($this->collection[$i]['longer_then'] == $hour) {
-                            $this->collection[$i]['mail'] = $mail;
+            $this->resolvePickup($this->collection[$i]['shipping']);
+
+            if ($this->pickup != '') {
+                foreach (agconf('mail_pickup.' . $this->collection[$i]['payment'])[0] as $key => $items) {
+                    if ($this->collection[$i]['status'] == $key) {
+                        foreach ($items as $hour => $mail) {
+                            if ($this->collection[$i]['longer_then'] == $hour) {
+                                $this->collection[$i]['mail'] = $mail;
+                            }
+                        }
+                    }
+                }
+            } else {
+                foreach (agconf('mail.' . $this->collection[$i]['payment'])[0] as $key => $items) {
+                    if ($this->collection[$i]['status'] == $key) {
+                        foreach ($items as $hour => $mail) {
+                            if ($this->collection[$i]['longer_then'] == $hour) {
+                                $this->collection[$i]['mail'] = $mail;
+                            }
                         }
                     }
                 }
@@ -580,8 +1037,6 @@ class LOC_Order
      */
     private function getPaymentType()
     {
-        $loc_p = [];
-        
         if ($this->hasOIB()) {
             return '96-1063';
         }
@@ -615,9 +1070,11 @@ class LOC_Order
     private function getItems(): array
     {
         // Get the regular products from cart.
-        $response = $this->getRegularProducts();
+        $response = array_values($this->getRegularProducts());
         // Apply shipping dummy product.
-        $response[] = $this->getShippingProduct();
+        if ($this->pickup == '') {
+            $response[] = $this->getShippingProduct();
+        }
 
         return $response;
     }
@@ -631,24 +1088,15 @@ class LOC_Order
         $response       = [];
         $order_products = OrderProduct::where('order_id', $this->oc_order['order_id'])->get();
 
-        $this->log('$order_products', $order_products->toArray());
-        $this->log('$this->installments', $this->installments);
-
         if ($order_products->count()) {
             foreach ($order_products as $order_product) {
-                /*$price = $this->getItemPrices($order_product->product_id, $order_product->price);
-
-                if ( ! $price['rabat']) {
-                    $price['rabat'] = $this->applyCouponDiscount();
-                }*/
-
                 $price = $order_product->price;
 
                 if ($this->installments > 12) {
                     $price = $order_product->price * 1.07;
                 }
 
-                $response[] = [
+                $response[$order_product->model] = [
                     'artikl'   => $order_product->model,
                     'kolicina' => (int) $order_product->quantity,
                     'cijena'   => (float) number_format($price, 2, '.', ''),
@@ -656,6 +1104,8 @@ class LOC_Order
                 ];
             }
         }
+
+        $this->log_items('getRegularProducts()::LEAVE');
 
         return $response;
     }
@@ -681,6 +1131,8 @@ class LOC_Order
                 }
             }
         }
+
+        $this->log_items('getShippingProduct()::LEAVE');
 
         return [
             'artikl'   => ($this->oc_order['shipping_code'] == 'weight.weight_5') ? agconf('luceed.shipping_boxnow_article_uid') : agconf('luceed.shipping_article_uid'),
@@ -715,7 +1167,7 @@ class LOC_Order
      *
      * @return array
      */
-    private function getItemPrices(int $product_id, float $price): array
+    /*private function getItemPrices(int $product_id, float $price): array
     {
         $product = Product::find($product_id);
 
@@ -733,7 +1185,7 @@ class LOC_Order
             'cijena' => number_format($price, 2, '.', ''),
             'rabat'  => 0
         ];
-    }
+    }*/
 
 
     /**
@@ -767,12 +1219,12 @@ class LOC_Order
                 if ($item->code == 'coupon') {
                     preg_match('#\((.*?)\)#', $item->title, $code);
 
-                    $coupon = Coupon::where('code', $code[1])->first();
+                    $this->coupon = Coupon::where('code', $code[1])->first();
 
-                    if ($coupon) {
-                        $this->log('$coupon', $coupon->toArray());
+                    if ($this->coupon) {
+                        $this->log('$coupon', $this->coupon->toArray());
 
-                        $this->discount = $coupon->discount;
+                        $this->discount = $this->coupon->discount;
 
                         $this->log('$this->discount', $this->discount);
                     }
@@ -788,14 +1240,14 @@ class LOC_Order
      *
      * @return int
      */
-    private function applyCouponDiscount()
+    /*private function applyCouponDiscount()
     {
         if ($this->discount) {
             return abs($this->discount);
         }
 
         return 0;
-    }
+    }*/
 
 
     /**
@@ -814,7 +1266,7 @@ class LOC_Order
     /**
      * @return array
      */
-    private function setAvailability()
+    /*private function setAvailability()
     {
         $has      = true;
         $iterator = $this->getRegularProducts();
@@ -843,7 +1295,20 @@ class LOC_Order
 
         return $has;
 
-    }
+    }*/
+
+
+    /**
+     * @return int|string
+     */
+    /*private function getIznos()
+    {
+        if ($this->hasOIB()) {
+            return $this->getSubTotal();
+        }
+
+        return number_format($this->oc_order['total'], 2, '.', '');
+    }*/
 
 
     /**
@@ -858,7 +1323,7 @@ class LOC_Order
     {
         $json = json_decode($orders);
 
-        return $json->result[0]->nalozi_prodaje;
+        return $json->result[0]->nalozi_prodaje ?: [];
     }
 
 
@@ -884,6 +1349,28 @@ class LOC_Order
         if ($data) {
             Log::store($data, 'proccess_order_' . $this->oc_order['order_id']);
         }
+    }
+
+
+    /**
+     * @param $string
+     * @param $data
+     *
+     * @return int|mixed
+     */
+    private function log_items($string, $data = null)
+    {
+        if (is_string($data) || is_int($data) || is_float($data)) {
+            return Log::store($string . ' => ' . $data, 'proccess_order_' . $this->oc_order['order_id'] . '_items');
+        }
+
+        Log::store($string, 'proccess_order_' . $this->oc_order['order_id'] . '_items');
+
+        if ($data) {
+            Log::store($data, 'proccess_order_' . $this->oc_order['order_id'] . '_items');
+        }
+
+        return 1;
     }
 
 }
