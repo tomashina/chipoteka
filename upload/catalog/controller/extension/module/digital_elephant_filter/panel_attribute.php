@@ -151,7 +151,6 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
 
                     foreach ($attribute_value['values'] as $value) {
 
-                        // normalizacija vrijednosti
                         $value = is_string($value) ? trim($value) : $value;
 
                         // ne prikazuj prazne (ali dozvoli '0')
@@ -159,9 +158,14 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                             continue;
                         }
 
-                        // ✅ Decimalni broj: trim trailing zeros + trailing decimal point
-                        if ($isDecimalAttr && is_string($value)) {
-                            $value = $this->defNormalizeDecimal($value);
+                        // ✅ NORMALIZACIJA: ako izgleda kao broj (13.00, 15.60, 16,30) -> makni trailing nule
+                        if (is_string($value)) {
+                            $candidate = str_replace(',', '.', $value);
+
+                            // dozvoli samo "čiste" brojeve (da ne diraš npr. "i7-13. generacija" itd.)
+                            if (preg_match('/^-?\d+(?:\.\d+)?$/', $candidate)) {
+                                $value = $this->defNormalizeDecimal($candidate);
+                            }
                         }
 
                         $input_label = $value;
