@@ -72,12 +72,18 @@
 
                 {# Da/Ne: D -> "Da", ali Energetska oznaka: ostaje "D" #}
                 {% if input_data['input_value'] == 'D' %}
-                    {% if section['name'] is defined and section['name']|lower == 'energetska oznaka' %}
+
+                    {# provjeri je li sekcija Energetska oznaka (sigurno, bez obzira na razmake i case) #}
+                    {% set section_name = section['name']|default('')|trim|lower %}
+
+                    {% if section_name starts with 'energetska oznaka' %}
                         {% set display_label = 'D' %}
                     {% else %}
                         {% set display_label = 'Da' %}
                     {% endif %}
+
                 {% endif %}
+
 
                 {% set attr_checked = '' %}
                 {% if check_data_on_active[input_data['input_name']][section['id']]
