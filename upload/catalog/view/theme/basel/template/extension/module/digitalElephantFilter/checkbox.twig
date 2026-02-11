@@ -1,33 +1,90 @@
-{# filtriraj: makni N #}
+{# filtriraj i normaliziraj vrijednosti #}
 {% set visible_inputs = [] %}
+
 {% for v in inputs_data %}
-    {% if v['input_value'] != 'N' %}
-        {% set visible_inputs = visible_inputs|merge([v]) %}
+
+    {# raw value/label #}
+    {% set raw_value = (v['input_value'] ?? '')|trim %}
+    {% set raw_label = (v['input_label'] ?? raw_value)|trim %}
+
+    {# preskoči prazno/null #}
+    {% if raw_value == '' %}
+        {% continue %}
     {% endif %}
+
+    {# preskoči "Ne" (isključivo) #}
+    {% if raw_value == 'Ne' %}
+        {% continue %}
+    {% endif %}
+
+    {# preskoči nule: 0 / 0,0 / 0,00 / 0.0 / 0.00 ... #}
+    {% set v_norm = raw_value|replace({',': '.'}) %}
+    {% if v_norm matches '/^0+(?:\\.0+)?$/' %}
+        {% continue %}
+    {% endif %}
+
+    {# broj? -> makni trailing nule i točku #}
+    {% set display_value = raw_value %}
+    {% if v_norm matches '/^-?\\d+(?:\\.\\d+)?$/' %}
+        {# rtrim 0 i . (Twig nema rtrim, pa to radimo regexom) #}
+        {% set display_value = v_norm
+            |replace({',': '.'})
+            |replace({' ': ''})
+        %}
+        {# 15.60 -> 15.6 #}
+        {% set display_value = display_value|replace({(display_value|replace({'0':''})): (display_value|replace({'0':''}))}) %}
+        {# pouzdanije: regex uklanjanje trailing nula #}
+        {% set display_value = display_value|replace({(display_value): (display_value)}) %}
+        {% set display_value = display_value|replace({',': '.'}) %}
+
+        {# ukloni trailing nule #}
+        {% set display_value = display_value|replace({(display_value): (display_value)}) %}
+        {% set display_value = display_value|preg_replace('/(\\.\\d*?[1-9])0+$/', '$1') %}
+        {% set display_value = display_value|preg_replace('/\\.0+$/', '') %}
+        {% set display_value = display_value|preg_replace('/\\.$/', '') %}
+    {% endif %}
+
+    {# default label = normalizirani display_value (bez totals span-a) #}
+    {# ako ti input_label sadrži HTML (totals), radije koristi raw_value/display_value za tekst #}
+    {% set v2 = v|merge({
+        'input_value': raw_value,
+        'display_value': display_value
+    }) %}
+
+    {% set visible_inputs = visible_inputs|merge([v2]) %}
 {% endfor %}
 
 {% if visible_inputs|length > 0 %}
     <div class="digitalElephantFilter_type_checkbox">
-        <ul class="widget-list widget-filter-list list-unstyled pt-1" style="max-height: 11rem;" data-simplebar data-simplebar-auto-hide="false">
+        <ul class="widget-list widget-filter-list list-unstyled pt-1"
+            style="max-height: 11rem;"
+            data-simplebar
+            data-simplebar-auto-hide="false">
+
             {% for input_data in visible_inputs %}
 
-                {# D -> DA #}
-                {% set display_label = input_data['input_label'] %}
+                {# --- LABEL LOGIKA --- #}
+                {% set display_label = input_data['display_value'] %}
+
+                {# Da/Ne: D -> "Da", ali NE za Energetska oznaka #}
                 {% if input_data['input_value'] == 'D' %}
-                    {% set display_label = 'DA' %}
+                    {% if section['name'] is defined and section['name']|lower == 'energetska oznaka' %}
+                        {# Energetska oznaka: ostaje "D" #}
+                        {% set display_label = 'D' %}
+                    {% else %}
+                        {# Da/Ne: "Da" #}
+                        {% set display_label = 'Da' %}
+                    {% endif %}
                 {% endif %}
 
+                {# CHECKED/DISABLED #}
                 {% set attr_checked = '' %}
                 {% if check_data_on_active[input_data['input_name']][section['id']]
                     and input_data['input_value'] in check_data_on_active[input_data['input_name']][section['id']] %}
                     {% set attr_checked = 'checked="checked"' %}
                 {% endif %}
 
-                {% if input_data['is_enable'] %}
-                    {% set attr_disabled = '' %}
-                {% else %}
-                    {% set attr_disabled = 'disabled="disabled"' %}
-                {% endif %}
+                {% set attr_disabled = input_data['is_enable'] ? '' : 'disabled="disabled"' %}
 
                 <li class="widget-filter-item d-flex justify-content-between align-items-center mb-1">
                     <div class="form-check">
