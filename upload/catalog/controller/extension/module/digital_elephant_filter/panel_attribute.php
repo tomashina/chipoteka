@@ -21,6 +21,40 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
         $this->helperUrl  = $this->load->controller('extension/module/digital_elephant_filter/helper_url/prototype');
     }
 
+    /**
+     * Decimal display normalization:
+     * - trim trailing zeros
+     * - trim trailing decimal point
+     * Examples: "15.60" -> "15.6", "13.00" -> "13"
+     */
+    private function defNormalizeDecimal($value) {
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        $v = trim($value);
+        if ($v === '') return $v;
+
+        // if ever comes as "15,60"
+        $v = str_replace(',', '.', $v);
+
+        if (strpos($v, '.') !== false) {
+            $v = rtrim($v, '0');
+            $v = rtrim($v, '.');
+        }
+
+        return $v;
+    }
+
+    /**
+     * Detects attribute type "Decimalni broj" (or any variant containing "decimal")
+     * Adjust this mapping if your system uses a specific fixed value.
+     */
+    private function defIsDecimalType($type) {
+        $t = strtolower((string)$type);
+        return ($t === 'decimalni broj' || $t === 'decimal' || strpos($t, 'decimal') !== false);
+    }
+
     public function getSectionGroups($setting, $category_id)
     {
         $category_id = (int)$category_id;
@@ -36,8 +70,27 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
 
             $attributes_groups = $this->model_extension_module_digitalElephantFilter->getAttributes($setting['DEF_settings'], $args);
 
+            $attributes_type_by_setting = '';
+            if (isset($setting['DEF_settings']['attributes'])) {
+                $attributes_type_by_setting = $setting['DEF_settings']['attributes'];
+            }
+
             // ===================== URL STATE + PRIMARY CONTEXT =====================
             $urlBase = $this->helperUrl->getUrlData();
+
+            // Normaliziraj već odabrane URL vrijednosti za decimalne atribute
+            if (!empty($urlBase['attribute']) && is_array($urlBase['attribute']) && !empty($attributes_type_by_setting)) {
+                foreach ($urlBase['attribute'] as $attrId => $selectedVals) {
+                    $attrId = (int)$attrId;
+
+                    $typeForAttr = $attributes_type_by_setting[$attrId]['type'] ?? '';
+                    if ($this->defIsDecimalType($typeForAttr) && is_array($selectedVals)) {
+                        foreach ($selectedVals as $k => $sv) {
+                            $urlBase['attribute'][$attrId][$k] = $this->defNormalizeDecimal($sv);
+                        }
+                    }
+                }
+            }
 
             // SVI trenutno odabrani atributi (primarni + sekundarni)
             $activeAttributes = [];
@@ -76,11 +129,6 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
             $showTotalsInLabel = false;
             // ======================================================================
 
-            $attributes_type_by_setting = '';
-            if (isset($setting['DEF_settings']['attributes'])) {
-                $attributes_type_by_setting = $setting['DEF_settings']['attributes'];
-            }
-
             $section_groups = [];
 
             foreach ($attributes_groups as $attribute_groups_id => $attribute_group) {
@@ -97,6 +145,10 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
 
                     $values = [];
 
+                    // type ovog atributa (za odluku treba li decimal normalizacija)
+                    $typeForThisAttr = $attributes_type_by_setting[$attribute_value_id]['type'] ?? '';
+                    $isDecimalAttr = $this->defIsDecimalType($typeForThisAttr);
+
                     foreach ($attribute_value['values'] as $value) {
 
                         // normalizacija vrijednosti
@@ -105,6 +157,11 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                         // ne prikazuj prazne (ali dozvoli '0')
                         if ($value === '' || $value === null) {
                             continue;
+                        }
+
+                        // ✅ Decimalni broj: trim trailing zeros + trailing decimal point
+                        if ($isDecimalAttr && is_string($value)) {
+                            $value = $this->defNormalizeDecimal($value);
                         }
 
                         $input_label = $value;
