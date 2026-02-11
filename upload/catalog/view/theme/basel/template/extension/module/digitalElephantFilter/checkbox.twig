@@ -3,81 +3,82 @@
 
 {% for v in inputs_data %}
 
-    {# raw value/label #}
-    {% set raw_value = (v['input_value'] ?? '')|trim %}
-    {% set raw_label = (v['input_label'] ?? raw_value)|trim %}
+    {% set raw_value = (v['input_value'] is defined ? v['input_value'] : '')|trim %}
+    {% set is_visible = true %}
 
-    {# preskoči prazno/null #}
+    {# 1) prazno/null #}
     {% if raw_value == '' %}
-        {% continue %}
+        {% set is_visible = false %}
     {% endif %}
 
-    {# preskoči "Ne" (isključivo) #}
-    {% if raw_value == 'Ne' %}
-        {% continue %}
+    {# 2) makni "Ne" (isključivo) #}
+    {% if is_visible and raw_value == 'Ne' %}
+        {% set is_visible = false %}
     {% endif %}
 
-    {# preskoči nule: 0 / 0,0 / 0,00 / 0.0 / 0.00 ... #}
+    {# 3) makni nule: 0 / 0,0 / 0,00 / 0.0 / 0.00 #}
     {% set v_norm = raw_value|replace({',': '.'}) %}
-    {% if v_norm matches '/^0+(?:\\.0+)?$/' %}
-        {% continue %}
+    {% if is_visible and (v_norm == '0' or v_norm == '0.0' or v_norm == '0.00' or v_norm == '0.000' or v_norm == '0.0000') %}
+        {% set is_visible = false %}
     {% endif %}
 
-    {# broj? -> makni trailing nule i točku #}
+    {# 4) makni N (tvoje staro pravilo) #}
+    {% if is_visible and raw_value == 'N' %}
+        {% set is_visible = false %}
+    {% endif %}
+
+    {# normalizacija prikaza brojeva: 15.60->15.6, 13.00->13 (bez regexa) #}
     {% set display_value = raw_value %}
-    {% if v_norm matches '/^-?\\d+(?:\\.\\d+)?$/' %}
-        {# rtrim 0 i . (Twig nema rtrim, pa to radimo regexom) #}
-        {% set display_value = v_norm
-            |replace({',': '.'})
-            |replace({' ': ''})
-        %}
-        {# 15.60 -> 15.6 #}
-        {% set display_value = display_value|replace({(display_value|replace({'0':''})): (display_value|replace({'0':''}))}) %}
-        {# pouzdanije: regex uklanjanje trailing nula #}
-        {% set display_value = display_value|replace({(display_value): (display_value)}) %}
-        {% set display_value = display_value|replace({',': '.'}) %}
+    {% if is_visible %}
+        {% set tmp = raw_value|replace({',': '.'}) %}
 
-        {# ukloni trailing nule #}
-        {% set display_value = display_value|replace({(display_value): (display_value)}) %}
-        {% set display_value = display_value|preg_replace('/(\\.\\d*?[1-9])0+$/', '$1') %}
-        {% set display_value = display_value|preg_replace('/\\.0+$/', '') %}
-        {% set display_value = display_value|preg_replace('/\\.$/', '') %}
+        {# ako izgleda kao decimal sa 2 znamenke: npr 15.60, 13.00 #}
+        {% if '.' in tmp %}
+            {# prvo makni .00 -> ništa #}
+            {% if tmp|slice(-3) == '.00' %}
+                {% set tmp = tmp|slice(0, tmp|length - 3) %}
+            {% else %}
+                {# makni jednu trailing 0: 15.60 -> 15.6, 16.30 -> 16.3 #}
+                {% if tmp|slice(-1) == '0' %}
+                    {% set tmp = tmp|slice(0, tmp|length - 1) %}
+                {% endif %}
+                {# ako ostane trailing '.' (npr 13.) makni #}
+                {% if tmp|slice(-1) == '.' %}
+                    {% set tmp = tmp|slice(0, tmp|length - 1) %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+        {% set display_value = tmp %}
     {% endif %}
 
-    {# default label = normalizirani display_value (bez totals span-a) #}
-    {# ako ti input_label sadrži HTML (totals), radije koristi raw_value/display_value za tekst #}
-    {% set v2 = v|merge({
-        'input_value': raw_value,
-        'display_value': display_value
-    }) %}
+    {% if is_visible %}
+        {% set v2 = v|merge({
+            'input_value': raw_value,
+            'display_value': display_value
+        }) %}
+        {% set visible_inputs = visible_inputs|merge([v2]) %}
+    {% endif %}
 
-    {% set visible_inputs = visible_inputs|merge([v2]) %}
 {% endfor %}
 
 {% if visible_inputs|length > 0 %}
     <div class="digitalElephantFilter_type_checkbox">
-        <ul class="widget-list widget-filter-list list-unstyled pt-1"
-            style="max-height: 11rem;"
-            data-simplebar
-            data-simplebar-auto-hide="false">
-
+        <ul class="widget-list widget-filter-list list-unstyled pt-1" style="max-height: 11rem;" data-simplebar data-simplebar-auto-hide="false">
             {% for input_data in visible_inputs %}
 
                 {# --- LABEL LOGIKA --- #}
                 {% set display_label = input_data['display_value'] %}
 
-                {# Da/Ne: D -> "Da", ali NE za Energetska oznaka #}
+                {# Da/Ne: D -> "Da", ali Energetska oznaka: ostaje "D" #}
                 {% if input_data['input_value'] == 'D' %}
                     {% if section['name'] is defined and section['name']|lower == 'energetska oznaka' %}
-                        {# Energetska oznaka: ostaje "D" #}
                         {% set display_label = 'D' %}
                     {% else %}
-                        {# Da/Ne: "Da" #}
                         {% set display_label = 'Da' %}
                     {% endif %}
                 {% endif %}
 
-                {# CHECKED/DISABLED #}
                 {% set attr_checked = '' %}
                 {% if check_data_on_active[input_data['input_name']][section['id']]
                     and input_data['input_value'] in check_data_on_active[input_data['input_name']][section['id']] %}
