@@ -21,13 +21,17 @@ class OrderHelper
     public static function resolvePickup($order)
     {
         $pickup        = false;
-        $shipping_code = substr($order['shipping_code'], 0, -1);
+        $shipping_code = $order['shipping_code'];
 
-        if ($shipping_code == 'xshippingpro.xshippingpro1_') {
-            $xid = substr($order['shipping_code'], strpos($order['shipping_code'], '_') + 1);
+        if (strpos($shipping_code, 'pickup.pickup_') === 0) {
+            $pickup = str_pad(substr($shipping_code, strlen('pickup.pickup_')), 3, '0', STR_PAD_LEFT);
+        }
+
+        if (strpos($shipping_code, 'xshippingpro.xshippingpro1_') === 0) {
+            $xid = substr($shipping_code, strlen('xshippingpro.xshippingpro1_'));
 
             foreach (agconf('luceed.pickup') as $key => $item) {
-                if ($key == $xid) {
+                if ((string) $key == (string) $xid) {
                     $pickup = $item;
                 }
             }

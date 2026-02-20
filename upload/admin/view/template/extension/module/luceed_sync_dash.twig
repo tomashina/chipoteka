@@ -29,8 +29,8 @@
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Sync Manager</a></li>
             <li role="presentation" class="active"><a href="#products" aria-controls="products" role="tab" data-toggle="tab">Products</a></li>
-
             <li role="presentation"><a href="#eprel" aria-controls="eprel" role="tab" data-toggle="tab">EPREL</a></li>
+            <li role="presentation"><a href="#poslovnice" aria-controls="poslovnice" role="tab" data-toggle="tab">Poslovnice</a></li>
         </ul>
         <div class="tab-content">
             <div role="tabpanel" class="tab-pane" id="home">
@@ -269,6 +269,130 @@
                 </div>
             </div>
 
+            <div role="tabpanel" class="tab-pane" id="poslovnice">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading darker-bg">
+                                <h3 class="panel-title"><i class="fa fa-map-marker"></i> Audit Poslovnica (Pickup/Availability)</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="well well-sm" style="margin-bottom: 15px;">
+                                    <div class="row">
+                                        <div class="col-sm-8">
+                                            <label style="font-weight: 600; margin-bottom: 0;">
+                                                <input type="checkbox" id="pickup-stores-enabled" {% if pickup_stores_enabled %}checked="checked"{% endif %} />
+                                                Prikaži popis poslovnica u checkoutu kada je odabran pickup način dostave (pickup.pickup_*)
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-4 text-right">
+                                            <button type="button" id="save-pickup-stores-enabled" class="btn btn-primary btn-sm">Spremi postavku</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p style="margin-bottom: 5px;">
+                                    Potrebne šifre: <strong>{{ store_audit.stats.required }}</strong>,
+                                    pronađeno u JSON: <strong>{{ store_audit.stats.in_json }}</strong>,
+                                    pickup mapiranja: <strong>{{ store_audit.stats.pickup }}</strong>
+                                </p>
+                                <p style="margin-bottom: 15px;">
+                                    Izvor skladišta: <code>{{ store_audit.json_path }}</code>
+                                </p>
+
+                                {% if store_audit.warnings %}
+                                    <div class="alert alert-warning">
+                                        <strong>Upozorenja:</strong>
+                                        <ul style="margin-top: 8px; margin-bottom: 0;">
+                                            {% for warning in store_audit.warnings %}
+                                                <li>{{ warning }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-success">Nema konflikata između env mapiranja i JSON liste poslovnica.</div>
+                                {% endif %}
+
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped table-condensed" style="font-size: 12px; line-height: 1.2;">
+                                        <thead>
+                                        <tr>
+                                            <th style="white-space: nowrap;">Šifra</th>
+                                            <th>Naziv</th>
+                                            <th style="white-space: nowrap;">UID</th>
+                                            <th style="white-space: nowrap;">PJ</th>
+                                            <th style="white-space: nowrap;">Inc</th>
+                                            <th style="white-space: nowrap;">Def</th>
+                                            <th style="white-space: nowrap;">View</th>
+                                            <th style="white-space: nowrap;">Stores</th>
+                                            <th style="white-space: nowrap;">Pickup</th>
+                                            <th style="white-space: nowrap;">Map</th>
+                                            <th style="white-space: nowrap;">Pickup map keys</th>
+                                            <th style="white-space: nowrap;">Radno vrijeme</th>
+                                            <th style="white-space: nowrap;">JSON</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for row in store_audit.rows %}
+                                            <tr>
+                                                <td><strong>{{ row.code }}</strong></td>
+                                                <td>{{ row.name }}<br><small>{{ row.address }}</small></td>
+                                                <td><small>{{ row.uid }}</small></td>
+                                                <td>{{ row.pj }}</td>
+                                                <td>{% if row.in_included %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
+                                                <td>{% if row.in_default %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
+                                                <td>{% if row.in_availability %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
+                                                <td>{% if row.in_stores %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
+                                                <td>{% if row.in_pickup %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
+                                                <td>{% if row.in_pickup_map %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
+                                                <td>{{ row.pickup_method_ids ?: '-' }}</td>
+                                                <td><small>{{ row.working_hours ? row.working_hours|raw : '-' }}</small></td>
+                                                <td>{% if row.in_json %}<span class="label label-success">OK</span>{% else %}<span class="label label-danger">Fali</span>{% endif %}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                {# Hidden per request: keep luceed.pickup mapiranje and LOC_Order hardcoded section in source only.
+                                <div class="row">
+                                    <div class="col-sm-7">
+                                        <h4 style="margin-top: 10px;">luceed.pickup mapiranje</h4>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-condensed" style="font-size: 12px;">
+                                                <thead>
+                                                <tr>
+                                                    <th>Map key</th>
+                                                    <th>Šifra poslovnice</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for item in store_audit.pickup_map %}
+                                                    <tr>
+                                                        <td>{{ item.method_id }}</td>
+                                                        <td>{{ item.store }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <h4 style="margin-top: 10px;">Hardcoded skladišta iz LOC_Order</h4>
+                                        <ul style="padding-left: 18px;">
+                                            {% for item in store_audit.special %}
+                                                <li><strong>{{ item.code }}</strong> - {{ item.purpose }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                #}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div role="tabpanel" class="tab-pane active" id="products">
                 <div class="row">
                     <div class="col-sm-12">
@@ -440,6 +564,20 @@
 
     <script type="text/javascript">
         $(() => {
+            const savePickupStoresSwitch = () => {
+                let enabled = $('#pickup-stores-enabled').is(':checked') ? 1 : 0;
+
+                $.ajax({
+                    url: 'index.php?route=extension/module/luceed_sync/savePickupStoresSwitch&user_token={{ user_token }}',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { enabled: enabled },
+                    success: function(json) {
+                        checkResult(json);
+                    }
+                });
+            };
+
             //
             if (localStorage.getItem('sync_updated')) {
                 document.getElementById('luceed-updated').innerHTML = localStorage.getItem('sync_updated') ? localStorage.getItem('sync_updated') : 0;
@@ -502,6 +640,9 @@
                         alert('Morate odabrati element!');
                     }
             });
+
+            $('#save-pickup-stores-enabled').on('click', () => { savePickupStoresSwitch(); });
+            $('#pickup-stores-enabled').on('change', () => { savePickupStoresSwitch(); });
         });
 
 

@@ -75,6 +75,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $data['last_rev'] = Carbon::make($last_rev->last_revision_date)->diffForHumans();
         }
 
+        $data['store_audit'] = $this->buildStoreAuditData();
+        $data['pickup_stores_enabled'] = (bool) $this->config->get('luceed_sync_pickup_stores_enabled');
+
         $data['breadcrumbs'] = array();
 
         $data['breadcrumbs'][] = array(
@@ -113,6 +116,377 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $data['footer']      = $this->load->controller('common/footer');
 
         $this->response->setOutput($this->load->view('extension/module/luceed_sync_dash', $data));
+    }
+
+
+    /**
+     * Toggle checkout display of pickup stores list.
+     *
+     * @return void
+     */
+    public function savePickupStoresSwitch()
+    {
+        if ( ! $this->hasModifyPermission()) {
+            $this->output([
+                'status' => 403,
+                'message' => 'Nemate dozvolu za izmjenu postavki.'
+            ]);
+
+            return;
+        }
+
+        $enabled = ! empty($this->request->post['enabled']) ? 1 : 0;
+        $this->saveSettingForAllStores('luceed_sync_pickup_stores_enabled', (string) (int) $enabled, 0);
+
+        $this->config->set('luceed_sync_pickup_stores_enabled', $enabled);
+
+        $this->output([
+            'status'  => 200,
+            'enabled' => $enabled,
+            'message' => $enabled ? 'Prikaz poslovnica u checkoutu je uključen.' : 'Prikaz poslovnica u checkoutu je isključen.'
+        ]);
+    }
+
+
+    /**
+     * Build one place where admin can see all store related dependencies.
+     *
+     * @return array
+     */
+    private function buildStoreAuditData(): array
+    {
+        $warehouse_config = agconf('import.warehouse');
+        $luceed_pickup    = agconf('luceed.pickup');
+        $working_hours    = agconf('poslovnice_radno_vrijeme');
+
+        if ( ! is_array($warehouse_config)) {
+            $warehouse_config = [];
+        }
+
+        if ( ! is_array($luceed_pickup)) {
+            $luceed_pickup = [];
+        }
+
+        if ( ! is_array($working_hours)) {
+            $working_hours = [];
+        }
+
+        $included_codes   = $this->normalizeStoreCodes($warehouse_config['included'] ?? []);
+        $default_codes    = $this->normalizeStoreCodes($warehouse_config['default'] ?? []);
+        $view_codes       = $this->normalizeStoreCodes($warehouse_config['availability_view'] ?? []);
+        $store_codes      = $this->normalizeStoreCodes($warehouse_config['stores'] ?? []);
+        $pickup_codes     = $this->normalizeStoreCodes($warehouse_config['pickup'] ?? []);
+        $pickup_map_codes = $this->normalizeStoreCodes(array_values($luceed_pickup));
+        $hours_codes      = $this->normalizeStoreCodes(array_keys($working_hours));
+
+        $required_codes = $this->uniqueStoreCodes(array_merge(
+            $included_codes,
+            $default_codes,
+            $view_codes,
+            $store_codes,
+            $pickup_codes,
+            $pickup_map_codes,
+            $hours_codes
+        ));
+
+        $json_data = $this->loadWarehouseJsonData($warehouse_config['json'] ?? '');
+        $json_path = $json_data['source'];
+        $json_rows = $json_data['stores'];
+
+        $rows = [];
+
+        foreach ($required_codes as $code) {
+            $store = $json_rows[$code] ?? [];
+
+            $rows[] = [
+                'code'               => $code,
+                'name'               => $store['naziv'] ?? '-',
+                'address'            => $store['adresa'] ?? '-',
+                'uid'                => $store['skladiste_uid'] ?? '-',
+                'pj'                 => $store['pj'] ?? '-',
+                'in_json'            => (bool) $store,
+                'in_included'        => in_array($code, $included_codes, true),
+                'in_default'         => in_array($code, $default_codes, true),
+                'in_availability'    => in_array($code, $view_codes, true),
+                'in_stores'          => in_array($code, $store_codes, true),
+                'in_pickup'          => in_array($code, $pickup_codes, true),
+                'in_pickup_map'      => in_array($code, $pickup_map_codes, true),
+                'working_hours'      => $working_hours[$code] ?? '',
+                'pickup_method_ids'  => $this->getPickupMethodIds($luceed_pickup, $code),
+            ];
+        }
+
+        $warnings = [];
+        $warnings = array_merge($warnings, $this->missingFrom($default_codes, $included_codes, 'import.warehouse.default', 'import.warehouse.included'));
+        $warnings = array_merge($warnings, $this->missingFrom($view_codes, $included_codes, 'import.warehouse.availability_view', 'import.warehouse.included'));
+        $warnings = array_merge($warnings, $this->missingFrom($store_codes, $included_codes, 'import.warehouse.stores', 'import.warehouse.included'));
+        $warnings = array_merge($warnings, $this->missingFrom($pickup_codes, $included_codes, 'import.warehouse.pickup', 'import.warehouse.included'));
+        $warnings = array_merge($warnings, $this->missingFrom($pickup_map_codes, $pickup_codes, 'luceed.pickup (values)', 'import.warehouse.pickup'));
+
+        foreach ($rows as $row) {
+            if ( ! $row['in_json']) {
+                $warnings[] = 'Sifra ' . $row['code'] . ' je u env mapiranju, ali ne postoji u ' . $json_path . '.';
+            }
+
+            if ($row['in_pickup_map'] && $row['code'] != '101' && $row['working_hours'] == '') {
+                $warnings[] = 'Sifra ' . $row['code'] . ' koristi se za pickup, ali nema "poslovnice_radno_vrijeme".';
+            }
+        }
+
+        $pickup_duplicates = array_count_values($pickup_map_codes);
+        foreach ($pickup_duplicates as $code => $count) {
+            if ($count > 1) {
+                $warnings[] = 'Sifra ' . $code . ' je mapirana vise puta u "luceed.pickup".';
+            }
+        }
+
+        $pickup_map = [];
+        foreach ($luceed_pickup as $method_id => $store_code) {
+            $pickup_map[] = [
+                'method_id' => (string) $method_id,
+                'store'     => $this->normalizeStoreCode($store_code),
+            ];
+        }
+
+        return [
+            'json_path'  => $json_path,
+            'rows'       => $rows,
+            'warnings'   => array_values(array_unique($warnings)),
+            'pickup_map' => $pickup_map,
+            'special'    => [
+                ['code' => '099', 'purpose' => 'LOC_Order web nalog (skladiste/na__skladiste)'],
+                ['code' => '101', 'purpose' => 'Fallback centralno skladiste u Availability/LOC_Order'],
+            ],
+            'stats'      => [
+                'required'  => count($required_codes),
+                'in_json'   => count(array_filter($rows, static function($row) { return $row['in_json']; })),
+                'pickup'    => count($pickup_map),
+            ]
+        ];
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function hasModifyPermission(): bool
+    {
+        return $this->user->hasPermission('modify', 'extension/module/luceed_sync')
+            || $this->user->hasPermission('modify', 'extension/module/luceed_sync_dash');
+    }
+
+
+    /**
+     * @return array
+     */
+    private function getStoreIds(): array
+    {
+        $store_ids = [0];
+        $stores_query = $this->db->query("SELECT store_id FROM `" . DB_PREFIX . "store`");
+
+        foreach ($stores_query->rows as $store) {
+            $store_ids[] = (int) $store['store_id'];
+        }
+
+        return array_values(array_unique($store_ids));
+    }
+
+
+    /**
+     * @param string $key
+     * @param string $value
+     * @param int $serialized
+     *
+     * @return void
+     */
+    private function saveSettingForAllStores(string $key, string $value, int $serialized = 0): void
+    {
+        foreach ($this->getStoreIds() as $store_id) {
+            $this->db->query("DELETE FROM `" . DB_PREFIX . "setting` WHERE store_id = '" . (int) $store_id . "' AND `key` = '" . $this->db->escape($key) . "'");
+            $this->db->query(
+                "INSERT INTO `" . DB_PREFIX . "setting` SET store_id = '" . (int) $store_id . "', `code` = 'luceed_sync', `key` = '" . $this->db->escape($key) . "', `value` = '" . $this->db->escape($value) . "', serialized = '" . (int) $serialized . "'"
+            );
+        }
+    }
+
+
+    /**
+     * @param array $source
+     * @param array $target
+     * @param string $source_name
+     * @param string $target_name
+     *
+     * @return array
+     */
+    private function missingFrom(array $source, array $target, string $source_name, string $target_name): array
+    {
+        $missing = array_diff($source, $target);
+        $warnings = [];
+
+        foreach ($missing as $code) {
+            $warnings[] = 'Sifra ' . $code . ' postoji u "' . $source_name . '", ali ne postoji u "' . $target_name . '".';
+        }
+
+        return $warnings;
+    }
+
+
+    /**
+     * @param mixed $path
+     *
+     * @return array
+     */
+    private function loadWarehouseJsonData($path): array
+    {
+        $sources = [];
+
+        if (is_string($path) && $path != '') {
+            $sources[] = $path;
+        }
+
+        $sources[] = DIR_STORAGE . 'upload/assets/skladista.json';
+        $sources[] = DIR_STORAGE . 'upload/luceed_json/skladista_lista.json';
+
+        $sources = array_values(array_unique($sources));
+
+        foreach ($sources as $source) {
+            $content = $this->loadJsonFile($source);
+
+            if (empty($content)) {
+                continue;
+            }
+
+            $list = $this->extractStoresList($content);
+
+            if ($list) {
+                $indexed = [];
+
+                foreach ($list as $item) {
+                    if ( ! is_array($item) || ! isset($item['skladiste'])) {
+                        continue;
+                    }
+
+                    $code = $this->normalizeStoreCode($item['skladiste']);
+                    $item['skladiste'] = $code;
+                    $indexed[$code] = $item;
+                }
+
+                if ($indexed) {
+                    return [
+                        'source' => $source,
+                        'stores' => $indexed
+                    ];
+                }
+            }
+        }
+
+        return [
+            'source' => DIR_STORAGE . 'upload/assets/skladista.json',
+            'stores' => []
+        ];
+    }
+
+
+    /**
+     * @param string $path
+     *
+     * @return array
+     */
+    private function loadJsonFile(string $path): array
+    {
+        if ($path == '' || ! is_file($path)) {
+            return [];
+        }
+
+        $decoded = json_decode(file_get_contents($path), true);
+
+        return is_array($decoded) ? $decoded : [];
+    }
+
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    private function extractStoresList(array $data): array
+    {
+        if (isset($data['result'][0]['skladista']) && is_array($data['result'][0]['skladista'])) {
+            return $data['result'][0]['skladista'];
+        }
+
+        return $data;
+    }
+
+
+    /**
+     * @param array $pickup_map
+     * @param string $code
+     *
+     * @return string
+     */
+    private function getPickupMethodIds(array $pickup_map, string $code): string
+    {
+        $ids = [];
+
+        foreach ($pickup_map as $method_id => $store_code) {
+            if ($this->normalizeStoreCode($store_code) == $code) {
+                $ids[] = (string) $method_id;
+            }
+        }
+
+        return implode(', ', $ids);
+    }
+
+
+    /**
+     * @param array $codes
+     *
+     * @return array
+     */
+    private function normalizeStoreCodes(array $codes): array
+    {
+        $response = [];
+
+        foreach ($codes as $code) {
+            $response[] = $this->normalizeStoreCode($code);
+        }
+
+        return $this->uniqueStoreCodes($response);
+    }
+
+
+    /**
+     * @param mixed $code
+     *
+     * @return string
+     */
+    private function normalizeStoreCode($code): string
+    {
+        $code = (string) $code;
+
+        if ($code !== '' && ctype_digit($code) && strlen($code) < 3) {
+            return str_pad($code, 3, '0', STR_PAD_LEFT);
+        }
+
+        return $code;
+    }
+
+
+    /**
+     * @param array $codes
+     *
+     * @return array
+     */
+    private function uniqueStoreCodes(array $codes): array
+    {
+        $codes = array_values(array_unique(array_filter($codes, static function($code) {
+            return is_string($code) && $code !== '';
+        })));
+
+        sort($codes);
+
+        return $codes;
     }
 
 

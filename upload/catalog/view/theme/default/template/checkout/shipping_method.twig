@@ -7,20 +7,31 @@
 <p><strong>{{ shipping_method.title }}</strong></p>
 {% if not shipping_method.error %}
 {% for quote in shipping_method.quote %}
-<div class="radio">
+{% set is_pickup_quote = quote.code|slice(0,14) == 'pickup.pickup_' %}
+<div class="radio" {% if is_pickup_quote and not loop.first %}style="display: none;"{% endif %}>
   <label> {% if quote.code == code or not code %}
     {% set code = quote.code %}
     <input type="radio" name="shipping_method" value="{{ quote.code }}" checked="checked" />
     {% else %}
     <input type="radio" name="shipping_method" value="{{ quote.code }}" />
     {% endif %}
-    {{ quote.title }} - {{ quote.text }}</label>
+    {% if is_pickup_quote %}{{ shipping_method.title }}{% else %}{{ quote.title }}{% endif %} - {{ quote.text }}</label>
 </div>
 {% endfor %}
 {% else %}
 <div class="alert alert-danger alert-dismissible">{{ shipping_method.error }}</div>
 {% endif %}
 {% endfor %}
+{% endif %}
+{% if pickup_stores_enabled and pickup_stores %}
+<div id="pickup-store-select-wrapper" class="form-group" style="display: none;">
+  <label for="pickup-store-select"><strong>Odaberite poslovnicu za preuzimanje</strong></label>
+  <select id="pickup-store-select" class="form-control">
+    {% for store in pickup_stores %}
+    <option value="{{ store.shipping_code }}" {% if store.shipping_code == code %}selected="selected"{% endif %}>{{ store.name }}{% if store.address %} - {{ store.address }}{% endif %}</option>
+    {% endfor %}
+  </select>
+</div>
 {% endif %}
 <p><strong>{{ text_comments }}</strong></p>
 <p>
@@ -31,3 +42,115 @@
     <input type="button" value="{{ button_continue }}" id="button-shipping-method" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
   </div>
 </div>
+{% if pickup_stores_enabled and pickup_stores %}
+<script type="text/javascript">
+$(document).ready(function() {
+  var $pickupSelectWrapper = $('#pickup-store-select-wrapper');
+  var $pickupSelect = $('#pickup-store-select');
+  var pickupPrefix = 'pickup.pickup_';
+  var select2CssId = 'ag-pickup-select2-css';
+  var select2JsFlag = '__agPickupSelect2Loading';
+  var select2ReadyEvent = 'ag.pickup.select2.ready';
+  var select2CssUrl = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css';
+  var select2JsUrl = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
+
+  if (!$pickupSelectWrapper.length || !$pickupSelect.length) {
+    return;
+  }
+
+  function initSelect2() {
+    if (!$.fn.select2) {
+      return;
+    }
+
+    if (!$pickupSelect.data('select2')) {
+      $pickupSelect.select2({
+        width: '100%',
+        placeholder: 'Odaberite poslovnicu'
+      });
+    }
+  }
+
+  function loadSelect2(callback) {
+    if ($.fn.select2) {
+      callback();
+      return;
+    }
+
+    if (!document.getElementById(select2CssId)) {
+      $('<link/>', {
+        id: select2CssId,
+        rel: 'stylesheet',
+        href: select2CssUrl
+      }).appendTo('head');
+    }
+
+    if (window[select2JsFlag]) {
+      $(document).one(select2ReadyEvent, callback);
+      return;
+    }
+
+    window[select2JsFlag] = true;
+
+    $.getScript(select2JsUrl)
+      .always(function() {
+        window[select2JsFlag] = false;
+        $(document).trigger(select2ReadyEvent);
+        callback();
+      });
+  }
+
+  function getPickupRadios() {
+    return $('input[name="shipping_method"][value^="' + pickupPrefix + '"]');
+  }
+
+  function refreshPickupSelect() {
+    var selected = $('input[name="shipping_method"]:checked').val() || '';
+    var isPickup = selected.indexOf(pickupPrefix) === 0;
+    var $pickupRadios = getPickupRadios();
+
+    if (!$pickupRadios.length) {
+      $pickupSelectWrapper.hide();
+      return;
+    }
+
+    if (isPickup) {
+      if (!$pickupRadios.filter('[value="' + selected + '"]').length) {
+        selected = $pickupSelect.val() || $pickupRadios.first().val();
+        $pickupRadios.prop('checked', false);
+        $pickupRadios.filter('[value="' + selected + '"]').prop('checked', true);
+      }
+
+      $pickupSelectWrapper.show();
+
+      if ($pickupSelect.val() !== selected) {
+        $pickupSelect.val(selected);
+        if ($.fn.select2 && $pickupSelect.data('select2')) {
+          $pickupSelect.trigger('change.select2');
+        }
+      }
+    } else {
+      $pickupSelectWrapper.hide();
+    }
+  }
+
+  $(document).off('change.pickupStores', 'input[name="shipping_method"]').on('change.pickupStores', 'input[name="shipping_method"]', refreshPickupSelect);
+
+  $pickupSelect.off('change.pickupStores').on('change.pickupStores', function() {
+    var selected = $(this).val() || '';
+    var $target = getPickupRadios().filter('[value="' + selected + '"]');
+
+    if ($target.length) {
+      $target.prop('checked', true).trigger('change');
+    }
+  });
+
+  loadSelect2(function() {
+    initSelect2();
+    refreshPickupSelect();
+  });
+
+  refreshPickupSelect();
+});
+</script>
+{% endif %}

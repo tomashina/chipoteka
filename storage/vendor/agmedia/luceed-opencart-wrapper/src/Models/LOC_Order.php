@@ -685,13 +685,17 @@ class LOC_Order
     {
         $this->pickup = '';
         $shipping_uid = $code ?: $this->oc_order['shipping_code'];
-        $shipping_code = substr($shipping_uid, 0, -1);
 
-        if ($shipping_code == 'xshippingpro.xshippingpro1_') {
-            $xid = substr($shipping_uid, strpos($shipping_uid, '_') + 1);
+        if (strpos($shipping_uid, 'pickup.pickup_') === 0) {
+            $store_code = substr($shipping_uid, strlen('pickup.pickup_'));
+            $this->pickup = str_pad($store_code, 3, '0', STR_PAD_LEFT);
+        }
+
+        if (strpos($shipping_uid, 'xshippingpro.xshippingpro1_') === 0) {
+            $xid = substr($shipping_uid, strlen('xshippingpro.xshippingpro1_'));
 
             foreach (agconf('luceed.pickup') as $key => $item) {
-                if ($key == $xid) {
+                if ((string) $key == (string) $xid) {
                     $this->pickup = $item;
                 }
             }

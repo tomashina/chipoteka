@@ -20,25 +20,18 @@
   {% for shipping_method in shipping_methods %}
     {% if not shipping_method.error %}
       {% for quote in shipping_method.quote %}
-        <tr >
+        {% set is_pickup_quote = quote.code|slice(0,14) == 'pickup.pickup_' %}
+        <tr {% if is_pickup_quote and not loop.first %}class="pickup-hidden-option" style="display:none"{% endif %}>
           <td>
 
             <div class="form-check mb-0 mt-1">
               {% if quote.code == code or not code %}
-
                 {% set code = quote.code %}
-              <label class="form-check-label" for="{{ quote.code }}">
-                <input class="form-check-input" type="radio" name="shipping_method" id="{{ quote.code }}" value="{{ quote.code }}"  />
-                <span class="text-dark fw-medium me-3">{{ quote.title }}</span>
-              </label>
-
-
-              {% else %}
-                <label class="form-check-label" for="{{ quote.code }}">
-                <input class="form-check-input" type="radio" name="shipping_method" id="{{ quote.code }}" value="{{ quote.code }}" />
-                <span class="text-dark fw-medium me-3">{{ quote.title }}</span>
-                </label>
               {% endif %}
+              <label class="form-check-label" for="{{ quote.code }}">
+                <input class="form-check-input" type="radio" name="shipping_method" id="{{ quote.code }}" value="{{ quote.code }}" {% if quote.code == code %}checked="checked"{% endif %} />
+                <span class="text-dark fw-medium me-3">{% if is_pickup_quote %}{{ shipping_method.title }}{% else %}{{ quote.title }}{% endif %}</span>
+              </label>
 
 
             </div>
@@ -131,6 +124,17 @@
   </div>
 
 {% endif %}
+
+{% if pickup_stores_enabled and pickup_stores %}
+<div id="pickup-store-select-wrapper" class="mt-3 mb-3" style="display: none;">
+  <label class="form-label" for="pickup-store-select">Odaberite poslovnicu za preuzimanje</label>
+  <select id="pickup-store-select" class="form-select">
+    {% for store in pickup_stores %}
+      <option value="{{ store.shipping_code }}" {% if store.shipping_code == code %}selected="selected"{% endif %}>{{ store.name }}{% if store.address %} - {{ store.address }}{% endif %}</option>
+    {% endfor %}
+  </select>
+</div>
+{% endif %}
 <div class="form-group mb-3 required">
   <label class="form-label" for="input-payment-firstname">Dodatna napomena</label>
   <textarea class="form-control" name="comment" style="height: 120px;" placeholder="Ukoliko imate dodatnih napomena vezano uz isporuku molimo upišite ovdje">{{ comment }}</textarea>
@@ -180,3 +184,115 @@
   (function (d) { var e = d.createElement("script"); e.src = "https://widget-cdn.boxnow.hr/map-widget/client/v5.js"; e.async = true; e.defer = true; d.getElementsByTagName("head")[0].appendChild(e); })(document);
 </script>
 
+{% if pickup_stores_enabled and pickup_stores %}
+<script type="text/javascript">
+  jQuery(function($) {
+    var $pickupSelectWrapper = $('#pickup-store-select-wrapper');
+    var $pickupSelect = $('#pickup-store-select');
+    var pickupPrefix = 'pickup.pickup_';
+    var select2CssId = 'ag-pickup-select2-css';
+    var select2JsFlag = '__agPickupSelect2Loading';
+    var select2ReadyEvent = 'ag.pickup.select2.ready';
+    var select2CssUrl = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css';
+    var select2JsUrl = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
+
+    if (!$pickupSelectWrapper.length || !$pickupSelect.length) {
+      return;
+    }
+
+    function initSelect2() {
+      if (!$.fn.select2) {
+        return;
+      }
+
+      if (!$pickupSelect.data('select2')) {
+        $pickupSelect.select2({
+          width: '100%',
+          placeholder: 'Odaberite poslovnicu'
+        });
+      }
+    }
+
+    function loadSelect2(callback) {
+      if ($.fn.select2) {
+        callback();
+        return;
+      }
+
+      if (!document.getElementById(select2CssId)) {
+        $('<link/>', {
+          id: select2CssId,
+          rel: 'stylesheet',
+          href: select2CssUrl
+        }).appendTo('head');
+      }
+
+      if (window[select2JsFlag]) {
+        $(document).one(select2ReadyEvent, callback);
+        return;
+      }
+
+      window[select2JsFlag] = true;
+
+      $.getScript(select2JsUrl)
+        .always(function() {
+          window[select2JsFlag] = false;
+          $(document).trigger(select2ReadyEvent);
+          callback();
+        });
+    }
+
+    function getPickupRadios() {
+      return $('input[name="shipping_method"][value^="' + pickupPrefix + '"]');
+    }
+
+    function refreshPickupSelect() {
+      var selected = $('input[name="shipping_method"]:checked').val() || '';
+      var isPickup = selected.indexOf(pickupPrefix) === 0;
+      var $pickupRadios = getPickupRadios();
+
+      if (!$pickupRadios.length) {
+        $pickupSelectWrapper.hide();
+        return;
+      }
+
+      if (isPickup) {
+        if (!$pickupRadios.filter('[value="' + selected + '"]').length) {
+          selected = $pickupSelect.val() || $pickupRadios.first().val();
+          $pickupRadios.prop('checked', false);
+          $pickupRadios.filter('[value="' + selected + '"]').prop('checked', true);
+        }
+
+        $pickupSelectWrapper.show();
+
+        if ($pickupSelect.val() !== selected) {
+          $pickupSelect.val(selected);
+          if ($.fn.select2 && $pickupSelect.data('select2')) {
+            $pickupSelect.trigger('change.select2');
+          }
+        }
+      } else {
+        $pickupSelectWrapper.hide();
+      }
+    }
+
+    $(document).off('change.pickupStores', 'input[name="shipping_method"]').on('change.pickupStores', 'input[name="shipping_method"]', refreshPickupSelect);
+
+    $pickupSelect.off('change.pickupStores').on('change.pickupStores', function() {
+      var selected = $(this).val() || '';
+      var $target = getPickupRadios().filter('[value="' + selected + '"]');
+
+      if ($target.length) {
+        $target.prop('checked', true).trigger('change');
+      }
+    });
+
+    loadSelect2(function() {
+      initSelect2();
+      refreshPickupSelect();
+    });
+
+    refreshPickupSelect();
+  });
+</script>
+{% endif %}

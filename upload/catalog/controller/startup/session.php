@@ -22,10 +22,25 @@ class ControllerStartupSession extends Controller {
 			
 			$this->session->start($session_id);
 			
-			/*setcookie($this->config->get('session_name'), $this->session->getId(), ini_get('session.cookie_lifetime'), ini_get('session.cookie_path'), ini_get('session.cookie_domain'));*/
+				/*setcookie($this->config->get('session_name'), $this->session->getId(), ini_get('session.cookie_lifetime'), ini_get('session.cookie_path'), ini_get('session.cookie_domain'));*/
 
-            setcookie($this->config->get('session_name'), $this->session->getId(), ['expires' => ini_get('session.cookie_lifetime'), 'path' => ini_get('session.cookie_path'), 'domain' => ini_get('session.cookie_domain'), 'samesite' => 'None', 'secure' => true, 'httponly' => true]);
+				$lifetime = (int)ini_get('session.cookie_lifetime');
+				$expires = $lifetime > 0 ? time() + $lifetime : 0;
+				$is_secure = (
+					(!empty($this->request->server['HTTPS']) && strtolower((string)$this->request->server['HTTPS']) !== 'off')
+					|| (isset($this->request->server['SERVER_PORT']) && (int)$this->request->server['SERVER_PORT'] === 443)
+					|| (!empty($this->request->server['HTTP_X_FORWARDED_PROTO']) && strtolower((string)$this->request->server['HTTP_X_FORWARDED_PROTO']) === 'https')
+				);
 
+				setcookie($this->config->get('session_name'), $this->session->getId(), [
+					'expires' => $expires,
+					'path' => ini_get('session.cookie_path'),
+					'domain' => ini_get('session.cookie_domain'),
+					'samesite' => $is_secure ? 'None' : 'Lax',
+					'secure' => $is_secure,
+					'httponly' => true
+				]);
+
+			}
 		}
 	}
-}

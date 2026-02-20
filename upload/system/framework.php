@@ -111,7 +111,22 @@ if ($config->get('session_autostart')) {
 
 	/*setcookie($config->get('session_name'), $session->getId(), ini_get('session.cookie_lifetime'), ini_get('session.cookie_path'), ini_get('session.cookie_domain'));*/
 
-    setcookie($config->get('session_name'), $session->getId(), ['expires' => ini_get('session.cookie_lifetime'), 'path' => ini_get('session.cookie_path'), 'domain' => ini_get('session.cookie_domain'), 'samesite' => 'None', 'secure' => true, 'httponly' => true]);
+	$lifetime = (int)ini_get('session.cookie_lifetime');
+	$expires = $lifetime > 0 ? time() + $lifetime : 0;
+	$is_secure = (
+		(!empty($_SERVER['HTTPS']) && strtolower((string)$_SERVER['HTTPS']) !== 'off')
+		|| (isset($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443)
+		|| (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower((string)$_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https')
+	);
+
+	setcookie($config->get('session_name'), $session->getId(), [
+		'expires' => $expires,
+		'path' => ini_get('session.cookie_path'),
+		'domain' => ini_get('session.cookie_domain'),
+		'samesite' => $is_secure ? 'None' : 'Lax',
+		'secure' => $is_secure,
+		'httponly' => true
+	]);
 }
 
 // Cache
