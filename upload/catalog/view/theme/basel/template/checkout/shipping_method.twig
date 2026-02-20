@@ -21,7 +21,7 @@
     {% if not shipping_method.error %}
       {% for quote in shipping_method.quote %}
         {% set is_pickup_quote = quote.code|slice(0,14) == 'pickup.pickup_' %}
-        <tr {% if is_pickup_quote and not loop.first %}class="pickup-hidden-option" style="display:none"{% endif %}>
+        <tr{% if is_pickup_quote %} class="pickup-radio-row"{% endif %}{% if is_pickup_quote and not loop.first %} style="display:none"{% endif %}>
           <td>
 
             <div class="form-check mb-0 mt-1">
@@ -246,10 +246,35 @@
       return $('input[name="shipping_method"][value^="' + pickupPrefix + '"]');
     }
 
+    function findPickupRadioByValue($pickupRadios, value) {
+      var target = String(value || '');
+
+      return $pickupRadios.filter(function() {
+        return String($(this).val() || '') === target;
+      }).first();
+    }
+
+    function syncPickupRows($pickupRadios, $selectedRadio) {
+      var $rows = $pickupRadios.closest('tr.pickup-radio-row');
+
+      if (!$rows.length) {
+        return;
+      }
+
+      $rows.hide();
+
+      if ($selectedRadio && $selectedRadio.length) {
+        $selectedRadio.closest('tr.pickup-radio-row').show();
+      } else {
+        $rows.first().show();
+      }
+    }
+
     function refreshPickupSelect() {
       var selected = $('input[name="shipping_method"]:checked').val() || '';
       var isPickup = selected.indexOf(pickupPrefix) === 0;
       var $pickupRadios = getPickupRadios();
+      var $selectedPickupRadio = findPickupRadioByValue($pickupRadios, selected);
 
       if (!$pickupRadios.length) {
         $pickupSelectWrapper.hide();
@@ -257,12 +282,18 @@
       }
 
       if (isPickup) {
-        if (!$pickupRadios.filter('[value="' + selected + '"]').length) {
+        if (!$selectedPickupRadio.length) {
           selected = $pickupSelect.val() || $pickupRadios.first().val();
-          $pickupRadios.prop('checked', false);
-          $pickupRadios.filter('[value="' + selected + '"]').prop('checked', true);
+          $selectedPickupRadio = findPickupRadioByValue($pickupRadios, selected);
         }
 
+        if (!$selectedPickupRadio.length) {
+          $selectedPickupRadio = $pickupRadios.first();
+          selected = $selectedPickupRadio.val() || '';
+        }
+
+        $selectedPickupRadio.prop('checked', true);
+        syncPickupRows($pickupRadios, $selectedPickupRadio);
         $pickupSelectWrapper.show();
 
         if ($pickupSelect.val() !== selected) {
@@ -272,6 +303,7 @@
           }
         }
       } else {
+        syncPickupRows($pickupRadios, $pickupRadios.first());
         $pickupSelectWrapper.hide();
       }
     }
@@ -280,7 +312,8 @@
 
     $pickupSelect.off('change.pickupStores').on('change.pickupStores', function() {
       var selected = $(this).val() || '';
-      var $target = getPickupRadios().filter('[value="' + selected + '"]');
+      var $pickupRadios = getPickupRadios();
+      var $target = findPickupRadioByValue($pickupRadios, selected);
 
       if ($target.length) {
         $target.prop('checked', true).trigger('change');
