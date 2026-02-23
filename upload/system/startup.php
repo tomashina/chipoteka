@@ -47,6 +47,12 @@ if ((isset($_SERVER['HTTPS']) && (($_SERVER['HTTPS'] == 'on') || ($_SERVER['HTTP
 
 // Modification Override
 function modification($filename) {
+	// DB adaptors must come from source system files (not stale modification cache).
+	// This avoids runtime schema-fallback regressions when storage/modification is outdated.
+	if (strpos($filename, DIR_SYSTEM . 'library/db/') === 0) {
+		return $filename;
+	}
+
 	if (defined('DIR_CATALOG')) {
 		$file = DIR_MODIFICATION . 'admin/' .  substr($filename, strlen(DIR_APPLICATION));
 	} elseif (defined('DIR_OPENCART')) {
