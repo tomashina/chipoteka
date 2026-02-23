@@ -174,7 +174,7 @@ class ModelCheckoutOrder extends Model {
 			return array(
 				'order_id'                => $order_query->row['order_id'],
                 'invoice_no'              => $order_query->row['invoice_no'],
-                'oib'                     => $order_query->row['oib'],
+                'oib'                     => isset($order_query->row['oib']) ? $order_query->row['oib'] : '',
 				'invoice_prefix'          => $order_query->row['invoice_prefix'],
 				'store_id'                => $order_query->row['store_id'],
 				'store_name'              => $order_query->row['store_name'],
@@ -240,8 +240,8 @@ class ModelCheckoutOrder extends Model {
 				'accept_language'         => $order_query->row['accept_language'],
 				'date_added'              => $order_query->row['date_added'],
 				'date_modified'           => $order_query->row['date_modified'],
-                'scanimage'               => $order_query->row['scanimage'],
-                'installment'             => $order_query->row['installment'],
+                'scanimage'               => isset($order_query->row['scanimage']) ? $order_query->row['scanimage'] : '',
+                'installment'             => isset($order_query->row['installment']) ? $order_query->row['installment'] : '',
                 'boxnow'                 => isset($order_query->row['boxnow']) ? $order_query->row['boxnow'] : ''
 			);
 		} else {
