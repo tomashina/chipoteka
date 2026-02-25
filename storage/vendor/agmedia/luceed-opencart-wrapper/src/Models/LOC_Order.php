@@ -270,7 +270,7 @@ class LOC_Order
         $wants_eracun = !empty($this->oc_order['eracun']) && (int)$this->oc_order['eracun'] === 1;
 
         if (
-            $this->hasOIB() &&
+            $this->hasOrderOIB() &&
             $wants_eracun &&
             in_array($this->oc_order['payment_code'], ['wspay', 'cod'])
         ) {
@@ -315,6 +315,17 @@ class LOC_Order
     {
 
         return ($this->oc_order['oib'] != '' && $this->oc_order['customer_group_id'] > 2) ? true : false;
+    }
+
+
+    /**
+     * Checkbox "Želim eRačun" je vezan uz OIB, ne nužno uz B2B grupu kupca.
+     *
+     * @return bool
+     */
+    private function hasOrderOIB(): bool
+    {
+        return ! empty($this->oc_order['oib']);
     }
 
 
