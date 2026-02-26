@@ -142,34 +142,92 @@ class LOC_Order
      */
     public function store()
     {
+        $this->log('[FLOW] store:start', [
+            'order_id'      => $this->oc_order['order_id'] ?? '',
+            'shipping_code' => $this->oc_order['shipping_code'] ?? '',
+            'payment_code'  => $this->oc_order['payment_code'] ?? '',
+            'pickup'        => $this->pickup ?: 'none',
+        ]);
+
         // Always create and send the main webshop order first.
         $this->create();
+        $this->log('[FLOW] main:create:prepared', [
+            'nalog_prodaje_b2b' => $this->order['nalog_prodaje_b2b'] ?? '',
+            'narudzba'          => $this->order['narudzba'] ?? '',
+            'skladiste'         => $this->order['skladiste'] ?? '',
+            'na__skladiste'     => $this->order['na__skladiste'] ?? '',
+            'vrsta_isporuke'    => $this->order['vrsta_isporuke'] ?? '',
+            'stavke_count'      => isset($this->order['stavke']) ? count($this->order['stavke']) : 0,
+            'iznos'             => $this->order['iznos'] ?? 0,
+        ]);
+
         $main_uid = $this->sendOrder(true);
+        $this->log('[FLOW] main:send:result', [
+            'order_id'    => $this->oc_order['order_id'] ?? '',
+            'luceed_uid'  => $main_uid ?: 'FAILED',
+            'save_to_db'  => true,
+        ]);
 
         if ( ! $main_uid) {
+            $this->log('[FLOW] store:stop', ['reason' => 'main_send_failed']);
             return false;
         }
 
         // No pickup flow needed.
         if ($this->pickup == '') {
+            $this->log('[FLOW] pickup:skip', ['reason' => 'not_pickup_shipping']);
             return $main_uid;
         }
 
         // Set up availability for pickup split logic.
         $this->availability = $this->resolveAvailability();
+        $pickup_nalozi = $this->availability->getNalozi();
+        $this->log('[FLOW] pickup:availability', [
+            'pickup'                   => $this->pickup,
+            'has_any_in_pickup_store'  => $this->availability->has_any_in_pickup_store,
+            'has_all_in_pickup_store'  => $this->availability->has_all_in_pickup_store,
+            'nalozi_count'             => count($pickup_nalozi),
+            'items_required_count'     => count($this->availability->items_required),
+        ]);
 
         // If pickup store has all requested items, only main order is required.
         if ($this->availability->has_all_in_pickup_store) {
+            $this->log('[FLOW] pickup:skip_split', ['reason' => 'pickup_store_has_all_items']);
             return $main_uid;
         }
 
         // Create additional pickup nalogs only for missing/split items.
-        foreach ($this->availability->getNalozi() as $nalog) {
+        if (empty($pickup_nalozi)) {
+            $this->log('[FLOW] pickup:skip_split', ['reason' => 'no_split_nalozi_generated']);
+            return $main_uid;
+        }
+
+        foreach ($pickup_nalozi as $nalog) {
+            $this->log('[FLOW] pickup:split:prepare', [
+                'broj_naloga'       => $nalog['broj_naloga'] ?: '(main-suffix-empty)',
+                'sa__skladiste'     => $nalog['sa__skladiste'] ?? '',
+                'na__skladiste'     => $nalog['na__skladiste'] ?? '',
+                'vrsta_isporuke'    => $nalog['vrsta_isporuke'] ?? '',
+                'skl_dokument'      => $nalog['skl_dokument'] ?? '',
+                'stavke_count'      => isset($nalog['stavke']) ? count($nalog['stavke']) : 0,
+                'iznos'             => $nalog['iznos'] ?? 0,
+            ]);
+
             $this->createPickup($nalog);
 
             // Keep main luceed_uid in OC order; don't overwrite it with split nalogs.
-            $this->sendOrder(false);
+            $split_uid = $this->sendOrder(false);
+            $this->log('[FLOW] pickup:split:result', [
+                'broj_naloga'      => $nalog['broj_naloga'] ?: '(main-suffix-empty)',
+                'luceed_uid'       => $split_uid ?: 'FAILED',
+                'save_to_db'       => false,
+            ]);
         }
+
+        $this->log('[FLOW] store:done', [
+            'order_id'       => $this->oc_order['order_id'] ?? '',
+            'main_luceed_uid'=> $main_uid,
+        ]);
 
         return $main_uid;
     }
@@ -193,21 +251,46 @@ class LOC_Order
 
         return 1;*/
 
-        // If response ok.
-        // Update order uid.
-        if (isset($this->response->result[0]) && $save) {
+        $luceed_uid = $this->response->result[0] ?? null;
+
+        $this->log('[FLOW] sendOrder:response', [
+            'save_to_db'        => $save,
+            'nalog_prodaje_b2b' => $this->order['nalog_prodaje_b2b'] ?? '',
+            'narudzba'          => $this->order['narudzba'] ?? '',
+            'luceed_uid'        => $luceed_uid ?: '',
+        ]);
+
+        // If response ok and this send should save uid to OC order.
+        if ($luceed_uid && $save) {
 
             $this->log($this->oc_order['order_id']);
-            $this->log($this->response->result[0]);
+            $this->log($luceed_uid);
 
             $this->db = new Database(DB_DATABASE);
-            $updated = $this->db->query("UPDATE " . DB_PREFIX . "order o SET o.luceed_uid = '" . $this->db->escape($this->response->result[0]) . "' WHERE o.order_id = " . $this->oc_order['order_id'] . ";");
+            $updated = $this->db->query("UPDATE " . DB_PREFIX . "order o SET o.luceed_uid = '" . $this->db->escape($luceed_uid) . "' WHERE o.order_id = " . $this->oc_order['order_id'] . ";");
 
             if ($updated) {
                 $this->log('Luceed UID updated in DB...');
-                return $this->response->result[0];
+                return $luceed_uid;
             }
+
+            $this->log('[FLOW] sendOrder:db_update_failed', [
+                'order_id'   => $this->oc_order['order_id'] ?? '',
+                'luceed_uid' => $luceed_uid,
+            ]);
+            return false;
         }
+
+        if ($luceed_uid) {
+            return $luceed_uid;
+        }
+
+        $this->log('[FLOW] sendOrder:failed', [
+            'save_to_db'        => $save,
+            'nalog_prodaje_b2b' => $this->order['nalog_prodaje_b2b'] ?? '',
+            'narudzba'          => $this->order['narudzba'] ?? '',
+            'raw_response'      => $this->response,
+        ]);
 
         return false;
     }
