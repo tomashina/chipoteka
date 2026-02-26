@@ -142,30 +142,36 @@ class LOC_Order
      */
     public function store()
     {
-        // Check if it's a pickup
-        if ($this->pickup != '') {
-            // Set up availability.
-            $this->availability = $this->resolveAvailability();
+        // Always create and send the main webshop order first.
+        $this->create();
+        $main_uid = $this->sendOrder(true);
 
-            if ($this->availability->has_all_in_pickup_store) {
-                $this->createPickup($this->availability->nalozi[$this->availability->pickup_warehouse['skladiste_uid']]);
-
-                return $this->sendOrder(true);
-
-            } else {
-                foreach ($this->availability->getNalozi() as $nalog) {
-                    $this->createPickup($nalog);
-
-                    $this->sendOrder(($nalog['broj_naloga'] == '') ? true : false);
-                }
-
-                return 1;
-            }
+        if ( ! $main_uid) {
+            return false;
         }
 
-        $this->create();
+        // No pickup flow needed.
+        if ($this->pickup == '') {
+            return $main_uid;
+        }
 
-        return $this->sendOrder(true);
+        // Set up availability for pickup split logic.
+        $this->availability = $this->resolveAvailability();
+
+        // If pickup store has all requested items, only main order is required.
+        if ($this->availability->has_all_in_pickup_store) {
+            return $main_uid;
+        }
+
+        // Create additional pickup nalogs only for missing/split items.
+        foreach ($this->availability->getNalozi() as $nalog) {
+            $this->createPickup($nalog);
+
+            // Keep main luceed_uid in OC order; don't overwrite it with split nalogs.
+            $this->sendOrder(false);
+        }
+
+        return $main_uid;
     }
 
 
