@@ -70,6 +70,11 @@
                 {# --- LABEL LOGIKA --- #}
                 {% set display_label = input_data['display_value'] %}
 
+                {# manufacturer panel treba prikazivati naziv (input_label), ne ID #}
+                {% if section['id'] == 'manufacturer' and input_data['input_label'] is defined %}
+                    {% set display_label = input_data['input_label'] %}
+                {% endif %}
+
                 {# Da/Ne: D -> "Da", ali Energetska oznaka: ostaje "D" #}
                 {% if input_data['input_value'] == 'D' %}
 
