@@ -9,6 +9,6 @@
   "license": "MIT",
   "dependencies": {
     "browser-sync": "^2.1.6",
-    "less": "^2.4.0"
+    "less": "^3.0.2"
   }
 }
