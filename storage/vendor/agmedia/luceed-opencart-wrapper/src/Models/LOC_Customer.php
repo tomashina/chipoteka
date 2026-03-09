@@ -579,6 +579,9 @@ class LOC_Customer
             return $data->result[0]->partner;
         }
 
+        Log::store('setResponseData($response)', 'test_customers');
+        Log::store($data, 'test_customers');
+
         return [];
     }
 
