@@ -214,7 +214,9 @@ class LOC_Warehouse
             $title = 'success';
             $date = Carbon::now()->addWeekdays(1);
             $btn = 'DOSTUPNO ODMAH';
-            $date = ($date->diff(Carbon::now())->days < 1) ? 'Šaljemo sutra' : 'Šaljemo do ' . $date->format('d.m.Y');;
+            //$date = ($date->diff(Carbon::now())->days < 1) ? 'Šaljemo sutra' : 'Šaljemo do ' . $date->format('d.m.Y');
+
+            $date = 'Rok isporuke 2-3 radna dana';
         }
 
         if ( ! $qty_default && ! $dobavljac_stanje && $qty_stores) {
@@ -228,7 +230,9 @@ class LOC_Warehouse
             $title = 'warning';
             $btn = 'DOSTUPNO NA IZDVOJENOM SKLADIŠTU';
             $button = 'Stavi u košaricu';
-            $date = 'Šaljemo do ' . Carbon::now()->addWeekdays(5)->format('d.m.Y');
+           // $date = 'Šaljemo do ' . Carbon::now()->addWeekdays(5)->format('d.m.Y');
+
+            $date = 'Rok isporuke 5-7 radnih dana ';
         }
 
         if ( ! $qty_default && ! $dobavljac_stanje && ! $qty_stores) {
