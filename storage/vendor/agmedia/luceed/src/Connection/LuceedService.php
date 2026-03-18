@@ -106,12 +106,45 @@ class LuceedService
             curl_setopt ($ch, CURLOPT_POST, true);
             curl_setopt ($ch, CURLOPT_POSTFIELDS, json_encode($body));
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 
-            $response = curl_exec($ch);
+            $response   = curl_exec($ch);
+            $curl_errno = curl_errno($ch);
+            $curl_error = curl_error($ch);
+            $http_code  = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
 
-            $this->logResponse('POST', $url, [$body, json_decode($response)]);
+            // cURL transport error (timeout, DNS failure, connection refused, etc.)
+            if ($curl_errno !== 0) {
+                $this->logResponse('POST', $url, [
+                    'body'       => $body,
+                    'curl_errno' => $curl_errno,
+                    'curl_error' => $curl_error,
+                    'http_code'  => $http_code,
+                    'response'   => $response,
+                ]);
+
+                return false;
+            }
+
+            // HTTP-level error (4xx / 5xx)
+            if ($http_code >= 400) {
+                $this->logResponse('POST', $url, [
+                    'body'       => $body,
+                    'http_code'  => $http_code,
+                    'curl_errno' => $curl_errno,
+                    'response'   => $response,
+                ]);
+
+                return false;
+            }
+
+            $this->logResponse('POST', $url, [
+                'body'      => $body,
+                'http_code' => $http_code,
+                'response'  => json_decode($response),
+            ]);
 
             return $response;
 

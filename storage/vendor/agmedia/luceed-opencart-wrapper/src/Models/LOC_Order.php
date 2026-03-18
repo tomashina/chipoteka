@@ -242,9 +242,22 @@ class LOC_Order
     private function sendOrder(bool $save = false)
     {
         // Send order to luceed service.
-        $this->response = json_decode(
-            $this->service->createOrder(['nalozi_prodaje' => [$this->order]], $this->hasOIB())
-        );
+        $raw = $this->service->createOrder(['nalozi_prodaje' => [$this->order]], $this->hasOIB());
+
+        // Guard: API returned false (cURL/HTTP error) or empty string (unexpected empty body).
+        if ($raw === false || $raw === '' || $raw === null) {
+            $this->log('[FLOW] sendOrder:api_error', [
+                'save_to_db'        => $save,
+                'nalog_prodaje_b2b' => $this->order['nalog_prodaje_b2b'] ?? '',
+                'narudzba'          => $this->order['narudzba'] ?? '',
+                'raw'               => $raw,
+                'note'              => 'createOrder() returned false/empty — check luceed_POST_response.log for curl_errno / http_code',
+            ]);
+
+            return false;
+        }
+
+        $this->response = json_decode($raw);
 
         /*$this->log('Store order response: $this->response - LOC_Order #98.', $this->response);
         $this->log($this->oc_order['order_id'] . ' Order sent...');
