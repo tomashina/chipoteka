@@ -187,6 +187,7 @@ class LOC_Stock
     public function update(): int
     {
         //   $this->truncateProductsQuantity();
+        $status_threshold = $this->getStatusResolveThreshold();
 
         if (!$this->skladista_valid) {
             Log::store('SKIP UPDATE: invalid skladista feed', $this->log_name . '-SKIP');
@@ -195,13 +196,13 @@ class LOC_Stock
 
         if ($this->skladista_query != '') {
             $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($this->skladista_query, 0, -1) . ";");
-            $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.luceed_uid = pt.uid SET p.quantity = pt.quantity, p.stock_status_id = pt.price");
+            $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.luceed_uid = pt.uid SET p.quantity = pt.quantity, p.stock_status_id = pt.price, p.status = IF(pt.quantity > " . $status_threshold . ", 1, p.status)");
 
             $this->deleteProductTempDB();
 
             if ($this->dobavljaci_query != '') {
                 $this->db->query("INSERT INTO " . DB_PREFIX . "product_temp (uid, quantity, price) VALUES " . substr($this->dobavljaci_query, 0, -1) . ";");
-                $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.quantity = p.quantity + pt.quantity, p.stock_status_id = pt.price");
+                $this->db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.quantity = p.quantity + pt.quantity, p.stock_status_id = pt.price, p.status = IF((p.quantity + pt.quantity) > " . $status_threshold . ", 1, p.status)");
             }
 
             $this->deleteProductTempDB();
@@ -211,6 +212,15 @@ class LOC_Stock
         }
 
         return 0;
+    }
+
+
+    /**
+     * Use the configured quantity threshold to reactivate products during stock sync.
+     */
+    private function getStatusResolveThreshold(): int
+    {
+        return max((int) agconf('import.default_stock_empty'), 0);
     }
 
 
