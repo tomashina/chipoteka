@@ -340,7 +340,7 @@ class LOC_Order
             'partner_uid'               => $this->customer['main'],
             'korisnik__partner_uid'     => $this->customer['alter'] ?: $this->customer['main'],
             'iznos'                     => (float) $iznos,
-            'vrsta_isporuke'            => '10',
+            'vrsta_isporuke'            => ($this->pickup != '') ? '07' : '10',
             'rezervacija_do_datuma'     => $this->getReservation(),
             'placanja'                  => [
                 [
@@ -444,7 +444,9 @@ class LOC_Order
             $this->order['vezani_poziv_na_broj'] = $this->oc_order['poziv_na_broj'];
         }
 
-        if ($this->oc_order['payment_code'] == 'cod') {
+        // For COD, wipe payment only on secondary (warehouse-to-store) split nalozi.
+        // The main pickup nalog (broj_naloga == '') must keep the payment method.
+        if ($this->oc_order['payment_code'] == 'cod' && $nalog['broj_naloga'] !== '') {
             $this->order['placanja'] = '';
         }
 
@@ -459,7 +461,7 @@ class LOC_Order
 
     private function resolveAvailability()
     {
-        $availability = new Availability($this->getRegularProducts(), $this->getShippingProduct(), $this->oc_order, $this->pickup);
+        $availability = new Availability($this->getRegularProducts(), $this->getShippingProduct(), $this->oc_order, $this->pickup, $this->getPickupTitle());
 
         $availability->checkPickupStore();
 
@@ -852,10 +854,6 @@ class LOC_Order
             return '02';
         }
 
-        if ($this->oc_order['payment_code'] == 'bank_transfer' && $this->pickup != '') {
-            return '01';
-        }
-
         if ($this->oc_order['payment_code'] == 'bank_transfer') {
             return '12';
         }
@@ -1214,6 +1212,32 @@ class LOC_Order
         $this->log_items('getRegularProducts()::LEAVE');
 
         return $response;
+    }
+
+
+    /**
+     * Resolve the human-readable pickup store name from oc_order_total.
+     * The shipping title is like "Preuzimanje: CHIPOTEKA SPLIT (Matice Hrvatske 1)".
+     * We strip the "Preuzimanje: " prefix so napomena reads "Osobno preuzimanje: CHIPOTEKA SPLIT ...".
+     *
+     * @return string
+     */
+    private function getPickupTitle(): string
+    {
+        $row = OrderTotal::where('order_id', $this->oc_order['order_id'])
+            ->where('code', 'shipping')
+            ->orderBy('order_total_id', 'desc')
+            ->first();
+
+        if ($row) {
+            $title = $row->title;
+            if (strpos($title, ': ') !== false) {
+                $title = substr($title, strpos($title, ': ') + 2);
+            }
+            return trim($title);
+        }
+
+        return '';
     }
 
 

@@ -89,20 +89,30 @@ class Availability
      */
     private int $loop = 1;
 
+    /**
+     * Human-readable pickup store title (e.g. "CHIPOTEKA SPLIT (Matice Hrvatske 1)")
+     * resolved from oc_order_total.title where code = 'shipping'.
+     *
+     * @var string
+     */
+    protected string $pickup_title = '';
+
 
     /**
      * @param array  $products
      * @param array  $shipping_product
      * @param array  $order
      * @param string $pickup
+     * @param string $pickup_title  Store name from oc_order_total shipping title
      */
-    public function __construct(array $products, array $shipping_product, array $order, string $pickup)
+    public function __construct(array $products, array $shipping_product, array $order, string $pickup, string $pickup_title = '')
     {
         $this->service          = new Luceed();
         $this->products         = $products;
         $this->shipping_product = $shipping_product;
         $this->order            = $order;
         $this->pickup           = $pickup;
+        $this->pickup_title     = $pickup_title;
         $this->items_available  = $this->resolveAvailabilityForCart();
         $this->warehouse_list   = (new LOC_Warehouse())->getList();
         $this->pickup_warehouse = $this->warehouse_list->where('skladiste', '=', $this->pickup)->first();
@@ -168,7 +178,7 @@ class Availability
                             '',
                             $this->pickup_warehouse['skladiste'],
                             $this->pickup_warehouse,
-                            'Osobno preuzimanje: ' . $this->order['comment']
+                            'Osobno preuzimanje: ' . $this->pickup_title
                         );
 
                         $this->log_items('resolveAvailability()::$this->nalozi from return', $this->nalozi);
@@ -190,7 +200,7 @@ class Availability
                             '',
                             $this->pickup_warehouse['skladiste'],
                             $this->pickup_warehouse,
-                            'Osobno preuzimanje: ' . $this->order['comment']
+                            'Osobno preuzimanje: ' . $this->pickup_title
                         );
 
                         $this->log_items('resolveAvailability()::$this->nalozi from  ! $this->has_all_in_pickup_store');
@@ -222,7 +232,7 @@ class Availability
                 '',
                 $this->pickup_warehouse['skladiste'],
                 $this->pickup_warehouse,
-                'Osobno preuzimanje: ' . $this->order['comment']
+                'Osobno preuzimanje: ' . $this->pickup_title
             );
 
             $this->log_items('resolveAvailability()::$this->nalozi from  ! $this->has_any_in_pickup_store');
