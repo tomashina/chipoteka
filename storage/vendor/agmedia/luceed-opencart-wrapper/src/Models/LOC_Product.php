@@ -158,7 +158,6 @@ class LOC_Product
     public function update(string $type = 'all')
     {
         $db = new Database(DB_DATABASE);
-        $status_threshold = $this->getStatusResolveThreshold();
 
         if ($type != 'quantity' || $type != 'quantities') {
             $updated = $this->updateOptionsPrices();
@@ -183,13 +182,13 @@ class LOC_Product
         // Check wich type of update to conduct.
         // Price and quantity or each individualy?
         if ($type == 'all') {
-            $updated = $db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.quantity = pt.quantity, p.price = pt.price, p.stock_status_id = pt.stock_id, p.status = IF(pt.quantity > " . $status_threshold . ", 1, p.status)");
+            $updated = $db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.quantity = pt.quantity, p.price = pt.price, p.stock_status_id = pt.stock_id, p.status = IF(pt.quantity > 0, 1, p.status)");
         }
         if ($type == 'price' || $type == 'prices') {
             $updated = $db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.price = pt.price");
         }
         if ($type == 'quantity' || $type == 'quantities') {
-            $updated = $db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.quantity = pt.quantity, p.stock_status_id = pt.stock_id, p.status = IF(pt.quantity > " . $status_threshold . ", 1, p.status)");
+            $updated = $db->query("UPDATE " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_temp pt ON p.model = pt.uid SET p.quantity = pt.quantity, p.stock_status_id = pt.stock_id, p.status = IF(pt.quantity > 0, 1, p.status)");
         }
 
         // Truncate the product_temp table.
@@ -203,16 +202,6 @@ class LOC_Product
 
         return false;
     }
-
-
-    /**
-     * Use the configured quantity threshold to reactivate products during quantity sync.
-     */
-    private function getStatusResolveThreshold(): int
-    {
-        return max((int) agconf('import.default_stock_empty'), 0);
-    }
-
 
     /**
      * @return bool
