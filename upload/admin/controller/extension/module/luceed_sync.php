@@ -809,26 +809,28 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateOrderStatuses()
     {
-        $legacy = isset($this->request->get['legacy']) && (int) $this->request->get['legacy'] === 1;
-        $cutoff = Carbon::now()->subDays(60);
+        $legacy                = isset($this->request->get['legacy']) && (int) $this->request->get['legacy'] === 1;
+        $cutoff                = Carbon::now()->subDays(60);
+        $excludedLuceedStatuses = $legacy ? $this->getExcludedLuceedStatuses() : [];
 
-        return $this->output($this->syncOrderStatusBatch($cutoff, $legacy));
+        return $this->output($this->syncOrderStatusBatch($cutoff, $legacy, $excludedLuceedStatuses));
     }
 
 
     /**
      * @param Carbon $cutoff
      * @param bool   $legacy
+     * @param array  $excludedLuceedStatuses
      *
      * @return array
      */
-    private function syncOrderStatusBatch(Carbon $cutoff, bool $legacy = false): array
+    private function syncOrderStatusBatch(Carbon $cutoff, bool $legacy = false, array $excludedLuceedStatuses = []): array
     {
         $this->prepareLongRunningOrderStatusSync();
 
         $cursor    = isset($this->request->get['cursor']) ? (int) $this->request->get['cursor'] : 0;
         $batchSize = 150;
-        $batch     = $this->getOrderStatusBatch($cutoff, $legacy, $cursor, $batchSize);
+        $batch     = $this->getOrderStatusBatch($cutoff, $legacy, $cursor, $batchSize, $excludedLuceedStatuses);
 
         if ($batch->isEmpty()) {
             return [
@@ -897,14 +899,28 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
 
     /**
+     * @return array
+     */
+    private function getExcludedLuceedStatuses(): array
+    {
+        if ( ! isset($this->request->get['skip_luceed_statuses'])) {
+            return [];
+        }
+
+        return array_values(array_filter(array_unique(array_map('trim', explode(',', (string) $this->request->get['skip_luceed_statuses'])))));
+    }
+
+
+    /**
      * @param Carbon $cutoff
      * @param bool   $legacy
      * @param int    $cursor
      * @param int    $limit
+     * @param array  $excludedLuceedStatuses
      *
      * @return \Illuminate\Support\Collection
      */
-    private function getOrderStatusBatch(Carbon $cutoff, bool $legacy, int $cursor, int $limit)
+    private function getOrderStatusBatch(Carbon $cutoff, bool $legacy, int $cursor, int $limit, array $excludedLuceedStatuses = [])
     {
         $query = Order::query()
                       ->select('order_id', 'luceed_uid', 'email', 'payment_code', 'order_status_id', 'date_added')
@@ -914,6 +930,17 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
         if ($legacy) {
             $query->where('date_added', '<', $cutoff->toDateTimeString());
+
+            if ($excludedLuceedStatuses) {
+                $excludedOrderStatusIds = OrderStatus::query()
+                                                     ->whereIn('luceed_status_id', $excludedLuceedStatuses)
+                                                     ->pluck('order_status_id')
+                                                     ->all();
+
+                if ($excludedOrderStatusIds) {
+                    $query->whereNotIn('order_status_id', $excludedOrderStatusIds);
+                }
+            }
         } else {
             $query->where('date_added', '>=', $cutoff->toDateTimeString());
         }
