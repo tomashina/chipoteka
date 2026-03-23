@@ -24,6 +24,7 @@ use Agmedia\LuceedOpencartWrapper\Models\LOC_Stock;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse;
 use Agmedia\Models\Category\Category;
 use Agmedia\Models\Order\Order;
+use Agmedia\Models\Order\OrderStatus;
 use Agmedia\Models\Product\Product;
 use Agmedia\Models\Product\ProductCategory;
 use Carbon\Carbon;
@@ -808,24 +809,292 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateOrderStatuses()
     {
-        $loc = new LOC_Order();
+        $legacy = isset($this->request->get['legacy']) && (int) $this->request->get['legacy'] === 1;
+        $cutoff = Carbon::now()->subDays(60);
 
-        $loc->setOrders(
-            LuceedOrder::get(
-                $loc->collectStatuses(),
-                Carbon::now()->subWeek(2)->format('d.m.Y') //agconf('import.orders.from_date')
-            )
-        );
+        return $this->output($this->syncOrderStatusBatch($cutoff, $legacy));
+    }
 
-        $updated = $loc->sort()->updateStatuses();
 
-        foreach ($loc->collection as $order) {
-            $this->sendMail($order);
+    /**
+     * @param Carbon $cutoff
+     * @param bool   $legacy
+     *
+     * @return array
+     */
+    private function syncOrderStatusBatch(Carbon $cutoff, bool $legacy = false): array
+    {
+        $this->prepareLongRunningOrderStatusSync();
+
+        $cursor    = isset($this->request->get['cursor']) ? (int) $this->request->get['cursor'] : 0;
+        $batchSize = 150;
+        $batch     = $this->getOrderStatusBatch($cutoff, $legacy, $cursor, $batchSize);
+
+        if ($batch->isEmpty()) {
+            return [
+                'status'     => 200,
+                'processed'  => 0,
+                'updated'    => 0,
+                'done'       => true,
+                'empty'      => ($cursor === 0),
+                'next_cursor'=> 0
+            ];
         }
 
-        $updated += $this->updateB2BOrderStatuses();
+        $loc               = new LOC_Order();
+        $statuses          = OrderStatus::query()->where('luceed_status_id', '!=', '')->get();
+        $statusesById      = $statuses->keyBy('order_status_id');
+        $statusesByLuceed  = $statuses->keyBy('luceed_status_id');
+        $statusList        = $loc->collectStatuses($statuses->all());
+        $startDate         = Carbon::make($batch->min('date_added'))->format('d.m.Y');
+        $updates           = [];
 
-        return $this->response($updated, 'orders');
+        foreach ([false, true] as $b2b) {
+            $updates = $this->collectOrderStatusUpdates(
+                $updates,
+                $batch,
+                $statusesById,
+                $statusesByLuceed,
+                $statusList,
+                $startDate,
+                $b2b,
+                ! $legacy
+            );
+        }
+
+        $updated = $this->applyOrderStatusUpdates(array_values($updates), ! $legacy);
+
+        if ( ! $legacy) {
+            foreach ($updates as $update) {
+                $this->sendMail($update);
+            }
+        }
+
+        return [
+            'status'      => 200,
+            'processed'   => $batch->count(),
+            'updated'     => $updated,
+            'done'        => ($batch->count() < $batchSize),
+            'empty'       => false,
+            'next_cursor' => ($batch->count() < $batchSize) ? 0 : (int) $batch->last()->order_id
+        ];
+    }
+
+
+    /**
+     * @return void
+     */
+    private function prepareLongRunningOrderStatusSync(): void
+    {
+        ignore_user_abort(true);
+
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
+
+        @ini_set('max_execution_time', '0');
+    }
+
+
+    /**
+     * @param Carbon $cutoff
+     * @param bool   $legacy
+     * @param int    $cursor
+     * @param int    $limit
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function getOrderStatusBatch(Carbon $cutoff, bool $legacy, int $cursor, int $limit)
+    {
+        $query = Order::query()
+                      ->select('order_id', 'luceed_uid', 'email', 'payment_code', 'order_status_id', 'date_added')
+                      ->where('order_status_id', '!=', 0)
+                      ->whereNotNull('luceed_uid')
+                      ->where('luceed_uid', '!=', '');
+
+        if ($legacy) {
+            $query->where('date_added', '<', $cutoff->toDateTimeString());
+        } else {
+            $query->where('date_added', '>=', $cutoff->toDateTimeString());
+        }
+
+        if ($cursor > 0) {
+            $query->where('order_id', '<', $cursor);
+        }
+
+        return $query->orderByDesc('order_id')
+                     ->limit($limit)
+                     ->get();
+    }
+
+
+    /**
+     * @param array                         $updates
+     * @param \Illuminate\Support\Collection $batch
+     * @param \Illuminate\Support\Collection $statusesById
+     * @param \Illuminate\Support\Collection $statusesByLuceed
+     * @param string                        $statusList
+     * @param string                        $startDate
+     * @param bool                          $b2b
+     * @param bool                          $withMail
+     *
+     * @return array
+     */
+    private function collectOrderStatusUpdates(
+        array $updates,
+        $batch,
+        $statusesById,
+        $statusesByLuceed,
+        string $statusList,
+        string $startDate,
+        bool $b2b = false,
+        bool $withMail = true
+    ): array
+    {
+        $luceedOrders = $this->extractLuceedOrders(
+            LuceedOrder::get($statusList, $startDate, $b2b)
+        );
+
+        if ($luceedOrders->isEmpty()) {
+            return $updates;
+        }
+
+        $luceedOrdersByUid = $luceedOrders->keyBy('nalog_prodaje_uid');
+
+        foreach ($batch as $order) {
+            $luceedOrder = $luceedOrdersByUid->get($order->luceed_uid);
+
+            if ( ! $luceedOrder || ! isset($luceedOrder->status)) {
+                continue;
+            }
+
+            $oldStatus = $statusesById->get($order->order_status_id);
+            $newStatus = $statusesByLuceed->get((string) $luceedOrder->status);
+
+            if ( ! $oldStatus || ! $newStatus) {
+                continue;
+            }
+
+            if ((string) $luceedOrder->status === (string) $oldStatus->luceed_status_id) {
+                continue;
+            }
+
+            $update = [
+                'order_id'     => (int) $order->order_id,
+                'oc_status_to' => (int) $newStatus->order_status_id,
+                'email'        => $order->email
+            ];
+
+            if ($withMail) {
+                $update['payment']     = $order->payment_code;
+                $update['status_from'] = (string) $oldStatus->luceed_status_id;
+                $update['status_to']   = (string) $luceedOrder->status;
+                $mailKey               = $this->resolveOrderStatusMail($update);
+
+                if ($mailKey) {
+                    $update['mail'] = $mailKey;
+                }
+            }
+
+            $updates[$order->order_id] = $update;
+        }
+
+        return $updates;
+    }
+
+
+    /**
+     * @param mixed $response
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function extractLuceedOrders($response)
+    {
+        $json = json_decode($response);
+
+        if ( ! isset($json->result[0]->nalozi_prodaje)) {
+            return collect();
+        }
+
+        return collect($json->result[0]->nalozi_prodaje)->filter(function($order) {
+            return isset($order->nalog_prodaje_uid);
+        });
+    }
+
+
+    /**
+     * @param array $update
+     *
+     * @return mixed|null
+     */
+    private function resolveOrderStatusMail(array $update)
+    {
+        $items = agconf('mail.' . $update['payment']);
+
+        if ( ! is_array($items)) {
+            return null;
+        }
+
+        foreach ($items as $key => $item) {
+            if ( ! $key || ! isset($item['from'], $item['to'])) {
+                continue;
+            }
+
+            if ($update['status_from'] == $item['from'] && $update['status_to'] == $item['to']) {
+                return $key;
+            }
+        }
+
+        return null;
+    }
+
+
+    /**
+     * @param array $updates
+     * @param bool  $notify
+     *
+     * @return int
+     */
+    private function applyOrderStatusUpdates(array $updates, bool $notify): int
+    {
+        if (empty($updates)) {
+            return 0;
+        }
+
+        $updated = 0;
+        $now     = Carbon::now()->toDateTimeString();
+
+        foreach (array_chunk($updates, 500) as $chunk) {
+            $cases         = [];
+            $historyValues = [];
+            $orderIds      = [];
+
+            foreach ($chunk as $item) {
+                $orderId  = (int) $item['order_id'];
+                $statusId = (int) $item['oc_status_to'];
+
+                $orderIds[]      = $orderId;
+                $cases[]         = 'WHEN ' . $orderId . ' THEN ' . $statusId;
+                $historyValues[] = '(' . $orderId . ', ' . $statusId . ', ' . (int) $notify . ", '', '" . $this->db->escape($now) . "')";
+            }
+
+            $this->db->query(
+                "UPDATE `" . DB_PREFIX . "order`
+                 SET order_status_id = CASE order_id " . implode(' ', $cases) . " END,
+                     order_status_changed = '" . $this->db->escape($now) . "',
+                     date_modified = '" . $this->db->escape($now) . "'
+                 WHERE order_id IN (" . implode(',', $orderIds) . ')'
+            );
+
+            $this->db->query(
+                "INSERT INTO `" . DB_PREFIX . "order_history` (order_id, order_status_id, notify, comment, date_added)
+                 VALUES " . implode(',', $historyValues)
+            );
+
+            $updated += count($chunk);
+        }
+
+        return $updated;
     }
 
 
