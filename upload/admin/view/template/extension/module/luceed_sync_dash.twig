@@ -210,13 +210,13 @@
                                     <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="update-order-statuses" data-toggle="tooltip" title="Update Statusa Narudžbi" class="btn btn-info btn-block">Update Statusa Narudžbi</a>
                                     </div>
-                                    <p class="col-sm-8">Sinkronizira statuse narudžbi za zadnjih 60 dana i šalje standardne mailove kupcima gdje su predviđeni.</p>
+                                    <p class="col-sm-8">Sinkronizira statuse narudžbi za zadnjih 60 dana u serijama po 200 i šalje standardne mailove kupcima gdje su predviđeni.</p>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="update-order-statuses-legacy" data-toggle="tooltip" title="Update Starijih Statusa Narudžbi" class="btn btn-info btn-block">Update Starijih Statusa</a>
                                     </div>
-                                    <p class="col-sm-8">Sinkronizira narudžbe starije od 60 dana od najstarijih prema novijima, preskače lokalni status 10 i upisuje promjene bez slanja mailova kupcima.</p>
+                                    <p class="col-sm-8">Sinkronizira narudžbe starije od 60 dana od najstarijih prema novijima, u serijama po 200, preskače lokalni status 10 i upisuje promjene bez slanja mailova kupcima.</p>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-4 text-center">
@@ -608,12 +608,22 @@
 
             lockTarget('u', button);
 
-            processBatch(legacy ? '' : 0);
+            processBatch(legacy ? { start: '', cursor: 0 } : 0);
 
             function processBatch(cursor) {
-                let paging = legacy
-                    ? (cursor ? '&legacy_start=' + encodeURIComponent(cursor) : '')
-                    : '&cursor=' + cursor;
+                let paging = '';
+
+                if (legacy) {
+                    if (cursor.start) {
+                        paging += '&legacy_start=' + encodeURIComponent(cursor.start);
+                    }
+
+                    if (cursor.cursor) {
+                        paging += '&legacy_cursor=' + cursor.cursor;
+                    }
+                } else {
+                    paging = '&cursor=' + cursor;
+                }
 
                 $.ajax({
                     url: 'index.php?route=extension/module/luceed_sync/updateOrderStatuses' + (legacy ? '&legacy=1&skip_luceed_statuses=10' : '') + paging + '&user_token={{ user_token }}',
@@ -639,13 +649,19 @@
                         if (json.done) {
                             releseTarget(originalText, button);
                             AG_alert.success(legacy
-                                ? 'Sinkronizacija starijih statusa od najstarijih prema novijima je završena bez slanja mailova kupcima i uz preskakanje statusa 10. Ažurirano: ' + updated + '.'
-                                : 'Sinkronizacija statusa narudžbi za zadnjih 60 dana je završena. Ažurirano: ' + updated + '.'
+                                ? 'Sinkronizacija starijih statusa od najstarijih prema novijima je završena u serijama po 200, bez slanja mailova kupcima i uz preskakanje statusa 10. Ažurirano: ' + updated + '.'
+                                : 'Sinkronizacija statusa narudžbi za zadnjih 60 dana je završena u serijama po 200. Ažurirano: ' + updated + '.'
                             );
                             return;
                         }
 
-                        processBatch(legacy ? json.next_legacy_start : json.next_cursor);
+                        processBatch(legacy
+                            ? {
+                                start: json.next_legacy_start ? json.next_legacy_start : '',
+                                cursor: json.next_legacy_cursor ? parseInt(json.next_legacy_cursor, 10) : 0
+                            }
+                            : json.next_cursor
+                        );
                     },
                     error: function() {
                         releseTarget(originalText, button);
