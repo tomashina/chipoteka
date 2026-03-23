@@ -216,13 +216,13 @@
                                     <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="update-order-statuses-legacy" data-toggle="tooltip" title="Update Starijih Statusa Narudžbi" class="btn btn-info btn-block">Update Starijih Statusa</a>
                                     </div>
-                                    <p class="col-sm-8">Sinkronizira narudžbe starije od 60 dana od najstarijih prema novijima, u serijama po 200, preskače lokalni status 10 i upisuje promjene bez slanja mailova kupcima.</p>
+                                    <p class="col-sm-8">Sinkronizira narudžbe starije od 60 dana od kraja prema natrag, u serijama po 200, preskače lokalni status 10 i upisuje promjene bez slanja mailova kupcima.</p>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="duration-order-statuses" data-toggle="tooltip" title="Provjera Trajanja Statusa" class="btn btn-info btn-block">Provjera Trajanja Statusa</a>
                                     </div>
-                                    <p class="col-sm-8">Vrši se provjera trajanja pojedinih statusa narudžbi i šalje se mail ako je potrabno.</p>
+                                    <p class="col-sm-8">Vrši se provjera trajanja pojedinih statusa narudžbi u serijama po 200 i šalje se mail ako je potrebno.</p>
                                 </div>
                             </div>
                         </div>
@@ -483,11 +483,11 @@
 
             $('#update-order-statuses')     .on('click', e => { runOrderStatusSync(e, false); });
             $('#update-order-statuses-legacy').on('click', e => {
-                if (confirm('Sinkronizirati statuse za narudžbe starije od 60 dana od najstarijih prema novijima, preskočiti status 10 i ne slati mailove kupcima?')) {
+                if (confirm('Sinkronizirati statuse za narudžbe starije od 60 dana od kraja prema natrag, preskočiti status 10 i ne slati mailove kupcima?')) {
                     runOrderStatusSync(e, true);
                 }
             });
-            $('#duration-order-statuses')   .on('click', e => { callApi(e, 'checkOrderStatusDuration'); });
+            $('#duration-order-statuses')   .on('click', e => { runDurationStatusCheck(e); });
 
             $('#import-initial-manufacturer').on('click', e => { callApi(e, 'importInitialManufacturers'); });
             $('#import-initial-customers')   .on('click', e => { callApi(e, 'importInitialCustomers'); });
@@ -608,25 +608,11 @@
 
             lockTarget('u', button);
 
-            processBatch(legacy ? { start: '', cursor: 0 } : 0);
+            processBatch(0);
 
             function processBatch(cursor) {
-                let paging = '';
-
-                if (legacy) {
-                    if (cursor.start) {
-                        paging += '&legacy_start=' + encodeURIComponent(cursor.start);
-                    }
-
-                    if (cursor.cursor) {
-                        paging += '&legacy_cursor=' + cursor.cursor;
-                    }
-                } else {
-                    paging = '&cursor=' + cursor;
-                }
-
                 $.ajax({
-                    url: 'index.php?route=extension/module/luceed_sync/updateOrderStatuses' + (legacy ? '&legacy=1&skip_luceed_statuses=10' : '') + paging + '&user_token={{ user_token }}',
+                    url: 'index.php?route=extension/module/luceed_sync/updateOrderStatuses' + (legacy ? '&legacy=1&skip_luceed_statuses=10' : '') + '&cursor=' + cursor + '&user_token={{ user_token }}',
                     dataType: 'json',
                     success: function(json) {
                         if (json.status != 200) {
@@ -649,23 +635,79 @@
                         if (json.done) {
                             releseTarget(originalText, button);
                             AG_alert.success(legacy
-                                ? 'Sinkronizacija starijih statusa od najstarijih prema novijima je završena u serijama po 200, bez slanja mailova kupcima i uz preskakanje statusa 10. Ažurirano: ' + updated + '.'
+                                ? 'Sinkronizacija starijih statusa od kraja prema natrag je završena u serijama po 200, bez slanja mailova kupcima i uz preskakanje statusa 10. Ažurirano: ' + updated + '.'
                                 : 'Sinkronizacija statusa narudžbi za zadnjih 60 dana je završena u serijama po 200. Ažurirano: ' + updated + '.'
                             );
                             return;
                         }
 
-                        processBatch(legacy
-                            ? {
-                                start: json.next_legacy_start ? json.next_legacy_start : '',
-                                cursor: json.next_legacy_cursor ? parseInt(json.next_legacy_cursor, 10) : 0
-                            }
-                            : json.next_cursor
-                        );
+                        processBatch(json.next_cursor);
                     },
                     error: function(xhr) {
                         releseTarget(originalText, button);
                         let message = 'Došlo je do greške tijekom sinkronizacije statusa narudžbi. Molimo pokušajte ponovo.';
+
+                        if (xhr && xhr.responseText) {
+                            try {
+                                let parsed = JSON.parse(xhr.responseText);
+
+                                if (parsed.message) {
+                                    message = parsed.message;
+                                }
+                            } catch (e) {
+                            }
+                        }
+
+                        AG_alert.warning(message);
+                    }
+                });
+            }
+        }
+
+        function runDurationStatusCheck(e) {
+            let target = e.currentTarget;
+            let button = $('#' + target.id);
+            let originalText = target.text;
+            let processed = 0;
+            let sent = 0;
+
+            lockTarget('c', button);
+
+            processBatch(0);
+
+            function processBatch(cursor) {
+                $.ajax({
+                    url: 'index.php?route=extension/module/luceed_sync/checkOrderStatusDuration&cursor=' + cursor + '&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        if (json.status != 200) {
+                            checkResult(json);
+                            releseTarget(originalText, button);
+                            return;
+                        }
+
+                        processed += json.processed ? parseInt(json.processed, 10) : 0;
+                        sent += json.updated ? parseInt(json.updated, 10) : 0;
+
+                        if (json.empty) {
+                            releseTarget(originalText, button);
+                            AG_alert.warning('Nema narudžbi za provjeru trajanja statusa.');
+                            return;
+                        }
+
+                        button.text('Provjera ' + sent + '/' + processed);
+
+                        if (json.done) {
+                            releseTarget(originalText, button);
+                            AG_alert.success('Provjera trajanja statusa je završena u serijama po 200. Poslano mailova: ' + sent + '.');
+                            return;
+                        }
+
+                        processBatch(json.next_cursor);
+                    },
+                    error: function(xhr) {
+                        releseTarget(originalText, button);
+                        let message = 'Došlo je do greške tijekom provjere trajanja statusa. Molimo pokušajte ponovo.';
 
                         if (xhr && xhr.responseText) {
                             try {

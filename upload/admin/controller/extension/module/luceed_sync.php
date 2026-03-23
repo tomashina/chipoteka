@@ -814,11 +814,11 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $cutoff                 = Carbon::now()->subDays(60);
             $excludedLuceedStatuses = $legacy ? $this->getExcludedLuceedStatuses() : [];
 
-            if ($legacy) {
-                return $this->output($this->syncLegacyOrderStatusBatch($cutoff, $excludedLuceedStatuses));
+            if ($this->shouldRunFullOrderStatusCronSync($legacy)) {
+                return $this->output($this->syncAllOrderStatusBatches($cutoff, $excludedLuceedStatuses));
             }
 
-            return $this->output($this->syncOrderStatusBatch($cutoff, false, []));
+            return $this->output($this->syncOrderStatusBatch($cutoff, $legacy, $excludedLuceedStatuses));
         } catch (\Throwable $e) {
             Log::store($e->getMessage(), 'luceed_order_status_sync_error');
             Log::store($e->getTraceAsString(), 'luceed_order_status_sync_error');
@@ -838,11 +838,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
      *
      * @return array
      */
-    private function syncOrderStatusBatch(Carbon $cutoff, bool $legacy = false, array $excludedLuceedStatuses = []): array
+    private function syncOrderStatusBatch(Carbon $cutoff, bool $legacy = false, array $excludedLuceedStatuses = [], ?int $cursor = null): array
     {
         $this->prepareLongRunningOrderStatusSync();
 
-        $cursor    = isset($this->request->get['cursor']) ? (int) $this->request->get['cursor'] : 0;
+        if ($cursor === null) {
+            $cursor = isset($this->request->get['cursor']) ? (int) $this->request->get['cursor'] : 0;
+        }
+
         $batchSize = $this->getOrderStatusBatchSize();
         $batch     = $this->getOrderStatusBatch($cutoff, $legacy, $cursor, $batchSize, $excludedLuceedStatuses);
 
@@ -894,6 +897,83 @@ class ControllerExtensionModuleLuceedSync extends Controller
             'empty'       => false,
             'next_cursor' => ($batch->count() < $batchSize) ? 0 : (int) $batch->last()->order_id
         ];
+    }
+
+
+    /**
+     * @param bool $legacy
+     *
+     * @return bool
+     */
+    private function shouldRunFullOrderStatusCronSync(bool $legacy): bool
+    {
+        if ($legacy) {
+            return false;
+        }
+
+        if (isset($this->request->get['cron']) && (int) $this->request->get['cron'] === 1) {
+            return true;
+        }
+
+        if (isset($this->request->get['user_token']) && $this->request->get['user_token']) {
+            return false;
+        }
+
+        return ! isset($this->request->get['cursor']) || (int) $this->request->get['cursor'] <= 0;
+    }
+
+
+    /**
+     * @param Carbon $cutoff
+     * @param array  $excludedLuceedStatuses
+     *
+     * @return array
+     */
+    private function syncAllOrderStatusBatches(Carbon $cutoff, array $excludedLuceedStatuses = []): array
+    {
+        $processed = 0;
+        $updated   = 0;
+        $cursor    = 0;
+        $empty     = true;
+
+        do {
+            $result = $this->syncOrderStatusBatch($cutoff, false, $excludedLuceedStatuses, $cursor);
+
+            if ((int) $result['status'] !== 200) {
+                return $result;
+            }
+
+            $processed += isset($result['processed']) ? (int) $result['processed'] : 0;
+            $updated   += isset($result['updated']) ? (int) $result['updated'] : 0;
+            $empty      = $empty && ! empty($result['empty']);
+
+            if ( ! empty($result['done'])) {
+                return [
+                    'status'      => 200,
+                    'processed'   => $processed,
+                    'updated'     => $updated,
+                    'done'        => true,
+                    'empty'       => $empty,
+                    'next_cursor' => 0
+                ];
+            }
+
+            $nextCursor = isset($result['next_cursor']) ? (int) $result['next_cursor'] : 0;
+
+            if ($nextCursor <= 0 || $nextCursor === $cursor) {
+                return [
+                    'status'      => 300,
+                    'processed'   => $processed,
+                    'updated'     => $updated,
+                    'done'        => false,
+                    'empty'       => $empty,
+                    'next_cursor' => $nextCursor,
+                    'message'     => 'Cron sinkronizacija statusa narudžbi je prekinuta zbog neispravnog kursora.'
+                ];
+            }
+
+            $cursor = $nextCursor;
+        } while (true);
     }
 
 
@@ -1373,15 +1453,153 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function checkOrderStatusDuration()
     {
-        $loc = new LOC_Order();
+        try {
+            $this->prepareLongRunningOrderStatusSync();
 
-        $updated = $loc->checkStatusDuration();
+            $cursor    = isset($this->request->get['cursor']) ? (int) $this->request->get['cursor'] : 0;
+            $batchSize = $this->getOrderStatusBatchSize();
+            $batch     = $this->getDurationStatusBatch($cursor, $batchSize);
 
-        foreach ($loc->collection as $order) {
-            $this->sendMail($order);
+            if ($batch->isEmpty()) {
+                return $this->output([
+                    'status'      => 200,
+                    'processed'   => 0,
+                    'updated'     => 0,
+                    'done'        => true,
+                    'empty'       => ($cursor === 0),
+                    'next_cursor' => 0
+                ]);
+            }
+
+            $notifications = $this->collectDurationStatusNotifications($batch);
+
+            foreach ($notifications as $order) {
+                $this->sendMail($order);
+            }
+
+            return $this->output([
+                'status'      => 200,
+                'processed'   => $batch->count(),
+                'updated'     => count($notifications),
+                'done'        => ($batch->count() < $batchSize),
+                'empty'       => false,
+                'next_cursor' => ($batch->count() < $batchSize) ? 0 : (int) $batch->last()->order_id
+            ]);
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_order_duration_sync_error');
+            Log::store($e->getTraceAsString(), 'luceed_order_duration_sync_error');
+
+            return $this->output([
+                'status'  => 300,
+                'message' => 'Greška kod provjere trajanja statusa: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+
+    /**
+     * @param int $cursor
+     * @param int $limit
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function getDurationStatusBatch(int $cursor, int $limit)
+    {
+        $query = Order::query()
+                      ->select('order_id', 'email', 'payment_code', 'order_status_id', 'order_status_changed')
+                      ->where('order_status_id', '!=', 0)
+                      ->whereNotNull('order_status_changed');
+
+        if ($cursor > 0) {
+            $query->where('order_id', '<', $cursor);
         }
 
-        return $this->response($updated, 'orders');
+        return $query->orderByDesc('order_id')
+                     ->limit($limit)
+                     ->get();
+    }
+
+
+    /**
+     * @param \Illuminate\Support\Collection $batch
+     *
+     * @return array
+     */
+    private function collectDurationStatusNotifications($batch): array
+    {
+        $notifications = [];
+        $statuses      = OrderStatus::query()->where('luceed_status_id', '!=', '')->get()->keyBy('order_status_id');
+        $now           = Carbon::now();
+
+        foreach ($batch as $order) {
+            $status = $statuses->get($order->order_status_id);
+
+            if ( ! $status || ! $order->order_status_changed) {
+                continue;
+            }
+
+            $changedAt  = Carbon::make($order->order_status_changed);
+            $longerThen = null;
+
+            if ($changedAt < $now->copy()->subHour(168) && $changedAt > $now->copy()->subHour(72) && $status->luceed_status_id == '11') {
+                $longerThen = 168;
+            } elseif ($changedAt < $now->copy()->subHour(72) && $changedAt > $now->copy()->subHour(48) && in_array($status->luceed_status_id, ['02', '05'])) {
+                $longerThen = 72;
+            } elseif ($changedAt < $now->copy()->subHour(48) && $changedAt > $now->copy()->subHour(24) && in_array($status->luceed_status_id, ['12', '01'])) {
+                $longerThen = 48;
+            } elseif ($changedAt < $now->copy()->subHour(24) && $changedAt > $now && in_array($status->luceed_status_id, ['02', '05', '12', '01'])) {
+                $longerThen = 24;
+            }
+
+            if ( ! $longerThen) {
+                continue;
+            }
+
+            $mailKey = $this->resolveDurationStatusMail($order->payment_code, (string) $status->luceed_status_id, $longerThen);
+
+            if ( ! $mailKey) {
+                continue;
+            }
+
+            $notifications[] = [
+                'order_id' => (int) $order->order_id,
+                'email'    => $order->email,
+                'mail'     => $mailKey
+            ];
+        }
+
+        return $notifications;
+    }
+
+
+    /**
+     * @param string $payment
+     * @param string $status
+     * @param int    $longerThen
+     *
+     * @return int|string|null
+     */
+    private function resolveDurationStatusMail(string $payment, string $status, int $longerThen)
+    {
+        $items = agconf('mail.' . $payment);
+
+        if ( ! is_array($items) || ! isset($items[0]) || ! is_array($items[0])) {
+            return null;
+        }
+
+        foreach ($items[0] as $key => $hours) {
+            if ($status != $key || ! is_array($hours)) {
+                continue;
+            }
+
+            foreach ($hours as $hour => $mail) {
+                if ((int) $hour === $longerThen) {
+                    return $mail;
+                }
+            }
+        }
+
+        return null;
     }
     
     
