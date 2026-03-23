@@ -216,7 +216,7 @@
                                     <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="update-order-statuses-legacy" data-toggle="tooltip" title="Update Starijih Statusa Narudžbi" class="btn btn-info btn-block">Update Starijih Statusa</a>
                                     </div>
-                                    <p class="col-sm-8">Sinkronizira narudžbe starije od 60 dana, preskače lokalni status 10 i upisuje promjene bez slanja mailova kupcima.</p>
+                                    <p class="col-sm-8">Sinkronizira narudžbe starije od 60 dana od najstarijih prema novijima, preskače lokalni status 10 i upisuje promjene bez slanja mailova kupcima.</p>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-4 text-center">
@@ -483,7 +483,7 @@
 
             $('#update-order-statuses')     .on('click', e => { runOrderStatusSync(e, false); });
             $('#update-order-statuses-legacy').on('click', e => {
-                if (confirm('Sinkronizirati statuse za narudžbe starije od 60 dana, preskočiti status 10 i ne slati mailove kupcima?')) {
+                if (confirm('Sinkronizirati statuse za narudžbe starije od 60 dana od najstarijih prema novijima, preskočiti status 10 i ne slati mailove kupcima?')) {
                     runOrderStatusSync(e, true);
                 }
             });
@@ -608,11 +608,15 @@
 
             lockTarget('u', button);
 
-            processBatch(0);
+            processBatch(legacy ? '' : 0);
 
             function processBatch(cursor) {
+                let paging = legacy
+                    ? (cursor ? '&legacy_start=' + encodeURIComponent(cursor) : '')
+                    : '&cursor=' + cursor;
+
                 $.ajax({
-                    url: 'index.php?route=extension/module/luceed_sync/updateOrderStatuses' + (legacy ? '&legacy=1&skip_luceed_statuses=10' : '') + '&cursor=' + cursor + '&user_token={{ user_token }}',
+                    url: 'index.php?route=extension/module/luceed_sync/updateOrderStatuses' + (legacy ? '&legacy=1&skip_luceed_statuses=10' : '') + paging + '&user_token={{ user_token }}',
                     dataType: 'json',
                     success: function(json) {
                         if (json.status != 200) {
@@ -635,13 +639,13 @@
                         if (json.done) {
                             releseTarget(originalText, button);
                             AG_alert.success(legacy
-                                ? 'Sinkronizacija starijih statusa je završena bez slanja mailova kupcima i uz preskakanje statusa 10. Ažurirano: ' + updated + '.'
+                                ? 'Sinkronizacija starijih statusa od najstarijih prema novijima je završena bez slanja mailova kupcima i uz preskakanje statusa 10. Ažurirano: ' + updated + '.'
                                 : 'Sinkronizacija statusa narudžbi za zadnjih 60 dana je završena. Ažurirano: ' + updated + '.'
                             );
                             return;
                         }
 
-                        processBatch(json.next_cursor);
+                        processBatch(legacy ? json.next_legacy_start : json.next_cursor);
                     },
                     error: function() {
                         releseTarget(originalText, button);

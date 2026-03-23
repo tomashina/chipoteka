@@ -813,7 +813,11 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $cutoff                = Carbon::now()->subDays(60);
         $excludedLuceedStatuses = $legacy ? $this->getExcludedLuceedStatuses() : [];
 
-        return $this->output($this->syncOrderStatusBatch($cutoff, $legacy, $excludedLuceedStatuses));
+        if ($legacy) {
+            return $this->output($this->syncLegacyOrderStatusBatch($cutoff, $excludedLuceedStatuses));
+        }
+
+        return $this->output($this->syncOrderStatusBatch($cutoff, false, []));
     }
 
 
@@ -884,6 +888,100 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
 
     /**
+     * @param Carbon $cutoff
+     * @param array  $excludedLuceedStatuses
+     *
+     * @return array
+     */
+    private function syncLegacyOrderStatusBatch(Carbon $cutoff, array $excludedLuceedStatuses = []): array
+    {
+        $this->prepareLongRunningOrderStatusSync();
+
+        $oldestDate = $this->getLegacyOldestOrderDate($cutoff, $excludedLuceedStatuses);
+
+        if ( ! $oldestDate) {
+            return [
+                'status'            => 200,
+                'processed'         => 0,
+                'updated'           => 0,
+                'done'              => true,
+                'empty'             => true,
+                'next_legacy_start' => ''
+            ];
+        }
+
+        $windowStart = isset($this->request->get['legacy_start']) && $this->request->get['legacy_start']
+            ? Carbon::parse($this->request->get['legacy_start'])
+            : $oldestDate->copy();
+
+        if ($windowStart->lessThan($oldestDate)) {
+            $windowStart = $oldestDate->copy();
+        }
+
+        $windowDays = 365;
+        $batch      = collect();
+        $windowEnd  = null;
+
+        while ($windowStart->lessThan($cutoff) && $batch->isEmpty()) {
+            $windowEnd = $windowStart->copy()->addDays($windowDays);
+
+            if ($windowEnd->greaterThan($cutoff)) {
+                $windowEnd = $cutoff->copy();
+            }
+
+            $batch = $this->getLegacyOrderStatusWindow($windowStart, $windowEnd, $excludedLuceedStatuses);
+
+            if ($batch->isEmpty()) {
+                $windowStart = $windowEnd->copy();
+            }
+        }
+
+        if ($batch->isEmpty() || ! $windowEnd) {
+            return [
+                'status'          => 200,
+                'processed'       => 0,
+                'updated'         => 0,
+                'done'            => true,
+                'empty'           => true,
+                'next_legacy_start' => ''
+            ];
+        }
+
+        $loc              = new LOC_Order();
+        $statuses         = OrderStatus::query()->where('luceed_status_id', '!=', '')->get();
+        $statusesById     = $statuses->keyBy('order_status_id');
+        $statusesByLuceed = $statuses->keyBy('luceed_status_id');
+        $statusList       = $loc->collectStatuses($statuses->all());
+        $updates          = [];
+
+        foreach ([false, true] as $b2b) {
+            $updates = $this->collectOrderStatusUpdates(
+                $updates,
+                $batch,
+                $statusesById,
+                $statusesByLuceed,
+                $statusList,
+                $windowStart->format('d.m.Y'),
+                $b2b,
+                false
+            );
+        }
+
+        $updated = $this->applyOrderStatusUpdates(array_values($updates), false);
+        $done    = $windowEnd->greaterThanOrEqualTo($cutoff);
+
+        return [
+            'status'            => 200,
+            'processed'         => $batch->count(),
+            'updated'           => $updated,
+            'done'              => $done,
+            'empty'             => false,
+            'next_legacy_start' => $done ? '' : $windowEnd->toDateTimeString()
+        ];
+    }
+
+
+    /**
      * @return void
      */
     private function prepareLongRunningOrderStatusSync(): void
@@ -912,6 +1010,24 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
 
     /**
+     * @param array $luceedStatuses
+     *
+     * @return array
+     */
+    private function getOrderStatusIdsByLuceedStatuses(array $luceedStatuses): array
+    {
+        if (empty($luceedStatuses)) {
+            return [];
+        }
+
+        return OrderStatus::query()
+                          ->whereIn('luceed_status_id', $luceedStatuses)
+                          ->pluck('order_status_id')
+                          ->all();
+    }
+
+
+    /**
      * @param Carbon $cutoff
      * @param bool   $legacy
      * @param int    $cursor
@@ -932,10 +1048,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $query->where('date_added', '<', $cutoff->toDateTimeString());
 
             if ($excludedLuceedStatuses) {
-                $excludedOrderStatusIds = OrderStatus::query()
-                                                     ->whereIn('luceed_status_id', $excludedLuceedStatuses)
-                                                     ->pluck('order_status_id')
-                                                     ->all();
+                $excludedOrderStatusIds = $this->getOrderStatusIdsByLuceedStatuses($excludedLuceedStatuses);
 
                 if ($excludedOrderStatusIds) {
                     $query->whereNotIn('order_status_id', $excludedOrderStatusIds);
@@ -952,6 +1065,64 @@ class ControllerExtensionModuleLuceedSync extends Controller
         return $query->orderByDesc('order_id')
                      ->limit($limit)
                      ->get();
+    }
+
+
+    /**
+     * @param Carbon $cutoff
+     * @param array  $excludedLuceedStatuses
+     *
+     * @return Carbon|null
+     */
+    private function getLegacyOldestOrderDate(Carbon $cutoff, array $excludedLuceedStatuses = [])
+    {
+        $query = Order::query()
+                      ->where('order_status_id', '!=', 0)
+                      ->whereNotNull('luceed_uid')
+                      ->where('luceed_uid', '!=', '')
+                      ->where('date_added', '<', $cutoff->toDateTimeString());
+
+        if ($excludedLuceedStatuses) {
+            $excludedOrderStatusIds = $this->getOrderStatusIdsByLuceedStatuses($excludedLuceedStatuses);
+
+            if ($excludedOrderStatusIds) {
+                $query->whereNotIn('order_status_id', $excludedOrderStatusIds);
+            }
+        }
+
+        $oldestDate = $query->min('date_added');
+
+        return $oldestDate ? Carbon::make($oldestDate) : null;
+    }
+
+
+    /**
+     * @param Carbon $windowStart
+     * @param Carbon $windowEnd
+     * @param array  $excludedLuceedStatuses
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function getLegacyOrderStatusWindow(Carbon $windowStart, Carbon $windowEnd, array $excludedLuceedStatuses = [])
+    {
+        $query = Order::query()
+                      ->select('order_id', 'luceed_uid', 'email', 'payment_code', 'order_status_id', 'date_added')
+                      ->where('order_status_id', '!=', 0)
+                      ->whereNotNull('luceed_uid')
+                      ->where('luceed_uid', '!=', '')
+                      ->where('date_added', '>=', $windowStart->toDateTimeString())
+                      ->where('date_added', '<', $windowEnd->toDateTimeString())
+                      ->orderByDesc('order_id');
+
+        if ($excludedLuceedStatuses) {
+            $excludedOrderStatusIds = $this->getOrderStatusIdsByLuceedStatuses($excludedLuceedStatuses);
+
+            if ($excludedOrderStatusIds) {
+                $query->whereNotIn('order_status_id', $excludedOrderStatusIds);
+            }
+        }
+
+        return $query->get();
     }
 
 
