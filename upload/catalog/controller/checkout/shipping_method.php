@@ -21,7 +21,7 @@ class ControllerCheckoutShippingMethod extends Controller {
 			$results = $this->model_setting_extension->getExtensions('shipping');
 
 				foreach ($results as $result) {
-					// Pickup and xshippingpro are handled outside extension config for this project.
+					// Pickup is built from import.warehouse.pickup; xshippingpro is intentionally excluded.
 					if (in_array($result['code'], array('pickup', 'xshippingpro'), true)) {
 						continue;
 					}
@@ -206,20 +206,7 @@ class ControllerCheckoutShippingMethod extends Controller {
 		}
 
 		private function getConfiguredPickupMap() {
-			$candidates = array(
-				agconf('luceed.pickup'),
-				agconf('import.warehouse.pickup')
-			);
-
-			foreach ($candidates as $candidate) {
-				$parsed = $this->parsePickupMap($candidate);
-
-				if (!empty($parsed)) {
-					return $parsed;
-				}
-			}
-
-			return array();
+			return $this->parsePickupMap(agconf('import.warehouse.pickup'));
 		}
 
 		private function parsePickupMap($map) {
@@ -245,7 +232,7 @@ class ControllerCheckoutShippingMethod extends Controller {
 			}
 
 			$normalized = array_values(array_unique(array_filter($normalized, function($code) {
-				return $code !== '';
+				return $code !== '' && ctype_digit((string)$code);
 			})));
 
 			return $normalized;

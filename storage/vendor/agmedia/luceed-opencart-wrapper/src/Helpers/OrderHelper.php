@@ -27,16 +27,6 @@ class OrderHelper
             $pickup = str_pad(substr($shipping_code, strlen('pickup.pickup_')), 3, '0', STR_PAD_LEFT);
         }
 
-        if (strpos($shipping_code, 'xshippingpro.xshippingpro1_') === 0) {
-            $xid = substr($shipping_code, strlen('xshippingpro.xshippingpro1_'));
-
-            foreach (agconf('luceed.pickup') as $key => $item) {
-                if ((string) $key == (string) $xid) {
-                    $pickup = $item;
-                }
-            }
-        }
-
         return $pickup;
     }
 

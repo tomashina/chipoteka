@@ -795,16 +795,6 @@ class LOC_Order
             $this->pickup = str_pad($store_code, 3, '0', STR_PAD_LEFT);
         }
 
-        if (strpos($shipping_uid, 'xshippingpro.xshippingpro1_') === 0) {
-            $xid = substr($shipping_uid, strlen('xshippingpro.xshippingpro1_'));
-
-            foreach (agconf('luceed.pickup') as $key => $item) {
-                if ((string) $key == (string) $xid) {
-                    $this->pickup = $item;
-                }
-            }
-        }
-
         return $this;
     }
 

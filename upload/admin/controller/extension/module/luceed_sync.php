@@ -156,15 +156,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
     private function buildStoreAuditData(): array
     {
         $warehouse_config = agconf('import.warehouse');
-        $luceed_pickup    = agconf('luceed.pickup');
         $working_hours    = agconf('poslovnice_radno_vrijeme');
 
         if ( ! is_array($warehouse_config)) {
             $warehouse_config = [];
-        }
-
-        if ( ! is_array($luceed_pickup)) {
-            $luceed_pickup = [];
         }
 
         if ( ! is_array($working_hours)) {
@@ -176,7 +171,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $view_codes       = $this->normalizeStoreCodes($warehouse_config['availability_view'] ?? []);
         $store_codes      = $this->normalizeStoreCodes($warehouse_config['stores'] ?? []);
         $pickup_codes     = $this->normalizeStoreCodes($warehouse_config['pickup'] ?? []);
-        $pickup_map_codes = $this->normalizeStoreCodes(array_values($luceed_pickup));
         $hours_codes      = $this->normalizeStoreCodes(array_keys($working_hours));
 
         $required_codes = $this->uniqueStoreCodes(array_merge(
@@ -185,7 +179,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $view_codes,
             $store_codes,
             $pickup_codes,
-            $pickup_map_codes,
             $hours_codes
         ));
 
@@ -210,9 +203,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 'in_availability'    => in_array($code, $view_codes, true),
                 'in_stores'          => in_array($code, $store_codes, true),
                 'in_pickup'          => in_array($code, $pickup_codes, true),
-                'in_pickup_map'      => in_array($code, $pickup_map_codes, true),
                 'working_hours'      => $working_hours[$code] ?? '',
-                'pickup_method_ids'  => $this->getPickupMethodIds($luceed_pickup, $code),
             ];
         }
 
@@ -221,38 +212,21 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $warnings = array_merge($warnings, $this->missingFrom($view_codes, $included_codes, 'import.warehouse.availability_view', 'import.warehouse.included'));
         $warnings = array_merge($warnings, $this->missingFrom($store_codes, $included_codes, 'import.warehouse.stores', 'import.warehouse.included'));
         $warnings = array_merge($warnings, $this->missingFrom($pickup_codes, $included_codes, 'import.warehouse.pickup', 'import.warehouse.included'));
-        $warnings = array_merge($warnings, $this->missingFrom($pickup_map_codes, $pickup_codes, 'luceed.pickup (values)', 'import.warehouse.pickup'));
 
         foreach ($rows as $row) {
             if ( ! $row['in_json']) {
                 $warnings[] = 'Sifra ' . $row['code'] . ' je u env mapiranju, ali ne postoji u ' . $json_path . '.';
             }
 
-            if ($row['in_pickup_map'] && $row['code'] != '101' && $row['working_hours'] == '') {
+            if ($row['in_pickup'] && $row['code'] != '101' && $row['working_hours'] == '') {
                 $warnings[] = 'Sifra ' . $row['code'] . ' koristi se za pickup, ali nema "poslovnice_radno_vrijeme".';
             }
-        }
-
-        $pickup_duplicates = array_count_values($pickup_map_codes);
-        foreach ($pickup_duplicates as $code => $count) {
-            if ($count > 1) {
-                $warnings[] = 'Sifra ' . $code . ' je mapirana vise puta u "luceed.pickup".';
-            }
-        }
-
-        $pickup_map = [];
-        foreach ($luceed_pickup as $method_id => $store_code) {
-            $pickup_map[] = [
-                'method_id' => (string) $method_id,
-                'store'     => $this->normalizeStoreCode($store_code),
-            ];
         }
 
         return [
             'json_path'  => $json_path,
             'rows'       => $rows,
             'warnings'   => array_values(array_unique($warnings)),
-            'pickup_map' => $pickup_map,
             'special'    => [
                 ['code' => '099', 'purpose' => 'LOC_Order web nalog (skladiste/na__skladiste)'],
                 ['code' => '101', 'purpose' => 'Fallback centralno skladiste u Availability/LOC_Order'],
@@ -260,7 +234,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
             'stats'      => [
                 'required'  => count($required_codes),
                 'in_json'   => count(array_filter($rows, static function($row) { return $row['in_json']; })),
-                'pickup'    => count($pickup_map),
+                'pickup'    => count($pickup_codes),
             ]
         ];
     }
@@ -416,26 +390,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         return $data;
-    }
-
-
-    /**
-     * @param array $pickup_map
-     * @param string $code
-     *
-     * @return string
-     */
-    private function getPickupMethodIds(array $pickup_map, string $code): string
-    {
-        $ids = [];
-
-        foreach ($pickup_map as $method_id => $store_code) {
-            if ($this->normalizeStoreCode($store_code) == $code) {
-                $ids[] = (string) $method_id;
-            }
-        }
-
-        return implode(', ', $ids);
     }
 
 

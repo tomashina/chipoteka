@@ -294,7 +294,7 @@
                                 <p style="margin-bottom: 5px;">
                                     Potrebne šifre: <strong>{{ store_audit.stats.required }}</strong>,
                                     pronađeno u JSON: <strong>{{ store_audit.stats.in_json }}</strong>,
-                                    pickup mapiranja: <strong>{{ store_audit.stats.pickup }}</strong>
+                                    pickup poslovnica: <strong>{{ store_audit.stats.pickup }}</strong>
                                 </p>
                                 <p style="margin-bottom: 15px;">
                                     Izvor skladišta: <code>{{ store_audit.json_path }}</code>
@@ -326,8 +326,6 @@
                                             <th style="white-space: nowrap;">View</th>
                                             <th style="white-space: nowrap;">Stores</th>
                                             <th style="white-space: nowrap;">Pickup</th>
-                                            <th style="white-space: nowrap;">Map</th>
-                                            <th style="white-space: nowrap;">Pickup map keys</th>
                                             <th style="white-space: nowrap;">Radno vrijeme</th>
                                             <th style="white-space: nowrap;">JSON</th>
                                         </tr>
@@ -344,8 +342,6 @@
                                                 <td>{% if row.in_availability %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
                                                 <td>{% if row.in_stores %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
                                                 <td>{% if row.in_pickup %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
-                                                <td>{% if row.in_pickup_map %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
-                                                <td>{{ row.pickup_method_ids ?: '-' }}</td>
                                                 <td><small>{{ row.working_hours ? row.working_hours|raw : '-' }}</small></td>
                                                 <td>{% if row.in_json %}<span class="label label-success">OK</span>{% else %}<span class="label label-danger">Fali</span>{% endif %}</td>
                                             </tr>
@@ -354,29 +350,8 @@
                                     </table>
                                 </div>
 
-                                {# Hidden per request: keep luceed.pickup mapiranje and LOC_Order hardcoded section in source only.
+                                {# Hidden per request: keep LOC_Order hardcoded section in source only.
                                 <div class="row">
-                                    <div class="col-sm-7">
-                                        <h4 style="margin-top: 10px;">luceed.pickup mapiranje</h4>
-                                        <div class="table-responsive">
-                                            <table class="table table-bordered table-condensed" style="font-size: 12px;">
-                                                <thead>
-                                                <tr>
-                                                    <th>Map key</th>
-                                                    <th>Šifra poslovnice</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {% for item in store_audit.pickup_map %}
-                                                    <tr>
-                                                        <td>{{ item.method_id }}</td>
-                                                        <td>{{ item.store }}</td>
-                                                    </tr>
-                                                {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
                                     <div class="col-sm-5">
                                         <h4 style="margin-top: 10px;">Hardcoded skladišta iz LOC_Order</h4>
                                         <ul style="padding-left: 18px;">
