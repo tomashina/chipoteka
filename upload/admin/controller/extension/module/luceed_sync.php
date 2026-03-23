@@ -829,7 +829,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $this->prepareLongRunningOrderStatusSync();
 
         $cursor    = isset($this->request->get['cursor']) ? (int) $this->request->get['cursor'] : 0;
-        $batchSize = 150;
+        $batchSize = 1000;
         $batch     = $this->getOrderStatusBatch($cutoff, $legacy, $cursor, $batchSize, $excludedLuceedStatuses);
 
         if ($batch->isEmpty()) {
@@ -1091,7 +1091,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $updated = 0;
         $now     = Carbon::now()->toDateTimeString();
 
-        foreach (array_chunk($updates, 500) as $chunk) {
+        foreach (array_chunk($updates, 1000) as $chunk) {
             $cases         = [];
             $historyValues = [];
             $orderIds      = [];
