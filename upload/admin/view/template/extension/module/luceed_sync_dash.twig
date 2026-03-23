@@ -663,9 +663,22 @@
                             : json.next_cursor
                         );
                     },
-                    error: function() {
+                    error: function(xhr) {
                         releseTarget(originalText, button);
-                        AG_alert.warning('Došlo je do greške tijekom sinkronizacije statusa narudžbi. Molimo pokušajte ponovo.');
+                        let message = 'Došlo je do greške tijekom sinkronizacije statusa narudžbi. Molimo pokušajte ponovo.';
+
+                        if (xhr && xhr.responseText) {
+                            try {
+                                let parsed = JSON.parse(xhr.responseText);
+
+                                if (parsed.message) {
+                                    message = parsed.message;
+                                }
+                            } catch (e) {
+                            }
+                        }
+
+                        AG_alert.warning(message);
                     }
                 });
             }

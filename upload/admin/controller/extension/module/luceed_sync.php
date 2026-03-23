@@ -809,15 +809,25 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateOrderStatuses()
     {
-        $legacy                = isset($this->request->get['legacy']) && (int) $this->request->get['legacy'] === 1;
-        $cutoff                = Carbon::now()->subDays(60);
-        $excludedLuceedStatuses = $legacy ? $this->getExcludedLuceedStatuses() : [];
+        try {
+            $legacy                 = isset($this->request->get['legacy']) && (int) $this->request->get['legacy'] === 1;
+            $cutoff                 = Carbon::now()->subDays(60);
+            $excludedLuceedStatuses = $legacy ? $this->getExcludedLuceedStatuses() : [];
 
-        if ($legacy) {
-            return $this->output($this->syncLegacyOrderStatusBatch($cutoff, $excludedLuceedStatuses));
+            if ($legacy) {
+                return $this->output($this->syncLegacyOrderStatusBatch($cutoff, $excludedLuceedStatuses));
+            }
+
+            return $this->output($this->syncOrderStatusBatch($cutoff, false, []));
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_order_status_sync_error');
+            Log::store($e->getTraceAsString(), 'luceed_order_status_sync_error');
+
+            return $this->output([
+                'status'  => 300,
+                'message' => 'Greška kod sinkronizacije statusa narudžbi: ' . $e->getMessage()
+            ]);
         }
-
-        return $this->output($this->syncOrderStatusBatch($cutoff, false, []));
     }
 
 
@@ -848,7 +858,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         $loc               = new LOC_Order();
-        $statuses          = OrderStatus::query()->where('luceed_status_id', '!=', '')->get();
+        $statuses          = $this->getSyncOrderStatusesCollection($excludedLuceedStatuses);
         $statusesById      = $statuses->keyBy('order_status_id');
         $statusesByLuceed  = $statuses->keyBy('luceed_status_id');
         $statusList        = $loc->collectStatuses($statuses->all());
@@ -951,7 +961,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         $loc              = new LOC_Order();
-        $statuses         = OrderStatus::query()->where('luceed_status_id', '!=', '')->get();
+        $statuses         = $this->getSyncOrderStatusesCollection($excludedLuceedStatuses);
         $statusesById     = $statuses->keyBy('order_status_id');
         $statusesByLuceed = $statuses->keyBy('luceed_status_id');
         $statusList       = $loc->collectStatuses($statuses->all());
@@ -1038,6 +1048,23 @@ class ControllerExtensionModuleLuceedSync extends Controller
                           ->whereIn('luceed_status_id', $luceedStatuses)
                           ->pluck('order_status_id')
                           ->all();
+    }
+
+
+    /**
+     * @param array $excludedLuceedStatuses
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function getSyncOrderStatusesCollection(array $excludedLuceedStatuses = [])
+    {
+        $query = OrderStatus::query()->where('luceed_status_id', '!=', '');
+
+        if ($excludedLuceedStatuses) {
+            $query->whereNotIn('luceed_status_id', $excludedLuceedStatuses);
+        }
+
+        return $query->get();
     }
 
 
