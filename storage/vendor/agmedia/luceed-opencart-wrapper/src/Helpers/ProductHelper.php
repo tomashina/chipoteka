@@ -11,6 +11,7 @@ use Agmedia\Models\Attribute\AttributeDescription;
 use Agmedia\Models\Category\Category;
 use Agmedia\Models\Category\CategoryDescription;
 use Agmedia\Models\Manufacturer\Manufacturer;
+use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -180,36 +181,74 @@ class ProductHelper
      *
      * @return array
      */
-    public static function getAttributes(Collection $product): array
+    public static function getAttributes(Collection $product, bool $import_all = false): array
     {
         $response = [];
-        $attributes = collect($product['atributi']);
+        $attributes = collect($product['atributi'] ?? [])->sortBy(function ($attribute) {
+            $attribute = collect($attribute);
+
+            return (int) ($attribute['redoslijed'] ?? 9999);
+        })->values();
 
         foreach ($attributes as $attribute) {
             $attribute = collect($attribute);
-            if (static::checkAttributeForImport($attribute)) {
-                $has = Attribute::where('luceed_uid', $attribute['atribut_uid'])->first();
+            if ( ! static::checkAttributeForImport($attribute, $import_all)) {
+                continue;
+            }
 
-                if ($has && $has->count()) {
-                    $id = $has['attribute_id'];
-                } else {
-                    $id = static::makeAttribute($attribute);
-                }
+            $id = static::resolveAttributeId($attribute);
 
-                if ($id) {
-                    $response[] = [
-                        'attribute_id' => $id,
-                        'product_attribute_description' => [
-                            agconf('import.default_language') => [
-                                'text' => static::setText($attribute['vrijednost'])
-                            ]
+            if ($id) {
+                $response[$id] = [
+                    'attribute_id' => $id,
+                    'product_attribute_description' => [
+                        agconf('import.default_language') => [
+                            'text' => static::sanitizeAttributeValue($attribute['vrijednost'] ?? null)
                         ]
-                    ];
-                }
+                    ]
+                ];
             }
         }
 
-        return $response;
+        return array_values($response);
+    }
+
+
+    /**
+     * @param int        $product_id
+     * @param Collection $product
+     * @param bool       $import_all
+     *
+     * @return int
+     */
+    public static function syncProductAttributes(int $product_id, Collection $product, bool $import_all = false): int
+    {
+        $attributes = static::getAttributes($product, $import_all);
+
+        DB::table(DB_PREFIX . 'product_attribute')->where('product_id', $product_id)->delete();
+
+        if (empty($attributes)) {
+            return 0;
+        }
+
+        $rows = [];
+
+        foreach ($attributes as $attribute) {
+            foreach ($attribute['product_attribute_description'] as $language_id => $description) {
+                $rows[] = [
+                    'product_id' => $product_id,
+                    'attribute_id' => $attribute['attribute_id'],
+                    'language_id' => (int) $language_id,
+                    'text' => $description['text'],
+                ];
+            }
+        }
+
+        if ($rows) {
+            DB::table(DB_PREFIX . 'product_attribute')->insert($rows);
+        }
+
+        return count($attributes);
     }
 
 
@@ -359,6 +398,7 @@ class ProductHelper
                     'aktivan' => $atr->aktivan,
                     'vidljiv' => $atr->vidljiv,
                     'vrijednost' => $atr->vrijednost,
+                    'redoslijed' => isset($atr->redoslijed) ? $atr->redoslijed : null,
                 ];
             }
         }
@@ -480,16 +520,91 @@ class ProductHelper
      *
      * @return bool
      */
-    private static function checkAttributeForImport($attribute): bool
+    private static function checkAttributeForImport($attribute, bool $import_all = false): bool
     {
-        if ($attribute['aktivan'] == 'D' &&
-            $attribute['vidljiv'] == 'D' &&
-            $attribute['atribut_uid'] != '' &&
-            $attribute['naziv'] != '') {
+        if (trim((string) $attribute['atribut_uid']) == '' || trim((string) $attribute['naziv']) == '') {
+            return false;
+        }
+
+        if ($import_all) {
             return true;
         }
 
-        return false;
+        return $attribute['aktivan'] == 'D' && $attribute['vidljiv'] == 'D';
+    }
+
+
+    /**
+     * @param $attribute
+     *
+     * @return int|null
+     */
+    private static function resolveAttributeId(Collection $attribute): ?int
+    {
+        $has = Attribute::where('luceed_uid', $attribute['atribut_uid'])->first();
+
+        if ($has) {
+            static::syncAttributeMeta($has, $attribute);
+
+            return (int) $has['attribute_id'];
+        }
+
+        $id = static::makeAttribute($attribute);
+
+        return $id ? (int) $id : null;
+    }
+
+
+    /**
+     * @param int        $attribute_id
+     * @param Collection $attribute
+     *
+     * @return void
+     */
+    private static function syncAttributeMeta(Attribute $existingAttribute, Collection $attribute): void
+    {
+        $name = static::setText((string) $attribute['naziv']);
+        $sortOrder = (int) ($attribute['redoslijed'] ?? 9);
+
+        if ((int) $existingAttribute->sort_order !== $sortOrder) {
+            $existingAttribute->update(['sort_order' => $sortOrder]);
+        }
+
+        $description = AttributeDescription::query()
+            ->where('attribute_id', $existingAttribute->attribute_id)
+            ->where('language_id', agconf('import.default_language'))
+            ->first();
+
+        if ($description) {
+            if ($description->name !== $name) {
+                $description->update(['name' => $name]);
+            }
+
+            return;
+        }
+
+        AttributeDescription::insert([
+            'attribute_id' => $existingAttribute->attribute_id,
+            'language_id' => agconf('import.default_language'),
+            'name' => $name
+        ]);
+    }
+
+
+    /**
+     * @param mixed $value
+     *
+     * @return string
+     */
+    private static function sanitizeAttributeValue($value): string
+    {
+        if ($value === null) {
+            return '';
+        }
+
+        $value = str_replace("'", '', (string) $value);
+
+        return str_replace('"', 'in', $value);
     }
 
 

@@ -10,6 +10,7 @@ use Agmedia\Luceed\Facade\LuceedWarehouse;
 use Agmedia\Luceed\Models\LuceedProductForRevision;
 use Agmedia\Luceed\Models\LuceedProductForRevisionData;
 use Agmedia\Luceed\Models\LuceedProductForUpdate;
+use Agmedia\LuceedOpencartWrapper\Helpers\ProductHelper;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Action;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Category;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Customer;
@@ -520,6 +521,57 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         return $this->output($_loc_ps->finish());
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function updateProductAttributes()
+    {
+        $_loc            = new LOC_Product(LuceedProduct::all());
+        $updatedProducts = 0;
+        $updatedAttrs    = 0;
+        $localProducts   = Product::query()
+                                  ->select('product_id', 'luceed_uid')
+                                  ->whereNotNull('luceed_uid')
+                                  ->where('luceed_uid', '!=', '')
+                                  ->get()
+                                  ->keyBy('luceed_uid');
+
+        foreach ($_loc->getProducts() as $luceedProduct) {
+            if ( ! isset($luceedProduct->artikl_uid) || ! $luceedProduct->artikl_uid) {
+                continue;
+            }
+
+            $localProduct = $localProducts->get($luceedProduct->artikl_uid);
+
+            if ( ! $localProduct) {
+                continue;
+            }
+
+            $updatedAttrs += ProductHelper::syncProductAttributes(
+                (int) $localProduct->product_id,
+                collect(ProductHelper::collectLuceedData($luceedProduct)),
+                true
+            );
+
+            $updatedProducts++;
+        }
+
+        if ( ! $updatedProducts) {
+            return $this->output([
+                'status' => 300,
+                'message' => 'Nije pronađen nijedan postojeći artikl za ažuriranje atributa iz Luceed-a.'
+            ]);
+        }
+
+        return $this->output([
+            'status' => 200,
+            'message' => 'Atributi su ažurirani na ' . $updatedProducts . ' artikala. Ukupno sinkronizirano atributa: ' . $updatedAttrs . '.',
+            'products' => $updatedProducts,
+            'attributes' => $updatedAttrs,
+        ]);
     }
 
 

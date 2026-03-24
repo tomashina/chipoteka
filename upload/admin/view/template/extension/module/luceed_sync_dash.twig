@@ -130,6 +130,13 @@
 
                                 <div class="form-group">
                                     <div class="col-sm-4 text-center">
+                                        <a href="javascript:void(0)" id="update-product-attributes" data-toggle="tooltip" title="Update svih Luceed atributa" class="btn btn-info btn-block">Update Atributa</a>
+                                    </div>
+                                    <p class="col-sm-8" style="margin-top: 9px;">Povuče sve Luceed atribute i osvježi ih na svim postojećim artiklima bez punog reimporta proizvoda.</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="import-related" data-toggle="tooltip" title="Import Povezanih Proizvoda" class="btn btn-info btn-block">Import Povezanih Proizvoda</a>
                                     </div>
                                     <p class="col-sm-8" style="margin-top: 9px;">Import Povezanih Proizvoda. Iz luceed-a i iz iste kategorije. 5 po artiklu.
@@ -468,6 +475,11 @@
             $('#import-new-payments')       .on('click', e => { callApi(e, 'importPayments'); });
             $('#import-new-products')       .on('click', e => { callApi(e, 'importProducts'); });
             $('#update-products')           .on('click', e => { callApi(e, 'updateProducts'); });
+            $('#update-product-attributes') .on('click', e => {
+                if (confirm('Ovo će osvježiti sve Luceed atribute na svim postojećim artiklima. Želiš li nastaviti?')) {
+                    callApi(e, 'updateProductAttributes');
+                }
+            });
             $('#import-related')            .on('click', e => { callApi(e, 'importRelatedProducts'); });
             $('#update-products-pakiranje') .on('click', e => { callApi(e, 'updateAdditionalProductData'); });
             $('#import-detail-product')     .on('click', e => { callApi(e, 'importProduct'); });
