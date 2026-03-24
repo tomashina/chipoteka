@@ -132,14 +132,14 @@
                                     <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="update-product-attributes" data-toggle="tooltip" title="Update svih Luceed atributa" class="btn btn-info btn-block">Update Atributa</a>
                                     </div>
-                                    <p class="col-sm-8" style="margin-top: 9px;">Osvježi sve Luceed atribute na svim postojećim artiklima u serijama. Ako želiš najsvježije podatke iz Luceed-a, prvo pokreni standardni Update Proizvoda.</p>
+                                    <p class="col-sm-8" style="margin-top: 9px;">Osvježi sve Luceed atribute na svim postojećim artiklima u serijama. Ako želiš najsvježije podatke iz Luceed-a, prvo osvježi Luceed cache.</p>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="update-attribute-sort-orders" data-toggle="tooltip" title="Update redoslijeda atributa" class="btn btn-info btn-block">Update Redoslijeda</a>
                                     </div>
-                                    <p class="col-sm-8" style="margin-top: 9px;">U kontroliranim batch serijama direktno iz Luceeda povlači atribute i upisuje `redoslijed` i globalno u `oc_attribute.sort_order` i per-artikl u `oc_product_attribute.sort_order`.</p>
+                                    <p class="col-sm-8" style="margin-top: 9px;">Najprije osvježi Luceed cache iz Luceeda, pa zatim lokalno u batch serijama upisuje `redoslijed` i globalno u `oc_attribute.sort_order` i per-artikl u `oc_product_attribute.sort_order`.</p>
                                 </div>
 
                                 <div class="form-group">
@@ -294,12 +294,12 @@
                     <div class="col-sm-12">
                         <div class="panel panel-default">
                             <div class="panel-heading darker-bg">
-                                <h3 class="panel-title"><i class="fa fa-list"></i> Update Proizvoda</h3>
+                                <h3 class="panel-title"><i class="fa fa-list"></i> Luceed Cache</h3>
                             </div>
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-sm-2 text-center pt-3">
-                                        <a href="javascript:void(0)" id="import-luceed-products" data-toggle="tooltip" title="Pokreni Update Proizvoda" class="btn btn-info btn-block">Update Proizvoda</a>
+                                        <a href="javascript:void(0)" id="import-luceed-products" data-toggle="tooltip" title="Osvježi Luceed cache proizvoda" class="btn btn-info btn-block">Osvježi Luceed Cache</a>
                                     </div>
                                     <div class="col-sm-10">
                                         <div class="row">
@@ -605,8 +605,8 @@
                             localStorage.removeItem('sync_error');
                             localStorage.removeItem('sync_deleted');
                             localStorage.removeItem('sync_total');
-
-                            updateProducts();
+                            releseTarget(text, $('#' + target.id));
+                            AG_alert.success('Luceed cache je osvježen. Lokalna tablica je spremna za update atributa i redoslijeda.');
                         }
                     }
                 });
@@ -620,6 +620,37 @@
                     }
                 });
             }
+        }
+
+        function refreshLuceedProductsCache(onSuccess, onError) {
+            $.ajax({
+                url: 'index.php?route=extension/module/luceed_sync/importLuceedProducts&user_token={{ user_token }}',
+                dataType: 'json',
+                success: function(json) {
+                    if (json.status == 200) {
+                        document.getElementById('luceed-all-imported').style.display = 'block';
+                        document.getElementById('luceed-updating').innerHTML = json.updating;
+                        document.getElementById('luceed-inserting').innerHTML = json.inserting;
+                        document.getElementById('luceed-total-for').innerHTML = json.updating + json.inserting;
+                        document.getElementById('luceed-total').innerHTML = json.total;
+
+                        if (typeof onSuccess === 'function') {
+                            onSuccess(json);
+                        }
+
+                        return;
+                    }
+
+                    if (typeof onError === 'function') {
+                        onError(json);
+                    }
+                },
+                error: function(xhr) {
+                    if (typeof onError === 'function') {
+                        onError(xhr);
+                    }
+                }
+            });
         }
 
         function runOrderStatusSync(e, legacy) {
@@ -802,11 +833,24 @@
             let attributes = 0;
 
             lockTarget('u', button);
-            processBatch(0);
+            button.text('Luceed cache...');
+
+            refreshLuceedProductsCache(function() {
+                processBatch(0);
+            }, function(response) {
+                releseTarget(originalText, button);
+
+                if (response && response.status) {
+                    checkResult(response);
+                    return;
+                }
+
+                AG_alert.warning('Došlo je do greške tijekom osvježavanja Luceed cachea.');
+            });
 
             function processBatch(cursor) {
                 $.ajax({
-                    url: 'index.php?route=extension/module/luceed_sync/updateAttributeSortOrders&cursor=' + cursor + '&limit=25&user_token={{ user_token }}',
+                    url: 'index.php?route=extension/module/luceed_sync/updateAttributeSortOrders&cursor=' + cursor + '&limit=100&user_token={{ user_token }}',
                     dataType: 'json',
                     success: function(json) {
                         if (json.status != 200) {
