@@ -420,6 +420,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function importLuceedProducts()
     {
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
+
         $_loc = new LOC_Product(LuceedProduct::all());
 
         return $this->output($_loc->populateLuceedData());
@@ -530,6 +534,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateProductAttributes()
     {
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
+
         $cursor = isset($this->request->get['cursor']) ? max((int) $this->request->get['cursor'], 0) : 0;
         $limit  = isset($this->request->get['limit']) ? max((int) $this->request->get['limit'], 1) : 100;
         $total  = LuceedProductRecord::query()->count();
@@ -608,6 +616,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateAttributeSortOrders()
     {
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
+
         $cursor = isset($this->request->get['cursor']) ? max((int) $this->request->get['cursor'], 0) : 0;
         $limit  = isset($this->request->get['limit']) ? max((int) $this->request->get['limit'], 1) : 100;
         $total  = LuceedProductRecord::query()->count();
