@@ -132,7 +132,7 @@
                                     <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="update-product-attributes" data-toggle="tooltip" title="Update svih Luceed atributa" class="btn btn-info btn-block">Update Atributa</a>
                                     </div>
-                                    <p class="col-sm-8" style="margin-top: 9px;">Povuče sve Luceed atribute i osvježi ih na svim postojećim artiklima bez punog reimporta proizvoda.</p>
+                                    <p class="col-sm-8" style="margin-top: 9px;">Osvježi sve Luceed atribute na svim postojećim artiklima u serijama. Ako želiš najsvježije podatke iz Luceed-a, prvo pokreni standardni Update Proizvoda.</p>
                                 </div>
 
                                 <div class="form-group">
@@ -477,7 +477,7 @@
             $('#update-products')           .on('click', e => { callApi(e, 'updateProducts'); });
             $('#update-product-attributes') .on('click', e => {
                 if (confirm('Ovo će osvježiti sve Luceed atribute na svim postojećim artiklima. Želiš li nastaviti?')) {
-                    callApi(e, 'updateProductAttributes');
+                    runAttributeSync(e);
                 }
             });
             $('#import-related')            .on('click', e => { callApi(e, 'importRelatedProducts'); });
@@ -731,6 +731,50 @@
                         }
 
                         AG_alert.warning(message);
+                    }
+                });
+            }
+        }
+
+        function runAttributeSync(e) {
+            let target = e.currentTarget;
+            let button = $('#' + target.id);
+            let originalText = target.text;
+            let processed = 0;
+            let updatedProducts = 0;
+            let updatedAttributes = 0;
+
+            lockTarget('u', button);
+            processBatch(0);
+
+            function processBatch(cursor) {
+                $.ajax({
+                    url: 'index.php?route=extension/module/luceed_sync/updateProductAttributes&cursor=' + cursor + '&limit=100&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        if (json.status != 200) {
+                            checkResult(json);
+                            releseTarget(originalText, button);
+                            return;
+                        }
+
+                        processed += json.processed ? parseInt(json.processed, 10) : 0;
+                        updatedProducts += json.products ? parseInt(json.products, 10) : 0;
+                        updatedAttributes += json.attributes ? parseInt(json.attributes, 10) : 0;
+
+                        button.text('Atributi ' + processed + '/' + (json.total ? parseInt(json.total, 10) : processed));
+
+                        if (json.done) {
+                            releseTarget(originalText, button);
+                            AG_alert.success('Atributi su ažurirani na ' + updatedProducts + ' artikala. Ukupno sinkronizirano atributa: ' + updatedAttributes + '.');
+                            return;
+                        }
+
+                        processBatch(json.next_cursor);
+                    },
+                    error: function() {
+                        releseTarget(originalText, button);
+                        AG_alert.warning('Došlo je do greške tijekom batch updatea atributa.');
                     }
                 });
             }

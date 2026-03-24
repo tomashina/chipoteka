@@ -6,6 +6,7 @@ use Agmedia\Luceed\Facade\LuceedManufacturer;
 use Agmedia\Luceed\Facade\LuceedOrder;
 use Agmedia\Luceed\Facade\LuceedPayments;
 use Agmedia\Luceed\Facade\LuceedProduct;
+use Agmedia\Luceed\Models\LuceedProduct as LuceedProductRecord;
 use Agmedia\Luceed\Facade\LuceedWarehouse;
 use Agmedia\Luceed\Models\LuceedProductForRevision;
 use Agmedia\Luceed\Models\LuceedProductForRevisionData;
@@ -529,48 +530,73 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateProductAttributes()
     {
-        $_loc            = new LOC_Product(LuceedProduct::all());
+        $cursor = isset($this->request->get['cursor']) ? max((int) $this->request->get['cursor'], 0) : 0;
+        $limit  = isset($this->request->get['limit']) ? max((int) $this->request->get['limit'], 1) : 100;
+        $total  = LuceedProductRecord::query()->count();
+
+        if ( ! $total) {
+            return $this->output([
+                'status' => 300,
+                'message' => 'Luceed cache proizvoda je prazan. Prvo osvježi proizvode iz Luceed-a pa pokreni update atributa.'
+            ]);
+        }
+
+        $batch = LuceedProductRecord::query()
+            ->select('uid', 'data')
+            ->orderBy('uid')
+            ->skip($cursor)
+            ->take($limit)
+            ->get();
+
+        if ($batch->isEmpty()) {
+            return $this->output([
+                'status' => 200,
+                'processed' => 0,
+                'products' => 0,
+                'attributes' => 0,
+                'next_cursor' => $cursor,
+                'total' => $total,
+                'done' => true,
+            ]);
+        }
+
         $updatedProducts = 0;
         $updatedAttrs    = 0;
-        $localProducts   = Product::query()
-                                  ->select('product_id', 'luceed_uid')
-                                  ->whereNotNull('luceed_uid')
-                                  ->where('luceed_uid', '!=', '')
-                                  ->get()
-                                  ->keyBy('luceed_uid');
 
-        foreach ($_loc->getProducts() as $luceedProduct) {
-            if ( ! isset($luceedProduct->artikl_uid) || ! $luceedProduct->artikl_uid) {
-                continue;
-            }
-
-            $localProduct = $localProducts->get($luceedProduct->artikl_uid);
+        foreach ($batch as $luceedProduct) {
+            $localProduct = Product::query()
+                ->where('luceed_uid', $luceedProduct->uid)
+                ->first(['product_id']);
 
             if ( ! $localProduct) {
                 continue;
             }
 
+            $data = @unserialize(base64_decode($luceedProduct->data));
+
+            if ( ! is_array($data)) {
+                continue;
+            }
+
             $updatedAttrs += ProductHelper::syncProductAttributes(
                 (int) $localProduct->product_id,
-                collect(ProductHelper::collectLuceedData($luceedProduct)),
+                collect($data),
                 true
             );
 
             $updatedProducts++;
         }
 
-        if ( ! $updatedProducts) {
-            return $this->output([
-                'status' => 300,
-                'message' => 'Nije pronađen nijedan postojeći artikl za ažuriranje atributa iz Luceed-a.'
-            ]);
-        }
+        $nextCursor = $cursor + $batch->count();
 
         return $this->output([
             'status' => 200,
-            'message' => 'Atributi su ažurirani na ' . $updatedProducts . ' artikala. Ukupno sinkronizirano atributa: ' . $updatedAttrs . '.',
+            'processed' => $batch->count(),
             'products' => $updatedProducts,
             'attributes' => $updatedAttrs,
+            'next_cursor' => $nextCursor,
+            'total' => $total,
+            'done' => $nextCursor >= $total,
         ]);
     }
 

@@ -225,7 +225,7 @@ class ProductHelper
     {
         $attributes = static::getAttributes($product, $import_all);
 
-        DB::table(DB_PREFIX . 'product_attribute')->where('product_id', $product_id)->delete();
+        DB::table('product_attribute')->where('product_id', $product_id)->delete();
 
         if (empty($attributes)) {
             return 0;
@@ -245,7 +245,7 @@ class ProductHelper
         }
 
         if ($rows) {
-            DB::table(DB_PREFIX . 'product_attribute')->insert($rows);
+            DB::table('product_attribute')->insert($rows);
         }
 
         return count($attributes);
