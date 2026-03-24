@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Attribute extends Model
 {
+    /**
+     * @var bool
+     */
+    public $timestamps = false;
     
     /**
      * @var string

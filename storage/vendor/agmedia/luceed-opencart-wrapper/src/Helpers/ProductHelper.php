@@ -567,7 +567,9 @@ class ProductHelper
         $sortOrder = (int) ($attribute['redoslijed'] ?? 9);
 
         if ((int) $existingAttribute->sort_order !== $sortOrder) {
-            $existingAttribute->update(['sort_order' => $sortOrder]);
+            DB::table('attribute')
+                ->where('attribute_id', $existingAttribute->attribute_id)
+                ->update(['sort_order' => $sortOrder]);
         }
 
         $description = AttributeDescription::query()
@@ -577,7 +579,10 @@ class ProductHelper
 
         if ($description) {
             if ($description->name !== $name) {
-                $description->update(['name' => $name]);
+                DB::table('attribute_description')
+                    ->where('attribute_id', $existingAttribute->attribute_id)
+                    ->where('language_id', agconf('import.default_language'))
+                    ->update(['name' => $name]);
             }
 
             return;

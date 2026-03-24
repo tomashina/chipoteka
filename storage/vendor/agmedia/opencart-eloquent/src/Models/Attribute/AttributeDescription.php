@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class AttributeDescription extends Model
 {
+    /**
+     * @var bool
+     */
+    public $timestamps = false;
     
     /**
      * @var string
