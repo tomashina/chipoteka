@@ -265,6 +265,25 @@ class ProductHelper
     {
         $attributes = static::getAttributes($product, $import_all);
 
+        if (empty($attributes)) {
+            return 0;
+        }
+
+        $attributeIds = array_values(array_unique(array_map(static function ($attribute) {
+            return (int) $attribute['attribute_id'];
+        }, $attributes)));
+
+        $matchingAttributes = DB::table('product_attribute')
+            ->where('product_id', $product_id)
+            ->whereIn('attribute_id', $attributeIds)
+            ->distinct()
+            ->count('attribute_id');
+
+        // If legacy rows use old attribute IDs, rebuild product attributes from Luceed cache.
+        if ($matchingAttributes < count($attributeIds)) {
+            return static::syncProductAttributes($product_id, $product, $import_all);
+        }
+
         foreach ($attributes as $attribute) {
             DB::table('product_attribute')
                 ->where('product_id', $product_id)
