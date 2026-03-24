@@ -55,6 +55,95 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
         return ($t === 'decimalni broj' || $t === 'decimal' || strpos($t, 'decimal') !== false);
     }
 
+    private function defBooleanTrueValues() {
+        return array('D', 'DA', 'T', 'TRUE', 'Y', 'YES', '1');
+    }
+
+    private function defBooleanFalseValues() {
+        return array('N', 'NE', 'F', 'FALSE', 'NO', '0');
+    }
+
+    private function defNormalizeBooleanToken($value) {
+        $value = trim((string)$value);
+
+        if ($value === '') {
+            return '';
+        }
+
+        return strtoupper($value);
+    }
+
+    private function defIsEnergyLabelSection($name) {
+        $name = trim((string)$name);
+
+        if ($name === '') {
+            return false;
+        }
+
+        if (function_exists('mb_strtolower')) {
+            $name = mb_strtolower($name, 'UTF-8');
+        } else {
+            $name = strtolower($name);
+        }
+
+        return (strpos($name, 'energetska oznaka') === 0);
+    }
+
+    private function defIsBooleanAttributeSection($name, array $values) {
+        if ($this->defIsEnergyLabelSection($name)) {
+            return false;
+        }
+
+        $allowed = array_flip(array_merge(
+            $this->defBooleanTrueValues(),
+            $this->defBooleanFalseValues()
+        ));
+
+        $tokens = array();
+
+        foreach ($values as $value) {
+            foreach (explode(':', (string)$value) as $part) {
+                $token = $this->defNormalizeBooleanToken($part);
+
+                if ($token === '') {
+                    continue;
+                }
+
+                $tokens[$token] = true;
+            }
+        }
+
+        if ( ! $tokens) {
+            return false;
+        }
+
+        foreach (array_keys($tokens) as $token) {
+            if ( ! isset($allowed[$token])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function defNormalizeBooleanValue($value) {
+        $token = $this->defNormalizeBooleanToken($value);
+
+        if ($token === '') {
+            return null;
+        }
+
+        if (in_array($token, $this->defBooleanTrueValues(), true)) {
+            return 'D';
+        }
+
+        if (in_array($token, $this->defBooleanFalseValues(), true)) {
+            return null;
+        }
+
+        return trim((string)$value);
+    }
+
     public function getSectionGroups($setting, $category_id)
     {
         $category_id = (int)$category_id;
@@ -144,6 +233,11 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                     }
 
                     $values = [];
+                    $seenValues = [];
+                    $isBooleanAttr = $this->defIsBooleanAttributeSection(
+                        $attribute_value['name'],
+                        $attribute_value['values']
+                    );
 
                     // type ovog atributa (za odluku treba li decimal normalizacija)
                     $typeForThisAttr = $attributes_type_by_setting[$attribute_value_id]['type'] ?? '';
@@ -158,6 +252,14 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                             continue;
                         }
 
+                        if ($isBooleanAttr) {
+                            $value = $this->defNormalizeBooleanValue($value);
+
+                            if ($value === null) {
+                                continue;
+                            }
+                        }
+
                         // ✅ NORMALIZACIJA: ako izgleda kao broj (13.00, 15.60, 16,30) -> makni trailing nule
                         if (is_string($value)) {
                             $candidate = str_replace(',', '.', $value);
@@ -167,6 +269,12 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                                 $value = $this->defNormalizeDecimal($candidate);
                             }
                         }
+
+                        if (isset($seenValues[$value])) {
+                            continue;
+                        }
+
+                        $seenValues[$value] = true;
 
                         $input_label = $value;
                         $is_enable = true;
@@ -280,11 +388,12 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                         }
 
                         $sections[] = array(
-                            'id'     => $attribute_value_id,
-                            'name'   => $attribute_value['name'],
-                            'values' => $values,
-                            'type'   => $type,
-                            'open'   => $opened,
+                            'id'         => $attribute_value_id,
+                            'name'       => $attribute_value['name'],
+                            'values'     => $values,
+                            'type'       => $type,
+                            'open'       => $opened,
+                            'is_boolean' => $isBooleanAttr,
                         );
                     }
                 }

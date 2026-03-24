@@ -604,6 +604,68 @@ class ControllerExtensionModuleLuceedSync extends Controller
     /**
      * @return mixed
      */
+    public function updateAttributeSortOrders()
+    {
+        $cursor = isset($this->request->get['cursor']) ? max((int) $this->request->get['cursor'], 0) : 0;
+        $limit  = isset($this->request->get['limit']) ? max((int) $this->request->get['limit'], 1) : 100;
+        $total  = LuceedProductRecord::query()->count();
+
+        if ( ! $total) {
+            return $this->output([
+                'status' => 300,
+                'message' => 'Luceed cache proizvoda je prazan. Prvo osvježi proizvode iz Luceed-a pa pokreni update redoslijeda atributa.'
+            ]);
+        }
+
+        $batch = LuceedProductRecord::query()
+            ->select('uid', 'data')
+            ->orderBy('uid')
+            ->skip($cursor)
+            ->take($limit)
+            ->get();
+
+        if ($batch->isEmpty()) {
+            return $this->output([
+                'status' => 200,
+                'processed' => 0,
+                'definitions' => 0,
+                'next_cursor' => $cursor,
+                'total' => $total,
+                'done' => true,
+            ]);
+        }
+
+        $definitions = 0;
+
+        foreach ($batch as $luceedProduct) {
+            $data = @unserialize(base64_decode($luceedProduct->data));
+
+            if ( ! is_array($data)) {
+                continue;
+            }
+
+            $definitions += ProductHelper::syncAttributeDefinitions(
+                collect($data),
+                true
+            );
+        }
+
+        $nextCursor = $cursor + $batch->count();
+
+        return $this->output([
+            'status' => 200,
+            'processed' => $batch->count(),
+            'definitions' => $definitions,
+            'next_cursor' => $nextCursor,
+            'total' => $total,
+            'done' => $nextCursor >= $total,
+        ]);
+    }
+
+
+    /**
+     * @return mixed
+     */
     public function checkRevision()
     {
         $loc_p = new LOC_Product();

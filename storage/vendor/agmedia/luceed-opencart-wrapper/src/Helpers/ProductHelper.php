@@ -201,6 +201,7 @@ class ProductHelper
             if ($id) {
                 $response[$id] = [
                     'attribute_id' => $id,
+                    'sort_order' => (int) ($attribute['redoslijed'] ?? 9),
                     'product_attribute_description' => [
                         agconf('import.default_language') => [
                             'text' => static::sanitizeAttributeValue($attribute['vrijednost'] ?? null)
@@ -239,6 +240,7 @@ class ProductHelper
                     'product_id' => $product_id,
                     'attribute_id' => $attribute['attribute_id'],
                     'language_id' => (int) $language_id,
+                    'sort_order' => (int) ($attribute['sort_order'] ?? 9),
                     'text' => $description['text'],
                 ];
             }
@@ -249,6 +251,37 @@ class ProductHelper
         }
 
         return count($attributes);
+    }
+
+
+    /**
+     * @param Collection $product
+     * @param bool       $import_all
+     *
+     * @return int
+     */
+    public static function syncAttributeDefinitions(Collection $product, bool $import_all = false): int
+    {
+        $count = 0;
+        $attributes = collect($product['atributi'] ?? [])->sortBy(function ($attribute) {
+            $attribute = collect($attribute);
+
+            return (int) ($attribute['redoslijed'] ?? 9999);
+        })->values();
+
+        foreach ($attributes as $attribute) {
+            $attribute = collect($attribute);
+
+            if ( ! static::checkAttributeForImport($attribute, $import_all)) {
+                continue;
+            }
+
+            if (static::resolveAttributeId($attribute)) {
+                $count++;
+            }
+        }
+
+        return $count;
     }
 
 

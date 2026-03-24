@@ -137,6 +137,13 @@
 
                                 <div class="form-group">
                                     <div class="col-sm-4 text-center">
+                                        <a href="javascript:void(0)" id="update-attribute-sort-orders" data-toggle="tooltip" title="Update redoslijeda atributa" class="btn btn-info btn-block">Update Redoslijeda</a>
+                                    </div>
+                                    <p class="col-sm-8" style="margin-top: 9px;">Poravna `redoslijed` atributa iz Luceed cachea u `oc_attribute.sort_order` u serijama, bez mijenjanja vrijednosti atributa na artiklima.</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="import-related" data-toggle="tooltip" title="Import Povezanih Proizvoda" class="btn btn-info btn-block">Import Povezanih Proizvoda</a>
                                     </div>
                                     <p class="col-sm-8" style="margin-top: 9px;">Import Povezanih Proizvoda. Iz luceed-a i iz iste kategorije. 5 po artiklu.
@@ -480,6 +487,11 @@
                     runAttributeSync(e);
                 }
             });
+            $('#update-attribute-sort-orders').on('click', e => {
+                if (confirm('Ovo će ažurirati redoslijed atributa iz Luceed cachea. Želiš li nastaviti?')) {
+                    runAttributeSortOrderSync(e);
+                }
+            });
             $('#import-related')            .on('click', e => { callApi(e, 'importRelatedProducts'); });
             $('#update-products-pakiranje') .on('click', e => { callApi(e, 'updateAdditionalProductData'); });
             $('#import-detail-product')     .on('click', e => { callApi(e, 'importProduct'); });
@@ -775,6 +787,48 @@
                     error: function() {
                         releseTarget(originalText, button);
                         AG_alert.warning('Došlo je do greške tijekom batch updatea atributa.');
+                    }
+                });
+            }
+        }
+
+        function runAttributeSortOrderSync(e) {
+            let target = e.currentTarget;
+            let button = $('#' + target.id);
+            let originalText = target.text;
+            let processed = 0;
+            let definitions = 0;
+
+            lockTarget('u', button);
+            processBatch(0);
+
+            function processBatch(cursor) {
+                $.ajax({
+                    url: 'index.php?route=extension/module/luceed_sync/updateAttributeSortOrders&cursor=' + cursor + '&limit=100&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        if (json.status != 200) {
+                            checkResult(json);
+                            releseTarget(originalText, button);
+                            return;
+                        }
+
+                        processed += json.processed ? parseInt(json.processed, 10) : 0;
+                        definitions += json.definitions ? parseInt(json.definitions, 10) : 0;
+
+                        button.text('Redoslijed ' + processed + '/' + (json.total ? parseInt(json.total, 10) : processed));
+
+                        if (json.done) {
+                            releseTarget(originalText, button);
+                            AG_alert.success('Redoslijed atributa je obrađen. Dodirnuto definicija atributa: ' + definitions + '.');
+                            return;
+                        }
+
+                        processBatch(json.next_cursor);
+                    },
+                    error: function() {
+                        releseTarget(originalText, button);
+                        AG_alert.warning('Došlo je do greške tijekom batch updatea redoslijeda atributa.');
                     }
                 });
             }

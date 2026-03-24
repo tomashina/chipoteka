@@ -6,6 +6,151 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
     private $storageSort = null;
     private $storageAttribute = null;
 
+    private function defBooleanTrueValues()
+    {
+        return array('D', 'Da', 'T', 'True', 'Y', 'Yes', '1');
+    }
+
+    private function defBooleanFalseValues()
+    {
+        return array('N', 'Ne', 'F', 'False', 'No', '0');
+    }
+
+    private function defNormalizeBooleanToken($value)
+    {
+        $value = trim((string)$value);
+
+        if ($value === '') {
+            return '';
+        }
+
+        return strtoupper($value);
+    }
+
+    private function defIsEnergyLabelAttribute($name)
+    {
+        $name = trim((string)$name);
+
+        if ($name === '') {
+            return false;
+        }
+
+        if (function_exists('mb_strtolower')) {
+            $name = mb_strtolower($name, 'UTF-8');
+        } else {
+            $name = strtolower($name);
+        }
+
+        return (strpos($name, 'energetska oznaka') === 0);
+    }
+
+    private function defGetBooleanAttributeMap(array $attribute_ids, array $product_ids)
+    {
+        $attribute_ids = array_values(array_unique(array_map('intval', $attribute_ids)));
+        $product_ids = array_values(array_unique(array_map('intval', $product_ids)));
+
+        if ( ! $attribute_ids || ! $product_ids) {
+            return array();
+        }
+
+        $sql = "SELECT pa.attribute_id, ad.name, TRIM(pa.text) AS text
+                FROM " . DB_PREFIX . "product_attribute pa
+                LEFT JOIN " . DB_PREFIX . "attribute_description ad
+                    ON (ad.attribute_id = pa.attribute_id AND ad.language_id = '" . (int)$this->config->get('config_language_id') . "')
+                WHERE pa.language_id = '" . (int)$this->config->get('config_language_id') . "'
+                    AND pa.attribute_id IN (" . implode(',', $attribute_ids) . ")
+                    AND pa.product_id IN (" . implode(',', $product_ids) . ")";
+
+        $query = $this->db->query($sql);
+        $allowed = array_flip(array_merge(
+            array_map(array($this, 'defNormalizeBooleanToken'), $this->defBooleanTrueValues()),
+            array_map(array($this, 'defNormalizeBooleanToken'), $this->defBooleanFalseValues())
+        ));
+        $map = array();
+
+        foreach ($query->rows as $row) {
+            $attribute_id = (int)$row['attribute_id'];
+
+            if ( ! isset($map[$attribute_id])) {
+                $map[$attribute_id] = array(
+                    'name' => $row['name'],
+                    'tokens' => array(),
+                );
+            }
+
+            foreach (explode(':', (string)$row['text']) as $part) {
+                $token = $this->defNormalizeBooleanToken($part);
+
+                if ($token === '') {
+                    continue;
+                }
+
+                $map[$attribute_id]['tokens'][$token] = true;
+            }
+        }
+
+        $boolean_attributes = array();
+
+        foreach ($map as $attribute_id => $attribute) {
+            if ($this->defIsEnergyLabelAttribute($attribute['name']) || empty($attribute['tokens'])) {
+                continue;
+            }
+
+            $is_boolean = true;
+
+            foreach (array_keys($attribute['tokens']) as $token) {
+                if ( ! isset($allowed[$token])) {
+                    $is_boolean = false;
+                    break;
+                }
+            }
+
+            if ($is_boolean) {
+                $boolean_attributes[$attribute_id] = true;
+            }
+        }
+
+        return $boolean_attributes;
+    }
+
+    private function defExpandAttributeFilterValues($attribute_id, array $attribute_values, array $boolean_attributes)
+    {
+        $values = array();
+        $is_boolean = !empty($boolean_attributes[(int)$attribute_id]);
+
+        foreach ($attribute_values as $attribute_value) {
+            $attribute_value = trim((string)$attribute_value);
+
+            if ($attribute_value === '') {
+                continue;
+            }
+
+            if ($is_boolean) {
+                $token = $this->defNormalizeBooleanToken($attribute_value);
+
+                if (in_array($token, array_map(array($this, 'defNormalizeBooleanToken'), $this->defBooleanTrueValues()), true)) {
+                    foreach ($this->defBooleanTrueValues() as $positive_value) {
+                        $values[$positive_value] = $positive_value;
+                    }
+
+                    continue;
+                }
+
+                if (in_array($token, array_map(array($this, 'defNormalizeBooleanToken'), $this->defBooleanFalseValues()), true)) {
+                    foreach ($this->defBooleanFalseValues() as $negative_value) {
+                        $values[$negative_value] = $negative_value;
+                    }
+
+                    continue;
+                }
+            }
+
+            $values[$attribute_value] = $attribute_value;
+        }
+
+        return array_values($values);
+    }
+
     public function getMinMaxPrice($category_id)
     {
         $customer_group_id = $this->config->get('config_customer_group_id');
@@ -398,8 +543,14 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
         if ($data['attributes']) {
 
             $without_attr_product_ids = [];
+            $product_ids = [];
             foreach ($query->rows as $row) {
-                $without_attr_product_ids[] = "'" . $row['product_id'] . "'";
+                $product_id = (int)$row['product_id'];
+
+                if ($product_id) {
+                    $without_attr_product_ids[] = "'" . $product_id . "'";
+                    $product_ids[] = $product_id;
+                }
             }
 
             if ($without_attr_product_ids) {
@@ -434,11 +585,19 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                                    LIMIT 1) AS special
                         FROM " . DB_PREFIX . "product_attribute pa";
 
+                $boolean_attributes = $this->defGetBooleanAttributeMap(array_keys($data['attributes']), $product_ids);
                 $attribute_ids = array();
+
                 foreach ($data['attributes'] as $key => $attribute_values) {
-                    foreach ($attribute_values as $attribute_value) {
+                    $expanded_values = $this->defExpandAttributeFilterValues(
+                        $key,
+                        is_array($attribute_values) ? $attribute_values : array($attribute_values),
+                        $boolean_attributes
+                    );
+
+                    foreach ($expanded_values as $attribute_value) {
                         if ($attribute_value) {
-                            $attribute_ids[$key][] = "'" . $attribute_value . "'";
+                            $attribute_ids[$key][] = "'" . $this->db->escape($attribute_value) . "'";
                         }
                     }
 

@@ -955,6 +955,7 @@ class ControllerCatalogProduct extends Controller {
 			if ($attribute_info) {
 				$data['product_attributes'][] = array(
 					'attribute_id'                  => $product_attribute['attribute_id'],
+					'sort_order'                    => isset($product_attribute['sort_order']) ? $product_attribute['sort_order'] : 9,
 					'name'                          => $attribute_info['name'],
 					'product_attribute_description' => $product_attribute['product_attribute_description']
 				);

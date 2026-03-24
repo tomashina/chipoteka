@@ -75,8 +75,10 @@
                     {% set display_label = input_data['input_label'] %}
                 {% endif %}
 
-                {# Da/Ne: D -> "Da", ali Energetska oznaka: ostaje "D" #}
-                {% if input_data['input_value'] == 'D' %}
+                {# Boolean atributi: prikazuj samo jedan "Da" checkbox #}
+                {% if section['is_boolean']|default(false) and input_data['input_value'] == 'D' %}
+                    {% set display_label = 'Da' %}
+                {% elseif input_data['input_value'] == 'D' %}
 
                     {# provjeri je li sekcija Energetska oznaka (sigurno, bez obzira na razmake i case) #}
                     {% set section_name = section['name']|default('')|trim|lower %}
@@ -91,8 +93,16 @@
 
 
                 {% set attr_checked = '' %}
-                {% if check_data_on_active[input_data['input_name']][section['id']]
-                    and input_data['input_value'] in check_data_on_active[input_data['input_name']][section['id']] %}
+                {% set active_values = check_data_on_active[input_data['input_name']][section['id']]|default([]) %}
+
+                {% if section['is_boolean']|default(false) and input_data['input_value'] == 'D' %}
+                    {% set positive_values = ['D', 'Da', 'DA', 'T', 'True', 'TRUE', 'Y', 'Yes', 'YES', '1'] %}
+                    {% for active_value in active_values %}
+                        {% if active_value in positive_values %}
+                            {% set attr_checked = 'checked="checked"' %}
+                        {% endif %}
+                    {% endfor %}
+                {% elseif active_values and input_data['input_value'] in active_values %}
                     {% set attr_checked = 'checked="checked"' %}
                 {% endif %}
 
