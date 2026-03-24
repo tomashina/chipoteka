@@ -43,9 +43,14 @@
                     <div class="dropdown product-filter__actions">
 
                         {% if categories|length == 0 %}
-                            <a class="btn btn-outline-secondary dropdown-toggle product-filter__toggle" href="#shop-filters" data-bs-toggle="collapse">
+                            <button type="button"
+                                    class="btn btn-outline-secondary dropdown-toggle product-filter__toggle"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#shop-filters"
+                                    aria-controls="shop-filters"
+                                    aria-expanded="false">
                                 <i class="fas fa-filter me-2"></i> <span>Filter</span>
-                            </a>
+                            </button>
                         {% endif %}
 
                         <button type="button"
