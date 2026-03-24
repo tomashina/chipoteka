@@ -814,6 +814,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $cutoff                 = Carbon::now()->subDays(60);
             $excludedLuceedStatuses = $legacy ? $this->getExcludedLuceedStatuses() : [];
 
+            if ($legacy) {
+                return $this->output($this->syncLegacyOrderStatusBatch($cutoff, $excludedLuceedStatuses));
+            }
+
             if ($this->shouldRunFullOrderStatusCronSync($legacy)) {
                 return $this->output($this->syncAllOrderStatusBatches($cutoff, $excludedLuceedStatuses));
             }
@@ -1000,43 +1004,44 @@ class ControllerExtensionModuleLuceedSync extends Controller
             ];
         }
 
-        $windowStart = isset($this->request->get['legacy_start']) && $this->request->get['legacy_start']
-            ? Carbon::parse($this->request->get['legacy_start'])
-            : $oldestDate->copy();
+        $windowEnd = isset($this->request->get['legacy_end']) && $this->request->get['legacy_end']
+            ? Carbon::parse($this->request->get['legacy_end'])
+            : $cutoff->copy();
 
-        if ($windowStart->lessThan($oldestDate)) {
-            $windowStart = $oldestDate->copy();
+        if ($windowEnd->greaterThan($cutoff)) {
+            $windowEnd = $cutoff->copy();
         }
 
         $legacyCursor = isset($this->request->get['legacy_cursor']) ? (int) $this->request->get['legacy_cursor'] : 0;
-        $windowDays = 365;
+        $windowDays  = 365;
         $batchSize  = $this->getOrderStatusBatchSize();
         $batch      = collect();
-        $windowEnd  = null;
+        $windowStart = null;
 
-        while ($windowStart->lessThan($cutoff) && $batch->isEmpty()) {
-            $windowEnd = $windowStart->copy()->addDays($windowDays);
+        while ($windowEnd->greaterThan($oldestDate) && $batch->isEmpty()) {
+            $windowStart = $windowEnd->copy()->subDays($windowDays);
 
-            if ($windowEnd->greaterThan($cutoff)) {
-                $windowEnd = $cutoff->copy();
+            if ($windowStart->lessThan($oldestDate)) {
+                $windowStart = $oldestDate->copy();
             }
 
             $batch = $this->getLegacyOrderStatusWindow($windowStart, $windowEnd, $excludedLuceedStatuses, $legacyCursor, $batchSize);
 
             if ($batch->isEmpty()) {
-                $windowStart = $windowEnd->copy();
+                $windowEnd = $windowStart->copy();
                 $legacyCursor = 0;
             }
         }
 
-        if ($batch->isEmpty() || ! $windowEnd) {
+        if ($batch->isEmpty() || ! $windowStart) {
             return [
                 'status'          => 200,
                 'processed'       => 0,
                 'updated'         => 0,
                 'done'            => true,
                 'empty'           => true,
-                'next_legacy_start' => ''
+                'next_legacy_start' => '',
+                'next_legacy_end'   => ''
             ];
         }
 
@@ -1062,7 +1067,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
         $updated = $this->applyOrderStatusUpdates(array_values($updates), false);
         $windowFinished = $batch->count() < $batchSize;
-        $done           = $windowFinished && $windowEnd->greaterThanOrEqualTo($cutoff);
+        $done           = $windowFinished && $windowStart->lessThanOrEqualTo($oldestDate);
+        $nextLegacyEnd  = $done ? '' : ($windowFinished ? $windowStart->toDateTimeString() : $windowEnd->toDateTimeString());
+        $nextLegacyCursor = $done ? 0 : ($windowFinished ? 0 : (int) $batch->last()->order_id);
 
         return [
             'status'             => 200,
@@ -1070,8 +1077,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
             'updated'            => $updated,
             'done'               => $done,
             'empty'              => false,
-            'next_legacy_start'  => $done ? '' : ($windowFinished ? $windowEnd->toDateTimeString() : $windowStart->toDateTimeString()),
-            'next_legacy_cursor' => $done ? 0 : ($windowFinished ? 0 : (int) $batch->last()->order_id)
+            'next_legacy_start'  => $nextLegacyEnd,
+            'next_legacy_end'    => $nextLegacyEnd,
+            'next_legacy_cursor' => $nextLegacyCursor
         ];
     }
 
@@ -1235,7 +1243,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
                       ->where('luceed_uid', '!=', '')
                       ->where('date_added', '>=', $windowStart->toDateTimeString())
                       ->where('date_added', '<', $windowEnd->toDateTimeString())
-                      ->orderBy('order_id');
+                      ->orderByDesc('order_id');
 
         if ($excludedLuceedStatuses) {
             $excludedOrderStatusIds = $this->getOrderStatusIdsByLuceedStatuses($excludedLuceedStatuses);
@@ -1246,7 +1254,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         if ($cursor > 0) {
-            $query->where('order_id', '>', $cursor);
+            $query->where('order_id', '<', $cursor);
         }
 
         return $query->limit($limit)->get();
