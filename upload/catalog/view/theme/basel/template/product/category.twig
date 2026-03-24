@@ -38,29 +38,29 @@
         <!-- Toolbar-->
             <!-- Products grid-->
         <div id="product-view">
-            <div class="product-filter  rounded-3 p-4 mt-n5 mb-4">
-                <div class="d-flex justify-content-between align-items-center ">
-                    <div class="dropdown me-2 ">
+            <div class="product-filter rounded-3 p-3 p-sm-4 mt-n5 mb-4">
+                <div class="product-filter__toolbar">
+                    <div class="dropdown product-filter__actions">
 
                         {% if categories|length == 0 %}
-                            <a class="btn btn-outline-secondary dropdown-toggle" href="#shop-filters" data-bs-toggle="collapse">
-                                <i class="fas fa-filter me-2"></i> <span></span>Filter
+                            <a class="btn btn-outline-secondary dropdown-toggle product-filter__toggle" href="#shop-filters" data-bs-toggle="collapse">
+                                <i class="fas fa-filter me-2"></i> <span>Filter</span>
                             </a>
                         {% endif %}
 
                         <button type="button"
-                                class="btn btn-outline-primary ms-2 d-none "
+                                class="btn btn-outline-primary d-none product-filter__apply"
                                 id="filter-apply-top">
                             <i class="fas fa-filter "></i>
                         </button>
 
                         <button type="button"
-                                class="btn btn-outline-primary ms-2 d-none "
+                                class="btn btn-outline-primary d-none product-filter__clear"
                                 id="filter-clear-top">
                             <i class="fas fa-trash "></i>
                         </button>
 
-                        <button type="button" class="btn btn-outline-secondary ms-2 d-none d-sm-inline-block">
+                        <button type="button" class="btn btn-outline-secondary d-none d-sm-inline-block product-filter__results">
                           Artikala  <span class="badge bg-primary ms-1" id="filter-results-badge">{{ results }}</span>
                         </button>
 
@@ -69,7 +69,7 @@
                     <div class="d-none d-lg-flex pagination-navigation px-3">
                         {{ pagination }}
                     </div>
-                    <div class="d-flex">
+                    <div class="product-filter__sort">
                         <label class="fs-sm opacity-75 text-nowrap me-2 sr-only" for="sorting">{{ text_sort }}</label>
                         <select id="input-sort" class="form-select " onchange="location = this.value;">
                             {% for sorts in sorts %}
@@ -158,7 +158,78 @@
             </div>
         </div>
     </div>
-<style>.alert-secondary p{margin-bottom:0px}</style>
+<style>
+    .alert-secondary p {
+        margin-bottom: 0;
+    }
+
+    .product-filter__toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem 1rem;
+    }
+
+    .product-filter__actions {
+        display: flex;
+        flex: 1 1 auto;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem;
+        min-width: 0;
+    }
+
+    .product-filter__actions .btn {
+        margin: 0 !important;
+    }
+
+    .product-filter__sort {
+        display: flex;
+        align-items: center;
+        flex: 0 1 16rem;
+        width: 100%;
+        max-width: 16rem;
+        min-width: 0;
+    }
+
+    .product-filter__sort .form-select {
+        min-width: 0;
+    }
+
+    @media (max-width: 767.98px) {
+        .product-filter {
+            padding: 1rem !important;
+        }
+
+        .product-filter__actions {
+            width: 100%;
+        }
+
+        .product-filter__toggle {
+            flex: 1 1 auto;
+        }
+
+        .product-filter__results {
+            margin-left: auto !important;
+        }
+
+        .product-filter__sort {
+            flex-basis: 100%;
+            max-width: none;
+        }
+
+        .product-filter__sort .form-select {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .product-filter__actions {
+            gap: 0.5rem;
+        }
+    }
+</style>
     <script type="text/javascript">
         // Basel
         $(document).ready(function() {
