@@ -621,7 +621,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         $cursor = isset($this->request->get['cursor']) ? max((int) $this->request->get['cursor'], 0) : 0;
-        $limit  = isset($this->request->get['limit']) ? max((int) $this->request->get['limit'], 1) : 10;
+        $limit  = isset($this->request->get['limit']) ? max((int) $this->request->get['limit'], 1) : 25;
         $total  = Product::query()
             ->whereNotNull('luceed_uid')
             ->where('luceed_uid', '!=', '')
@@ -660,37 +660,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $updatedProducts = 0;
         $updatedAttrs    = 0;
 
+        $luceedProducts = $this->fetchLuceedProductsBatch($batch);
+
         foreach ($batch as $localProduct) {
-            if ( ! $localProduct->sku) {
+            if ( ! isset($luceedProducts[(int) $localProduct->product_id])) {
                 continue;
             }
 
-            $response = LuceedProduct::getById((string) $localProduct->sku);
-
-            if ( ! $response) {
-                continue;
-            }
-
-            $decoded = json_decode($response);
-
-            if (
-                ! $decoded
-                || ! isset($decoded->result[0]->artikli[0])
-            ) {
-                continue;
-            }
-
-            $luceedProduct = $decoded->result[0]->artikli[0];
-
-            if (is_array($luceedProduct)) {
-                $luceedProduct = (object) $luceedProduct;
-            }
-
-            if ( ! is_object($luceedProduct)) {
-                continue;
-            }
-
-            $data = collect(ProductHelper::collectLuceedData($luceedProduct));
+            $data = $luceedProducts[(int) $localProduct->product_id];
 
             $definitions += ProductHelper::syncAttributeDefinitions(
                 $data,
@@ -718,6 +695,132 @@ class ControllerExtensionModuleLuceedSync extends Controller
             'total' => $total,
             'done' => $nextCursor >= $total,
         ]);
+    }
+
+
+    /**
+     * @param \Illuminate\Support\Collection $products
+     *
+     * @return array<int, \Illuminate\Support\Collection>
+     */
+    private function fetchLuceedProductsBatch($products): array
+    {
+        $results = [];
+
+        if ($products->isEmpty()) {
+            return $results;
+        }
+
+        if (agconf('env') == 'local' || ! function_exists('curl_multi_init')) {
+            foreach ($products as $localProduct) {
+                $data = $this->fetchSingleLuceedProductData((string) $localProduct->sku);
+
+                if ($data) {
+                    $results[(int) $localProduct->product_id] = $data;
+                }
+            }
+
+            return $results;
+        }
+
+        $chunks = array_chunk($products->all(), 5);
+
+        foreach ($chunks as $chunk) {
+            $multiHandle = curl_multi_init();
+            $handles = [];
+
+            foreach ($chunk as $localProduct) {
+                if (empty($localProduct->sku)) {
+                    continue;
+                }
+
+                $ch = curl_init(agconf('service.base_url') . \Agmedia\Luceed\LuceedEndPoints::get(agconf('env'))['product'] . $localProduct->sku);
+                curl_setopt($ch, CURLOPT_USERPWD, agconf('service.username') . ":" . agconf('service.password'));
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 500);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+
+                curl_multi_add_handle($multiHandle, $ch);
+
+                $handles[] = [
+                    'handle' => $ch,
+                    'product_id' => (int) $localProduct->product_id,
+                ];
+            }
+
+            $running = null;
+
+            do {
+                curl_multi_exec($multiHandle, $running);
+
+                if ($running) {
+                    curl_multi_select($multiHandle, 1.0);
+                }
+            } while ($running);
+
+            foreach ($handles as $item) {
+                $response = curl_multi_getcontent($item['handle']);
+                $data = $this->decodeLuceedProductResponse($response);
+
+                if ($data) {
+                    $results[$item['product_id']] = $data;
+                }
+
+                curl_multi_remove_handle($multiHandle, $item['handle']);
+                curl_close($item['handle']);
+            }
+
+            curl_multi_close($multiHandle);
+        }
+
+        return $results;
+    }
+
+
+    /**
+     * @param string $sku
+     *
+     * @return \Illuminate\Support\Collection|null
+     */
+    private function fetchSingleLuceedProductData(string $sku)
+    {
+        $response = LuceedProduct::getById($sku);
+
+        return $this->decodeLuceedProductResponse($response);
+    }
+
+
+    /**
+     * @param mixed $response
+     *
+     * @return \Illuminate\Support\Collection|null
+     */
+    private function decodeLuceedProductResponse($response)
+    {
+        if ( ! $response) {
+            return null;
+        }
+
+        $decoded = json_decode($response);
+
+        if (
+            ! $decoded
+            || ! isset($decoded->result[0]->artikli[0])
+        ) {
+            return null;
+        }
+
+        $luceedProduct = $decoded->result[0]->artikli[0];
+
+        if (is_array($luceedProduct)) {
+            $luceedProduct = (object) $luceedProduct;
+        }
+
+        if ( ! is_object($luceedProduct)) {
+            return null;
+        }
+
+        return collect(ProductHelper::collectLuceedData($luceedProduct));
     }
 
 

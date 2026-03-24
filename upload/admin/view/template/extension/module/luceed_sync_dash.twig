@@ -139,7 +139,7 @@
                                     <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="update-attribute-sort-orders" data-toggle="tooltip" title="Update redoslijeda atributa" class="btn btn-info btn-block">Update Redoslijeda</a>
                                     </div>
-                                    <p class="col-sm-8" style="margin-top: 9px;">U manjim batch serijama direktno iz Luceeda upisuje `redoslijed` i globalno u `oc_attribute.sort_order` i per-artikl u `oc_product_attribute.sort_order`.</p>
+                                    <p class="col-sm-8" style="margin-top: 9px;">U kontroliranim batch serijama direktno iz Luceeda povlači atribute i upisuje `redoslijed` i globalno u `oc_attribute.sort_order` i per-artikl u `oc_product_attribute.sort_order`.</p>
                                 </div>
 
                                 <div class="form-group">
@@ -806,7 +806,7 @@
 
             function processBatch(cursor) {
                 $.ajax({
-                    url: 'index.php?route=extension/module/luceed_sync/updateAttributeSortOrders&cursor=' + cursor + '&limit=10&user_token={{ user_token }}',
+                    url: 'index.php?route=extension/module/luceed_sync/updateAttributeSortOrders&cursor=' + cursor + '&limit=25&user_token={{ user_token }}',
                     dataType: 'json',
                     success: function(json) {
                         if (json.status != 200) {
