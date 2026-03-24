@@ -255,6 +255,30 @@ class ProductHelper
 
 
     /**
+     * @param int        $product_id
+     * @param Collection $product
+     * @param bool       $import_all
+     *
+     * @return int
+     */
+    public static function syncProductAttributeSortOrders(int $product_id, Collection $product, bool $import_all = false): int
+    {
+        $attributes = static::getAttributes($product, $import_all);
+
+        foreach ($attributes as $attribute) {
+            DB::table('product_attribute')
+                ->where('product_id', $product_id)
+                ->where('attribute_id', $attribute['attribute_id'])
+                ->update([
+                    'sort_order' => (int) ($attribute['sort_order'] ?? 9),
+                ]);
+        }
+
+        return count($attributes);
+    }
+
+
+    /**
      * @param Collection $product
      * @param bool       $import_all
      *
@@ -598,11 +622,22 @@ class ProductHelper
     {
         $name = static::setText((string) $attribute['naziv']);
         $sortOrder = (int) ($attribute['redoslijed'] ?? 9);
+        $attributeGroupId = (int) agconf('import.default_attribute_group');
+
+        $attributeUpdates = [];
 
         if ((int) $existingAttribute->sort_order !== $sortOrder) {
+            $attributeUpdates['sort_order'] = $sortOrder;
+        }
+
+        if ((int) $existingAttribute->attribute_group_id !== $attributeGroupId) {
+            $attributeUpdates['attribute_group_id'] = $attributeGroupId;
+        }
+
+        if ($attributeUpdates) {
             DB::table('attribute')
                 ->where('attribute_id', $existingAttribute->attribute_id)
-                ->update(['sort_order' => $sortOrder]);
+                ->update($attributeUpdates);
         }
 
         $description = AttributeDescription::query()

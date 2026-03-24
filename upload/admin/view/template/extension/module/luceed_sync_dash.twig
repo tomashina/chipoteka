@@ -139,7 +139,7 @@
                                     <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="update-attribute-sort-orders" data-toggle="tooltip" title="Update redoslijeda atributa" class="btn btn-info btn-block">Update Redoslijeda</a>
                                     </div>
-                                    <p class="col-sm-8" style="margin-top: 9px;">Poravna `redoslijed` atributa iz Luceed cachea u `oc_attribute.sort_order` u serijama, bez mijenjanja vrijednosti atributa na artiklima.</p>
+                                    <p class="col-sm-8" style="margin-top: 9px;">Upisuje Luceed `redoslijed` i globalno u `oc_attribute.sort_order` i per-artikl u `oc_product_attribute.sort_order`, kako bi admin i frontend detalj artikla koristili isti redoslijed.</p>
                                 </div>
 
                                 <div class="form-group">
@@ -798,6 +798,8 @@
             let originalText = target.text;
             let processed = 0;
             let definitions = 0;
+            let products = 0;
+            let attributes = 0;
 
             lockTarget('u', button);
             processBatch(0);
@@ -815,12 +817,14 @@
 
                         processed += json.processed ? parseInt(json.processed, 10) : 0;
                         definitions += json.definitions ? parseInt(json.definitions, 10) : 0;
+                        products += json.products ? parseInt(json.products, 10) : 0;
+                        attributes += json.attributes ? parseInt(json.attributes, 10) : 0;
 
                         button.text('Redoslijed ' + processed + '/' + (json.total ? parseInt(json.total, 10) : processed));
 
                         if (json.done) {
                             releseTarget(originalText, button);
-                            AG_alert.success('Redoslijed atributa je obrađen. Dodirnuto definicija atributa: ' + definitions + '.');
+                            AG_alert.success('Redoslijed atributa je ažuriran globalno i po artiklu. Definicija: ' + definitions + ', artikala: ' + products + ', atributa: ' + attributes + '.');
                             return;
                         }
 

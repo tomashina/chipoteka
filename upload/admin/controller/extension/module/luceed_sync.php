@@ -552,6 +552,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
             return $this->output([
                 'status' => 200,
                 'processed' => 0,
+                'definitions' => 0,
                 'products' => 0,
                 'attributes' => 0,
                 'next_cursor' => $cursor,
@@ -560,6 +561,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
             ]);
         }
 
+        $definitions    = 0;
         $updatedProducts = 0;
         $updatedAttrs    = 0;
 
@@ -629,15 +631,27 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 'status' => 200,
                 'processed' => 0,
                 'definitions' => 0,
+                'products' => 0,
+                'attributes' => 0,
                 'next_cursor' => $cursor,
                 'total' => $total,
                 'done' => true,
             ]);
         }
 
-        $definitions = 0;
+        $definitions    = 0;
+        $updatedProducts = 0;
+        $updatedAttrs    = 0;
 
         foreach ($batch as $luceedProduct) {
+            $localProduct = Product::query()
+                ->where('luceed_uid', $luceedProduct->uid)
+                ->first(['product_id']);
+
+            if ( ! $localProduct) {
+                continue;
+            }
+
             $data = @unserialize(base64_decode($luceedProduct->data));
 
             if ( ! is_array($data)) {
@@ -648,6 +662,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 collect($data),
                 true
             );
+
+            $updatedAttrs += ProductHelper::syncProductAttributeSortOrders(
+                (int) $localProduct->product_id,
+                collect($data),
+                true
+            );
+
+            $updatedProducts++;
         }
 
         $nextCursor = $cursor + $batch->count();
@@ -656,6 +678,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
             'status' => 200,
             'processed' => $batch->count(),
             'definitions' => $definitions,
+            'products' => $updatedProducts,
+            'attributes' => $updatedAttrs,
             'next_cursor' => $nextCursor,
             'total' => $total,
             'done' => $nextCursor >= $total,
