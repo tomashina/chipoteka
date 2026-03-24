@@ -139,7 +139,7 @@
                                     <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="update-attribute-sort-orders" data-toggle="tooltip" title="Update redoslijeda atributa" class="btn btn-info btn-block">Update Redoslijeda</a>
                                     </div>
-                                    <p class="col-sm-8" style="margin-top: 9px;">Najprije osvježi `oc_product_luceed` direktno iz Luceeda, pa zatim upisuje Luceed `redoslijed` i globalno u `oc_attribute.sort_order` i per-artikl u `oc_product_attribute.sort_order`.</p>
+                                    <p class="col-sm-8" style="margin-top: 9px;">U manjim batch serijama direktno iz Luceeda upisuje `redoslijed` i globalno u `oc_attribute.sort_order` i per-artikl u `oc_product_attribute.sort_order`.</p>
                                 </div>
 
                                 <div class="form-group">
@@ -622,31 +622,6 @@
             }
         }
 
-        function refreshLuceedProductsCache(onSuccess, onError) {
-            $.ajax({
-                url: 'index.php?route=extension/module/luceed_sync/importLuceedProducts&user_token={{ user_token }}',
-                dataType: 'json',
-                success: function(json) {
-                    if (json.status == 200) {
-                        if (typeof onSuccess === 'function') {
-                            onSuccess(json);
-                        }
-
-                        return;
-                    }
-
-                    if (typeof onError === 'function') {
-                        onError(json);
-                    }
-                },
-                error: function(xhr) {
-                    if (typeof onError === 'function') {
-                        onError(xhr);
-                    }
-                }
-            });
-        }
-
         function runOrderStatusSync(e, legacy) {
             let target = e.currentTarget;
             let button = $('#' + target.id);
@@ -827,24 +802,11 @@
             let attributes = 0;
 
             lockTarget('u', button);
-            button.text('Luceed cache...');
-
-            refreshLuceedProductsCache(function() {
-                processBatch(0);
-            }, function(response) {
-                releseTarget(originalText, button);
-
-                if (response && response.status) {
-                    checkResult(response);
-                    return;
-                }
-
-                AG_alert.warning('Došlo je do greške tijekom osvježavanja Luceed cachea za redoslijed atributa.');
-            });
+            processBatch(0);
 
             function processBatch(cursor) {
                 $.ajax({
-                    url: 'index.php?route=extension/module/luceed_sync/updateAttributeSortOrders&cursor=' + cursor + '&limit=100&user_token={{ user_token }}',
+                    url: 'index.php?route=extension/module/luceed_sync/updateAttributeSortOrders&cursor=' + cursor + '&limit=10&user_token={{ user_token }}',
                     dataType: 'json',
                     success: function(json) {
                         if (json.status != 200) {

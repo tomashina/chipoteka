@@ -621,19 +621,24 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         $cursor = isset($this->request->get['cursor']) ? max((int) $this->request->get['cursor'], 0) : 0;
-        $limit  = isset($this->request->get['limit']) ? max((int) $this->request->get['limit'], 1) : 100;
-        $total  = LuceedProductRecord::query()->count();
+        $limit  = isset($this->request->get['limit']) ? max((int) $this->request->get['limit'], 1) : 10;
+        $total  = Product::query()
+            ->whereNotNull('luceed_uid')
+            ->where('luceed_uid', '!=', '')
+            ->count();
 
         if ( ! $total) {
             return $this->output([
                 'status' => 300,
-                'message' => 'Luceed cache proizvoda je prazan. Prvo osvježi proizvode iz Luceed-a pa pokreni update redoslijeda atributa.'
+                'message' => 'Nema lokalnih proizvoda povezanih s Luceed-om za update redoslijeda atributa.'
             ]);
         }
 
-        $batch = LuceedProductRecord::query()
-            ->select('uid', 'data')
-            ->orderBy('uid')
+        $batch = Product::query()
+            ->select('product_id', 'sku', 'luceed_uid')
+            ->whereNotNull('luceed_uid')
+            ->where('luceed_uid', '!=', '')
+            ->orderBy('product_id')
             ->skip($cursor)
             ->take($limit)
             ->get();
@@ -655,29 +660,46 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $updatedProducts = 0;
         $updatedAttrs    = 0;
 
-        foreach ($batch as $luceedProduct) {
-            $localProduct = Product::query()
-                ->where('luceed_uid', $luceedProduct->uid)
-                ->first(['product_id']);
-
-            if ( ! $localProduct) {
+        foreach ($batch as $localProduct) {
+            if ( ! $localProduct->sku) {
                 continue;
             }
 
-            $data = @unserialize(base64_decode($luceedProduct->data));
+            $response = LuceedProduct::getById((string) $localProduct->sku);
 
-            if ( ! is_array($data)) {
+            if ( ! $response) {
                 continue;
             }
+
+            $decoded = json_decode($response);
+
+            if (
+                ! $decoded
+                || ! isset($decoded->result[0]->artikli[0])
+            ) {
+                continue;
+            }
+
+            $luceedProduct = $decoded->result[0]->artikli[0];
+
+            if (is_array($luceedProduct)) {
+                $luceedProduct = (object) $luceedProduct;
+            }
+
+            if ( ! is_object($luceedProduct)) {
+                continue;
+            }
+
+            $data = collect(ProductHelper::collectLuceedData($luceedProduct));
 
             $definitions += ProductHelper::syncAttributeDefinitions(
-                collect($data),
+                $data,
                 true
             );
 
             $updatedAttrs += ProductHelper::syncProductAttributeSortOrders(
                 (int) $localProduct->product_id,
-                collect($data),
+                $data,
                 true
             );
 
