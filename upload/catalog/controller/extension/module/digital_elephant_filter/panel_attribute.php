@@ -46,13 +46,22 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
         return $v;
     }
 
-    /**
-     * Detects attribute type "Decimalni broj" (or any variant containing "decimal")
-     * Adjust this mapping if your system uses a specific fixed value.
-     */
     private function defIsDecimalType($type) {
-        $t = strtolower((string)$type);
-        return ($t === 'decimalni broj' || $t === 'decimal' || strpos($t, 'decimal') !== false);
+        $t = trim((string)$type);
+
+        if ($t === '') {
+            return false;
+        }
+
+        $t = preg_replace('/\s+/', ' ', $t);
+
+        if (function_exists('mb_strtolower')) {
+            $t = mb_strtolower($t, 'UTF-8');
+        } else {
+            $t = strtolower($t);
+        }
+
+        return ($t === 'decimalni broj');
     }
 
     private function defBooleanTrueValues() {
@@ -260,11 +269,11 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                             }
                         }
 
-                        // ✅ NORMALIZACIJA: ako izgleda kao broj (13.00, 15.60, 16,30) -> makni trailing nule
-                        if (is_string($value)) {
+                        // Makni suvišne završne nule samo za atribute tipa "Decimalni broj".
+                        if ($isDecimalAttr && is_string($value)) {
                             $candidate = str_replace(',', '.', $value);
 
-                            // dozvoli samo "čiste" brojeve (da ne diraš npr. "i7-13. generacija" itd.)
+                            // Dozvoli samo čiste brojeve da ostali formati (npr. rezolucije) ostanu netaknuti.
                             if (preg_match('/^-?\d+(?:\.\d+)?$/', $candidate)) {
                                 $value = $this->defNormalizeDecimal($candidate);
                             }
