@@ -46,22 +46,14 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
         return $v;
     }
 
-    private function defIsDecimalType($type) {
-        $t = trim((string)$type);
-
-        if ($t === '') {
+    private function defLooksLikePlainNumber($value) {
+        if (!is_string($value)) {
             return false;
         }
 
-        $t = preg_replace('/\s+/', ' ', $t);
+        $candidate = str_replace(',', '.', trim($value));
 
-        if (function_exists('mb_strtolower')) {
-            $t = mb_strtolower($t, 'UTF-8');
-        } else {
-            $t = strtolower($t);
-        }
-
-        return ($t === 'decimalni broj');
+        return (bool)preg_match('/^-?\d+(?:\.\d+)?$/', $candidate);
     }
 
     private function defBooleanTrueValues() {
@@ -176,15 +168,16 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
             // ===================== URL STATE + PRIMARY CONTEXT =====================
             $urlBase = $this->helperUrl->getUrlData();
 
-            // Normaliziraj već odabrane URL vrijednosti za decimalne atribute
-            if (!empty($urlBase['attribute']) && is_array($urlBase['attribute']) && !empty($attributes_type_by_setting)) {
+            // Normaliziraj već odabrane URL vrijednosti kad su čisti brojevi.
+            if (!empty($urlBase['attribute']) && is_array($urlBase['attribute'])) {
                 foreach ($urlBase['attribute'] as $attrId => $selectedVals) {
                     $attrId = (int)$attrId;
 
-                    $typeForAttr = $attributes_type_by_setting[$attrId]['type'] ?? '';
-                    if ($this->defIsDecimalType($typeForAttr) && is_array($selectedVals)) {
+                    if (is_array($selectedVals)) {
                         foreach ($selectedVals as $k => $sv) {
-                            $urlBase['attribute'][$attrId][$k] = $this->defNormalizeDecimal($sv);
+                            if ($this->defLooksLikePlainNumber($sv)) {
+                                $urlBase['attribute'][$attrId][$k] = $this->defNormalizeDecimal($sv);
+                            }
                         }
                     }
                 }
@@ -248,10 +241,6 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                         $attribute_value['values']
                     );
 
-                    // type ovog atributa (za odluku treba li decimal normalizacija)
-                    $typeForThisAttr = $attributes_type_by_setting[$attribute_value_id]['type'] ?? '';
-                    $isDecimalAttr = $this->defIsDecimalType($typeForThisAttr);
-
                     foreach ($attribute_value['values'] as $value) {
 
                         $value = is_string($value) ? trim($value) : $value;
@@ -269,14 +258,9 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                             }
                         }
 
-                        // Makni suvišne završne nule samo za atribute tipa "Decimalni broj".
-                        if ($isDecimalAttr && is_string($value)) {
-                            $candidate = str_replace(',', '.', $value);
-
-                            // Dozvoli samo čiste brojeve da ostali formati (npr. rezolucije) ostanu netaknuti.
-                            if (preg_match('/^-?\d+(?:\.\d+)?$/', $candidate)) {
-                                $value = $this->defNormalizeDecimal($candidate);
-                            }
+                        // Makni suvišne završne nule samo za čiste brojčane vrijednosti.
+                        if ($this->defLooksLikePlainNumber($value)) {
+                            $value = $this->defNormalizeDecimal($value);
                         }
 
                         if (isset($seenValues[$value])) {
