@@ -56,7 +56,7 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
     }
 
     private function defBooleanTrueValues() {
-        return array('D', 'DA', 'T', 'TRUE', 'Y', 'YES', '1');
+        return array('D', 'DA', 'T', 'TRUE', 'Y', 'YES');
     }
 
     private function defBooleanFalseValues() {
