@@ -75,7 +75,7 @@
 
 
                             {% if is_show_group_attributes and section_group['group_name'] %}
-                                <div class="filter_element_title">{{ section_group['group_name'] }}</div>
+                                <div class="filter_element_title" style="display: none">{{ section_group['group_name'] }}</div>
                             {% endif %}
 
                             {% for section in section_group['sections'] %}
