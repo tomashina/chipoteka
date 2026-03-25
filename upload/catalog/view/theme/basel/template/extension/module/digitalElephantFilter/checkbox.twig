@@ -27,30 +27,7 @@
         {% set is_visible = false %}
     {% endif %}
 
-    {# normalizacija prikaza brojeva: 15.60->15.6, 13.00->13 (bez regexa) #}
     {% set display_value = raw_value %}
-    {% if is_visible %}
-        {% set tmp = raw_value|replace({',': '.'}) %}
-
-        {# ako izgleda kao decimal sa 2 znamenke: npr 15.60, 13.00 #}
-        {% if '.' in tmp %}
-            {# prvo makni .00 -> ništa #}
-            {% if tmp|slice(-3) == '.00' %}
-                {% set tmp = tmp|slice(0, tmp|length - 3) %}
-            {% else %}
-                {# makni jednu trailing 0: 15.60 -> 15.6, 16.30 -> 16.3 #}
-                {% if tmp|slice(-1) == '0' %}
-                    {% set tmp = tmp|slice(0, tmp|length - 1) %}
-                {% endif %}
-                {# ako ostane trailing '.' (npr 13.) makni #}
-                {% if tmp|slice(-1) == '.' %}
-                    {% set tmp = tmp|slice(0, tmp|length - 1) %}
-                {% endif %}
-            {% endif %}
-        {% endif %}
-
-        {% set display_value = tmp %}
-    {% endif %}
 
     {% if is_visible %}
         {% set v2 = v|merge({
