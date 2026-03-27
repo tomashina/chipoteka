@@ -52,18 +52,23 @@ class ControllerCheckoutSuccess extends Controller {
                     $this->load->model('checkout/order');
                     $oc_order = $order_info;
                     $oc_order['poziv_na_broj'] = $poziv_nb;
-                    $order    = new LOC_Order($oc_order);
-                    $customer = new LOC_Customer($order->getCustomerData());
+                    try {
+                        $order    = new LOC_Order($oc_order);
+                        $customer = new LOC_Customer($order->getCustomerData());
 
-                    if ( ! $customer->exist()) {
-                        $customer->store();
+                        if ( ! $customer->exist()) {
+                            $customer->store();
+                        }
+
+                        $sent = $order->setCustomerUid($customer->getUid())->store();
+
+                        if ( ! $sent) {
+                            $order->recordError();
+                            $this->log->write('[Luceed] Order sync failed after checkout success. order_id=' . $order_id);
+                        }
+                    } catch (\Throwable $e) {
+                        $this->log->write('[Luceed] Checkout success sync exception. order_id=' . $order_id . ' message=' . $e->getMessage());
                     }
-
-                    $sent = $order->setCustomerUid($customer->getUid())->store();
-
-                    if ( ! $sent) {
-                        $order->recordError();
-             }
 
             }
 

@@ -92,7 +92,7 @@ class LOC_Order
      *
      * @param array|null $order
      */
-    public function __construct(array $order = null)
+    public function __construct(?array $order = null)
     {
         $this->oc_order = $order;
         $this->service  = new Luceed();
@@ -393,8 +393,14 @@ class LOC_Order
      */
     public function recordError()
     {
+        $error = 'LUCEED_SYNC_FAILED';
+
+        if (is_object($this->response) && isset($this->response->error) && $this->response->error) {
+            $error = (string) $this->response->error;
+        }
+
         return Order::where('order_id', $this->oc_order['order_id'])->update([
-            'luceed_uid' => $this->response->error
+            'luceed_uid' => $error
         ]);
     }
 
@@ -404,7 +410,7 @@ class LOC_Order
      *
      * @return string
      */
-    public function collectStatuses(array $statuses = null): string
+    public function collectStatuses(?array $statuses = null): string
     {
         $string = '[';
 
@@ -886,7 +892,7 @@ class LOC_Order
      * @param string|null $string
      * @param             $data
      */
-    private function log(string $string = null, $data = null): void
+    private function log(?string $string = null, $data = null): void
     {
         if ($string) {
             Log::store($string, 'proccess_order_' . $this->oc_order['order_id']);

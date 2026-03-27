@@ -947,6 +947,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateQuantities()
     {
+        if ($response = $this->abortStockSyncWhenLuceedUnavailable('updateQuantities')) {
+            return $this->output($response);
+        }
+
         $_loc = new LOC_Stock();
 
         $_loc->setSkladista(
@@ -969,6 +973,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateQuantitiesWithoutSupliers()
     {
+        if ($response = $this->abortStockSyncWhenLuceedUnavailable('updateQuantitiesWithoutSupliers')) {
+            return $this->output($response);
+        }
+
         $_loc = new LOC_Stock();
 
         $_loc->setSkladista(
@@ -1810,6 +1818,37 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
 
     /**
+     * Dedicated Luceed availability check for external cron services.
+     *
+     * @return mixed
+     */
+    public function monitorAvailability()
+    {
+        if ( ! $this->validateMonitorAvailabilityToken()) {
+            return $this->output([
+                'status'  => 403,
+                'message' => 'Invalid cron token.'
+            ]);
+        }
+
+        $service = new \Agmedia\Luceed\Connection\LuceedService();
+        $result  = $service->probeAvailability();
+
+        return $this->output([
+            'status'        => 200,
+            'message'       => 'Luceed availability probe executed.',
+            'service_status'=> $result['status'],
+            'notification'  => $result['notification'] ?? null,
+            'checked_at'    => $result['checked_at'] ?? null,
+            'down_since'    => $result['down_since'] ?? null,
+            'http_code'     => $result['http_code'] ?? null,
+            'error'         => $result['error'] ?? '',
+            'url'           => $result['url'] ?? ''
+        ]);
+    }
+
+
+    /**
      * @return bool
      */
     protected function validateRole()
@@ -1819,6 +1858,71 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         return ! $this->error;
+    }
+
+
+    /**
+     * Hard-stop stock syncs while Luceed is unavailable so existing quantities stay untouched.
+     *
+     * @param string $context
+     *
+     * @return array|null
+     */
+    private function abortStockSyncWhenLuceedUnavailable(string $context): ?array
+    {
+        $probe = (new \Agmedia\Luceed\Connection\LuceedService())->probeAvailability();
+
+        if (($probe['status'] ?? 'down') === 'up') {
+            return null;
+        }
+
+        Log::store([
+            'context'    => $context,
+            'checked_at' => $probe['checked_at'] ?? null,
+            'down_since' => $probe['down_since'] ?? null,
+            'http_code'  => $probe['http_code'] ?? null,
+            'error'      => $probe['error'] ?? null,
+        ], 'luceed_stock_sync_skipped');
+
+        return [
+            'status'  => 300,
+            'message' => 'Luceed nije dostupan. Sinkronizacija zaliha je preskočena kako postojeće količine ne bi bile promijenjene.',
+            'details' => [
+                'checked_at' => $probe['checked_at'] ?? null,
+                'down_since' => $probe['down_since'] ?? null,
+                'http_code'  => $probe['http_code'] ?? null,
+                'error'      => $probe['error'] ?? null,
+            ],
+        ];
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function validateMonitorAvailabilityToken(): bool
+    {
+        $token = isset($this->request->get['cron_token']) ? (string) $this->request->get['cron_token'] : '';
+
+        if ( ! $token) {
+            return false;
+        }
+
+        return hash_equals($this->resolveMonitorAvailabilityToken(), $token);
+    }
+
+
+    /**
+     * @return string
+     */
+    private function resolveMonitorAvailabilityToken(): string
+    {
+        return hash('sha256', implode('|', [
+            (string) agconf('service.base_url'),
+            (string) agconf('service.username'),
+            (string) agconf('service.password'),
+            'luceed-health-monitor'
+        ]));
     }
 
 

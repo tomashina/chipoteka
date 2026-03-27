@@ -662,6 +662,22 @@
     </div>
     <script>
         $(() => {
+            const fallbackAvailabilityTitle = 'Dostupnost po poslovnicama privremeno nije dostupna.';
+            const fallbackAvailabilitySubtitle = 'Pokusajte ponovno uskoro.';
+
+            const resetAvailabilityIcon = () => {
+                $('#availability-icon').removeClass('text-success text-warning text-secondary text-danger');
+            };
+
+            const renderAvailabilityFallback = (title = fallbackAvailabilityTitle, subtitle = fallbackAvailabilitySubtitle) => {
+                $('#availability-view').html('<div class="py-3 text-muted small">' + title + '</div>');
+                $('#availability-title').html(title);
+                $('#availability-subtitle').html(subtitle);
+
+                resetAvailabilityIcon();
+                $('#availability-icon').addClass('text-secondary');
+            };
+
             $.ajax({
                 type: 'get',
                 url: 'index.php?route=product/product/availability&sifra={{ model }}',
@@ -707,16 +723,33 @@
                         }
                     }
 
-                    $('#availability-view').html(html);
-                    $(".poslov").last().removeClass("border-bottom");
+                    if (html) {
+                        $('#availability-view').html(html);
+                        $(".poslov").last().removeClass("border-bottom");
+                    } else if (title || subtitle) {
+                        $('#availability-view').html('<div class="py-3 text-muted small">' + title + '</div>');
+                    } else {
+                        renderAvailabilityFallback();
+                        return;
+                    }
 
                     $('#availability-title').html(title);
                     $('#availability-subtitle').html(subtitle);
-                    $('#availability-icon').addClass('text-' + icon);
 
-                    if (title != 'DOSTUPNO ODMAH') {
+                    resetAvailabilityIcon();
+
+                    if (icon) {
+                        $('#availability-icon').addClass('text-' + icon);
+                    } else {
+                        $('#availability-icon').addClass('text-secondary');
+                    }
+
+                    if (title != 'DOSTUPNO ODMAH' && btn_title) {
                         $('#button-cart,#button-cart2,#button-cart3').html(btn_title);
                     }
+                },
+                error: () => {
+                    renderAvailabilityFallback();
                 }
             });
         });

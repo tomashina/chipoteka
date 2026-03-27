@@ -960,11 +960,78 @@ class ControllerProductProduct extends Controller {
         $this->load->model('catalog/product');
 
         $loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse();
-        $skladista = $loc->getAvailabilityForProduct($this->request->get['sifra']);
-
         $this->response->addHeader('Content-Type: application/json');
-        $this->response->setOutput($skladista->toJson());
+        $sku = isset($this->request->get['sifra']) ? (string) $this->request->get['sifra'] : '';
+
+        if (!$sku) {
+            $this->response->setOutput(
+                $loc->getAvailabilityFallbackResponse(
+                    'Dostupnost po poslovnicama privremeno nije dostupna.',
+                    'Pokusajte ponovno uskoro.'
+                )->toJson()
+            );
+
+            return;
+        }
+
+        try {
+            $this->response->setOutput($loc->getAvailabilityForProduct($sku)->toJson());
+        } catch (\Throwable $e) {
+            \Agmedia\Helpers\Log::store($e->getMessage(), 'luceed_product_availability_error');
+            \Agmedia\Helpers\Log::store($sku, 'luceed_product_availability_error');
+
+            $this->response->setOutput($this->getAvailabilityFallbackFromDatabase($loc, $sku));
+        }
 	}
+
+    private function getAvailabilityFallbackFromDatabase(
+        \Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse $loc,
+        string $sku
+    ): string {
+        $product = $this->getProductAvailabilityStateBySku($sku);
+
+        if (!$product) {
+            return $loc->getAvailabilityFallbackResponse(
+                'Dostupnost po poslovnicama privremeno nije dostupna.',
+                'Pokusajte ponovno uskoro.'
+            )->toJson();
+        }
+
+        $quantity = max((int) $product['quantity'], 0);
+        $has_stock = $quantity > 0;
+        $stock_status = trim((string) ($product['stock_status'] ?? ''));
+
+        return json_encode([
+            [
+                'title' => 'Btn',
+                'btn' => $has_stock ? 'success' : 'secondary',
+                'button' => $has_stock ? '' : 'Nedostupno',
+                'address' => $has_stock ? 'DOSTUPNO ODMAH' : ($stock_status ?: 'PROIZVOD NEDOSTUPAN'),
+                'qty' => 'Prikazano je zadnje spremljeno stanje iz baze.'
+            ]
+        ]);
+    }
+
+    private function getProductAvailabilityStateBySku(string $sku): array
+    {
+        $query = $this->db->query(
+            "SELECT p.quantity, ss.name AS stock_status
+            FROM " . DB_PREFIX . "product p
+            LEFT JOIN " . DB_PREFIX . "stock_status ss ON (
+                ss.stock_status_id = p.stock_status_id
+                AND ss.language_id = '" . (int) $this->config->get('config_language_id') . "'
+            )
+            WHERE p.sku = '" . $this->db->escape($sku) . "'
+                OR p.model = '" . $this->db->escape($sku) . "'
+            LIMIT 1"
+        );
+
+        if ($query->num_rows) {
+            return $query->row;
+        }
+
+        return [];
+    }
 
     public function getCategoryIdFromProductId($product_id) {
         $query = $this->db->query("SELECT pc.category_id FROM oc_product_to_category pc LEFT JOIN oc_category c ON (pc.category_id = c.category_id ) WHERE pc.product_id = '" . (int)$product_id . "' AND c.parent_id != 315 ORDER by pc.category_id DESC");

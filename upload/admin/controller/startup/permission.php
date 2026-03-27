@@ -22,7 +22,8 @@ class ControllerStartupPermission extends Controller {
                     'importActionPricesLast30Days',
                     'importRelatedProducts',
                     'importEprelModel',
-                    'checkRevisionTable'
+                    'checkRevisionTable',
+                    'monitorAvailability'
                 ])) {
                 return;
             }

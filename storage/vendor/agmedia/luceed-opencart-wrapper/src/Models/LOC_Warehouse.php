@@ -110,23 +110,33 @@ class LOC_Warehouse
         $houses_stores = $this->getList()->whereIn('skladiste', agconf('import.warehouse.stores'));
         $units_stores = $this->getUnitsQuery($houses_stores);
 
-        $availables = collect($this->setAvailables(
-            LuceedProduct::stock($units, $product)
-        ));
+        $availables_response = LuceedProduct::stock($units, $product);
+        $defaults_response = LuceedProduct::stock($units_default, $product);
+        $stores_response = LuceedProduct::stock($units_stores, $product);
+        $supplier_response = LuceedProduct::getSuplierStock($product);
 
-        $defaults = collect($this->setAvailables(
-            LuceedProduct::stock($units_default, $product)
-        ));
+        if (
+            ! $this->hasValidAvailabilityPayload($availables_response)
+            && ! $this->hasValidAvailabilityPayload($defaults_response)
+            && ! $this->hasValidAvailabilityPayload($stores_response)
+            && ! $this->hasValidSupplierPayload($supplier_response)
+        ) {
+            throw new \RuntimeException('Luceed availability response is missing or invalid.');
+        }
 
-        $stores = collect($this->setAvailables(
-            LuceedProduct::stock($units_stores, $product)
-        ));
+        $availables = collect($this->setAvailables($availables_response));
 
-        $suplier = collect($this->setSuplierStock(
-            LuceedProduct::getSuplierStock($product)
-        ))->where('main', 'D')->first();
+        $defaults = collect($this->setAvailables($defaults_response));
 
-        $dobavljac_stanje = $suplier->dobavljac_stanje;
+        $stores = collect($this->setAvailables($stores_response));
+
+        $suplier = collect($this->setSuplierStock($supplier_response))->where('main', 'D')->first();
+
+        $dobavljac_stanje = 0;
+
+        if (is_object($suplier) && isset($suplier->dobavljac_stanje)) {
+            $dobavljac_stanje = max((int) $suplier->dobavljac_stanje, 0);
+        }
 
         // AVAILABILITY VIEW
         foreach ($houses as $house) {
@@ -272,10 +282,27 @@ class LOC_Warehouse
     }
 
 
+    public function getAvailabilityFallbackResponse(
+        string $title = 'Dostupnost po poslovnicama privremeno nije dostupna.',
+        string $subtitle = 'Pokusajte ponovno uskoro.'
+    ): Collection
+    {
+        return collect([
+            [
+                'title'   => 'Btn',
+                'btn'     => 'secondary',
+                'button'  => '',
+                'address' => $title,
+                'qty'     => $subtitle
+            ]
+        ]);
+    }
+
+
     /**
      * @return int
      */
-    public function import(Collection $list = null)
+    public function import(?Collection $list = null)
     {
         $imported = 0;
 
@@ -377,6 +404,14 @@ class LOC_Warehouse
     }
 
 
+    private function hasValidAvailabilityPayload($items): bool
+    {
+        $json = json_decode($items);
+
+        return isset($json->result[0]->stanje) && is_array($json->result[0]->stanje);
+    }
+
+
     /**
      * @param $stock
      *
@@ -391,5 +426,13 @@ class LOC_Warehouse
         }
 
         return [];
+    }
+
+
+    private function hasValidSupplierPayload($stock): bool
+    {
+        $json = json_decode($stock);
+
+        return isset($json->result[0]->artikli_dobavljaci) && is_array($json->result[0]->artikli_dobavljaci);
     }
 }
