@@ -27,6 +27,73 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
         return strtoupper($value);
     }
 
+    private function defLooksLikePlainNumber($value)
+    {
+        $candidate = trim((string)$value);
+
+        if ($candidate === '') {
+            return false;
+        }
+
+        $candidate = str_replace(',', '.', $candidate);
+
+        return (bool)preg_match('/^-?\d+(?:\.\d+)?$/', $candidate);
+    }
+
+    private function defNormalizePlainNumber($value)
+    {
+        $candidate = str_replace(',', '.', trim((string)$value));
+
+        if ($candidate === '') {
+            return '';
+        }
+
+        if (strpos($candidate, '.') !== false) {
+            $candidate = rtrim($candidate, '0');
+            $candidate = rtrim($candidate, '.');
+        }
+
+        return $candidate;
+    }
+
+    private function defExpandNumericFilterValues($value)
+    {
+        if ( ! $this->defLooksLikePlainNumber($value)) {
+            return array((string)$value);
+        }
+
+        $normalized = $this->defNormalizePlainNumber($value);
+        $variants = array(
+            (string)$value => (string)$value,
+            $normalized => $normalized,
+        );
+        $separators = array('.', ',');
+
+        if (strpos($normalized, '.') === false) {
+            foreach ($separators as $separator) {
+                for ($scale = 1; $scale <= 4; $scale++) {
+                    $variant = $normalized . $separator . str_repeat('0', $scale);
+                    $variants[$variant] = $variant;
+                }
+            }
+
+            return array_values($variants);
+        }
+
+        list($integer_part, $decimal_part) = explode('.', $normalized, 2);
+        $min_scale = strlen($decimal_part);
+        $max_scale = max($min_scale, 4);
+
+        foreach ($separators as $separator) {
+            for ($scale = $min_scale; $scale <= $max_scale; $scale++) {
+                $variant = $integer_part . $separator . str_pad($decimal_part, $scale, '0');
+                $variants[$variant] = $variant;
+            }
+        }
+
+        return array_values($variants);
+    }
+
     private function defIsEnergyLabelAttribute($name)
     {
         $name = trim((string)$name);
@@ -143,6 +210,14 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
 
                     continue;
                 }
+            }
+
+            if ($this->defLooksLikePlainNumber($attribute_value)) {
+                foreach ($this->defExpandNumericFilterValues($attribute_value) as $numeric_value) {
+                    $values[$numeric_value] = $numeric_value;
+                }
+
+                continue;
             }
 
             $values[$attribute_value] = $attribute_value;

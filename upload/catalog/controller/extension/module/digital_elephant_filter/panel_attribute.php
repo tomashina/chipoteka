@@ -168,21 +168,6 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
             // ===================== URL STATE + PRIMARY CONTEXT =====================
             $urlBase = $this->helperUrl->getUrlData();
 
-            // Normaliziraj već odabrane URL vrijednosti kad su čisti brojevi.
-            if (!empty($urlBase['attribute']) && is_array($urlBase['attribute'])) {
-                foreach ($urlBase['attribute'] as $attrId => $selectedVals) {
-                    $attrId = (int)$attrId;
-
-                    if (is_array($selectedVals)) {
-                        foreach ($selectedVals as $k => $sv) {
-                            if ($this->defLooksLikePlainNumber($sv)) {
-                                $urlBase['attribute'][$attrId][$k] = $this->defNormalizeDecimal($sv);
-                            }
-                        }
-                    }
-                }
-            }
-
             // SVI trenutno odabrani atributi (primarni + sekundarni)
             $activeAttributes = [];
             if (!empty($urlBase['attribute']) && is_array($urlBase['attribute'])) {
@@ -243,33 +228,35 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
 
                     foreach ($attribute_value['values'] as $value) {
 
-                        $value = is_string($value) ? trim($value) : $value;
+                        $rawValue = is_string($value) ? trim($value) : $value;
 
                         // ne prikazuj prazne (ali dozvoli '0')
-                        if ($value === '' || $value === null) {
+                        if ($rawValue === '' || $rawValue === null) {
                             continue;
                         }
 
                         if ($isBooleanAttr) {
-                            $value = $this->defNormalizeBooleanValue($value);
+                            $rawValue = $this->defNormalizeBooleanValue($rawValue);
 
-                            if ($value === null) {
+                            if ($rawValue === null) {
                                 continue;
                             }
                         }
 
-                        // Makni suvišne završne nule samo za čiste brojčane vrijednosti.
-                        if ($this->defLooksLikePlainNumber($value)) {
-                            $value = $this->defNormalizeDecimal($value);
+                        $displayValue = $rawValue;
+
+                        // Za prikaz makni suvišne završne nule samo na čistim brojčanim vrijednostima.
+                        if ($this->defLooksLikePlainNumber($rawValue)) {
+                            $displayValue = $this->defNormalizeDecimal($rawValue);
                         }
 
-                        if (isset($seenValues[$value])) {
+                        if (isset($seenValues[(string)$rawValue])) {
                             continue;
                         }
 
-                        $seenValues[$value] = true;
+                        $seenValues[(string)$rawValue] = true;
 
-                        $input_label = $value;
+                        $input_label = $displayValue;
                         $is_enable = true;
 
                         // računaj totals ako je:
@@ -322,8 +309,8 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                             }
 
                             // spriječi duplikate
-                            if (!in_array($value, $url['attribute'][$attribute_value_id], true)) {
-                                $url['attribute'][$attribute_value_id][] = $value;
+                            if (!in_array($rawValue, $url['attribute'][$attribute_value_id], true)) {
+                                $url['attribute'][$attribute_value_id][] = $rawValue;
                             }
 
                             $filter_data = $this->getProduct->getFilterDataByUrl($url);
@@ -333,9 +320,9 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
 
                             // Label: po želji pokaži (total)
                             if ($showTotalsInLabel || isset($setting['DEF_settings']['is_display_total'])) {
-                                $input_label = $value . ' <span>(' . (int)$totalProducts . ')</span>';
+                                $input_label = $displayValue . ' <span>(' . (int)$totalProducts . ')</span>';
                             } else {
-                                $input_label = $value;
+                                $input_label = $displayValue;
                             }
                         }
 
@@ -357,10 +344,11 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                         }
 
                         $values[] = array(
-                            'input_value' => $value,
+                            'input_value' => $rawValue,
+                            'display_value' => $displayValue,
                             'input_name'  => 'attribute',
                             'input_label' => $input_label,
-                            'value_id'    => $value,
+                            'value_id'    => $rawValue,
                             'image'       => '',
                             'is_enable'   => $is_enable
                         );

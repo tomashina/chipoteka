@@ -27,7 +27,7 @@
         {% set is_visible = false %}
     {% endif %}
 
-    {% set display_value = raw_value %}
+    {% set display_value = (v['display_value'] is defined ? v['display_value'] : raw_value)|trim %}
 
     {% if is_visible %}
         {% set v2 = v|merge({
