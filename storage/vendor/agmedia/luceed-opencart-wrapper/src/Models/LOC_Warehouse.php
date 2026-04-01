@@ -32,7 +32,7 @@ class LOC_Warehouse
      *
      * @var array
      */
-    private $strict_default_houses = ['101', '001'];
+    private $strict_default_houses = ['101'];
 
     /**
      * @var array
