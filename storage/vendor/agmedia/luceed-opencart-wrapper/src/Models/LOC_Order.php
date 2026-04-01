@@ -149,8 +149,29 @@ class LOC_Order
             'pickup'        => $this->pickup ?: 'none',
         ]);
 
-        // Always create and send the main webshop order first.
+        // Prepare main webshop order payload.
         $this->create();
+
+        $pickup_nalozi = [];
+
+        // Resolve pickup availability before sending the main order so we can
+        // map "all items in pickup store" directly to pickup nalog fields.
+        if ($this->pickup != '') {
+            $this->availability = $this->resolveAvailability();
+            $pickup_nalozi = $this->availability->getNalozi();
+            $this->log('[FLOW] pickup:availability', [
+                'pickup'                   => $this->pickup,
+                'has_any_in_pickup_store'  => $this->availability->has_any_in_pickup_store,
+                'has_all_in_pickup_store'  => $this->availability->has_all_in_pickup_store,
+                'nalozi_count'             => count($pickup_nalozi),
+                'items_required_count'     => count($this->availability->items_required),
+            ]);
+
+            if ($this->availability->has_all_in_pickup_store) {
+                $this->applyAllInPickupMainOrder();
+            }
+        }
+
         $this->log('[FLOW] main:create:prepared', [
             'nalog_prodaje_b2b' => $this->order['nalog_prodaje_b2b'] ?? '',
             'narudzba'          => $this->order['narudzba'] ?? '',
@@ -178,17 +199,6 @@ class LOC_Order
             $this->log('[FLOW] pickup:skip', ['reason' => 'not_pickup_shipping']);
             return $main_uid;
         }
-
-        // Set up availability for pickup split logic.
-        $this->availability = $this->resolveAvailability();
-        $pickup_nalozi = $this->availability->getNalozi();
-        $this->log('[FLOW] pickup:availability', [
-            'pickup'                   => $this->pickup,
-            'has_any_in_pickup_store'  => $this->availability->has_any_in_pickup_store,
-            'has_all_in_pickup_store'  => $this->availability->has_all_in_pickup_store,
-            'nalozi_count'             => count($pickup_nalozi),
-            'items_required_count'     => count($this->availability->items_required),
-        ]);
 
         // If pickup store has all requested items, only main order is required.
         if ($this->availability->has_all_in_pickup_store) {
@@ -230,6 +240,36 @@ class LOC_Order
         ]);
 
         return $main_uid;
+    }
+
+
+    /**
+     * For full pickup availability, the main nalog should point to the selected
+     * pickup store and carry pickup-specific delivery metadata.
+     *
+     * @return void
+     */
+    private function applyAllInPickupMainOrder(): void
+    {
+        $pickup_title = trim($this->getPickupTitle());
+        $pickup_note = $pickup_title !== '' ? $pickup_title : ($this->oc_order['comment'] ?? '');
+
+        $this->order['skladiste'] = $this->pickup;
+        $this->order['sa__skladiste'] = $this->pickup;
+        $this->order['na__skladiste'] = $this->pickup;
+        $this->order['skl_dokument'] = 'DP';
+        $this->order['vrsta_isporuke'] = '03';
+        $this->order['napomena'] = 'Osobno preuzimanje: ' . $pickup_note;
+        $this->order['poruka_dolje'] = $this->order['napomena'];
+
+        $this->log('[FLOW] pickup:apply_main_override', [
+            'pickup'         => $this->pickup,
+            'skladiste'      => $this->order['skladiste'] ?? '',
+            'sa__skladiste'  => $this->order['sa__skladiste'] ?? '',
+            'na__skladiste'  => $this->order['na__skladiste'] ?? '',
+            'skl_dokument'   => $this->order['skl_dokument'] ?? '',
+            'vrsta_isporuke' => $this->order['vrsta_isporuke'] ?? '',
+        ]);
     }
 
 
@@ -385,19 +425,6 @@ class LOC_Order
         ) {
             $this->order['kupac_zeli_eracun'] = 'D';
         }
-
-        //
-        /*if ($this->pickup != '' && $this->items_available['has_all_in_pickup_store']) {
-            $this->order['sa__skladiste'] = $this->pickup;
-            $this->order['na__skladiste'] = $this->pickup;
-            $this->order['skl_dokument']  = 'DP';
-            $this->order['vrsta_isporuke']  = '03';
-            $this->order['napomena']  = 'Osobno preuzimanje: ' . $this->oc_order['comment'];
-
-            if ($this->oc_order['payment_code'] == 'cod') {
-                $this->order['placanja'] = '';
-            }
-        }*/
 
         $this->log('Order create method: $this->>order - LOC_Order #262', $this->order);
     }
