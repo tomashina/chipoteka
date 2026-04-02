@@ -108,7 +108,7 @@ class ControllerMailOrder extends Controller {
 		$data['payment_method'] = $order_info['payment_method'];
         $data['payment_code'] = $order_info['payment_code'];
 
-        if ($order_info['payment_code'] == 'cod') {
+        if (in_array($order_info['payment_code'], array('cod', 'cod_preuzimanje'))) {
 
             $data['text_message'] = sprintf($language->get('text_pouzece'), $order_info['order_id']);
 
@@ -337,13 +337,13 @@ class ControllerMailOrder extends Controller {
 
 
 
-        if ($order_info['payment_code'] == 'cod' && $order_info['shipping_code'] != 'weight.weight_5') {
+        if (in_array($order_info['payment_code'], array('cod', 'cod_preuzimanje')) && $order_info['shipping_code'] != 'weight.weight_5') {
 
             $order_info['mail'] = '7';
 
         }
 
-        else if ($order_info['payment_code'] == 'cod' &&  $order_info['shipping_code'] == 'weight.weight_5') {
+        else if (in_array($order_info['payment_code'], array('cod', 'cod_preuzimanje')) &&  $order_info['shipping_code'] == 'weight.weight_5') {
 
             $order_info['mail'] = '711';
 
