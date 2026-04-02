@@ -767,6 +767,8 @@ class ControllerProductProduct extends Controller {
                     'price_2'       => $price_2,
                     'vpc'       => $vpc,
 					'special'     => $special,
+                    'sale_badge'  => $result['sale_badge'],
+                    'sale_percent'=> $result['sale_percent'],
                     'priceeur'       => $priceeur,
                     'specialeur'     => $specialeur,
                     'priceeur_2'       => $priceeur_2,

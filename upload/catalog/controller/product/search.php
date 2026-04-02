@@ -315,6 +315,8 @@ class ControllerProductSearch extends Controller {
                     'specialeur'     => $specialeur,
                     'priceeur_2'       => $priceeur_2,
                     'lasteur_30'      => $lasteur_30,
+                    'sale_badge'      => $result['sale_badge'],
+                    'sale_percent'    => $result['sale_percent'],
                    /*'freeshipping' => $freeshipping,*/
                     'saljemodo'   => $saljemodo,
 					'tax'         => $tax,
