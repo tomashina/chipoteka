@@ -1162,7 +1162,7 @@ class LOC_Order
             return '96-1063';
         }
 
-        if (in_array($this->oc_order['payment_code'], ['cod', 'bank_transfer'])) {
+        if (in_array($this->oc_order['payment_code'], ['cod', 'cod_preuzimanje', 'bank_transfer'])) {
             $loc_p = (new LOC_Payment())->getList(agconf('luceed.payment.' . $this->oc_order['payment_code']))->first();
         }
 
