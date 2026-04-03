@@ -31,97 +31,36 @@
         </div>
     {% endif %}
 
-    <div class="featured-posts-carousel blog-latest-carousel-{{ module }} tns-carousel tns-controls-static tns-controls-outside tns-nav-enabled py-3 pt-4">
-        <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 2, &quot;slideBy&quot;: 1, &quot;nav&quot;: true, &quot;controls&quot;: true, &quot;autoHeight&quot;: true, &quot;touch&quot;: true, &quot;mouseDrag&quot;: true, &quot;preventScrollOnTouch&quot;: &quot;auto&quot;, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1},&quot;700&quot;:{&quot;items&quot;:2, &quot;gutter&quot;: 20},&quot;1240&quot;:{&quot;items&quot;:3, &quot;gutter&quot;: 16},&quot;1440&quot;:{&quot;items&quot;:4, &quot;gutter&quot;: 16}}}">
+    <div class="featured-posts-carousel blog-latest-carousel-{{ module }} tns-carousel tns-controls-static tns-controls-inside tns-nav-enabled py-3 pt-4">
+        <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 2, &quot;gutter&quot;: 16, &quot;controls&quot;:true, &quot;autoHeight&quot;: true, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1}, &quot;700&quot;:{&quot;items&quot;:2, &quot;gutter&quot;: 20}, &quot;1240&quot;:{&quot;items&quot;:3, &quot;gutter&quot;: 16}, &quot;1440&quot;:{&quot;items&quot;:4, &quot;gutter&quot;: 16}}}">
          {% if posts %}
             {% for blog in posts %}
-            <article>
-                {% if blog.image and thumb %}
-                <a class="blog-entry-thumb mb-3" href="{{ blog.href }}"><span class="blog-entry-meta-label fs-sm"><i class="fal fa-clock"></i>{{ blog.date_added_day }} {{ blog.date_added_month }} </span><img loading="lazy" src="{{ blog.image }}" alt="{{ blog.title }}"></a>
-                {% endif %}
-                <div class="d-flex justify-content-between mb-2 pt-1">
-                    <h2 class="h5 blog-entry-title mb-0"><a href="{{ blog.href }}">{{ blog.title }}</a></h2>
-                </div>
-                <div class="d-flex align-items-center fs-sm">
-
-                    {% if blog.short_description %}
-                        <p class="fs-sm">{{ blog.short_description }}</p>
+            <div>
+                <article>
+                    {% if blog.image and thumb %}
+                    <a class="blog-entry-thumb mb-3" href="{{ blog.href }}"><span class="blog-entry-meta-label fs-sm"><i class="fal fa-clock"></i>{{ blog.date_added_day }} {{ blog.date_added_month }} </span><img loading="lazy" src="{{ blog.image }}" alt="{{ blog.title }}"></a>
                     {% endif %}
-                </div>
-            </article>
+                    <div class="d-flex justify-content-between mb-2 pt-1">
+                        <h2 class="h5 blog-entry-title mb-0"><a href="{{ blog.href }}">{{ blog.title }}</a></h2>
+                    </div>
+                    <div class="d-flex align-items-center fs-sm">
+                        {% if blog.short_description %}
+                            <p class="fs-sm">{{ blog.short_description }}</p>
+                        {% endif %}
+                    </div>
+                </article>
+            </div>
             {% endfor %}
         {% endif %}
         </div>
     </div>
     <style>
-        .featured-posts-carousel.blog-latest-carousel-{{ module }} .tns-ovh,
-        .featured-posts-carousel.blog-latest-carousel-{{ module }} .tns-carousel-inner {
-            -ms-touch-action: pan-y;
-            touch-action: pan-y;
-        }
-
         @media (max-width: 991.98px) {
-            .featured-posts-carousel.blog-latest-carousel-{{ module }} {
-                padding-left: 2.5rem;
-                padding-right: 2.5rem;
-            }
-
             .featured-posts-carousel.blog-latest-carousel-{{ module }} [data-controls] {
-                opacity: 1;
                 z-index: 3;
-                width: 2.5rem;
-                height: 2.5rem;
-                line-height: 2.375rem;
-            }
-
-            .featured-posts-carousel.blog-latest-carousel-{{ module }} [data-controls="prev"] {
-                left: 0;
-            }
-
-            .featured-posts-carousel.blog-latest-carousel-{{ module }} [data-controls="next"] {
-                right: 0;
             }
         }
     </style>
-    <script>
-      window.addEventListener('load', function () {
-        window.setTimeout(function () {
-          var root = document.querySelector('.blog-latest-carousel-{{ module }}');
-
-          if (!root || typeof tns !== 'function' || root.querySelector('.tns-outer')) {
-            return;
-          }
-
-          var container = root.querySelector('.tns-carousel-inner');
-
-          if (!container || container._tnsCarousel || container.classList.contains('tns-slider')) {
-            return;
-          }
-
-          var userOptions = {};
-
-          if (container.dataset.carouselOptions) {
-            try {
-              userOptions = JSON.parse(container.dataset.carouselOptions);
-            } catch (error) {
-              userOptions = {};
-            }
-          }
-
-          var options = Object.assign({
-            container: container,
-            controlsText: ['<i class="fal fa-chevron-left"></i>', '<i class="fal fa-chevron-right"></i>'],
-            navPosition: 'bottom',
-            mouseDrag: true,
-            speed: 500,
-            autoplayHoverPause: true,
-            autoplayButtonOutput: false
-          }, userOptions);
-
-          container._tnsCarousel = tns(options);
-        }, 250);
-      }, { once: true });
-    </script>
 
 </section>
 
