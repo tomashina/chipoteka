@@ -32,27 +32,22 @@ class ControllerExtensionModuleSlideshow extends Controller {
             }
             // --- /FILTER ---
 
-            if (empty($result['image']) || !is_file(DIR_IMAGE . $result['image'])) {
-                continue;
-            }
-
-            $image = $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height']);
-
+            // Responsive slika
             if (!empty($result['image_responsive']) && is_file(DIR_IMAGE . $result['image_responsive'])) {
                 $image_responsive = $this->model_tool_image->resize($result['image_responsive'], 500, 500);
             } else {
-                $image_responsive = '';
+                $image_responsive = $this->model_tool_image->resize('no_image.png', 500, 500);
             }
 
-            if ($image) {
+            if (!empty($result['image']) && is_file(DIR_IMAGE . $result['image'])) {
                 $data['banners'][] = array(
-                    'title'            => $result['title'],
-                    'actiontitle'      => isset($result['actiontitle']) ? $result['actiontitle'] : '',
-                    'buttontitle'      => isset($result['buttontitle']) ? $result['buttontitle'] : '',
-                    'text'             => isset($result['text']) ? $result['text'] : '',
-                    'link'             => $result['link'],
-                    'bojapozadine'     => isset($result['bojapozadine']) ? $result['bojapozadine'] : '',
-                    'image'            => $image,
+                    'title'          => $result['title'],
+                    'actiontitle'    => isset($result['actiontitle']) ? $result['actiontitle'] : '',
+                    'buttontitle'    => isset($result['buttontitle']) ? $result['buttontitle'] : '',
+                    'text'           => isset($result['text']) ? $result['text'] : '',
+                    'link'           => $result['link'],
+                    'bojapozadine'   => isset($result['bojapozadine']) ? $result['bojapozadine'] : '',
+                    'image'          => $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height']),
                     'image_responsive' => $image_responsive
                 );
             }
