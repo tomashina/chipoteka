@@ -38,12 +38,10 @@ class ControllerExtensionModuleSlideshow extends Controller {
 
             $image = $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height']);
 
-            // Kad nema posebne mobilne slike, koristi isti banner kako tap na mobitelu
-            // ne bi završio na praznom ili kolabiranom slideu.
             if (!empty($result['image_responsive']) && is_file(DIR_IMAGE . $result['image_responsive'])) {
                 $image_responsive = $this->model_tool_image->resize($result['image_responsive'], 500, 500);
             } else {
-                $image_responsive = $image;
+                $image_responsive = '';
             }
 
             if ($image) {
