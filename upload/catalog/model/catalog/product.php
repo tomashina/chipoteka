@@ -28,6 +28,7 @@ class ModelCatalogProduct extends Model {
 				'meta_keyword'     => $query->row['meta_keyword'],
 				'tag'              => $query->row['tag'],
 				'model'            => $query->row['model'],
+				'eprel_model'      => $query->row['eprel_model'],
 				'sku'              => $query->row['sku'],
 				'upc'              => $query->row['upc'],
 				'ean'              => $query->row['ean'],

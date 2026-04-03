@@ -318,33 +318,45 @@
 
 
 
-                                    {% if jan %}
+                                    {% if energy_label_pdf or energy_fiche_pdf or energy_label_thumb %}
                                         <div class="energy-class-wrapper">
 
-                                            <div class="energy-class-image-wrapper">
-                                                <a href="{{ energy_label_pdf }}"
-                                                   target="_blank" rel="noopener">
-                                                    <img class="product-image-energy-stickers-img"
-                                                         src="{{ energy_label_thumb }}"
-                                                         alt="{{ energy_label }}">
-                                                </a>
-                                            </div>
-
-                                            <div class="energy-class-links-wrapper">
-
-                                                <div class="energy-class-link">
-                                                    <a href="{{ energy_label_pdf }}"
-                                                       target="_blank" rel="noopener">
-                                                        Energetska naljepnica
-                                                    </a>
+                                            {% if energy_label_thumb %}
+                                                <div class="energy-class-image-wrapper">
+                                                    {% if energy_label_pdf %}
+                                                        <a href="{{ energy_label_pdf }}"
+                                                           target="_blank" rel="noopener">
+                                                            <img class="product-image-energy-stickers-img"
+                                                                 src="{{ energy_label_thumb }}"
+                                                                 alt="{{ energy_label }}">
+                                                        </a>
+                                                    {% else %}
+                                                        <img class="product-image-energy-stickers-img"
+                                                             src="{{ energy_label_thumb }}"
+                                                             alt="{{ energy_label }}">
+                                                    {% endif %}
                                                 </div>
+                                            {% endif %}
 
-                                                <div class="energy-class-link">
-                                                    <a href="{{ energy_fiche_pdf }}"
-                                                       target="_blank" rel="noopener">
-                                                        Informacijski list
-                                                    </a>
-                                                </div>
+                                            <div class="energy-class-links-wrapper"{% if not energy_label_thumb %} style="margin-left: 0;"{% endif %}>
+
+                                                {% if energy_label_pdf %}
+                                                    <div class="energy-class-link">
+                                                        <a href="{{ energy_label_pdf }}"
+                                                           target="_blank" rel="noopener">
+                                                            Energetska naljepnica
+                                                        </a>
+                                                    </div>
+                                                {% endif %}
+
+                                                {% if energy_fiche_pdf %}
+                                                    <div class="energy-class-link">
+                                                        <a href="{{ energy_fiche_pdf }}"
+                                                           target="_blank" rel="noopener">
+                                                            Informacijski list
+                                                        </a>
+                                                    </div>
+                                                {% endif %}
 
                                             </div>
                                         </div>

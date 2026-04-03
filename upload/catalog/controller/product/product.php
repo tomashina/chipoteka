@@ -177,31 +177,55 @@ class ControllerProductProduct extends Controller {
        // $loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse();
        // $loc->getAvailabilityForProduct($pinfo['sku']);
 
-		$product_info = $this->model_catalog_product->getProduct($product_id);
+			$product_info = $this->model_catalog_product->getProduct($product_id);
 
-		if ($product_info) {
+			if ($product_info) {
+                $data['energy_label_pdf'] = '';
+                $data['energy_label_thumb'] = '';
+                $data['energy_fiche_pdf'] = '';
+                $data['energy_label'] = null;
+                $data['energy_model'] = null;
+                $data['energy_category'] = null;
+                $data['eprel_model'] = !empty($product_info['eprel_model']) ? $product_info['eprel_model'] : null;
 
             if (!empty($product_info['jan'])) {
 
                 $eprelData = json_decode($product_info['jan'], true);
 
-                if ($eprelData) {
+                if (is_array($eprelData)) {
                     $energy_label_thumb = isset($eprelData[0]) ? $eprelData[0] : '';
                     $energy_model       = isset($eprelData[1]) ? $eprelData[1] : '';
                     $energy_category    = isset($eprelData[2]) ? $eprelData[2] : '';
 
-                    // URL za energetsku naljepnicu (PDF)
-                    $data['energy_label_pdf'] =
-                        "https://eprel.ec.europa.eu/api/products/" . $energy_category . "/" . $energy_model . "/labels?format=PDF";
+                    $data['energy_label'] = $energy_label_thumb ?: null;
+                    $data['energy_model'] = $energy_model ?: null;
+                    $data['energy_category'] = $energy_category ?: null;
 
-                    // URL za thumbnail (ako ga želiš prikazivati)
-                    $data['energy_label_thumb'] =
-                        "https://ec.europa.eu/assets/move-ener/eprel/EPREL%20Public/Nested-labels%20thumbnails/" . $energy_label_thumb;
+                    if ($energy_category && $energy_model) {
+                        $data['energy_label_pdf'] = $this->getEprelLabelPdfUrl($energy_category, $energy_model);
+                        $data['energy_fiche_pdf'] = $this->getEprelFichePdfUrl($energy_category, $energy_model);
+                    }
 
-                    // URL za fiche (putem tvog proxy route-a)
-                    $data['energy_fiche_pdf'] =
-                        "https://eprel.ec.europa.eu/fiches/$energy_category/Fiche_{$energy_model}_HR.pdf";
+                    if ($energy_label_thumb) {
+                        $data['energy_label_thumb'] = $this->getEprelLabelThumbUrl($energy_label_thumb);
+                    }
                 }
+            }
+
+            if (!$data['energy_model'] && $data['eprel_model']) {
+                $data['energy_model'] = $data['eprel_model'];
+            }
+
+            if (!$data['energy_category'] && $data['energy_model']) {
+                $data['energy_category'] = $this->getEprelCategoryFromProductCategories($product_id);
+            }
+
+            if (!$data['energy_label_pdf'] && $data['energy_category'] && $data['energy_model']) {
+                $data['energy_label_pdf'] = $this->getEprelLabelPdfUrl($data['energy_category'], $data['energy_model']);
+            }
+
+            if (!$data['energy_fiche_pdf'] && $data['energy_category'] && $data['energy_model']) {
+                $data['energy_fiche_pdf'] = $this->getEprelFichePdfUrl($data['energy_category'], $data['energy_model']);
             }
 
 
@@ -336,18 +360,8 @@ class ControllerProductProduct extends Controller {
 			$data['points'] = $product_info['points'];
             $data['upc'] = $product_info['upc'];
             $data['ean'] = $product_info['ean'];
-
-            if($product_info['jan']){
-
-                $data['jan'] = $product_info['jan'];
-
-                $jan = json_decode($product_info['jan'], true);
-
-                $data['energy_label'] = isset($jan[0]) ? $jan[0] : null;
-                $data['energy_model'] = isset($jan[1]) ? $jan[1] : null;
-                $data['energy_category'] = isset($jan[2]) ? $jan[2] : null;
-
-            }
+            $data['jan'] = !empty($product_info['jan']) ? $product_info['jan'] : null;
+            $data['eprel_model'] = !empty($product_info['eprel_model']) ? $product_info['eprel_model'] : null;
 
 
 
@@ -1033,6 +1047,42 @@ class ControllerProductProduct extends Controller {
         }
 
         return [];
+    }
+
+    private function getEprelCategoryFromProductCategories(int $product_id): string
+    {
+        $eprel_category_map = [
+            'electronicdisplays' => [320, 396],
+            'smartphonestablets20231669' => [378, 380, 389],
+            'lightsources' => [538],
+        ];
+
+        foreach ($this->model_catalog_product->getCategories($product_id) as $product_category) {
+            $category_id = (int) $product_category['category_id'];
+
+            foreach ($eprel_category_map as $eprel_category => $category_ids) {
+                if (in_array($category_id, $category_ids, true)) {
+                    return $eprel_category;
+                }
+            }
+        }
+
+        return '';
+    }
+
+    private function getEprelLabelPdfUrl(string $category, string $model): string
+    {
+        return "https://eprel.ec.europa.eu/api/products/" . $category . "/" . $model . "/labels?format=PDF";
+    }
+
+    private function getEprelFichePdfUrl(string $category, string $model): string
+    {
+        return "https://eprel.ec.europa.eu/fiches/" . $category . "/Fiche_{$model}_HR.pdf";
+    }
+
+    private function getEprelLabelThumbUrl(string $thumb): string
+    {
+        return "https://ec.europa.eu/assets/move-ener/eprel/EPREL%20Public/Nested-labels%20thumbnails/" . $thumb;
     }
 
     public function getCategoryIdFromProductId($product_id) {
