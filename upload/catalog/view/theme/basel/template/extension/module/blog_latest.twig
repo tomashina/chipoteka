@@ -32,7 +32,7 @@
     {% endif %}
 
     <div class="featured-posts-carousel blog-latest-carousel-{{ module }} tns-carousel tns-controls-static tns-controls-outside py-3 pt-4">
-        <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 2, &quot;nav&quot;: false, &quot;controls&quot;: true, &quot;autoHeight&quot;: true, &quot;touch&quot;: true, &quot;mouseDrag&quot;: true, &quot;swipeAngle&quot;: false, &quot;preventScrollOnTouch&quot;: &quot;auto&quot;, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1},&quot;700&quot;:{&quot;items&quot;:2, &quot;gutter&quot;: 20},&quot;1240&quot;:{&quot;items&quot;:3, &quot;gutter&quot;: 16},&quot;1440&quot;:{&quot;items&quot;:4, &quot;gutter&quot;: 16}}}">
+        <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 2, &quot;nav&quot;: false, &quot;controls&quot;: true, &quot;autoHeight&quot;: true, &quot;responsive&quot;: {&quot;0&quot;:{&quot;items&quot;:1},&quot;700&quot;:{&quot;items&quot;:2, &quot;gutter&quot;: 20},&quot;1240&quot;:{&quot;items&quot;:3, &quot;gutter&quot;: 16},&quot;1440&quot;:{&quot;items&quot;:4, &quot;gutter&quot;: 16}}}">
          {% if posts %}
             {% for blog in posts %}
             <article>
@@ -54,10 +54,6 @@
         </div>
     </div>
     <style>
-        .featured-posts-carousel.blog-latest-carousel-{{ module }} .tns-carousel-inner {
-            touch-action: pan-y;
-        }
-
         @media (max-width: 991.98px) {
             .featured-posts-carousel.blog-latest-carousel-{{ module }} {
                 padding-left: 2.5rem;
@@ -66,6 +62,7 @@
 
             .featured-posts-carousel.blog-latest-carousel-{{ module }} [data-controls] {
                 opacity: 1;
+                z-index: 3;
                 width: 2.5rem;
                 height: 2.5rem;
                 line-height: 2.375rem;
