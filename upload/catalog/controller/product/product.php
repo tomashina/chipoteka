@@ -186,6 +186,7 @@ class ControllerProductProduct extends Controller {
                 $data['energy_label'] = null;
                 $data['energy_model'] = null;
                 $data['energy_category'] = null;
+                $data['jan'] = !empty($product_info['jan']) ? $product_info['jan'] : null;
                 $data['eprel_model'] = !empty($product_info['eprel_model']) ? $product_info['eprel_model'] : null;
 
             if (!empty($product_info['jan'])) {
@@ -226,6 +227,29 @@ class ControllerProductProduct extends Controller {
 
             if (!$data['energy_fiche_pdf'] && $data['energy_category'] && $data['energy_model']) {
                 $data['energy_fiche_pdf'] = $this->getEprelFichePdfUrl($data['energy_category'], $data['energy_model']);
+            }
+
+            if (!$data['energy_label_thumb'] && $data['energy_category'] && $data['energy_model']) {
+                $eprel_product_data = $this->getEprelProductData($data['energy_category'], $data['energy_model']);
+
+                if (!empty($eprel_product_data['energyClassImageWithScale']) || !empty($eprel_product_data['energyClassImage'])) {
+                    $energy_label_image = !empty($eprel_product_data['energyClassImageWithScale'])
+                        ? $eprel_product_data['energyClassImageWithScale']
+                        : $eprel_product_data['energyClassImage'];
+
+                    $data['energy_label'] = $energy_label_image;
+                    $data['energy_label_thumb'] = $this->getEprelLabelThumbUrl($energy_label_image);
+
+                    if (!$data['jan']) {
+                        $data['jan'] = $this->buildEprelJanPayload(
+                            $energy_label_image,
+                            (string) $data['energy_model'],
+                            (string) $data['energy_category']
+                        );
+
+                        $this->model_catalog_product->cacheEprelJanIfMissing($product_id, $data['jan']);
+                    }
+                }
             }
 
 
@@ -360,7 +384,6 @@ class ControllerProductProduct extends Controller {
 			$data['points'] = $product_info['points'];
             $data['upc'] = $product_info['upc'];
             $data['ean'] = $product_info['ean'];
-            $data['jan'] = !empty($product_info['jan']) ? $product_info['jan'] : null;
             $data['eprel_model'] = !empty($product_info['eprel_model']) ? $product_info['eprel_model'] : null;
 
 
@@ -1070,6 +1093,53 @@ class ControllerProductProduct extends Controller {
         return '';
     }
 
+    private function getEprelProductData(string $category, string $model): array
+    {
+        if (!$category || !$model || !function_exists('curl_init')) {
+            return [];
+        }
+
+        $ch = curl_init("https://eprel.ec.europa.eu/api/products/{$category}/{$model}");
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 4);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'x-api-key: ' . $this->getEprelApiKey(),
+            'Accept: application/json',
+        ]);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'AGmedia-EPREL-Client/1.0');
+
+        $response = curl_exec($ch);
+
+        if ($response === false) {
+            curl_close($ch);
+
+            return [];
+        }
+
+        $http_code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($http_code !== 200) {
+            return [];
+        }
+
+        $data = json_decode($response, true);
+
+        return is_array($data) ? $data : [];
+    }
+
+    private function buildEprelJanPayload(string $image, string $model, string $category): string
+    {
+        return json_encode((object) [
+            '0' => $image,
+            '1' => $model,
+            '2' => $category,
+        ], JSON_UNESCAPED_SLASHES);
+    }
+
     private function getEprelLabelPdfUrl(string $category, string $model): string
     {
         return "https://eprel.ec.europa.eu/api/products/" . $category . "/" . $model . "/labels?format=PDF";
@@ -1083,6 +1153,11 @@ class ControllerProductProduct extends Controller {
     private function getEprelLabelThumbUrl(string $thumb): string
     {
         return "https://ec.europa.eu/assets/move-ener/eprel/EPREL%20Public/Nested-labels%20thumbnails/" . $thumb;
+    }
+
+    private function getEprelApiKey(): string
+    {
+        return 'EJIHIAziLs86nUV0rs7V08u5XTg1m8LF16uXJ9J4';
     }
 
     public function getCategoryIdFromProductId($product_id) {
