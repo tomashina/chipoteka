@@ -1,5 +1,18 @@
 <?php
 class ModelToolImage extends Model {
+    private function normalizeCachePath($path) {
+        $segments = explode('/', str_replace('\\', '/', $path));
+
+        $segments = array_map(function ($segment) {
+            $segment = str_replace(array(' ', '+'), '-', $segment);
+            $segment = preg_replace('/-+/', '-', $segment);
+
+            return trim($segment, '-');
+        }, $segments);
+
+        return implode('/', $segments);
+    }
+
     private function buildImageUrl($path) {
         $segments = explode('/', str_replace('\\', '/', $path));
         $segments = array_map('rawurlencode', $segments);
@@ -13,10 +26,11 @@ class ModelToolImage extends Model {
         }
 
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        $cache_stem = $this->normalizeCachePath(utf8_substr($filename, 0, utf8_strrpos($filename, '.')));
 
         $image_old = $filename;
-        $image_new = 'cache/' . utf8_substr($filename, 0, utf8_strrpos($filename, '.')) . '-' . (int)$width . 'x' . (int)$height . '.' . $extension;
-        $image_new_webp = 'cachewebp/' . utf8_substr($filename, 0, utf8_strrpos($filename, '.')) . '-' . (int)$width . 'x' . (int)$height . '.webp';
+        $image_new = 'cache/' . $cache_stem . '-' . (int)$width . 'x' . (int)$height . '.' . $extension;
+        $image_new_webp = 'cachewebp/' . $cache_stem . '-' . (int)$width . 'x' . (int)$height . '.webp';
 
         if (!is_file(DIR_IMAGE . $image_new) || (filemtime(DIR_IMAGE . $image_old) > filemtime(DIR_IMAGE . $image_new))) {
             list($width_orig, $height_orig, $image_type) = getimagesize(DIR_IMAGE . $image_old);
@@ -66,7 +80,16 @@ class ModelToolImage extends Model {
 
                 $image_webp = new Image(DIR_IMAGE . $image_old);
                 $image_webp->resize($width, $height);
-                $image_webp->save_webp($webp_file);
+
+                if (!$image_webp->save_webp($webp_file)) {
+                    @unlink($webp_file);
+                }
+
+                clearstatcache(true, $webp_file);
+
+                if (!is_file($webp_file) || !@getimagesize($webp_file)) {
+                    @unlink($webp_file);
+                }
             }
         }
 

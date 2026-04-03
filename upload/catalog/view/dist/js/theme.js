@@ -395,9 +395,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     };
 
 
-    var carousels = document.querySelectorAll('.tns-carousel .tns-carousel-inner');
-    forEach(carousels, function (index, value) {
-      if (value._tnsCarousel || value.classList.contains('tns-slider')) return;
+    var initCarousel = function initCarousel(value) {
+      if (!value || value._tnsCarousel || value.classList.contains('tns-slider')) return;
       var defaults = {
         container: value,
         controlsText: ['<i class="fal fa-chevron-left"></i>', '<i class="fal fa-chevron-right"></i>'],
@@ -407,13 +406,47 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         autoplayHoverPause: true,
         autoplayButtonOutput: false
       };
-      var userOptions;
-      if (value.dataset.carouselOptions != undefined) userOptions = JSON.parse(value.dataset.carouselOptions);
-      var options = Object.assign({}, defaults, userOptions);
-      var carousel = tns(options);
-      value._tnsCarousel = carousel;
-      stabilizeCarousel(value, carousel);
+      var userOptions = {};
+
+      if (value.dataset.carouselOptions != undefined) {
+        try {
+          userOptions = JSON.parse(value.dataset.carouselOptions);
+        } catch (error) {
+          console.error('Carousel options parse failed', value, error);
+          return;
+        }
+      }
+
+      try {
+        var options = Object.assign({}, defaults, userOptions);
+        var carousel = tns(options);
+        value._tnsCarousel = carousel;
+        stabilizeCarousel(value, carousel);
+      } catch (error) {
+        console.error('Carousel init failed', value, error);
+      }
+    };
+
+    var initCarousels = function initCarousels() {
+      var carousels = document.querySelectorAll('.tns-carousel .tns-carousel-inner');
+      forEach(carousels, function (index, value) {
+        initCarousel(value);
+      });
+    };
+
+    initCarousels();
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCarousels, {
+        once: true
+      });
+    }
+
+    window.addEventListener('load', initCarousels, {
+      once: true
     });
+    window.addEventListener('pageshow', initCarousels);
+    window.requestAnimationFrame(initCarousels);
   }();
   /**
    * Lightbox component for presenting various types of media

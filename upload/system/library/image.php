@@ -115,10 +115,33 @@ class Image {
      */
 
     public function save_webp($file, $quality = 100) {
-        if (is_resource($this->image)) {
-            imagewebp($this->image, $file, $quality);
+        $saved = false;
+
+        if (is_object($this->image) || is_resource($this->image)) {
+            $directory = dirname($file);
+            $temp_file = $file . '.' . uniqid('tmp_', true);
+
+            if (!is_dir($directory)) {
+                @mkdir($directory, 0777, true);
+            }
+
+            $saved = imagewebp($this->image, $temp_file, $quality);
+
+            if ($saved) {
+                @chmod($temp_file, 0666);
+
+                if (!@rename($temp_file, $file)) {
+                    $saved = @copy($temp_file, $file);
+                    @unlink($temp_file);
+                }
+            } else {
+                @unlink($temp_file);
+            }
+
             imagedestroy($this->image);
         }
+
+        return $saved;
     }
 
 	public function save($file, int $quality = 90) {
