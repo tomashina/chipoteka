@@ -1,5 +1,12 @@
 <?php
 class ModelToolImage extends Model {
+    private function buildImageUrl($path) {
+        $segments = explode('/', str_replace('\\', '/', $path));
+        $segments = array_map('rawurlencode', $segments);
+
+        return 'https://images.chipoteka.hr/image/' . implode('/', $segments);
+    }
+
     public function resize($filename, $width, $height) {
         if (!is_file(DIR_IMAGE . $filename) || substr(str_replace('\\', '/', realpath(DIR_IMAGE . $filename)), 0, strlen(DIR_IMAGE)) != str_replace('\\', '/', DIR_IMAGE)) {
             return;
@@ -41,7 +48,10 @@ class ModelToolImage extends Model {
 
         $gd = gd_info();
         if ($gd['WebP Support']) {
-            if (!is_file(DIR_IMAGE . $image_new_webp) || (filectime(DIR_IMAGE . $image_new) > filectime(DIR_IMAGE . $image_new_webp))) {
+            $webp_file = DIR_IMAGE . $image_new_webp;
+            $webp_is_valid = is_file($webp_file) && @getimagesize($webp_file);
+
+            if (!$webp_is_valid || (filemtime(DIR_IMAGE . $image_old) > filemtime($webp_file))) {
                 $path = '';
 
                 $directories = explode('/', dirname($image_new_webp));
@@ -56,18 +66,14 @@ class ModelToolImage extends Model {
 
                 $image_webp = new Image(DIR_IMAGE . $image_old);
                 $image_webp->resize($width, $height);
-                $image_webp->save_webp(DIR_IMAGE . $image_new_webp);
+                $image_webp->save_webp($webp_file);
             }
         }
 
-        $image_new = str_replace(' ', '%20', $image_new);  // fix bug when attach image on email (gmail.com). it is automatic changing space " " to +
-
-        if ($this->request->server['HTTPS']) {
-            //return $this->config->get('config_ssl') . 'image/' . $image_new;
-            return 'https://images.chipoteka.hr/image/' . $image_new_webp . '" width="' . $width . '" height="' . $height;
-        } else {
-            //return $this->config->get('config_url') . 'image/' . $image_new;
-            return 'https://images.chipoteka.hr/image/' . $image_new_webp . '" width="' . $width . '" height="' . $height;
+        if ($gd['WebP Support'] && is_file(DIR_IMAGE . $image_new_webp)) {
+            return $this->buildImageUrl($image_new_webp);
         }
+
+        return $this->buildImageUrl($image_old);
     }
 }

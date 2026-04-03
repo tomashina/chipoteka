@@ -21,8 +21,10 @@ $(document).ready(function() {
 		var product = $(this).parents("#content").find('h1').text();
 
 		var label = module ? module : (product ? product : '');
-		var route = getURLVar('route').split('/')[1];
-		var page = route.charAt(0).toUpperCase() + route.slice(1).toLowerCase();
+		var routeValue = typeof getURLVar === 'function' ? getURLVar('route') : '';
+		var routeParts = routeValue ? routeValue.split('/') : [];
+		var route = routeParts[1] ? routeParts[1] : (routeParts[0] ? routeParts[0] : '');
+		var page = route ? route.charAt(0).toUpperCase() + route.slice(1).toLowerCase() : '';
 		var category = module ? route == 'product' ? 'Related ' + page : page : page;
 		
 		if (category && action && label) {
