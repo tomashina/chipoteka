@@ -32,22 +32,29 @@ class ControllerExtensionModuleSlideshow extends Controller {
             }
             // --- /FILTER ---
 
-            // Responsive slika
+            if (empty($result['image']) || !is_file(DIR_IMAGE . $result['image'])) {
+                continue;
+            }
+
+            $image = $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height']);
+
+            // Kad nema posebne mobilne slike, koristi isti banner kako tap na mobitelu
+            // ne bi završio na praznom ili kolabiranom slideu.
             if (!empty($result['image_responsive']) && is_file(DIR_IMAGE . $result['image_responsive'])) {
                 $image_responsive = $this->model_tool_image->resize($result['image_responsive'], 500, 500);
             } else {
-                $image_responsive = $this->model_tool_image->resize('no_image.png', 500, 500);
+                $image_responsive = $image;
             }
 
-            if (!empty($result['image']) && is_file(DIR_IMAGE . $result['image'])) {
+            if ($image) {
                 $data['banners'][] = array(
-                    'title'          => $result['title'],
-                    'actiontitle'    => isset($result['actiontitle']) ? $result['actiontitle'] : '',
-                    'buttontitle'    => isset($result['buttontitle']) ? $result['buttontitle'] : '',
-                    'text'           => isset($result['text']) ? $result['text'] : '',
-                    'link'           => $result['link'],
-                    'bojapozadine'   => isset($result['bojapozadine']) ? $result['bojapozadine'] : '',
-                    'image'          => $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height']),
+                    'title'            => $result['title'],
+                    'actiontitle'      => isset($result['actiontitle']) ? $result['actiontitle'] : '',
+                    'buttontitle'      => isset($result['buttontitle']) ? $result['buttontitle'] : '',
+                    'text'             => isset($result['text']) ? $result['text'] : '',
+                    'link'             => $result['link'],
+                    'bojapozadine'     => isset($result['bojapozadine']) ? $result['bojapozadine'] : '',
+                    'image'            => $image,
                     'image_responsive' => $image_responsive
                 );
             }

@@ -1,5 +1,5 @@
-<section class="tns-carousel mb-0">
-  <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 1, &quot;mode&quot;: &quot;gallery&quot;, &quot;nav&quot;: true, &quot;autoplay&quot;:  &quot;3000&quot;, &quot;responsive&quot;: {&quot;0&quot;: {&quot;nav&quot;: true, &quot;controls&quot;: true}, &quot;576&quot;: {&quot;nav&quot;: true, &quot;controls&quot;: true}}}">
+<section class="hero-slideshow hero-slideshow-{{ module }} tns-carousel mb-0">
+  <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 1, &quot;mode&quot;: &quot;gallery&quot;, &quot;nav&quot;: true, &quot;controls&quot;: true, &quot;autoplay&quot;: true, &quot;autoplayTimeout&quot;: 3000, &quot;mouseDrag&quot;: false, &quot;touch&quot;: false, &quot;speed&quot;: 500, &quot;autoplayButtonOutput&quot;: false, &quot;responsive&quot;: {&quot;0&quot;: {&quot;nav&quot;: true, &quot;controls&quot;: true}, &quot;576&quot;: {&quot;nav&quot;: true, &quot;controls&quot;: true}}}">
     {% for banner in banners %}
     <div>
       <div class="rounded-3  text-center text-xl-start" style="overflow: hidden;">
@@ -9,9 +9,9 @@
 
 
                    <!--  <img loading="lazy" src="{{ banner.image }}" alt="{{ banner.title }}"> -->
-                     <img loading="lazy" src="{{ banner.image }}" class="d-none d-sm-block" alt="{{ banner.title }}" style="width:100%">
+                     <img loading="lazy" draggable="false" src="{{ banner.image }}" class="d-none d-sm-block" alt="{{ banner.title }}" style="width:100%">
 
-                        <img loading="lazy" src="{{ banner.image_responsive }}"  class="d-block d-sm-none" alt="{{ banner.title }}">
+                        <img loading="lazy" draggable="false" src="{{ banner.image_responsive }}"  class="d-block d-sm-none" alt="{{ banner.title }}">
                      {% if banner.link %}
 
                         </a>
@@ -22,4 +22,24 @@
     </div>
     {% endfor %}
     </div>
+    <style>
+      .hero-slideshow.hero-slideshow-{{ module }} .tns-item {
+        pointer-events: none;
+      }
+
+      .hero-slideshow.hero-slideshow-{{ module }} .tns-slide-active {
+        pointer-events: auto;
+      }
+
+      .hero-slideshow.hero-slideshow-{{ module }} .tns-slide-active > div {
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero-slideshow.hero-slideshow-{{ module }} a,
+      .hero-slideshow.hero-slideshow-{{ module }} img {
+        display: block;
+        width: 100%;
+      }
+    </style>
 </section>
