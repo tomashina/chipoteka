@@ -1,5 +1,5 @@
-<section class="tns-carousel mb-0">
-  <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;: 1, &quot;mode&quot;: &quot;gallery&quot;, &quot;nav&quot;: true, &quot;autoplay&quot;:  &quot;3000&quot;, &quot;responsive&quot;: {&quot;0&quot;: {&quot;nav&quot;: true, &quot;controls&quot;: true}, &quot;576&quot;: {&quot;nav&quot;: true, &quot;controls&quot;: true}}}">
+<section class="hero-slideshow hero-slideshow-{{ module }} tns-carousel mb-0">
+  <div class="tns-carousel-inner" data-carousel-options="{&quot;items&quot;:1,&quot;slideBy&quot;:1,&quot;mode&quot;:&quot;gallery&quot;,&quot;nav&quot;:true,&quot;controls&quot;:true,&quot;autoplay&quot;:true,&quot;autoplayTimeout&quot;:5000,&quot;touch&quot;:false,&quot;mouseDrag&quot;:false,&quot;preventActionWhenRunning&quot;:true,&quot;responsive&quot;:{&quot;0&quot;:{&quot;nav&quot;:true,&quot;controls&quot;:true},&quot;576&quot;:{&quot;nav&quot;:true,&quot;controls&quot;:true}}}">
     {% for banner in banners %}
     <div>
       <div class="rounded-3  text-center text-xl-start" style="overflow: hidden;">
@@ -22,4 +22,13 @@
     </div>
     {% endfor %}
     </div>
+    <style>
+      .hero-slideshow.hero-slideshow-{{ module }} .tns-item {
+        pointer-events: none;
+      }
+
+      .hero-slideshow.hero-slideshow-{{ module }} .tns-slide-active {
+        pointer-events: auto;
+      }
+    </style>
 </section>
