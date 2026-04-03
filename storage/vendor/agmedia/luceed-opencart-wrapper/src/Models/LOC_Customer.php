@@ -169,11 +169,23 @@ class LOC_Customer
         $this->lookup_response_reliable = true;
         $customer_exist = ! empty($this->customer['uid']);
 
-        // Set the response from Luceed service.
-        $exist = $this->getCustomersByEmail();
+        $exist = [];
 
-        if ($exist === null) {
-            return $customer_exist;
+        if ($this->hasOIB()) {
+            $exist = $this->getCustomersByOib();
+
+            if ($exist === null) {
+                return $customer_exist;
+            }
+
+            $exist = $this->mergeLookupCustomers($exist, $this->getCustomersByEmail(false));
+        } else {
+            // Set the response from Luceed service.
+            $exist = $this->getCustomersByEmail();
+
+            if ($exist === null) {
+                return $customer_exist;
+            }
         }
 
         Log::store('$this->customer', 'test_customers');
@@ -203,26 +215,27 @@ class LOC_Customer
             /**
              * @hasOIB
              */
-            if ($this->hasOIB() && ! $this->isB2B()) {
+            if ($this->hasOIB()) {
                 $has = false;
 
-                foreach ($exist as $l_customer) {
-                    if ($l_customer->enabled == 'D' && $l_customer->oib == $this->order_customer['oib']) {
-                        $this->customer['uid'] = $l_customer->partner_uid;
-                        $this->customer['partner_uid'] = $l_customer->partner_uid;
-                        $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
-                        $this->customer['naziv'] = $l_customer->naziv;
-                        $this->customer['tip_komitenta'] = 'P';
+                $l_customer = $this->resolveLegalEntityCustomerMatch($exist);
 
-                        $has = true;
-                        $customer_exist = true;
+                if ($l_customer) {
+                    $this->customer['uid'] = $l_customer->partner_uid;
+                    $this->customer['partner_uid'] = $l_customer->partner_uid;
+                    $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
+                    $this->customer['naziv'] = $l_customer->naziv;
+                    $this->customer['tip_komitenta'] = 'P';
+                    $this->syncLocalLuceedUid((string) $l_customer->partner_uid);
 
-                        Log::store('2', 'test_customers');
-                        Log::store($this->customer, 'test_customers');
-                    }
+                    $has = true;
+                    $customer_exist = true;
+
+                    Log::store('2', 'test_customers');
+                    Log::store($this->customer, 'test_customers');
                 }
 
-                if ( ! $has && empty($this->customer['uid'])) {
+                if ( ! $has && ! $this->isB2B() && empty($this->customer['uid'])) {
                     $this->setCustomerOibData();
 
                     if ($this->lookup_response_reliable) {
@@ -359,6 +372,8 @@ class LOC_Customer
             }
         }
 
+        $customer_exist = $customer_exist || ! empty($this->customer['uid']);
+
         if ($customer_exist) {
             $this->service->updateCustomer(['partner' => [$this->customer]]);
         }
@@ -429,7 +444,7 @@ class LOC_Customer
      */
     private function hasOIB(): bool
     {
-        return ($this->order_customer['oib'] != '') ? true : false;
+        return $this->normalizeOib((string) ($this->order_customer['oib'] ?? '')) !== '';
     }
 
 
@@ -438,7 +453,7 @@ class LOC_Customer
      */
     private function setCustomerOibData(): void
     {
-        $this->customer['oib'] = $this->order_customer['oib'];
+        $this->customer['oib'] = $this->normalizeOib((string) $this->order_customer['oib']);
         $this->customer['naziv'] = $this->order_customer['company'];
         $this->customer['ime'] = '';
         $this->customer['prezime'] = '';
@@ -512,7 +527,7 @@ class LOC_Customer
             'postanski_broj'      => $collection['zip'],
             'mjesto_uid'          => $this->setCityUid($collection['zip'], $collection['city']),
             'has_oib'             => $collection['has_oib'],
-            'oib'                 => $collection['oib'],
+            'oib'                 => $this->normalizeOib((string) $collection['oib']),
         ];
 
         return $data;
@@ -606,9 +621,122 @@ class LOC_Customer
     }
 
 
+    private function matchesBillingAddress($customer): bool
+    {
+        return $this->normalizeLookupValue((string) $this->order_customer['address']) === $this->normalizeLookupValue((string) ($customer->adresa ?? ''))
+            && $this->normalizeLookupValue((string) $this->order_customer['zip']) === $this->normalizeLookupValue((string) ($customer->postanski_broj ?? ''));
+    }
+
+
+    private function matchesCompanyName($customer): bool
+    {
+        $company = $this->normalizeLookupValue((string) ($this->order_customer['company'] ?? ''));
+
+        if ($company === '') {
+            return true;
+        }
+
+        return $company === $this->normalizeLookupValue((string) ($customer->naziv ?? ''));
+    }
+
+
     private function normalizeLookupValue(string $value): string
     {
         return mb_strtolower(trim(preg_replace('/\s+/', ' ', $value)));
+    }
+
+
+    private function normalizeOib(string $value): string
+    {
+        return preg_replace('/\D+/', '', $value);
+    }
+
+
+    private function mergeLookupCustomers(array $primary, array $secondary = []): array
+    {
+        $merged = [];
+        $seen = [];
+
+        foreach (array_merge($primary, $secondary) as $customer) {
+            $key = (string) ($customer->partner_uid ?? '');
+
+            if ($key !== '' && isset($seen[$key])) {
+                continue;
+            }
+
+            if ($key !== '') {
+                $seen[$key] = true;
+            }
+
+            $merged[] = $customer;
+        }
+
+        return $merged;
+    }
+
+
+    private function syncLocalLuceedUid(string $uid): void
+    {
+        if ( ! empty($this->customer['id'])) {
+            Customer::where('customer_id', $this->customer['id'])->update([
+                'luceed_uid' => $uid
+            ]);
+        }
+    }
+
+
+    private function resolveLegalEntityCustomerMatch(array $customers)
+    {
+        $exact_matches = [];
+        $address_matches = [];
+        $oib_matches = [];
+        $oib = $this->normalizeOib((string) ($this->order_customer['oib'] ?? ''));
+
+        foreach ($customers as $customer) {
+            if (($customer->enabled ?? '') != 'D') {
+                continue;
+            }
+
+            if ($this->normalizeOib((string) ($customer->oib ?? '')) !== $oib) {
+                continue;
+            }
+
+            $oib_matches[] = $customer;
+
+            if ($this->matchesBillingAddress($customer)) {
+                $address_matches[] = $customer;
+
+                if ($this->matchesCompanyName($customer)) {
+                    $exact_matches[] = $customer;
+                }
+            }
+        }
+
+        if ( ! empty($exact_matches)) {
+            return $this->preferPrimaryCustomer($exact_matches);
+        }
+
+        if ( ! empty($address_matches)) {
+            return $this->preferPrimaryCustomer($address_matches);
+        }
+
+        if (count($oib_matches) === 1) {
+            return $oib_matches[0];
+        }
+
+        return null;
+    }
+
+
+    private function preferPrimaryCustomer(array $customers)
+    {
+        foreach ($customers as $customer) {
+            if (empty($customer->grupacija)) {
+                return $customer;
+            }
+        }
+
+        return $customers[0] ?? null;
     }
 
 
@@ -635,46 +763,56 @@ class LOC_Customer
     }
 
 
-    private function getCustomersByEmail(): ?array
+    private function getCustomersByEmail(bool $required = true): ?array
     {
         return $this->resolveCustomersResponse(
             $this->service->getCustomerByEmail((string) ($this->customer['e_mail'] ?? '')),
-            'email'
+            'email',
+            $required
         );
     }
 
 
-    private function getCustomersByOib(): ?array
+    private function getCustomersByOib(bool $required = true): ?array
     {
         return $this->resolveCustomersResponse(
-            $this->service->getCustomerByOib((string) ($this->customer['oib'] ?? '')),
-            'oib'
+            $this->service->getCustomerByOib($this->normalizeOib((string) ($this->customer['oib'] ?? ''))),
+            'oib',
+            $required
         );
     }
 
 
-    private function resolveCustomersResponse($response, string $type): ?array
+    private function resolveCustomersResponse($response, string $type, bool $required = true): ?array
     {
         if ($response === false || $response === null || $response === '') {
-            $this->lookup_response_reliable = false;
-            Log::store('Invalid Luceed customer lookup response.', 'luceed_customer_sync_skip');
-            Log::store($type, 'luceed_customer_sync_skip');
-            Log::store($this->customer['e_mail'] ?? '', 'luceed_customer_sync_skip');
-            Log::store($this->customer['oib'] ?? '', 'luceed_customer_sync_skip');
+            if ($required) {
+                $this->lookup_response_reliable = false;
+                Log::store('Invalid Luceed customer lookup response.', 'luceed_customer_sync_skip');
+                Log::store($type, 'luceed_customer_sync_skip');
+                Log::store($this->customer['e_mail'] ?? '', 'luceed_customer_sync_skip');
+                Log::store($this->customer['oib'] ?? '', 'luceed_customer_sync_skip');
 
-            return null;
+                return null;
+            }
+
+            return [];
         }
 
         json_decode($response);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            $this->lookup_response_reliable = false;
-            Log::store('Non-JSON Luceed customer lookup response.', 'luceed_customer_sync_skip');
-            Log::store($type, 'luceed_customer_sync_skip');
-            Log::store($this->customer['e_mail'] ?? '', 'luceed_customer_sync_skip');
-            Log::store($this->customer['oib'] ?? '', 'luceed_customer_sync_skip');
+            if ($required) {
+                $this->lookup_response_reliable = false;
+                Log::store('Non-JSON Luceed customer lookup response.', 'luceed_customer_sync_skip');
+                Log::store($type, 'luceed_customer_sync_skip');
+                Log::store($this->customer['e_mail'] ?? '', 'luceed_customer_sync_skip');
+                Log::store($this->customer['oib'] ?? '', 'luceed_customer_sync_skip');
 
-            return null;
+                return null;
+            }
+
+            return [];
         }
 
         return $this->setResponseData($response);
