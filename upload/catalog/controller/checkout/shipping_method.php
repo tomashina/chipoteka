@@ -247,6 +247,10 @@ class ControllerCheckoutShippingMethod extends Controller {
 			foreach ($pickup_map as $store_code) {
 				$code = $this->normalizeStoreCode($store_code);
 
+				if ($this->isPickupStoreExcludedFromCheckout($code)) {
+					continue;
+				}
+
 				if (!isset($response[$code])) {
 					$row = isset($stores[$code]) ? $stores[$code] : array();
 
@@ -265,6 +269,10 @@ class ControllerCheckoutShippingMethod extends Controller {
 			});
 
 			return array_values($response);
+		}
+
+		private function isPickupStoreExcludedFromCheckout($store_code) {
+			return in_array((string)$store_code, array('101'), true);
 		}
 
 		private function loadPickupStoresIndex() {

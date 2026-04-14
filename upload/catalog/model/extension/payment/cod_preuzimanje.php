@@ -53,7 +53,7 @@ class ModelExtensionPaymentCodPreuzimanje extends Model {
             $status = false;
         }
 
-        if (isset($this->session->data['shipping_method']['code']) && $this->session->data['shipping_method']['code'] == 'flat.flat') {
+        if (!isset($this->session->data['shipping_method']['code']) || strpos($this->session->data['shipping_method']['code'], 'pickup.pickup_') !== 0) {
             $status = false;
         }
 

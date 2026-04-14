@@ -378,7 +378,7 @@ class LOC_Order
             'placa_porez'               => 'D',
             'cijene_s_porezom'          => agconf('luceed.with_tax'),
             'partner_uid'               => $this->customer['main'],
-            'korisnik__partner_uid'     => $this->customer['alter'] ?: $this->customer['main'],
+            'korisnik__partner_uid'     => $this->resolveKorisnikPartnerUid(),
             'iznos'                     => (float) $iznos,
             'vrsta_isporuke'            => ($this->pickup != '') ? '07' : '10',
             'rezervacija_do_datuma'     => $this->getReservation(),
@@ -390,6 +390,14 @@ class LOC_Order
             ],
             'stavke'                    => $this->getItems(),
         ];
+
+        if ($this->pickup != '') {
+            $pickup_pj = $this->getPickupPjId();
+
+            if ($pickup_pj !== '') {
+                $this->order['pj_id'] = $pickup_pj;
+            }
+        }
 
         if ( ! $this->hasOIB()) {
             $this->order['na__skladiste'] = '099'; // agconf('luceed.default_warehouse_uid') -> 099
@@ -453,7 +461,7 @@ class LOC_Order
             'placa_porez'               => 'D',
             'cijene_s_porezom'          => agconf('luceed.with_tax'),
             'partner_uid'               => $this->customer['main'],
-            'korisnik__partner_uid'     => $this->customer['alter'] ?: $this->customer['main'],
+            'korisnik__partner_uid'     => $this->resolveKorisnikPartnerUid(),
             'iznos'                     => (float) $nalog['iznos'],
             'vrsta_isporuke'            => $nalog['vrsta_isporuke'],
             'skl_dokument'              => $nalog['skl_dokument'],
@@ -466,6 +474,10 @@ class LOC_Order
             ],
             'stavke'                    => $nalog['stavke'],
         ];
+
+        if (! empty($nalog['pj'])) {
+            $this->order['pj_id'] = $nalog['pj'];
+        }
 
         if ($nalog['broj_naloga'] == '') {
             $this->order['vezani_poziv_na_broj'] = $this->oc_order['poziv_na_broj'];
@@ -867,7 +879,7 @@ class LOC_Order
             return '12';
         }
 
-        if ($this->oc_order['payment_code'] == 'cod') {
+        if (in_array($this->oc_order['payment_code'], ['cod', 'cod_preuzimanje'], true)) {
             return '02';
         }
 
@@ -880,6 +892,73 @@ class LOC_Order
         }
 
         return '12';
+    }
+
+
+    /**
+     * For pickup orders "korisnik" should resolve to selected PJ.
+     * We derive it from pickup warehouse PJ UID, converted to the Luceed UID suffix.
+     *
+     * @return string
+     */
+    private function resolveKorisnikPartnerUid(): string
+    {
+        $default = $this->customer['alter'] ?: $this->customer['main'];
+
+        if ($this->pickup == '') {
+            return $default;
+        }
+
+        $warehouse = $this->getPickupWarehouseData();
+        $pj_uid = isset($warehouse['pj_uid']) ? (string)$warehouse['pj_uid'] : '';
+
+        if ($pj_uid !== '') {
+            if (preg_match('/^\d+\-1$/', $pj_uid)) {
+                return preg_replace('/\-1$/', '-1063', $pj_uid);
+            }
+
+            return $pj_uid;
+        }
+
+        return $default;
+    }
+
+
+    /**
+     * Resolve pickup PJ code (e.g. 01, 02...) from warehouse metadata.
+     *
+     * @return string
+     */
+    private function getPickupPjId(): string
+    {
+        $warehouse = $this->getPickupWarehouseData();
+
+        return isset($warehouse['pj']) ? (string)$warehouse['pj'] : '';
+    }
+
+
+    /**
+     * @return array
+     */
+    private function getPickupWarehouseData(): array
+    {
+        if ($this->pickup == '') {
+            return [];
+        }
+
+        if (! empty($this->pickup_warehouse)) {
+            return $this->pickup_warehouse;
+        }
+
+        $warehouse = (new LOC_Warehouse())->getList()->where('skladiste', '=', $this->pickup)->first();
+
+        if (is_array($warehouse)) {
+            $this->pickup_warehouse = $warehouse;
+
+            return $this->pickup_warehouse;
+        }
+
+        return [];
     }
 
 
