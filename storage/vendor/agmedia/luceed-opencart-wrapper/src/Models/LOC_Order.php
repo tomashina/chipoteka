@@ -1345,6 +1345,8 @@ class LOC_Order
     private function getShippingProduct()
     {
         $shipping_amount = agconf('default_shipping_price');
+        $shipping_article = agconf('luceed.shipping_article_uid');
+        $boxnow_shipping_article = agconf('luceed.shipping_boxnow_article_uid');
 
         $order_total = OrderTotal::where('order_id', $this->oc_order['order_id'])->get();
 
@@ -1358,10 +1360,20 @@ class LOC_Order
             }
         }
 
+        if ($boxnow_shipping_article === 'Env key not found!' || $boxnow_shipping_article === '') {
+            $boxnow_shipping_article = $shipping_article;
+        }
+
+        $shipping_article_to_use = $shipping_article;
+
+        if ($this->oc_order['shipping_code'] == 'weight.weight_5') {
+            $shipping_article_to_use = $boxnow_shipping_article;
+        }
+
         $this->log_items('getShippingProduct()::LEAVE');
 
         return [
-            'artikl'   => ($this->oc_order['shipping_code'] == 'weight.weight_5') ? agconf('luceed.shipping_boxnow_article_uid') : agconf('luceed.shipping_article_uid'),
+            'artikl'   => $shipping_article_to_use,
             'kolicina' => (int) 1,
             'cijena'   => (float) $shipping_amount,
             'rabat'    => (int) 0,
