@@ -5,6 +5,7 @@ namespace Agmedia\LuceedOpencartWrapper\Models;
 use Agmedia\Helpers\Database;
 use Agmedia\Helpers\Log;
 use Agmedia\Kaonekad\Models\ShippingCollector;
+use Agmedia\Luceed\Connection\LuceedService;
 use Agmedia\Luceed\Luceed;
 use Agmedia\LuceedOpencartWrapper\Helpers\Availability;
 use Agmedia\LuceedOpencartWrapper\Helpers\OrderHelper;
@@ -97,6 +98,7 @@ class LOC_Order
      * @var string
      */
     private $query_update_history = '';
+    private $pickup_partner_uid_cache = [];
 
 
     /**
@@ -896,8 +898,8 @@ class LOC_Order
 
 
     /**
-     * For pickup orders "korisnik" should resolve to 14956-{skladiste}
-     * (e.g. 14956-001, 14956-004, ...).
+     * For pickup orders "korisnik" should resolve from partner code
+     * 14956-{skladiste} to an actual Luceed partner UID.
      *
      * @return string
      */
@@ -917,10 +919,65 @@ class LOC_Order
         }
 
         if ($skladiste !== '') {
-            return '14956-' . str_pad($skladiste, 3, '0', STR_PAD_LEFT);
+            $partner_code = '14956-' . str_pad($skladiste, 3, '0', STR_PAD_LEFT);
+            $partner_uid = $this->resolvePartnerUidByCode($partner_code);
+
+            if ($partner_uid !== '') {
+                return $partner_uid;
+            }
+
+            $this->log('[FLOW] pickup:korisnik_partner_not_found', [
+                'pickup'       => $this->pickup,
+                'partner_code' => $partner_code,
+                'fallback_uid' => $default,
+            ]);
         }
 
         return $default;
+    }
+
+    /**
+     * Resolve Luceed partner UID from partner code (sifra), e.g. 14956-001.
+     *
+     * @param string $partner_code
+     *
+     * @return string
+     */
+    private function resolvePartnerUidByCode(string $partner_code): string
+    {
+        if ($partner_code === '') {
+            return '';
+        }
+
+        if (isset($this->pickup_partner_uid_cache[$partner_code])) {
+            return $this->pickup_partner_uid_cache[$partner_code];
+        }
+
+        try {
+            $service = new LuceedService();
+            $raw = $service->get('partneri/sifra/', $partner_code);
+            $decoded = json_decode((string) $raw);
+
+            if (isset($decoded->result[0]->partner) && is_array($decoded->result[0]->partner)) {
+                foreach ($decoded->result[0]->partner as $partner) {
+                    if (isset($partner->partner_uid) && $partner->partner_uid !== '') {
+                        $uid = (string) $partner->partner_uid;
+                        $this->pickup_partner_uid_cache[$partner_code] = $uid;
+
+                        return $uid;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            $this->log('[FLOW] pickup:korisnik_partner_lookup_error', [
+                'partner_code' => $partner_code,
+                'error'        => $e->getMessage(),
+            ]);
+        }
+
+        $this->pickup_partner_uid_cache[$partner_code] = '';
+
+        return '';
     }
 
 
