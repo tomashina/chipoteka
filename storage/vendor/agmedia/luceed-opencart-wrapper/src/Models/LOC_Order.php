@@ -378,7 +378,7 @@ class LOC_Order
             'placa_porez'               => 'D',
             'cijene_s_porezom'          => agconf('luceed.with_tax'),
             'partner_uid'               => $this->customer['main'],
-            'korisnik__partner_uid'     => $this->customer['alter'] ?: $this->customer['main'],
+            'korisnik__partner_uid'     => $this->resolveKorisnikPartnerUid(),
             'iznos'                     => (float) $iznos,
             'vrsta_isporuke'            => ($this->pickup != '') ? '07' : '10',
             'rezervacija_do_datuma'     => $this->getReservation(),
@@ -461,7 +461,7 @@ class LOC_Order
             'placa_porez'               => 'D',
             'cijene_s_porezom'          => agconf('luceed.with_tax'),
             'partner_uid'               => $this->customer['main'],
-            'korisnik__partner_uid'     => $this->customer['alter'] ?: $this->customer['main'],
+            'korisnik__partner_uid'     => $this->resolveKorisnikPartnerUid(),
             'iznos'                     => (float) $nalog['iznos'],
             'vrsta_isporuke'            => $nalog['vrsta_isporuke'],
             'skl_dokument'              => $nalog['skl_dokument'],
@@ -896,8 +896,8 @@ class LOC_Order
 
 
     /**
-     * For pickup orders "korisnik" should resolve to selected PJ.
-     * We derive it from pickup warehouse PJ UID, converted to the Luceed UID suffix.
+     * For pickup orders "korisnik" should resolve to 14956-{skladiste}
+     * (e.g. 14956-001, 14956-004, ...).
      *
      * @return string
      */
@@ -910,14 +910,14 @@ class LOC_Order
         }
 
         $warehouse = $this->getPickupWarehouseData();
-        $pj_uid = isset($warehouse['pj_uid']) ? (string)$warehouse['pj_uid'] : '';
+        $skladiste = isset($warehouse['skladiste']) ? (string) $warehouse['skladiste'] : '';
 
-        if ($pj_uid !== '') {
-            if (preg_match('/^\d+\-1$/', $pj_uid)) {
-                return preg_replace('/\-1$/', '-1063', $pj_uid);
-            }
+        if ($skladiste === '') {
+            $skladiste = $this->pickup;
+        }
 
-            return $pj_uid;
+        if ($skladiste !== '') {
+            return '14956-' . str_pad($skladiste, 3, '0', STR_PAD_LEFT);
         }
 
         return $default;
