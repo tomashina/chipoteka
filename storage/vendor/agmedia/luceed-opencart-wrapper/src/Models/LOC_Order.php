@@ -255,8 +255,7 @@ class LOC_Order
         $pickup_note = $pickup_title !== '' ? $pickup_title : ($this->oc_order['comment'] ?? '');
 
         $this->order['skladiste'] = $this->pickup;
-        $this->order['sa__skladiste'] = $this->pickup;
-        $this->order['na__skladiste'] = $this->pickup;
+        unset($this->order['sa__skladiste'], $this->order['na__skladiste']);
         $this->order['skl_dokument'] = 'DP';
         $this->order['vrsta_isporuke'] = '03';
         $this->order['napomena'] = 'Osobno preuzimanje: ' . $pickup_note;
@@ -445,26 +444,29 @@ class LOC_Order
     {
         $this->log('createPickup() ---> $nalog ::::: ', $nalog);
 
+        $skl_dokument = $nalog['skl_dokument'] ?? '';
+        $target_skladiste = $nalog['na__skladiste'] ?? ($nalog['sa__skladiste'] ?? '');
+
         $this->order = [
             'nalog_prodaje_b2b'         => $this->oc_order['order_id']. '-' . Carbon::now()->year . $nalog['broj_naloga'],
             'narudzba'                  => $this->oc_order['order_id'] . '-' . Carbon::now()->year . $nalog['broj_naloga'],
             'datum'                     => Carbon::make($this->oc_order['date_added'])->format(agconf('luceed.date')),
             'raspored'                  => Carbon::make($this->oc_order['date_added'])->format('d.m.Y H:i:s'),
-            'skladiste'                 => $nalog['na__skladiste'],
-            'sa__skladiste'             => $nalog['sa__skladiste'],
-            'na__skladiste'             => $nalog['na__skladiste'],
+            'skladiste'                 => $target_skladiste,
+            'sa__skladiste'             => $nalog['sa__skladiste'] ?? '',
+            'na__skladiste'             => $nalog['na__skladiste'] ?? '',
             //'pj_id'                     => $nalog['pj'],
             'status'                    => $this->getStatus(),
-            'napomena'                  => $nalog['napomena'],
-            'poruka_dolje'              => $nalog['napomena'],
+            'napomena'                  => $nalog['napomena'] ?? '',
+            'poruka_dolje'              => $nalog['napomena'] ?? '',
             'komercijalist__radnik_uid' => '206-1063',
             'placa_porez'               => 'D',
             'cijene_s_porezom'          => agconf('luceed.with_tax'),
             'partner_uid'               => $this->customer['main'],
             'korisnik__partner_uid'     => $this->resolveKorisnikPartnerUid(),
             'iznos'                     => (float) $nalog['iznos'],
-            'vrsta_isporuke'            => $nalog['vrsta_isporuke'],
-            'skl_dokument'              => $nalog['skl_dokument'],
+            'vrsta_isporuke'            => $nalog['vrsta_isporuke'] ?? '',
+            'skl_dokument'              => $skl_dokument,
             'rezervacija_do_datuma'     => $this->getReservation(),
             'placanja'                  => [
                 [
@@ -487,6 +489,10 @@ class LOC_Order
         // The main pickup nalog (broj_naloga == '') must keep the payment method.
         if ($this->oc_order['payment_code'] == 'cod' && $nalog['broj_naloga'] !== '') {
             $this->order['placanja'] = '';
+        }
+
+        if ($skl_dokument === 'DP') {
+            unset($this->order['na__skladiste'], $this->order['sa__skladiste']);
         }
 
         $this->log('createPickup() ::::: ', $this->order);
@@ -910,17 +916,61 @@ class LOC_Order
         }
 
         $warehouse = $this->getPickupWarehouseData();
-        $pj_uid = isset($warehouse['pj_uid']) ? (string)$warehouse['pj_uid'] : '';
+        $candidates = [];
+        $mapped = $this->getPickupKorisnikPartnerUidMap();
+
+        if (is_array($mapped) && ! empty($mapped[$this->pickup])) {
+            $candidates[] = (string) $mapped[$this->pickup];
+        }
+
+        $pj_uid = isset($warehouse['pj_uid']) ? (string) $warehouse['pj_uid'] : '';
 
         if ($pj_uid !== '') {
-            if (preg_match('/^\d+\-1$/', $pj_uid)) {
-                return preg_replace('/\-1$/', '-1063', $pj_uid);
-            }
+            $candidates[] = $pj_uid;
 
-            return $pj_uid;
+            if (preg_match('/^\d+\-1$/', $pj_uid)) {
+                $candidates[] = preg_replace('/\-1$/', '-1063', $pj_uid);
+            }
+        }
+
+        foreach ($candidates as $candidate) {
+            if ($candidate !== '') {
+                return $candidate;
+            }
         }
 
         return $default;
+    }
+
+
+    /**
+     * Returns default korisnik partner mapping per pickup warehouse code.
+     * Env config `luceed.pickup_korisnik_partner_uid` can override these values.
+     *
+     * @return array
+     */
+    private function getPickupKorisnikPartnerUidMap(): array
+    {
+        $defaults = [
+            '001' => '4342-1063',
+            '002' => '4343-1063',
+            '003' => '4344-1063',
+            '004' => '4345-1063',
+            '005' => '4346-1',
+            '006' => '4347-1063',
+            '007' => '4348-1063',
+            '011' => '10088-1063',
+            '012' => '11437-1063',
+            '013' => '18527-1063',
+        ];
+
+        $mapped = agconf('luceed.pickup_korisnik_partner_uid');
+
+        if (is_array($mapped)) {
+            return array_merge($defaults, $mapped);
+        }
+
+        return $defaults;
     }
 
 
