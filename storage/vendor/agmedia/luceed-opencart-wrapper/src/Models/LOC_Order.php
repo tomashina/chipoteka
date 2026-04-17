@@ -22,6 +22,8 @@ use Illuminate\Support\Carbon;
  */
 class LOC_Order
 {
+    private const KORISNIK_PARTNER_SETTING_KEY = 'luceed_sync_korisnik_partner_ids';
+    private const KORISNIK_PARTNER_UID_SUFFIX = '1063';
 
     /**
      * @var array
@@ -77,6 +79,8 @@ class LOC_Order
     private $pickup_warehouse = [];
     private $availability = false;
     private $regular_products = [];
+    private $pickup_partner_id_map = null;
+    private $pickup_partner_mapping_missing_reason = '';
 
     /**
      * @var bool|array
@@ -181,6 +185,20 @@ class LOC_Order
             'stavke_count'      => isset($this->order['stavke']) ? count($this->order['stavke']) : 0,
             'iznos'             => $this->order['iznos'] ?? 0,
         ]);
+
+        if ($this->pickup != '' && $this->pickup_partner_mapping_missing_reason !== '') {
+            $this->response = (object) ['error' => $this->pickup_partner_mapping_missing_reason];
+
+            $this->log('[FLOW] pickup:korisnik_partner_mapping_missing', [
+                'reason' => $this->pickup_partner_mapping_missing_reason,
+                'skladiste' => $this->pickup,
+                'setting_key' => self::KORISNIK_PARTNER_SETTING_KEY,
+                'order_id' => $this->oc_order['order_id'] ?? '',
+            ]);
+            $this->log('[FLOW] store:stop', ['reason' => 'pickup_korisnik_partner_mapping_missing']);
+
+            return false;
+        }
 
         $main_uid = $this->sendOrder(true);
         $this->log('[FLOW] main:send:result', [
@@ -896,8 +914,8 @@ class LOC_Order
 
 
     /**
-     * For pickup orders "korisnik" should resolve to 14956-{skladiste}
-     * (e.g. 14956-001, 14956-004, ...).
+     * For pickup orders "korisnik" is resolved from DB setting map:
+     * skladiste => korisnik__partner ID, then sent as "{ID}-1063".
      *
      * @return string
      */
@@ -906,6 +924,7 @@ class LOC_Order
         $default = $this->customer['alter'] ?: $this->customer['main'];
 
         if ($this->pickup == '') {
+            $this->pickup_partner_mapping_missing_reason = '';
             return $default;
         }
 
@@ -916,11 +935,78 @@ class LOC_Order
             $skladiste = $this->pickup;
         }
 
-        if ($skladiste !== '') {
-            return '14956-' . str_pad($skladiste, 3, '0', STR_PAD_LEFT);
+        if ($skladiste === '') {
+            $this->pickup_partner_mapping_missing_reason = 'mapping missing for skladiste unknown (setting: ' . self::KORISNIK_PARTNER_SETTING_KEY . ')';
+            return '';
         }
 
-        return $default;
+        $skladiste = str_pad($skladiste, 3, '0', STR_PAD_LEFT);
+        $mapping = $this->getPickupPartnerIdMap();
+        $partner_id = isset($mapping[$skladiste]) ? trim((string) $mapping[$skladiste]) : '';
+
+        if ($partner_id !== '' && ctype_digit($partner_id)) {
+            $this->pickup_partner_mapping_missing_reason = '';
+
+            return $partner_id . '-' . self::KORISNIK_PARTNER_UID_SUFFIX;
+        }
+
+        $this->pickup_partner_mapping_missing_reason = 'mapping missing for skladiste ' . $skladiste . ' (setting: ' . self::KORISNIK_PARTNER_SETTING_KEY . ')';
+
+        return '';
+    }
+
+
+    /**
+     * @return array
+     */
+    private function getPickupPartnerIdMap(): array
+    {
+        if (is_array($this->pickup_partner_id_map)) {
+            return $this->pickup_partner_id_map;
+        }
+
+        $this->pickup_partner_id_map = [];
+
+        try {
+            $db = new Database(DB_DATABASE);
+            $query = $db->query(
+                "SELECT `value` FROM `" . DB_PREFIX . "setting` WHERE store_id = '0' AND `key` = '" . $db->escape(self::KORISNIK_PARTNER_SETTING_KEY) . "' LIMIT 1"
+            );
+        } catch (\Exception $e) {
+            $this->log('[FLOW] pickup:korisnik_partner_mapping_query_failed', [
+                'message' => $e->getMessage(),
+                'setting_key' => self::KORISNIK_PARTNER_SETTING_KEY,
+            ]);
+
+            return $this->pickup_partner_id_map;
+        }
+
+        if ( ! $query || ! isset($query->num_rows) || ! $query->num_rows || ! isset($query->row['value'])) {
+            return $this->pickup_partner_id_map;
+        }
+
+        $decoded = json_decode((string) $query->row['value'], true);
+
+        if ( ! is_array($decoded)) {
+            return $this->pickup_partner_id_map;
+        }
+
+        foreach ($decoded as $code => $id) {
+            $normalized_code = str_pad((string) $code, 3, '0', STR_PAD_LEFT);
+            $partner_id = trim((string) $id);
+
+            if ($normalized_code === '' || ! ctype_digit($normalized_code)) {
+                continue;
+            }
+
+            if ($partner_id === '' || ! ctype_digit($partner_id)) {
+                continue;
+            }
+
+            $this->pickup_partner_id_map[$normalized_code] = $partner_id;
+        }
+
+        return $this->pickup_partner_id_map;
     }
 
 

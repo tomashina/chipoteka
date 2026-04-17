@@ -30,6 +30,20 @@ use Carbon\Carbon;
 
 class ControllerExtensionModuleLuceedSync extends Controller
 {
+    private const KORISNIK_PARTNER_SETTING_KEY = 'luceed_sync_korisnik_partner_ids';
+    private const KORISNIK_PARTNER_UID_SUFFIX = '1063';
+    private const KORISNIK_PARTNER_SEED = [
+        '001' => '20761',
+        '002' => '15319',
+        '003' => '12271',
+        '004' => '24939',
+        '005' => '34976',
+        '006' => '20847',
+        '007' => '25041',
+        '011' => '82655',
+        '012' => '123062',
+        '013' => '329822',
+    ];
 
     private $error = array();
 
@@ -149,6 +163,61 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
 
     /**
+     * Save mapping: skladiste -> korisnik__partner ID.
+     *
+     * @return void
+     */
+    public function savePickupPartnerIds()
+    {
+        if ( ! $this->hasModifyPermission()) {
+            $this->output([
+                'status' => 403,
+                'message' => 'Nemate dozvolu za izmjenu postavki.'
+            ]);
+
+            return;
+        }
+
+        $mapping = $this->request->post['mapping'] ?? [];
+
+        if (is_string($mapping)) {
+            $decoded = json_decode($mapping, true);
+            $mapping = is_array($decoded) ? $decoded : [];
+        }
+
+        if ( ! is_array($mapping)) {
+            $this->output([
+                'status'  => 300,
+                'message' => 'Neispravan format mape poslovnica.'
+            ]);
+
+            return;
+        }
+
+        $allowed_codes = $this->getEditableStoreCodes();
+        $validation_errors = [];
+        $normalized = $this->normalizeKorisnikPartnerMap($mapping, $allowed_codes, $validation_errors);
+
+        if ($validation_errors) {
+            $this->output([
+                'status'  => 300,
+                'message' => 'ID korisnik__partner mora biti numerički. Problem kod: ' . implode(', ', array_unique($validation_errors))
+            ]);
+
+            return;
+        }
+
+        $this->saveKorisnikPartnerMap($normalized);
+        $this->config->set(self::KORISNIK_PARTNER_SETTING_KEY, json_encode($normalized));
+
+        $this->output([
+            'status'  => 200,
+            'message' => 'ID-evi korisnik__partner su uspješno spremljeni.'
+        ]);
+    }
+
+
+    /**
      * Build one place where admin can see all store related dependencies.
      *
      * @return array
@@ -185,11 +254,16 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $json_data = $this->loadWarehouseJsonData($warehouse_config['json'] ?? '');
         $json_path = $json_data['source'];
         $json_rows = $json_data['stores'];
+        $korisnik_partner_map = $this->getKorisnikPartnerMap($required_codes, array_keys($json_rows));
 
         $rows = [];
 
         foreach ($required_codes as $code) {
             $store = $json_rows[$code] ?? [];
+            $korisnik_partner_id = $korisnik_partner_map[$code] ?? '';
+            $korisnik_partner_uid_preview = $korisnik_partner_id !== ''
+                ? $korisnik_partner_id . '-' . self::KORISNIK_PARTNER_UID_SUFFIX
+                : '-';
 
             $rows[] = [
                 'code'               => $code,
@@ -204,6 +278,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 'in_stores'          => in_array($code, $store_codes, true),
                 'in_pickup'          => in_array($code, $pickup_codes, true),
                 'working_hours'      => $working_hours[$code] ?? '',
+                'korisnik_partner_id' => $korisnik_partner_id,
+                'korisnik_partner_uid_preview' => $korisnik_partner_uid_preview,
             ];
         }
 
@@ -231,12 +307,165 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 ['code' => '099', 'purpose' => 'LOC_Order web nalog (skladiste/na__skladiste)'],
                 ['code' => '101', 'purpose' => 'Fallback centralno skladiste u Availability/LOC_Order'],
             ],
+            'korisnik_partner_uid_suffix' => self::KORISNIK_PARTNER_UID_SUFFIX,
             'stats'      => [
                 'required'  => count($required_codes),
                 'in_json'   => count(array_filter($rows, static function($row) { return $row['in_json']; })),
                 'pickup'    => count($pickup_codes),
             ]
         ];
+    }
+
+
+    /**
+     * @return array
+     */
+    private function getEditableStoreCodes(): array
+    {
+        $warehouse_config = agconf('import.warehouse');
+
+        if ( ! is_array($warehouse_config)) {
+            $warehouse_config = [];
+        }
+
+        $included_codes = $this->normalizeStoreCodes($warehouse_config['included'] ?? []);
+        $default_codes = $this->normalizeStoreCodes($warehouse_config['default'] ?? []);
+        $view_codes = $this->normalizeStoreCodes($warehouse_config['availability_view'] ?? []);
+        $store_codes = $this->normalizeStoreCodes($warehouse_config['stores'] ?? []);
+        $pickup_codes = $this->normalizeStoreCodes($warehouse_config['pickup'] ?? []);
+
+        $json_data = $this->loadWarehouseJsonData($warehouse_config['json'] ?? '');
+        $json_codes = $this->normalizeStoreCodes(array_keys($json_data['stores']));
+
+        return $this->uniqueStoreCodes(array_merge(
+            $included_codes,
+            $default_codes,
+            $view_codes,
+            $store_codes,
+            $pickup_codes,
+            $json_codes
+        ));
+    }
+
+
+    /**
+     * @param array $allowed_codes
+     * @param array $seed_codes
+     *
+     * @return array
+     */
+    private function getKorisnikPartnerMap(array $allowed_codes = [], array $seed_codes = []): array
+    {
+        $allowed_codes = $this->normalizeStoreCodes($allowed_codes);
+        $seed_codes = $this->normalizeStoreCodes($seed_codes);
+        $query = $this->db->query(
+            "SELECT `value` FROM `" . DB_PREFIX . "setting` WHERE store_id = '0' AND `key` = '" . $this->db->escape(self::KORISNIK_PARTNER_SETTING_KEY) . "' LIMIT 1"
+        );
+
+        $raw = '';
+
+        if ($query->num_rows && isset($query->row['value'])) {
+            $raw = (string) $query->row['value'];
+        }
+
+        $decoded = [];
+
+        if ($raw !== '') {
+            $json = json_decode($raw, true);
+            if (is_array($json)) {
+                $decoded = $json;
+            }
+        }
+
+        $errors = [];
+        $normalized = $this->normalizeKorisnikPartnerMap($decoded, $allowed_codes, $errors);
+
+        if (empty($normalized)) {
+            $seed = $this->getSeededKorisnikPartnerMap($seed_codes ?: $allowed_codes);
+
+            if ( ! empty($seed)) {
+                $this->saveKorisnikPartnerMap($seed);
+                $normalized = $seed;
+            }
+        }
+
+        return $normalized;
+    }
+
+
+    /**
+     * @param array $mapping
+     * @param array $allowed_codes
+     * @param array $errors
+     *
+     * @return array
+     */
+    private function normalizeKorisnikPartnerMap(array $mapping, array $allowed_codes = [], array &$errors = []): array
+    {
+        $normalized = [];
+        $allowed_lookup = [];
+
+        foreach ($allowed_codes as $code) {
+            $allowed_lookup[$this->normalizeStoreCode($code)] = true;
+        }
+
+        foreach ($mapping as $code => $value) {
+            $normalized_code = $this->normalizeStoreCode($code);
+
+            if ($normalized_code === '' || ! ctype_digit($normalized_code)) {
+                continue;
+            }
+
+            if ($allowed_lookup && ! isset($allowed_lookup[$normalized_code])) {
+                continue;
+            }
+
+            $partner_id = trim((string) $value);
+
+            if ($partner_id === '') {
+                continue;
+            }
+
+            if ( ! ctype_digit($partner_id)) {
+                $errors[] = $normalized_code;
+                continue;
+            }
+
+            $normalized[$normalized_code] = $partner_id;
+        }
+
+        ksort($normalized);
+
+        return $normalized;
+    }
+
+
+    /**
+     * @param array $allowed_codes
+     *
+     * @return array
+     */
+    private function getSeededKorisnikPartnerMap(array $allowed_codes = []): array
+    {
+        return $this->normalizeKorisnikPartnerMap(self::KORISNIK_PARTNER_SEED, $allowed_codes);
+    }
+
+
+    /**
+     * @param array $mapping
+     *
+     * @return void
+     */
+    private function saveKorisnikPartnerMap(array $mapping): void
+    {
+        $json = json_encode($mapping);
+
+        if ($json === false) {
+            $json = '{}';
+        }
+
+        $this->saveSettingForAllStores(self::KORISNIK_PARTNER_SETTING_KEY, $json, 0);
+        $this->config->set(self::KORISNIK_PARTNER_SETTING_KEY, $json);
     }
 
 

@@ -287,6 +287,7 @@
                                         </div>
                                         <div class="col-sm-4 text-right">
                                             <button type="button" id="save-pickup-stores-enabled" class="btn btn-primary btn-sm">Spremi postavku</button>
+                                            <button type="button" id="save-pickup-partner-ids" class="btn btn-success btn-sm">Spremi ID-eve</button>
                                         </div>
                                     </div>
                                 </div>
@@ -326,6 +327,8 @@
                                             <th style="white-space: nowrap;">View</th>
                                             <th style="white-space: nowrap;">Stores</th>
                                             <th style="white-space: nowrap;">Pickup</th>
+                                            <th style="white-space: nowrap;">ID korisnik__partner</th>
+                                            <th style="white-space: nowrap;">UID preview</th>
                                             <th style="white-space: nowrap;">Radno vrijeme</th>
                                             <th style="white-space: nowrap;">JSON</th>
                                         </tr>
@@ -342,6 +345,18 @@
                                                 <td>{% if row.in_availability %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
                                                 <td>{% if row.in_stores %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
                                                 <td>{% if row.in_pickup %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
+                                                <td style="min-width: 140px;">
+                                                    <input
+                                                        type="text"
+                                                        class="form-control input-sm js-korisnik-partner-id"
+                                                        data-code="{{ row.code }}"
+                                                        value="{{ row.korisnik_partner_id }}"
+                                                        placeholder="npr. 20761"
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <code class="js-korisnik-partner-uid" data-code="{{ row.code }}">{{ row.korisnik_partner_uid_preview }}</code>
+                                                </td>
                                                 <td><small>{{ row.working_hours ? row.working_hours|raw : '-' }}</small></td>
                                                 <td>{% if row.in_json %}<span class="label label-success">OK</span>{% else %}<span class="label label-danger">Fali</span>{% endif %}</td>
                                             </tr>
@@ -539,6 +554,8 @@
 
     <script type="text/javascript">
         $(() => {
+            const korisnikPartnerUidSuffix = '{{ store_audit.korisnik_partner_uid_suffix }}';
+
             const savePickupStoresSwitch = () => {
                 let enabled = $('#pickup-stores-enabled').is(':checked') ? 1 : 0;
 
@@ -549,6 +566,67 @@
                     data: { enabled: enabled },
                     success: function(json) {
                         checkResult(json);
+                    }
+                });
+            };
+
+            const formatKorisnikPartnerUid = (partnerId) => {
+                let id = String(partnerId || '').trim();
+
+                if (id === '' || ! /^\d+$/.test(id)) {
+                    return '-';
+                }
+
+                return id + '-' + korisnikPartnerUidSuffix;
+            };
+
+            const syncKorisnikPartnerPreview = (input) => {
+                let code = $(input).data('code');
+                let value = $(input).val();
+                $('.js-korisnik-partner-uid[data-code="' + code + '"]').text(formatKorisnikPartnerUid(value));
+            };
+
+            const savePickupPartnerIds = () => {
+                let mapping = {};
+                let invalid_codes = [];
+
+                $('.js-korisnik-partner-id').each(function() {
+                    let code = String($(this).data('code') || '').trim();
+                    let value = String($(this).val() || '').trim();
+
+                    if (value === '') {
+                        return;
+                    }
+
+                    if ( ! /^\d+$/.test(value)) {
+                        invalid_codes.push(code);
+                        return;
+                    }
+
+                    mapping[code] = value;
+                });
+
+                if (invalid_codes.length) {
+                    checkResult({
+                        status: 300,
+                        message: 'ID korisnik__partner mora biti numerički. Problem kod: ' + invalid_codes.join(', ')
+                    });
+                    return;
+                }
+
+                $.ajax({
+                    url: 'index.php?route=extension/module/luceed_sync/savePickupPartnerIds&user_token={{ user_token }}',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { mapping: mapping },
+                    success: function(json) {
+                        checkResult(json);
+
+                        if (json.status == 200) {
+                            window.setTimeout(() => {
+                                location.reload();
+                            }, 500);
+                        }
                     }
                 });
             };
@@ -618,6 +696,9 @@
 
             $('#save-pickup-stores-enabled').on('click', () => { savePickupStoresSwitch(); });
             $('#pickup-stores-enabled').on('change', () => { savePickupStoresSwitch(); });
+            $('#save-pickup-partner-ids').on('click', () => { savePickupPartnerIds(); });
+            $('.js-korisnik-partner-id').on('input', function() { syncKorisnikPartnerPreview(this); });
+            $('.js-korisnik-partner-id').each(function() { syncKorisnikPartnerPreview(this); });
         });
 
 
@@ -817,7 +898,7 @@
             if (result.status == 200) {
                 AG_alert.success(result.message);
             }
-            if (result.status == 300) {
+            if (result.status == 300 || result.status == 403) {
                 AG_alert.warning(result.message);
             }
         }
