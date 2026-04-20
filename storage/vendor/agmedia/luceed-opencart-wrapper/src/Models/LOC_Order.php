@@ -158,8 +158,7 @@ class LOC_Order
 
         $pickup_nalozi = [];
 
-        // Resolve pickup availability before sending the main order so we can
-        // map "all items in pickup store" directly to pickup nalog fields.
+        // Resolve pickup availability before sending the main order.
         if ($this->pickup != '') {
             $this->availability = $this->resolveAvailability();
             $pickup_nalozi = $this->availability->getNalozi();
@@ -170,10 +169,7 @@ class LOC_Order
                 'nalozi_count'             => count($pickup_nalozi),
                 'items_required_count'     => count($this->availability->items_required),
             ]);
-
-            if ($this->availability->has_all_in_pickup_store) {
-                $this->applyAllInPickupMainOrder();
-            }
+            $this->applyPickupMainOrder();
         }
 
         $this->log('[FLOW] main:create:prepared', [
@@ -224,13 +220,15 @@ class LOC_Order
             return $main_uid;
         }
 
+        $split_nalozi = $this->preparePickupSplitNalozi($pickup_nalozi);
+
         // Create additional pickup nalogs only for missing/split items.
-        if (empty($pickup_nalozi)) {
+        if (empty($split_nalozi)) {
             $this->log('[FLOW] pickup:skip_split', ['reason' => 'no_split_nalozi_generated']);
             return $main_uid;
         }
 
-        foreach ($pickup_nalozi as $nalog) {
+        foreach ($split_nalozi as $nalog) {
             $this->log('[FLOW] pickup:split:prepare', [
                 'broj_naloga'       => $nalog['broj_naloga'] ?: '(main-suffix-empty)',
                 'sa__skladiste'     => $nalog['sa__skladiste'] ?? '',
@@ -262,23 +260,23 @@ class LOC_Order
 
 
     /**
-     * For full pickup availability, the main nalog should point to the selected
-     * pickup store and carry pickup-specific delivery metadata.
+     * Pickup glavni nalog always points to selected pickup store
+     * and carries pickup-specific delivery metadata.
      *
      * @return void
      */
-    private function applyAllInPickupMainOrder(): void
+    private function applyPickupMainOrder(): void
     {
         $pickup_title = trim($this->getPickupTitle());
         $pickup_note = $pickup_title !== '' ? $pickup_title : ($this->oc_order['comment'] ?? '');
 
         $this->order['skladiste'] = $this->pickup;
         $this->order['sa__skladiste'] = $this->pickup;
-        $this->order['na__skladiste'] = $this->pickup;
         $this->order['skl_dokument'] = 'DP';
         $this->order['vrsta_isporuke'] = '03';
         $this->order['napomena'] = 'Osobno preuzimanje: ' . $pickup_note;
         $this->order['poruka_dolje'] = $this->order['napomena'];
+        unset($this->order['na__skladiste']);
 
         $this->log('[FLOW] pickup:apply_main_override', [
             'pickup'         => $this->pickup,
@@ -292,6 +290,67 @@ class LOC_Order
 
 
     /**
+     * Keep only true split nalogs (suffix -1, -2, ...).
+     * If Availability cannot build those but there are still required items,
+     * create a fallback split from central warehouse 101 to selected pickup.
+     *
+     * @param array $pickup_nalozi
+     *
+     * @return array
+     */
+    private function preparePickupSplitNalozi(array $pickup_nalozi): array
+    {
+        $split_nalozi = [];
+
+        foreach ($pickup_nalozi as $nalog) {
+            $broj_naloga = isset($nalog['broj_naloga']) ? (string) $nalog['broj_naloga'] : '';
+
+            if ($broj_naloga === '') {
+                $this->log('[FLOW] pickup:split:skip', ['reason' => 'main_suffix_empty_is_handled_by_main_order']);
+                continue;
+            }
+
+            $split_nalozi[] = $nalog;
+        }
+
+        if ( ! empty($split_nalozi)) {
+            return $split_nalozi;
+        }
+
+        if ( ! $this->availability || empty($this->availability->items_required)) {
+            return [];
+        }
+
+        $pickup_warehouse = $this->getPickupWarehouseData();
+
+        if ( ! isset($pickup_warehouse['skladiste'])) {
+            return [];
+        }
+
+        $pickup_title = trim($this->getPickupTitle());
+        $pickup_note = $pickup_title !== '' ? $pickup_title : ($this->oc_order['comment'] ?? '');
+
+        $fallback_nalog = OrderHelper::getNalog(
+            $this->availability->items_required,
+            $this->oc_order['order_id'],
+            '1',
+            '101',
+            $pickup_warehouse,
+            'Osobno preuzimanje: ' . $pickup_note
+        );
+
+        $this->log('[FLOW] pickup:split:fallback_create', [
+            'source_skladiste' => $fallback_nalog['sa__skladiste'] ?? '',
+            'target_skladiste' => $fallback_nalog['na__skladiste'] ?? '',
+            'broj_naloga'      => $fallback_nalog['broj_naloga'] ?? '',
+            'stavke_count'     => isset($fallback_nalog['stavke']) ? count($fallback_nalog['stavke']) : 0,
+        ]);
+
+        return [$fallback_nalog];
+    }
+
+
+    /**
      * @param bool $save
      *
      * @return false|mixed
@@ -299,6 +358,11 @@ class LOC_Order
      */
     private function sendOrder(bool $save = false)
     {
+        if (($this->order['skl_dokument'] ?? '') === 'DP' && isset($this->order['na__skladiste'])) {
+            unset($this->order['na__skladiste']);
+            $this->log('[FLOW] sendOrder:cleanup', ['removed_field' => 'na__skladiste', 'reason' => 'dp_document']);
+        }
+
         // Send order to luceed service.
         $raw = $this->service->createOrder(['nalozi_prodaje' => [$this->order]], $this->hasOIB());
 
@@ -497,13 +561,10 @@ class LOC_Order
             $this->order['pj_id'] = $nalog['pj'];
         }
 
-        if ($nalog['broj_naloga'] == '') {
-            $this->order['vezani_poziv_na_broj'] = $this->oc_order['poziv_na_broj'];
-        }
+        $this->order['vezani_poziv_na_broj'] = $this->oc_order['poziv_na_broj'];
 
-        // For COD, wipe payment only on secondary (warehouse-to-store) split nalozi.
-        // The main pickup nalog (broj_naloga == '') must keep the payment method.
-        if ($this->oc_order['payment_code'] == 'cod' && $nalog['broj_naloga'] !== '') {
+        // For cash-on-delivery, wipe payment only on secondary (warehouse-to-store) split nalogs.
+        if (in_array($this->oc_order['payment_code'], ['cod', 'cod_preuzimanje'], true) && $nalog['broj_naloga'] !== '') {
             $this->order['placanja'] = '';
         }
 
