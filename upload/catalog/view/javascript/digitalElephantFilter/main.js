@@ -70,64 +70,49 @@ $(function () {
     // --- TOP "Očisti" + badge sync ---
     var defFiltersApplied = false;
 
+    function getComparableQueryEntries(qs) {
+        var normalizedQs = (qs || '').toString().replace(/^[?&]+/, '');
+        var entries = [];
+
+        if (!normalizedQs) {
+            return entries;
+        }
+
+        var searchParams = new URLSearchParams(normalizedQs);
+
+        searchParams.forEach(function (value, key) {
+            if (!key || value === '') {
+                return;
+            }
+
+            if (
+                key === 'ajax_digitalElephantFilter' ||
+                key === 'def_primary' ||
+                key === 'path' ||
+                key === 'page' ||
+                key === 'sort' ||
+                key === 'order' ||
+                key === 'limit'
+            ) {
+                return;
+            }
+
+            if (key === 'price[min]' && String(value) === String(DEFController.config.peakPrice.min)) {
+                return;
+            }
+
+            if (key === 'price[max]' && String(value) === String(DEFController.config.peakPrice.max)) {
+                return;
+            }
+
+            entries.push(key + '=' + value);
+        });
+
+        return entries.sort();
+    }
+
     function normalizeComparableFilterParams(qs) {
-        qs = (qs || '').toString().replace(/^[?&]+|[?&]+$/g, '');
-
-        if (!qs) {
-            return '';
-        }
-
-        qs = DEFController.url.removeEmptyParams(qs);
-
-        if (!qs) {
-            return '';
-        }
-
-        return qs
-            .split('&')
-            .filter(function (part) {
-                if (!part) {
-                    return false;
-                }
-
-                var pair = part.split('=');
-                var rawKey = pair.shift() || '';
-                var rawValue = pair.join('=');
-                var key = rawKey;
-                var value = rawValue;
-
-                try {
-                    key = decodeURIComponent(rawKey);
-                } catch (e) {}
-
-                try {
-                    value = decodeURIComponent(rawValue);
-                } catch (e) {}
-
-                if (
-                    key === 'ajax_digitalElephantFilter' ||
-                    key === 'def_primary' ||
-                    key === 'path' ||
-                    key === 'page' ||
-                    key === 'sort' ||
-                    key === 'order' ||
-                    key === 'limit'
-                ) {
-                    return false;
-                }
-
-                if (key === 'price[min]' && String(value) === String(DEFController.config.peakPrice.min)) {
-                    return false;
-                }
-
-                if (key === 'price[max]' && String(value) === String(DEFController.config.peakPrice.max)) {
-                    return false;
-                }
-
-                return true;
-            })
-            .sort()
-            .join('&');
+        return getComparableQueryEntries(qs).join('&');
     }
 
     function getCurrentFormFilterSignature() {
@@ -135,7 +120,7 @@ $(function () {
     }
 
     function getUrlFilterSignature() {
-        return normalizeComparableFilterParams(DEFController.url.getFilterParamsByLink());
+        return normalizeComparableFilterParams(window.location.search);
     }
 
     function hasAppliedFiltersInUrl() {
@@ -147,42 +132,18 @@ $(function () {
     }
 
     function getWarehouseValuesFromUrl() {
-        var filterParams = DEFController.url.getFilterParamsByLink().replace(/^[?&]+/, '');
-
-        if (!filterParams) {
-            return [];
-        }
-
-        var filterData = DEFController.url.stringToArray(filterParams);
         var warehouseValues = [];
+        var searchParams = new URLSearchParams((window.location.search || '').replace(/^[?&]+/, ''));
 
-        if (!filterData.warehouse) {
-            return warehouseValues;
-        }
+        searchParams.forEach(function (value, key) {
+            if (key.indexOf('warehouse[') === 0) {
+                var normalizedValue = $.trim(String(value || ''));
 
-        (function walk(value) {
-            if ($.isArray(value)) {
-                $.each(value, function (_, item) {
-                    walk(item);
-                });
-
-                return;
+                if (normalizedValue !== '') {
+                    warehouseValues.push(normalizedValue);
+                }
             }
-
-            if (value && typeof value === 'object') {
-                $.each(value, function (_, item) {
-                    walk(item);
-                });
-
-                return;
-            }
-
-            var normalizedValue = $.trim(String(value || ''));
-
-            if (normalizedValue !== '') {
-                warehouseValues.push(normalizedValue);
-            }
-        })(filterData.warehouse);
+        });
 
         return warehouseValues;
     }
@@ -289,8 +250,9 @@ $(function () {
     }
 
     function toggleTopFilterButtons() {
+        var hasSelection = hasFilterSelectionOrChange();
         var hasAppliedFilters = hasAppliedFiltersInUrl() || defFiltersApplied;
-        var hasPendingChanges = hasPendingFilterChanges();
+        var hasPendingChanges = hasSelection && (!hasAppliedFilters || hasPendingFilterChanges());
 
         $('#filter-apply-top').toggle(hasPendingChanges);
         $('#filter-clear-top').toggle(hasAppliedFilters);
@@ -504,6 +466,22 @@ $(function () {
             }
 
             toggleTopFilterButtons();
+        }
+    );
+
+    // warehouse select zna u nekim browser/theme kombinacijama preskočiti očekivani flow,
+    // pa ga dodatno vežemo i na click s odgođenim očitanjem stvarne selected vrijednosti.
+    $(document).on(
+        'change click',
+        '#digitalElephantFilter_form select[name^="warehouse["]',
+        function () {
+            var el = this;
+
+            setTimeout(function () {
+                ensurePrimaryContext(el);
+                markFiltersDirty();
+                toggleTopFilterButtons();
+            }, 0);
         }
     );
 
