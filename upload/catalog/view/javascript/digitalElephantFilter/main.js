@@ -119,8 +119,18 @@ $(function () {
         return normalizeComparableFilterParams($('#digitalElephantFilter_form').serialize());
     }
 
+    function getUrlFilterParamsRaw() {
+        var filterParams = DEFController.url.getFilterParamsByLink();
+
+        if (filterParams) {
+            return filterParams;
+        }
+
+        return window.location.search || '';
+    }
+
     function getUrlFilterSignature() {
-        return normalizeComparableFilterParams(window.location.search);
+        return normalizeComparableFilterParams(getUrlFilterParamsRaw());
     }
 
     function hasAppliedFiltersInUrl() {
@@ -133,7 +143,7 @@ $(function () {
 
     function getWarehouseValuesFromUrl() {
         var warehouseValues = [];
-        var searchParams = new URLSearchParams((window.location.search || '').replace(/^[?&]+/, ''));
+        var searchParams = new URLSearchParams((getUrlFilterParamsRaw() || '').replace(/^[?&]+/, ''));
 
         searchParams.forEach(function (value, key) {
             if (key.indexOf('warehouse[') === 0) {
@@ -156,7 +166,9 @@ $(function () {
             return;
         }
 
-        $warehouseSelect.val(warehouseValues.length ? warehouseValues[0] : '');
+        if (warehouseValues.length) {
+            $warehouseSelect.val(warehouseValues[0]);
+        }
     }
 
     function setTopButtonVisibility(selector, isVisible) {

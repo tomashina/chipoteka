@@ -105,7 +105,23 @@ function DigitalElephantFilterUrl() {
     };
 
     this.changeUrlAddress = function ($_GET_string) {
-        window.history.pushState('', '', this.config.action.category + $_GET_string);
+        var baseUrl = this.config.action.category || window.location.pathname;
+        var qs = ($_GET_string || '').toString().replace(/^[?&]+/, '');
+
+        if (!qs) {
+            window.history.pushState('', '', baseUrl);
+            return;
+        }
+
+        if (baseUrl.indexOf('?') !== -1) {
+            if (!/[?&]$/.test(baseUrl)) {
+                baseUrl += '&';
+            }
+        } else {
+            baseUrl += '?';
+        }
+
+        window.history.pushState('', '', baseUrl + qs);
     };
 }
 //Class digitalElephantFilter URL END
