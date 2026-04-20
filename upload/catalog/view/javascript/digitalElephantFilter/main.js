@@ -32,27 +32,22 @@ $(function () {
 
         return baseUrl + '?' + qs;
     }
-    function getPanelQS() {
-        // trenutno stanje forme (checked + price inputi + def_primary + ajax_digitalElephantFilter)
-        var qs = $('#digitalElephantFilter_form').serialize();
+    function normalizeAppliedQS(qs, primaryOverride) {
+        qs = (qs || '').toString().replace(/^[?&]+/, '');
 
-        // osiguraj path jer ga forma često nema, a serveru treba za category_id
         if (DEFController.config.categoryPath) {
             qs = upsertQsParam(qs, 'path', DEFController.config.categoryPath);
         }
 
-        // osiguraj ajax flag
         qs = upsertQsParam(qs, 'ajax_digitalElephantFilter', '1');
-
-        // osiguraj def_primary (jer ga server koristi za “primarni kontekst”)
-        qs = upsertQsParam(qs, 'def_primary', ($('#def_primary').val() || ''));
-
-        // makni page da ne radi gluposti
+        qs = upsertQsParam(qs, 'def_primary', primaryOverride != null ? primaryOverride : ($('#def_primary').val() || ''));
         qs = qs.replace(/(^|&)page=\d+(&|$)/g, '$1').replace(/^&+|&+$/g, '');
 
-        qs = DEFController.url.removeEmptyParams(qs);
-
-        return qs;
+        return DEFController.url.removeEmptyParams(qs);
+    }
+    function getPanelQS() {
+        // trenutno stanje forme (checked + price inputi + def_primary + ajax_digitalElephantFilter)
+        return normalizeAppliedQS($('#digitalElephantFilter_form').serialize());
     }
 
     // ✅ helper: upsert param u query string (dodaj ili zamijeni)
@@ -274,12 +269,10 @@ $(function () {
         setTopButtonVisibility('#filter-clear-top', hasAppliedFilters);
     }
 
-    function updateTotalFromDEF() {
-        // uzmi trenutno stanje forme (checked + price + def_primary + ajax flag + path)
-        var qs = getPanelQS();
-
-        // makni page da ne krivo računa
-        qs = DEFController.url.cutGetParam(qs, 'page');
+    function updateTotalFromDEF(qsOverride) {
+        var qs = (typeof qsOverride === 'string')
+            ? normalizeAppliedQS(qsOverride, '')
+            : getPanelQS();
 
         $.ajax({
             url: buildUrl(DEFController.config.action.ajaxRenderQuantityProducts, qs),
@@ -411,7 +404,7 @@ $(function () {
         var afterApplied = function () {
             defFiltersApplied = hasAppliedFiltersInUrl();
             toggleTopFilterButtons();
-            updateTotalFromDEF();
+            updateTotalFromDEF($_GET_string);
         };
 
         if (ret && typeof ret.always === 'function') {
@@ -512,7 +505,11 @@ $(function () {
         resetPrimaryContext();
         defFiltersApplied = false;
         toggleTopFilterButtons();
+        updateTotalFromDEF('');
         setTimeout(toggleTopFilterButtons, 50);
+        setTimeout(function () {
+            updateTotalFromDEF('');
+        }, 250);
     });
 
     // CONTAINER PRODUCT REQUIRE STYLE
@@ -567,6 +564,10 @@ $(function () {
         defFiltersApplied = false;
         toggleTopFilterButtons();
         DEFController.reset();
+        updateTotalFromDEF('');
+        setTimeout(function () {
+            updateTotalFromDEF('');
+        }, 250);
     });
 
     // show more
