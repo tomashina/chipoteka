@@ -31,12 +31,13 @@ function DigitalElephantFilterController() {
     this.config             = DEFConfig;
 
     this.$_GET_string = function() {
-        if (this.url.isFilterParamsInUrl()) {
-            var filterParams = this.url.removeEmptyParams(this.getFilterParams());
+        var filterParams = this.url.removeEmptyParams(this.getFilterParams());
+
+        if (filterParams) {
             return '&' + filterParams + this.url.getNativeParams();
-        } else {
-            return this.url.getNativeParams();
         }
+
+        return this.url.getNativeParams();
     };
 
     this.getFilterParams = function() {
