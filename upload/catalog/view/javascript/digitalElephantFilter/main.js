@@ -70,6 +70,134 @@ $(function () {
     // --- TOP "Očisti" + badge sync ---
     var defFiltersApplied = false;
 
+    function normalizeComparableFilterParams(qs) {
+        qs = (qs || '').toString().replace(/^[?&]+|[?&]+$/g, '');
+
+        if (!qs) {
+            return '';
+        }
+
+        qs = DEFController.url.removeEmptyParams(qs);
+
+        if (!qs) {
+            return '';
+        }
+
+        return qs
+            .split('&')
+            .filter(function (part) {
+                if (!part) {
+                    return false;
+                }
+
+                var pair = part.split('=');
+                var rawKey = pair.shift() || '';
+                var rawValue = pair.join('=');
+                var key = rawKey;
+                var value = rawValue;
+
+                try {
+                    key = decodeURIComponent(rawKey);
+                } catch (e) {}
+
+                try {
+                    value = decodeURIComponent(rawValue);
+                } catch (e) {}
+
+                if (
+                    key === 'ajax_digitalElephantFilter' ||
+                    key === 'def_primary' ||
+                    key === 'path' ||
+                    key === 'page' ||
+                    key === 'sort' ||
+                    key === 'order' ||
+                    key === 'limit'
+                ) {
+                    return false;
+                }
+
+                if (key === 'price[min]' && String(value) === String(DEFController.config.peakPrice.min)) {
+                    return false;
+                }
+
+                if (key === 'price[max]' && String(value) === String(DEFController.config.peakPrice.max)) {
+                    return false;
+                }
+
+                return true;
+            })
+            .sort()
+            .join('&');
+    }
+
+    function getCurrentFormFilterSignature() {
+        return normalizeComparableFilterParams($('#digitalElephantFilter_form').serialize());
+    }
+
+    function getUrlFilterSignature() {
+        return normalizeComparableFilterParams(DEFController.url.getFilterParamsByLink());
+    }
+
+    function hasAppliedFiltersInUrl() {
+        return getUrlFilterSignature() !== '';
+    }
+
+    function hasPendingFilterChanges() {
+        return getCurrentFormFilterSignature() !== getUrlFilterSignature();
+    }
+
+    function getWarehouseValuesFromUrl() {
+        var filterParams = DEFController.url.getFilterParamsByLink().replace(/^[?&]+/, '');
+
+        if (!filterParams) {
+            return [];
+        }
+
+        var filterData = DEFController.url.stringToArray(filterParams);
+        var warehouseValues = [];
+
+        if (!filterData.warehouse) {
+            return warehouseValues;
+        }
+
+        (function walk(value) {
+            if ($.isArray(value)) {
+                $.each(value, function (_, item) {
+                    walk(item);
+                });
+
+                return;
+            }
+
+            if (value && typeof value === 'object') {
+                $.each(value, function (_, item) {
+                    walk(item);
+                });
+
+                return;
+            }
+
+            var normalizedValue = $.trim(String(value || ''));
+
+            if (normalizedValue !== '') {
+                warehouseValues.push(normalizedValue);
+            }
+        })(filterData.warehouse);
+
+        return warehouseValues;
+    }
+
+    function syncWarehouseSelectionFromUrl() {
+        var warehouseValues = getWarehouseValuesFromUrl();
+        var $warehouseSelect = $('#digitalElephantFilter_form select[name^="warehouse["]');
+
+        if (!$warehouseSelect.length) {
+            return;
+        }
+
+        $warehouseSelect.val(warehouseValues.length ? warehouseValues[0] : '');
+    }
+
     function hasFilterSelectionOrChange() {
         var hasChecked = $('#digitalElephantFilter_form').find('input:checked').length > 0;
         var hasSelectedOption = $('#digitalElephantFilter_form').find('select').filter(function () {
@@ -150,7 +278,7 @@ $(function () {
     }
 
     function markFiltersDirty() {
-        defFiltersApplied = false;
+        defFiltersApplied = hasAppliedFiltersInUrl();
     }
 
     function isWarehouseControl(el) {
@@ -161,9 +289,11 @@ $(function () {
     }
 
     function toggleTopFilterButtons() {
-        var hasSelection = hasFilterSelectionOrChange();
-        $('#filter-apply-top').toggle(hasSelection && !defFiltersApplied);
-        $('#filter-clear-top').toggle(hasSelection || defFiltersApplied);
+        var hasAppliedFilters = hasAppliedFiltersInUrl() || defFiltersApplied;
+        var hasPendingChanges = hasPendingFilterChanges();
+
+        $('#filter-apply-top').toggle(hasPendingChanges);
+        $('#filter-clear-top').toggle(hasAppliedFilters);
     }
 
     function updateTotalFromDEF() {
@@ -225,7 +355,9 @@ $(function () {
                         $('#def_primary').val(primary);
                     }
 
+                    syncWarehouseSelectionFromUrl();
                     initSliderPrice(DEFController);
+                    toggleTopFilterButtons();
                 }
             }
         });
@@ -265,6 +397,7 @@ $(function () {
                     }
                     $('#def_primary').val(primary);
 
+                    syncWarehouseSelectionFromUrl();
                     initSliderPrice(DEFController);
                     toggleTopFilterButtons();
                 }
@@ -279,21 +412,32 @@ $(function () {
 
     // wrapaj ajaxGetProducts da nakon svakog refresh-a updatea badge + applied state + panel
     var _ajaxGetProducts = DEFController.containerProducts.ajaxGetProducts.bind(DEFController.containerProducts);
+    var _renderFilterPanel = DEFController.filterPanel.render.bind(DEFController.filterPanel);
+
+    DEFController.filterPanel.render = function ($_GET_string) {
+        var ret = _renderFilterPanel($_GET_string);
+
+        if (ret && typeof ret.always === 'function') {
+            ret.always(function () {
+                syncWarehouseSelectionFromUrl();
+                toggleTopFilterButtons();
+            });
+        }
+
+        return ret;
+    };
 
     DEFController.containerProducts.ajaxGetProducts = function ($_GET_string, isShowMore) {
         var ret = _ajaxGetProducts($_GET_string, isShowMore);
 
         var afterApplied = function () {
-            defFiltersApplied = hasFilterSelectionOrChange();
+            defFiltersApplied = hasAppliedFiltersInUrl();
             toggleTopFilterButtons();
             updateTotalFromDEF();
-            refreshFilterPanel();
         };
 
         if (ret && typeof ret.always === 'function') {
             ret.always(afterApplied);
-        } else {
-            setTimeout(afterApplied, 400);
         }
 
         return ret;
@@ -408,7 +552,6 @@ $(function () {
     // page reload
     if (DEFController.url.isFilterParamsInUrl()) {
         DEFController.pageReloaded();
-        refreshFilterPanel();
     }
 
     // change limit
