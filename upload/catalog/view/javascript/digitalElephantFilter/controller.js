@@ -110,8 +110,10 @@ function DigitalElephantFilterController() {
     };
 
     this.reset = function () {
-        $(this.filterPanel.selectorForm + ' input').removeAttr('checked');
-        $(this.filterPanel.selectorForm + ' select option').removeAttr('selected');
+        $(this.filterPanel.selectorForm + ' input[type="checkbox"], ' + this.filterPanel.selectorForm + ' input[type="radio"]').prop('checked', false);
+        $(this.filterPanel.selectorForm + ' select').each(function () {
+            $(this).prop('selectedIndex', 0).val('');
+        });
 
         this.sliderPrice.setChangePriceMin(this.sliderPrice.getPeakPriceMin());
         this.sliderPrice.setChangePriceMax(this.sliderPrice.getPeakPriceMax());

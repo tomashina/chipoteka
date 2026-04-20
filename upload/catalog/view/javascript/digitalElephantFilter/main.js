@@ -107,6 +107,10 @@ $(function () {
             return 'manufacturer';
         }
 
+        if (name.indexOf('warehouse[') === 0) {
+            return 'warehouse';
+        }
+
         if (name.indexOf('price[') === 0) {
             return 'price';
         }
@@ -255,6 +259,10 @@ $(function () {
         });
     }, 200);
 
+    var updateTotalPreview = debounce(function () {
+        updateTotalFromDEF();
+    }, 200);
+
 
     // wrapaj ajaxGetProducts da nakon svakog refresh-a updatea badge + applied state + panel
     var _ajaxGetProducts = DEFController.containerProducts.ajaxGetProducts.bind(DEFController.containerProducts);
@@ -312,6 +320,7 @@ $(function () {
 
                 // 🔥 odmah sakrij sekundarne u panelu
                 refreshFilterPanelOnly();
+                updateTotalPreview();
 
                 toggleTopFilterButtons();
             }, 0);
@@ -324,6 +333,8 @@ $(function () {
         '#digitalElephantFilter_form select, #digitalElephantFilter_form input:not([type="checkbox"]):not([type="radio"])',
         function () {
             ensurePrimaryContext(this);
+            refreshFilterPanelOnly();
+            updateTotalPreview();
             toggleTopFilterButtons();
         }
     );
