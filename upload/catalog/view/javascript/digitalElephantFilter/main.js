@@ -153,6 +153,13 @@ $(function () {
         defFiltersApplied = false;
     }
 
+    function isWarehouseControl(el) {
+        var $el = $(el);
+        var name = $el.attr('name') || '';
+
+        return name.indexOf('warehouse[') === 0;
+    }
+
     function toggleTopFilterButtons() {
         var hasSelection = hasFilterSelectionOrChange();
         $('#filter-apply-top').toggle(hasSelection && !defFiltersApplied);
@@ -293,10 +300,14 @@ $(function () {
     };
 
     // inicijalno
-    updateTotalFromDEF();
     initSliderPrice(DEFController);
 
     defFiltersApplied = DEFController.url.isFilterParamsInUrl();
+
+    if (defFiltersApplied) {
+        updateTotalFromDEF();
+    }
+
     toggleTopFilterButtons();
 
     // TOP "Očisti"
@@ -342,8 +353,12 @@ $(function () {
         function () {
             ensurePrimaryContext(this);
             markFiltersDirty();
-            refreshFilterPanelOnly();
-            updateTotalPreview();
+
+            if (!isWarehouseControl(this)) {
+                refreshFilterPanelOnly();
+                updateTotalPreview();
+            }
+
             toggleTopFilterButtons();
         }
     );
