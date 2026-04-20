@@ -11,6 +11,44 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
     private $storageWarehouseSnapshot = null;
     private $storageWarehouseTableAvailable = null;
 
+    private function defGetSaleSortReferencePriceSql($price_field = 'p.price')
+    {
+        return "(CASE
+            WHEN p.price_last_30 > 0 AND p.price_2 > 0 AND p.price_last_30 < p.price_2 THEN p.price_last_30
+            WHEN p.price_2 > 0 THEN p.price_2
+            WHEN " . $price_field . " > 0 THEN " . $price_field . "
+            ELSE 0
+        END)";
+    }
+
+    private function defGetSaleSortPrioritySql($special_field = 'special', $price_field = 'p.price')
+    {
+        $reference_price_sql = $this->defGetSaleSortReferencePriceSql($price_field);
+
+        return "(CASE
+            WHEN " . $special_field . " IS NOT NULL
+                AND " . $special_field . " > 0
+                AND " . $reference_price_sql . " > 0
+                AND " . $special_field . " < " . $reference_price_sql . "
+            THEN 1
+            ELSE 0
+        END)";
+    }
+
+    private function defGetSaleSortPercentSql($special_field = 'special', $price_field = 'p.price')
+    {
+        $reference_price_sql = $this->defGetSaleSortReferencePriceSql($price_field);
+
+        return "(CASE
+            WHEN " . $special_field . " IS NOT NULL
+                AND " . $special_field . " > 0
+                AND " . $reference_price_sql . " > 0
+                AND " . $special_field . " < " . $reference_price_sql . "
+            THEN ((" . $reference_price_sql . " - " . $special_field . ") / " . $reference_price_sql . ") * 100
+            ELSE 0
+        END)";
+    }
+
     private function defBooleanTrueValues()
     {
         return array('D', 'Da', 'T', 'True', 'Y', 'Yes', '1');
@@ -1095,7 +1133,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
 
                 $sql .= " LEFT JOIN (SELECT price, product_id FROM " . DB_PREFIX . "product_discount) AS pd2 ON (pd2.product_id = pa.product_id)
                     LEFT JOIN (SELECT price, product_id FROM " . DB_PREFIX . "product_special) AS ps ON (ps.product_id = pa.product_id)
-                    LEFT JOIN (SELECT price, sort_order, model, product_id FROM " . DB_PREFIX . "product) AS p ON (p.product_id = pa.product_id)
+                    LEFT JOIN (SELECT price, price_2, price_last_30, sort_order, model, product_id FROM " . DB_PREFIX . "product) AS p ON (p.product_id = pa.product_id)
                     LEFT JOIN (SELECT name, product_id FROM " . DB_PREFIX . "product_description) AS pd ON (pd.product_id = pa.product_id)";
 
                 $sql .= " WHERE pa.product_id IN (" . implode(',', $without_attr_product_ids) . ")";
@@ -1379,6 +1417,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                 'p.model',
                 'p.quantity',
                 'p.price',
+                'sale_percent',
                 'rating',
                 'p.sort_order',
                 'p.date_added'
@@ -1389,6 +1428,8 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                     $sql .= " ORDER BY LCASE(" . $data['sort'] . ")";
                 } elseif ($data['sort'] == 'p.price') {
                     $sql .= " ORDER BY (CASE WHEN special IS NOT NULL THEN special ELSE p.price END)";
+                } elseif ($data['sort'] == 'sale_percent') {
+                    $sql .= " ORDER BY " . $this->defGetSaleSortPrioritySql('special') . " DESC, " . $this->defGetSaleSortPercentSql('special');
                 } else {
                     $sql .= " ORDER BY " . $data['sort'];
                 }

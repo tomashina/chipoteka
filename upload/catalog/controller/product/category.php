@@ -394,6 +394,18 @@ class ControllerProductCategory extends Controller {
 				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.price&order=DESC' . $url)
 			);
 
+			$data['sorts'][] = array(
+				'text'  => $this->language->get('text_sale_percent_asc'),
+				'value' => 'sale_percent-ASC',
+				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=sale_percent&order=ASC' . $url)
+			);
+
+			$data['sorts'][] = array(
+				'text'  => $this->language->get('text_sale_percent_desc'),
+				'value' => 'sale_percent-DESC',
+				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=sale_percent&order=DESC' . $url)
+			);
+
 			if ($this->config->get('config_review_status')) {
 				$data['sorts'][] = array(
 					'text'  => $this->language->get('text_rating_desc'),

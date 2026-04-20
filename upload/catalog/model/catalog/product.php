@@ -167,6 +167,41 @@ class ModelCatalogProduct extends Model {
 		)";
 	}
 
+	private function getSaleSortReferencePriceSql($price_field = 'p.price') {
+		return "(CASE
+			WHEN p.price_last_30 > 0 AND p.price_2 > 0 AND p.price_last_30 < p.price_2 THEN p.price_last_30
+			WHEN p.price_2 > 0 THEN p.price_2
+			WHEN " . $price_field . " > 0 THEN " . $price_field . "
+			ELSE 0
+		END)";
+	}
+
+	private function getSaleSortPrioritySql($special_field = 'special', $price_field = 'p.price') {
+		$reference_price_sql = $this->getSaleSortReferencePriceSql($price_field);
+
+		return "(CASE
+			WHEN " . $special_field . " IS NOT NULL
+				AND " . $special_field . " > 0
+				AND " . $reference_price_sql . " > 0
+				AND " . $special_field . " < " . $reference_price_sql . "
+			THEN 1
+			ELSE 0
+		END)";
+	}
+
+	private function getSaleSortPercentSql($special_field = 'special', $price_field = 'p.price') {
+		$reference_price_sql = $this->getSaleSortReferencePriceSql($price_field);
+
+		return "(CASE
+			WHEN " . $special_field . " IS NOT NULL
+				AND " . $special_field . " > 0
+				AND " . $reference_price_sql . " > 0
+				AND " . $special_field . " < " . $reference_price_sql . "
+			THEN ((" . $reference_price_sql . " - " . $special_field . ") / " . $reference_price_sql . ") * 100
+			ELSE 0
+		END)";
+	}
+
 	public function getProducts($data = array()) {
 		$sql = "SELECT p.product_id, (SELECT AVG(rating) AS total FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = p.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating, (SELECT price FROM " . DB_PREFIX . "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, (SELECT price FROM " . DB_PREFIX . "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special";
 
@@ -273,16 +308,19 @@ class ModelCatalogProduct extends Model {
 			'p.model',
 			'p.quantity',
 			'p.price',
+			'sale_percent',
 			'rating',
 			'p.sort_order',
 			'p.date_added'
 		);
 
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
-			if ($data['sort'] == 'pd.name' || $data['sort'] == 'p.model') {
+            if ($data['sort'] == 'pd.name' || $data['sort'] == 'p.model') {
 				$sql .= " ORDER BY LCASE(" . $data['sort'] . ")";
 			} elseif ($data['sort'] == 'p.price') {
                 $sql .= " ORDER BY (CASE WHEN special IS NOT NULL THEN special WHEN discount IS NOT NULL THEN discount ELSE p.price END)";
+            } elseif ($data['sort'] == 'sale_percent') {
+				$sql .= " ORDER BY " . $this->getSaleSortPrioritySql('special') . " DESC, " . $this->getSaleSortPercentSql('special');
             } elseif ($data['sort'] == 'p.sort_order') {
                 $sql .= ' ORDER BY (CASE WHEN pd.name LIKE "' . $data['filter_name'] . '%" THEN 1 ELSE 2 END)';
             } else {
@@ -322,12 +360,13 @@ class ModelCatalogProduct extends Model {
 	}
 
 	public function getProductSpecials($data = array()) {
-		$sql = "SELECT DISTINCT ps.product_id, (SELECT AVG(rating) FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = ps.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating FROM " . DB_PREFIX . "product_special ps LEFT JOIN " . DB_PREFIX . "product p ON (ps.product_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW())) GROUP BY ps.product_id";
+		$sql = "SELECT DISTINCT ps.product_id, MIN(ps.price) AS special_price, (SELECT AVG(rating) FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = ps.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating FROM " . DB_PREFIX . "product_special ps LEFT JOIN " . DB_PREFIX . "product p ON (ps.product_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW())) GROUP BY ps.product_id";
 
 		$sort_data = array(
 			'pd.name',
 			'p.model',
 			'ps.price',
+			'sale_percent',
 			'rating',
 			'p.sort_order'
 		);
@@ -335,6 +374,10 @@ class ModelCatalogProduct extends Model {
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
 			if ($data['sort'] == 'pd.name' || $data['sort'] == 'p.model') {
 				$sql .= " ORDER BY LCASE(" . $data['sort'] . ")";
+			} elseif ($data['sort'] == 'ps.price') {
+				$sql .= " ORDER BY special_price";
+			} elseif ($data['sort'] == 'sale_percent') {
+				$sql .= " ORDER BY " . $this->getSaleSortPrioritySql('special_price') . " DESC, " . $this->getSaleSortPercentSql('special_price');
 			} else {
 				$sql .= " ORDER BY " . $data['sort'];
 			}

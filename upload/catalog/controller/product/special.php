@@ -184,6 +184,18 @@ class ControllerProductSpecial extends Controller {
 			'href'  => $this->url->link('product/special', 'sort=ps.price&order=DESC' . $url)
 		);
 
+		$data['sorts'][] = array(
+			'text'  => $this->language->get('text_sale_percent_asc'),
+			'value' => 'sale_percent-ASC',
+			'href'  => $this->url->link('product/special', 'sort=sale_percent&order=ASC' . $url)
+		);
+
+		$data['sorts'][] = array(
+			'text'  => $this->language->get('text_sale_percent_desc'),
+			'value' => 'sale_percent-DESC',
+			'href'  => $this->url->link('product/special', 'sort=sale_percent&order=DESC' . $url)
+		);
+
 		if ($this->config->get('config_review_status')) {
 			$data['sorts'][] = array(
 				'text'  => $this->language->get('text_rating_desc'),
