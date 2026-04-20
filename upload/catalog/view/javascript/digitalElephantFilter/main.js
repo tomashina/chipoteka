@@ -149,6 +149,10 @@ $(function () {
         $('#def_primary').val('');
     }
 
+    function markFiltersDirty() {
+        defFiltersApplied = false;
+    }
+
     function toggleTopFilterButtons() {
         var hasSelection = hasFilterSelectionOrChange();
         $('#filter-apply-top').toggle(hasSelection && !defFiltersApplied);
@@ -320,6 +324,8 @@ $(function () {
                     ensurePrimaryContext(el);
                 }
 
+                markFiltersDirty();
+
                 // 🔥 odmah sakrij sekundarne u panelu
                 refreshFilterPanelOnly();
                 updateTotalPreview();
@@ -335,6 +341,7 @@ $(function () {
         '#digitalElephantFilter_form select, #digitalElephantFilter_form input:not([type="checkbox"]):not([type="radio"])',
         function () {
             ensurePrimaryContext(this);
+            markFiltersDirty();
             refreshFilterPanelOnly();
             updateTotalPreview();
             toggleTopFilterButtons();
