@@ -159,6 +159,10 @@ $(function () {
         $warehouseSelect.val(warehouseValues.length ? warehouseValues[0] : '');
     }
 
+    function setTopButtonVisibility(selector, isVisible) {
+        $(selector).css('display', isVisible ? 'block' : 'none');
+    }
+
     function hasFilterSelectionOrChange() {
         var hasChecked = $('#digitalElephantFilter_form').find('input:checked').length > 0;
         var hasSelectedOption = $('#digitalElephantFilter_form').find('select').filter(function () {
@@ -254,8 +258,8 @@ $(function () {
         var hasAppliedFilters = hasAppliedFiltersInUrl() || defFiltersApplied;
         var hasPendingChanges = hasSelection && (!hasAppliedFilters || hasPendingFilterChanges());
 
-        $('#filter-apply-top').toggle(hasPendingChanges);
-        $('#filter-clear-top').toggle(hasAppliedFilters);
+        setTopButtonVisibility('#filter-apply-top', hasPendingChanges);
+        setTopButtonVisibility('#filter-clear-top', hasAppliedFilters);
     }
 
     function updateTotalFromDEF() {
@@ -480,6 +484,7 @@ $(function () {
             setTimeout(function () {
                 ensurePrimaryContext(el);
                 markFiltersDirty();
+                setTopButtonVisibility('#filter-apply-top', ($(el).val() || '') !== '');
                 toggleTopFilterButtons();
             }, 0);
         }

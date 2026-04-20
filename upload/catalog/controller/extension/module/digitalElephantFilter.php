@@ -26,6 +26,15 @@ class ControllerExtensionModuleDigitalElephantFilter extends Controller
      */
     private $panel = null;
 
+    private function getScriptVersion($path)
+    {
+        if (is_file($path)) {
+            return '?v=' . (string)filemtime($path);
+        }
+
+        return '';
+    }
+
 
     public function __construct($registry)
     {
@@ -60,26 +69,26 @@ class ControllerExtensionModuleDigitalElephantFilter extends Controller
 		}	
 		
         if ($this->language->get('direction') == 'rtl') {
-		$this->document->addScript($server . '/catalog/view/javascript/jquery/ui/jquery-ui-slider-rtl.min.js');	
+		$this->document->addScript($server . '/catalog/view/javascript/jquery/ui/jquery-ui-slider-rtl.min.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/jquery/ui/jquery-ui-slider-rtl.min.js'));	
         } else { 
-		$this->document->addScript($server . '/catalog/view/javascript/jquery/ui/jquery-ui-slider.min.js');
+		$this->document->addScript($server . '/catalog/view/javascript/jquery/ui/jquery-ui-slider.min.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/jquery/ui/jquery-ui-slider.min.js'));
 		}
 		
-		$this->document->addScript($server . '/catalog/view/theme/basel/js/jquery.ui.touch-punch.min.js');
-		$this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/main.js');
-        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/controller.js');
-        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/helper.js');
-        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/slider_price.js');
-        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/url_private.js');
-        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/url.js');
-        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/pagination.js');
-        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/show_more.js');
-        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/quantity_products.js');
-        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/sync.js');
-        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/container_products.js');
-        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/panel.js');
-        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/limit.js');
-        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/sort.js');
+		$this->document->addScript($server . '/catalog/view/theme/basel/js/jquery.ui.touch-punch.min.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/theme/basel/js/jquery.ui.touch-punch.min.js'));
+		$this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/main.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/digitalElephantFilter/main.js'));
+        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/controller.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/digitalElephantFilter/controller.js'));
+        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/helper.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/digitalElephantFilter/classes/helper.js'));
+        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/slider_price.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/digitalElephantFilter/classes/slider_price.js'));
+        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/url_private.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/digitalElephantFilter/classes/url_private.js'));
+        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/url.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/digitalElephantFilter/classes/url.js'));
+        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/pagination.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/digitalElephantFilter/classes/pagination.js'));
+        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/show_more.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/digitalElephantFilter/classes/show_more.js'));
+        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/quantity_products.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/digitalElephantFilter/classes/quantity_products.js'));
+        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/sync.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/digitalElephantFilter/classes/sync.js'));
+        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/container_products.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/digitalElephantFilter/classes/container_products.js'));
+        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/panel.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/digitalElephantFilter/classes/panel.js'));
+        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/limit.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/digitalElephantFilter/classes/limit.js'));
+        $this->document->addScript($server . '/catalog/view/javascript/digitalElephantFilter/classes/sort.js' . $this->getScriptVersion(DIR_APPLICATION . 'view/javascript/digitalElephantFilter/classes/sort.js'));
     }
 
     protected function setStyle()
