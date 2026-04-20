@@ -180,6 +180,14 @@
                 </div>
                     <input type="hidden" name="def_primary" id="def_primary" value="{{ def_primary|default('') }}"/>
 
+                    {% if action_filter_enabled %}
+                        <input type="hidden" name="action_filter" value="1"/>
+                    {% endif %}
+
+                    {% if action_selected_category_id %}
+                        <input type="hidden" name="action_category_id" value="{{ action_selected_category_id }}"/>
+                    {% endif %}
+
                     <input type="hidden" name="ajax_digitalElephantFilter" value="1"/>
                 </div>
             </form>

@@ -130,6 +130,43 @@ class ModelCatalogProduct extends Model {
 		return $sale_data;
 	}
 
+	private function hasActionFilter($data = array()) {
+		return !empty($data['filter_action_only']) || !empty($data['filter_action_category_id']);
+	}
+
+	private function getActionFilterPathId($data = array()) {
+		if (!empty($data['filter_action_category_id'])) {
+			return (int)$data['filter_action_category_id'];
+		}
+
+		if (!empty($data['filter_action_parent_id'])) {
+			return (int)$data['filter_action_parent_id'];
+		}
+
+		return 308;
+	}
+
+	private function getActionFilterSql($data = array(), $product_field = 'p.product_id') {
+		if (!$this->hasActionFilter($data)) {
+			return '';
+		}
+
+		$action_path_id = $this->getActionFilterPathId($data);
+
+		if (!$action_path_id) {
+			return '';
+		}
+
+		return " AND EXISTS (
+			SELECT 1
+			FROM " . DB_PREFIX . "category_path acp
+			LEFT JOIN " . DB_PREFIX . "product_to_category ap2c
+				ON (ap2c.category_id = acp.category_id)
+			WHERE acp.path_id = '" . $action_path_id . "'
+				AND ap2c.product_id = " . $product_field . "
+		)";
+	}
+
 	public function getProducts($data = array()) {
 		$sql = "SELECT p.product_id, (SELECT AVG(rating) AS total FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = p.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating, (SELECT price FROM " . DB_PREFIX . "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, (SELECT price FROM " . DB_PREFIX . "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special";
 
@@ -226,6 +263,8 @@ class ModelCatalogProduct extends Model {
 		if (!empty($data['filter_manufacturer_id'])) {
 			$sql .= " AND p.manufacturer_id = '" . (int)$data['filter_manufacturer_id'] . "'";
 		}
+
+		$sql .= $this->getActionFilterSql($data);
 
 		$sql .= " GROUP BY p.product_id";
 
@@ -598,6 +637,8 @@ class ModelCatalogProduct extends Model {
 		if (!empty($data['filter_manufacturer_id'])) {
 			$sql .= " AND p.manufacturer_id = '" . (int)$data['filter_manufacturer_id'] . "'";
 		}
+
+		$sql .= $this->getActionFilterSql($data);
 
 		$query = $this->db->query($sql);
 

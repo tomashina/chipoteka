@@ -23,4 +23,6 @@ $_['text_rating_desc']  = 'Ocjena (najviša)';
 $_['text_model_asc']    = 'Model (A -&gt; Z)';
 $_['text_model_desc']   = 'Model (Z -&gt; A)';
 $_['text_limit']        = 'Prikaži:';
+$_['text_action_only']   = 'Akcija';
+$_['text_action_all']    = 'Sve akcije';
 $_['text_pagination_limit']       = 'Ukupno %d ';

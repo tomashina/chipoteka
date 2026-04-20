@@ -68,6 +68,7 @@ $(function () {
     function getComparableQueryEntries(qs) {
         var normalizedQs = (qs || '').toString().replace(/^[?&]+/, '');
         var entries = [];
+        var ignoreActionFilterInUrl = !!window.DEFIgnoreActionFilterInUrl;
 
         if (!normalizedQs) {
             return entries;
@@ -81,6 +82,7 @@ $(function () {
             }
 
             if (
+                key === 'route' ||
                 key === 'ajax_digitalElephantFilter' ||
                 key === 'def_primary' ||
                 key === 'path' ||
@@ -89,6 +91,10 @@ $(function () {
                 key === 'order' ||
                 key === 'limit'
             ) {
+                return;
+            }
+
+            if (ignoreActionFilterInUrl && (key === 'action_filter' || key === 'action_category_id')) {
                 return;
             }
 
@@ -129,7 +135,36 @@ $(function () {
     }
 
     function hasAppliedFiltersInUrl() {
+        if (!!window.DEFResetInProgress) {
+            return false;
+        }
+
         return getUrlFilterSignature() !== '';
+    }
+
+    function hasActionFilterInUrl() {
+        var searchParams = new URLSearchParams((getUrlFilterParamsRaw() || '').replace(/^[?&]+/, ''));
+
+        if (!!window.DEFResetInProgress || !!window.DEFIgnoreActionFilterInUrl) {
+            return false;
+        }
+
+        return searchParams.has('action_filter') || searchParams.has('action_category_id');
+    }
+
+    function hasActionFilterActive() {
+        var $actionToggle = $('#action-filter-toggle');
+        var $actionForm = $('#digitalElephantFilter_form');
+
+        if ($actionToggle.length && $actionToggle.is(':checked')) {
+            return true;
+        }
+
+        if ($actionForm.length && $actionForm.find('input[name="action_filter"]').length) {
+            return true;
+        }
+
+        return hasActionFilterInUrl();
     }
 
     function hasPendingFilterChanges() {
@@ -168,6 +203,42 @@ $(function () {
 
     function setTopButtonVisibility(selector, isVisible) {
         $(selector).css('display', isVisible ? 'block' : 'none');
+    }
+
+    function beginResetFlow() {
+        window.DEFResetInProgress = true;
+        window.DEFIgnoreActionFilterInUrl = true;
+        setTopButtonVisibility('#filter-apply-top', false);
+        setTopButtonVisibility('#filter-clear-top', false);
+    }
+
+    function finishResetFlow() {
+        window.DEFResetInProgress = false;
+        window.DEFIgnoreActionFilterInUrl = false;
+        defFiltersApplied = hasAppliedFiltersInUrl();
+        toggleTopFilterButtons();
+        updateTotalFromDEF('');
+        setTimeout(function () {
+            updateTotalFromDEF('');
+        }, 250);
+    }
+
+    function runResetFlow() {
+        beginResetFlow();
+
+        if (typeof window.DEFClearActionFilterState === 'function') {
+            window.DEFClearActionFilterState();
+        }
+
+        var request = DEFController.reset();
+
+        if (request && typeof request.always === 'function') {
+            request.always(function () {
+                finishResetFlow();
+            });
+        } else {
+            finishResetFlow();
+        }
     }
 
     function hasFilterSelectionOrChange() {
@@ -262,8 +333,27 @@ $(function () {
 
     function toggleTopFilterButtons() {
         var hasSelection = hasFilterSelectionOrChange();
+        var hasActionFilter = hasActionFilterActive();
         var hasAppliedFilters = hasAppliedFiltersInUrl() || defFiltersApplied;
         var hasPendingChanges = hasSelection && (!hasAppliedFilters || hasPendingFilterChanges());
+
+        if (window.DEFResetInProgress) {
+            setTopButtonVisibility('#filter-apply-top', false);
+            setTopButtonVisibility('#filter-clear-top', false);
+            return;
+        }
+
+        if (window.DEFActionAutoApplyInProgress) {
+            setTopButtonVisibility('#filter-apply-top', false);
+            setTopButtonVisibility('#filter-clear-top', hasActionFilter || hasAppliedFilters);
+            return;
+        }
+
+        if (hasActionFilter) {
+            setTopButtonVisibility('#filter-apply-top', false);
+            setTopButtonVisibility('#filter-clear-top', true);
+            return;
+        }
 
         setTopButtonVisibility('#filter-apply-top', hasPendingChanges);
         setTopButtonVisibility('#filter-clear-top', hasAppliedFilters);
@@ -423,14 +513,15 @@ $(function () {
         updateTotalFromDEF();
     }
 
+    window.DEFToggleTopFilterButtons = toggleTopFilterButtons;
     toggleTopFilterButtons();
 
     // TOP "Očisti"
     $(document).on('click', '#filter-clear-top', function () {
         resetPrimaryContext();
         defFiltersApplied = false;
-        toggleTopFilterButtons();
-        $('#digitalElephantFilter_button_clear').trigger('click');
+        runResetFlow();
+        return false;
     });
 
     // TOP "Filtriraj"
@@ -504,12 +595,7 @@ $(function () {
     $(document).on('click', '#digitalElephantFilter_button_clear', function () {
         resetPrimaryContext();
         defFiltersApplied = false;
-        toggleTopFilterButtons();
-        updateTotalFromDEF('');
-        setTimeout(toggleTopFilterButtons, 50);
-        setTimeout(function () {
-            updateTotalFromDEF('');
-        }, 250);
+        beginResetFlow();
     });
 
     // CONTAINER PRODUCT REQUIRE STYLE
@@ -562,12 +648,8 @@ $(function () {
     $(document).on('click', DEFController.filterPanel.selectorButtonClear, function () {
         resetPrimaryContext();
         defFiltersApplied = false;
-        toggleTopFilterButtons();
-        DEFController.reset();
-        updateTotalFromDEF('');
-        setTimeout(function () {
-            updateTotalFromDEF('');
-        }, 250);
+        runResetFlow();
+        return false;
     });
 
     // show more

@@ -150,10 +150,10 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
         $category_id = (int)$category_id;
 
         $section_groups = $this->cache->get('DEF_panel_attr_' . $category_id);
+        $urlBase = $this->helperUrl->getUrlData();
+        $hasActionFilter = !empty($urlBase['action_filter']) || !empty($urlBase['action_category_id']);
 
-        if (($this->helperUrl->isAjaxRequest() || !$section_groups || !isset($setting['DEF_settings']['cache']['isset']))) {
-            $urlBase = $this->helperUrl->getUrlData();
-
+        if (($this->helperUrl->isAjaxRequest() || $hasActionFilter || !$section_groups || !isset($setting['DEF_settings']['cache']['isset']))) {
             $args = array(
                 'category_id' => $category_id,
                 'filter_sub_category' => true
@@ -161,6 +161,12 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
 
             if (!empty($urlBase['warehouse'])) {
                 $args['warehouses'] = $urlBase['warehouse'];
+            }
+
+            if ($hasActionFilter) {
+                $args['action_filter_only'] = 1;
+                $args['action_category_id'] = !empty($urlBase['action_category_id']) ? (int)$urlBase['action_category_id'] : 0;
+                $args['action_parent_id'] = 308;
             }
 
             $attributes_groups = $this->model_extension_module_digitalElephantFilter->getAttributes($setting['DEF_settings'], $args);

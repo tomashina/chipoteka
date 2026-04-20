@@ -544,7 +544,58 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
         return " AND (" . implode(' OR ', $clauses) . ")";
     }
 
-    public function getMinMaxPrice($category_id)
+    private function defHasActionFilter(array $data)
+    {
+        return !empty($data['filter_action_only'])
+            || !empty($data['action_filter_only'])
+            || !empty($data['filter_action_category_id'])
+            || !empty($data['action_category_id']);
+    }
+
+    private function defGetActionPathId(array $data)
+    {
+        if (!empty($data['filter_action_category_id'])) {
+            return (int)$data['filter_action_category_id'];
+        }
+
+        if (!empty($data['action_category_id'])) {
+            return (int)$data['action_category_id'];
+        }
+
+        if (!empty($data['filter_action_parent_id'])) {
+            return (int)$data['filter_action_parent_id'];
+        }
+
+        if (!empty($data['action_parent_id'])) {
+            return (int)$data['action_parent_id'];
+        }
+
+        return 308;
+    }
+
+    private function defGetActionFilterSql($field, array $data)
+    {
+        if (!$this->defHasActionFilter($data)) {
+            return '';
+        }
+
+        $action_path_id = $this->defGetActionPathId($data);
+
+        if (!$action_path_id) {
+            return '';
+        }
+
+        return " AND EXISTS (
+            SELECT 1
+            FROM `" . DB_PREFIX . "category_path` acp
+            LEFT JOIN `" . DB_PREFIX . "product_to_category` ap2c
+                ON (ap2c.category_id = acp.category_id)
+            WHERE acp.path_id = '" . $action_path_id . "'
+                AND ap2c.product_id = " . $field . "
+        )";
+    }
+
+    public function getMinMaxPrice($category_id, $data = array())
     {
         $customer_group_id = $this->config->get('config_customer_group_id');
         $shipping_country_id = isset($this->session->data['shipping_country_id']) ? $this->session->data['shipping_country_id'] : (($this->config->get('config_tax_default') == 'shipping') ? $this->config->get('config_country_id') : null);
@@ -634,7 +685,13 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
             $sql .= ' AND ((' . implode(') OR (', $conditions) . '))';
         }
 
-        $sql .= ") AS t GROUP BY t.tax_class_id) AS tr2 ON (tr2.tax_class_id = p.tax_class_id) WHERE p2s.store_id = '" . $this->config->get('config_store_id') . "' AND p.status = '1' AND p.date_available <= NOW() GROUP BY p.product_id) as min_max";
+        $sql .= ") AS t GROUP BY t.tax_class_id) AS tr2 ON (tr2.tax_class_id = p.tax_class_id) WHERE p2s.store_id = '" . $this->config->get('config_store_id') . "' AND p.status = '1' AND p.date_available <= NOW()";
+
+        if ($this->defHasActionFilter($data)) {
+            $sql .= $this->defGetActionFilterSql('p.product_id', $data);
+        }
+
+        $sql .= " GROUP BY p.product_id) as min_max";
 
         $query = $this->db->query($sql);
 
@@ -676,6 +733,10 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
 
         if (!empty($data['warehouses'])) {
             $sql .= $this->defGetWarehouseFilterSql('p.product_id', $data['warehouses']);
+        }
+
+        if ($this->defHasActionFilter($data)) {
+            $sql .= $this->defGetActionFilterSql('p.product_id', $data);
         }
 
         $sql .= " AND pa.language_id = '" . (int)$this->config->get('config_language_id') . "'" .
@@ -759,6 +820,10 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
             $sql .= $this->defGetWarehouseFilterSql('p.product_id', $data['warehouses']);
         }
 
+        if ($this->defHasActionFilter($data)) {
+            $sql .= $this->defGetActionFilterSql('p.product_id', $data);
+        }
+
         $sql .= " ORDER BY ";
 
         switch ($DEF_settings['advance']['manufacturers']['sort']) {
@@ -790,6 +855,10 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
 
         if (!empty($data['warehouses'])) {
             $sql .= $this->defGetWarehouseFilterSql('p.product_id', $data['warehouses']);
+        }
+
+        if ($this->defHasActionFilter($data)) {
+            $sql .= $this->defGetActionFilterSql('p.product_id', $data);
         }
 
         $sql .= " GROUP BY cd.category_id ORDER BY ";
@@ -843,6 +912,10 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
 
         if (!empty($data['warehouses'])) {
             $sql .= $this->defGetWarehouseFilterSql('p.product_id', $data['warehouses']);
+        }
+
+        if ($this->defHasActionFilter($data)) {
+            $sql .= $this->defGetActionFilterSql('p.product_id', $data);
         }
 
         $sql .= " ORDER BY ";
@@ -1274,6 +1347,8 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
             $sql .= ")";
         }
         //MANUFACTURER WHERE BEGIN
+
+        $sql .= $this->defGetActionFilterSql('p.product_id', $data);
 
 
         //PRICE WHERE BEGIN

@@ -48,6 +48,24 @@ class ControllerProductCategory extends Controller {
 			$limit = $this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit');
 		}
 
+		if (isset($this->request->get['action_category_id'])) {
+			$action_category_id = (int)$this->request->get['action_category_id'];
+		} else {
+			$action_category_id = 0;
+		}
+
+		$action_filter_enabled = !empty($this->request->get['action_filter']) || $action_category_id > 0;
+		$action_parent_id = 308;
+		$action_url = '';
+
+		if ($action_filter_enabled) {
+			$action_url .= '&action_filter=1';
+		}
+
+		if ($action_category_id) {
+			$action_url .= '&action_category_id=' . $action_category_id;
+		}
+
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
@@ -69,6 +87,8 @@ class ControllerProductCategory extends Controller {
 			if (isset($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
+
+			$url .= $action_url;
 
 			$path = '';
 
@@ -140,14 +160,22 @@ class ControllerProductCategory extends Controller {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
 
+			$url .= $action_url;
+
 			$data['categories'] = array();
+			$data['action_filter_enabled'] = $action_filter_enabled;
+			$data['action_selected_category_id'] = $action_category_id;
+			$data['action_filter_options'] = $this->model_catalog_category->getPromotionFilterOptions($category_id, $action_parent_id);
 
 			$results = $this->model_catalog_category->getCategories($category_id);
 
 			foreach ($results as $result) {
 				$filter_data = array(
 					'filter_category_id'  => $result['category_id'],
-					'filter_sub_category' => true
+					'filter_sub_category' => true,
+					'filter_action_only' => $action_filter_enabled,
+					'filter_action_category_id' => $action_category_id,
+					'filter_action_parent_id' => $action_parent_id
 				);
 
 				$data['categories'][] = array(
@@ -162,6 +190,9 @@ class ControllerProductCategory extends Controller {
 				'filter_category_id' => $category_id,
                 'filter_sub_category' => true,
                 'filter_filter'      => $filter,
+				'filter_action_only' => $action_filter_enabled,
+				'filter_action_category_id' => $action_category_id,
+				'filter_action_parent_id' => $action_parent_id,
 				'sort'               => $sort,
 				'order'              => $order,
 				'start'              => ($page - 1) * $limit,
@@ -329,6 +360,8 @@ class ControllerProductCategory extends Controller {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
 
+			$url .= $action_url;
+
 			$data['sorts'] = array();
 
 			$data['sorts'][] = array(
@@ -401,6 +434,8 @@ class ControllerProductCategory extends Controller {
 				$url .= '&order=' . $this->request->get['order'];
 			}
 
+			$url .= $action_url;
+
 			$data['limits'] = array();
 
 			$limits = array_unique(array($this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit'), 25, 50, 75, 100));
@@ -432,6 +467,8 @@ class ControllerProductCategory extends Controller {
 			if (isset($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
+
+			$url .= $action_url;
 
 
             $this->document->addOGMeta('property="og:url"', $this->url->link('product/category', 'path=' . $category_info['category_id'] . ( ($page != 1) ? '&page='. $page : '' ), true) );

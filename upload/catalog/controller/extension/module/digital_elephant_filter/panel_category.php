@@ -28,14 +28,20 @@ Class ControllerExtensionModuleDigitalElephantFilterPanelCategory extends Contro
         $categories_setting_advance = $setting['DEF_settings']['advance']['categories'];
 
         $section_groups = $this->cache->get('DEF_panel_cat_' . $category_id);
+        $urlBase = $this->helperUrl->getUrlData();
+        $hasActionFilter = !empty($urlBase['action_filter']) || !empty($urlBase['action_category_id']);
 
-        if (($this->helperUrl->isAjaxRequest() || !$section_groups  || !isset($setting['DEF_settings']['cache']['isset'])) && !isset($categories_setting['hide'])) {
-            $urlBase = $this->helperUrl->getUrlData();
-
+        if (($this->helperUrl->isAjaxRequest() || $hasActionFilter || !$section_groups  || !isset($setting['DEF_settings']['cache']['isset'])) && !isset($categories_setting['hide'])) {
             $args = $setting['DEF_settings'];
 
             if (!empty($urlBase['warehouse'])) {
                 $args['warehouses'] = $urlBase['warehouse'];
+            }
+
+            if ($hasActionFilter) {
+                $args['action_filter_only'] = 1;
+                $args['action_category_id'] = !empty($urlBase['action_category_id']) ? (int)$urlBase['action_category_id'] : 0;
+                $args['action_parent_id'] = 308;
             }
 
             $categories = $this->model_extension_module_digitalElephantFilter->getSubCategories($category_id, $args);

@@ -71,6 +71,8 @@ Class ControllerExtensionModuleDigitalElephantFilterPanel extends Controller
         $data['filter_data'] = $this->getFilterData($setting, $this->urlData['category_id']);
         $data['is_filter_show'] = $this->isFilterShow();
         $data['check_data_on_active'] = $this->urlData;
+        $data['action_filter_enabled'] = !empty($this->urlData['action_filter']) || !empty($this->urlData['action_category_id']);
+        $data['action_selected_category_id'] = !empty($this->urlData['action_category_id']) ? (int)$this->urlData['action_category_id'] : 0;
 
         $data['JS_config'] = $this->getJSConfig($setting);
 
@@ -191,7 +193,15 @@ Class ControllerExtensionModuleDigitalElephantFilterPanel extends Controller
     protected function getFilterPrice($setting)
     {
         if (!$this->storageFilterPrice) {
-            $price = $this->model_extension_module_digitalElephantFilter->getMinMaxPrice($this->urlData['category_id']);
+            $price_filter_data = array();
+
+            if (!empty($this->urlData['action_filter']) || !empty($this->urlData['action_category_id'])) {
+                $price_filter_data['filter_action_only'] = 1;
+                $price_filter_data['filter_action_category_id'] = !empty($this->urlData['action_category_id']) ? (int)$this->urlData['action_category_id'] : 0;
+                $price_filter_data['filter_action_parent_id'] = 308;
+            }
+
+            $price = $this->model_extension_module_digitalElephantFilter->getMinMaxPrice($this->urlData['category_id'], $price_filter_data);
 
             $show = true;
             if (isset($setting['DEF_settings']['filter_price']['hide'])

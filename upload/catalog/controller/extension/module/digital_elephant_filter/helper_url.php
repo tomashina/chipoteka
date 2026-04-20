@@ -148,6 +148,9 @@ class ControllerExtensionModuleDigitalElephantFilterHelperUrl extends Controller
                 $opencart_filter = '';
             }
 
+            $data_url['action_filter'] = (!empty($this->request->get['action_filter']) || !empty($this->request->get['action_category_id'])) ? 1 : 0;
+            $data_url['action_category_id'] = !empty($this->request->get['action_category_id']) ? (int)$this->request->get['action_category_id'] : 0;
+
             $path = 0;
             if (isset($this->request->get['path'])) {
                 $path = $this->request->get['path'];

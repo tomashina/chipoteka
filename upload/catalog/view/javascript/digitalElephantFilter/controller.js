@@ -48,7 +48,7 @@ function DigitalElephantFilterController() {
         var $_GET_string = this.$_GET_string();
         $_GET_string = this.url.cutGetParam($_GET_string, 'page');
 
-        this.containerProducts.ajaxGetProducts($_GET_string);
+        return this.containerProducts.ajaxGetProducts($_GET_string);
     };
 
     this.changeLimit = function (linkWithLimit) {
@@ -125,7 +125,7 @@ function DigitalElephantFilterController() {
         var $_GET_string = this.$_GET_string();
         $_GET_string = this.url.cutGetParam($_GET_string, 'page');
 
-        this.containerProducts.ajaxGetProducts($_GET_string);
+        return this.containerProducts.ajaxGetProducts($_GET_string);
     };
 }
 //ajax get products END

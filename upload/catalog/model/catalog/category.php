@@ -12,6 +12,53 @@ class ModelCatalogCategory extends Model {
 		return $query->rows;
 	}
 
+	public function getPromotionFilterOptions($category_id, $promotion_parent_id = 308) {
+		$category_id = (int)$category_id;
+		$promotion_parent_id = (int)$promotion_parent_id;
+
+		if (!$category_id || !$promotion_parent_id) {
+			return array();
+		}
+
+		$sql = "SELECT promo.category_id, promo_desc.name, promo.sort_order, COUNT(DISTINCT p.product_id) AS total
+			FROM " . DB_PREFIX . "category promo
+			LEFT JOIN " . DB_PREFIX . "category_description promo_desc
+				ON (promo_desc.category_id = promo.category_id)
+			LEFT JOIN " . DB_PREFIX . "category_to_store promo_store
+				ON (promo_store.category_id = promo.category_id)
+			INNER JOIN " . DB_PREFIX . "category_path promo_path
+				ON (promo_path.path_id = promo.category_id)
+			INNER JOIN " . DB_PREFIX . "product_to_category promo_p2c
+				ON (promo_p2c.category_id = promo_path.category_id)
+			INNER JOIN " . DB_PREFIX . "product p
+				ON (p.product_id = promo_p2c.product_id)
+			INNER JOIN " . DB_PREFIX . "product_to_store p2s
+				ON (p2s.product_id = p.product_id)
+			WHERE promo.parent_id = '" . $promotion_parent_id . "'
+				AND promo.status = '1'
+				AND promo_desc.language_id = '" . (int)$this->config->get('config_language_id') . "'
+				AND promo_store.store_id = '" . (int)$this->config->get('config_store_id') . "'
+				AND p.status = '1'
+				AND p.price > '0'
+				AND p.date_available <= NOW()
+				AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'
+				AND EXISTS (
+					SELECT 1
+					FROM " . DB_PREFIX . "category_path regular_path
+					INNER JOIN " . DB_PREFIX . "product_to_category regular_p2c
+						ON (regular_p2c.category_id = regular_path.category_id)
+					WHERE regular_path.path_id = '" . $category_id . "'
+						AND regular_p2c.product_id = p.product_id
+				)
+			GROUP BY promo.category_id, promo_desc.name, promo.sort_order
+			HAVING total > 0
+			ORDER BY promo.sort_order ASC, LCASE(promo_desc.name) ASC";
+
+		$query = $this->db->query($sql);
+
+		return $query->rows;
+	}
+
 	public function getCategoryFilters($category_id) {
 		$implode = array();
 
