@@ -80,6 +80,11 @@ class ControllerExtensionModuleDigitalElephantFilterHelperUrl extends Controller
                 $data_url['attribute'] = $this->request->get['attribute'];
             }
 
+            $data_url['warehouse'] = [];
+            if (isset($this->request->get['warehouse'])) {
+                $data_url['warehouse'] = $this->request->get['warehouse'];
+            }
+
             if (isset($this->request->get['sort'])) {
                 $sort = $this->request->get['sort'];
             } else {

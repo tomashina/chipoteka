@@ -152,11 +152,16 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
         $section_groups = $this->cache->get('DEF_panel_attr_' . $category_id);
 
         if (($this->helperUrl->isAjaxRequest() || !$section_groups || !isset($setting['DEF_settings']['cache']['isset']))) {
+            $urlBase = $this->helperUrl->getUrlData();
 
             $args = array(
                 'category_id' => $category_id,
                 'filter_sub_category' => true
             );
+
+            if (!empty($urlBase['warehouse'])) {
+                $args['warehouses'] = $urlBase['warehouse'];
+            }
 
             $attributes_groups = $this->model_extension_module_digitalElephantFilter->getAttributes($setting['DEF_settings'], $args);
 
@@ -166,8 +171,6 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
             }
 
             // ===================== URL STATE + PRIMARY CONTEXT =====================
-            $urlBase = $this->helperUrl->getUrlData();
-
             // SVI trenutno odabrani atributi (primarni + sekundarni)
             $activeAttributes = [];
             if (!empty($urlBase['attribute']) && is_array($urlBase['attribute'])) {

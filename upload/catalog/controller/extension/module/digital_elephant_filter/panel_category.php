@@ -30,8 +30,15 @@ Class ControllerExtensionModuleDigitalElephantFilterPanelCategory extends Contro
         $section_groups = $this->cache->get('DEF_panel_cat_' . $category_id);
 
         if (($this->helperUrl->isAjaxRequest() || !$section_groups  || !isset($setting['DEF_settings']['cache']['isset'])) && !isset($categories_setting['hide'])) {
+            $urlBase = $this->helperUrl->getUrlData();
 
-            $categories = $this->model_extension_module_digitalElephantFilter->getSubCategories($category_id, $setting['DEF_settings']);
+            $args = $setting['DEF_settings'];
+
+            if (!empty($urlBase['warehouse'])) {
+                $args['warehouses'] = $urlBase['warehouse'];
+            }
+
+            $categories = $this->model_extension_module_digitalElephantFilter->getSubCategories($category_id, $args);
 
             $section_groups = [];
             $sections = [];

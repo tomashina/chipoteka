@@ -71,11 +71,12 @@ function DigitalElephantFilterUrl() {
         var price           = this.getGetParam(link, 'price');
         var category        = this.getGetParam(link, 'category');
         var manufacturers   = this.getGetParam(link, 'manufacturers');
+        var warehouse       = this.getGetParam(link, 'warehouse');
         var option          = this.getGetParam(link, 'option');
         var attribute       = this.getGetParam(link, 'attribute');
         var ajaxDEF         = this.getGetParam(link, 'ajax_digitalElephantFilter');
 
-        return price + category + manufacturers + option + attribute + ajaxDEF;
+        return price + category + manufacturers + warehouse + option + attribute + ajaxDEF;
     };
 
     this.setGetParam = function(link, name, value) {

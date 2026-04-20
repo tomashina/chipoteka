@@ -5,6 +5,9 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
 //    private $DEF_settings;
     private $storageSort = null;
     private $storageAttribute = null;
+    private $storageWarehouseAvailability = null;
+    private $storageWarehouseProductUids = array();
+    private $storageWarehouseSnapshot = null;
 
     private function defBooleanTrueValues()
     {
@@ -226,6 +229,216 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
         return array_values($values);
     }
 
+    private function defFlattenWarehouseCodes($selected_warehouses)
+    {
+        if ( ! is_array($selected_warehouses)) {
+            return array();
+        }
+
+        $warehouse_codes = array();
+
+        array_walk_recursive($selected_warehouses, function ($warehouse_code) use (&$warehouse_codes) {
+            $warehouse_code = trim((string)$warehouse_code);
+
+            if ($warehouse_code !== '') {
+                $warehouse_codes[$warehouse_code] = $warehouse_code;
+            }
+        });
+
+        return array_values($warehouse_codes);
+    }
+
+    private function defGetWarehouseCachePath(array $warehouse_codes)
+    {
+        sort($warehouse_codes);
+
+        $cache_dir = defined('DIR_CACHE') ? DIR_CACHE : (DIR_STORAGE . 'cache/');
+
+        return rtrim($cache_dir, '/\\') . '/def_warehouse_stock_' . md5(implode(',', $warehouse_codes)) . '.json';
+    }
+
+    private function defExtractWarehouseProductUidsFromPayload($payload)
+    {
+        $json = json_decode((string)$payload, true);
+
+        if (empty($json['result'][0]['stanje']) || !is_array($json['result'][0]['stanje'])) {
+            return array();
+        }
+
+        $product_uids = array();
+
+        foreach ($json['result'][0]['stanje'] as $item) {
+            if (empty($item['artikl_uid'])) {
+                continue;
+            }
+
+            if ((int)($item['raspolozivo_kol'] ?? 0) < 1) {
+                continue;
+            }
+
+            $product_uids[$item['artikl_uid']] = $item['artikl_uid'];
+        }
+
+        return array_values($product_uids);
+    }
+
+    private function defGetAvailabilityWarehouses()
+    {
+        if ($this->storageWarehouseAvailability === null) {
+            $warehouse_model = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse();
+
+            $this->storageWarehouseAvailability = $warehouse_model->getAvailabilityViewWarehouses()
+                                                                  ->values()
+                                                                  ->all();
+        }
+
+        return $this->storageWarehouseAvailability;
+    }
+
+    public function getAvailabilityWarehouses()
+    {
+        return $this->defGetAvailabilityWarehouses();
+    }
+
+    private function defGetWarehouseUidsByCodes(array $warehouse_codes)
+    {
+        $warehouse_uids = array();
+
+        foreach ($this->defGetAvailabilityWarehouses() as $warehouse) {
+            $warehouse_code = trim((string)($warehouse['skladiste'] ?? ''));
+            $warehouse_uid = trim((string)($warehouse['skladiste_uid'] ?? ''));
+
+            if ($warehouse_code === '' || $warehouse_uid === '') {
+                continue;
+            }
+
+            if (in_array($warehouse_code, $warehouse_codes, true)) {
+                $warehouse_uids[$warehouse_uid] = $warehouse_uid;
+            }
+        }
+
+        return array_values($warehouse_uids);
+    }
+
+    private function defLoadWarehouseProductUidsFromCacheOrApi(array $warehouse_codes)
+    {
+        $cache_path = $this->defGetWarehouseCachePath($warehouse_codes);
+
+        if (is_file($cache_path) && (time() - (int)@filemtime($cache_path) < 300)) {
+            $cached_uids = json_decode((string)@file_get_contents($cache_path), true);
+
+            if (is_array($cached_uids)) {
+                return array_values(array_unique(array_map('strval', $cached_uids)));
+            }
+        }
+
+        try {
+            $payload = \Agmedia\Luceed\Facade\LuceedProduct::getWarehouseStock($warehouse_codes);
+            $product_uids = $this->defExtractWarehouseProductUidsFromPayload($payload);
+
+            if ($product_uids) {
+                @file_put_contents($cache_path, json_encode(array_values($product_uids)));
+            }
+
+            return $product_uids;
+        } catch (\Throwable $e) {
+            return array();
+        }
+    }
+
+    private function defLoadWarehouseProductUidsFromSnapshot(array $warehouse_codes)
+    {
+        $warehouse_uids = $this->defGetWarehouseUidsByCodes($warehouse_codes);
+
+        if ( ! $warehouse_uids) {
+            return array();
+        }
+
+        if ($this->storageWarehouseSnapshot === null) {
+            $snapshot_path = DIR_STORAGE . 'upload/luceed_json/stock_skladista.json';
+
+            if (is_file($snapshot_path)) {
+                $json = json_decode((string)@file_get_contents($snapshot_path), true);
+
+                if ( ! empty($json['result'][0]['stanje']) && is_array($json['result'][0]['stanje'])) {
+                    $this->storageWarehouseSnapshot = $json['result'][0]['stanje'];
+                } else {
+                    $this->storageWarehouseSnapshot = array();
+                }
+            } else {
+                $this->storageWarehouseSnapshot = array();
+            }
+        }
+
+        $product_uids = array();
+
+        foreach ($this->storageWarehouseSnapshot as $item) {
+            if (empty($item['artikl_uid']) || empty($item['skladiste_uid'])) {
+                continue;
+            }
+
+            if ( ! in_array($item['skladiste_uid'], $warehouse_uids, true)) {
+                continue;
+            }
+
+            if ((int)($item['raspolozivo_kol'] ?? 0) < 1) {
+                continue;
+            }
+
+            $product_uids[$item['artikl_uid']] = $item['artikl_uid'];
+        }
+
+        return array_values($product_uids);
+    }
+
+    private function defGetWarehouseProductUids(array $selected_warehouses)
+    {
+        $warehouse_codes = $this->defFlattenWarehouseCodes($selected_warehouses);
+
+        if ( ! $warehouse_codes) {
+            return array();
+        }
+
+        sort($warehouse_codes);
+
+        $storage_key = implode('|', $warehouse_codes);
+
+        if ( ! isset($this->storageWarehouseProductUids[$storage_key])) {
+            $product_uids = $this->defLoadWarehouseProductUidsFromCacheOrApi($warehouse_codes);
+
+            if ( ! $product_uids) {
+                $product_uids = $this->defLoadWarehouseProductUidsFromSnapshot($warehouse_codes);
+            }
+
+            $this->storageWarehouseProductUids[$storage_key] = array_values(array_unique($product_uids));
+        }
+
+        return $this->storageWarehouseProductUids[$storage_key];
+    }
+
+    private function defGetWarehouseFilterSql($field, array $selected_warehouses)
+    {
+        $product_uids = $this->defGetWarehouseProductUids($selected_warehouses);
+
+        if ( ! $product_uids) {
+            return " AND 1 = 0";
+        }
+
+        $clauses = array();
+
+        foreach (array_chunk($product_uids, 500) as $uid_chunk) {
+            $escaped_uids = array();
+
+            foreach ($uid_chunk as $product_uid) {
+                $escaped_uids[] = "'" . $this->db->escape($product_uid) . "'";
+            }
+
+            $clauses[] = $field . " IN (" . implode(',', $escaped_uids) . ")";
+        }
+
+        return " AND (" . implode(' OR ', $clauses) . ")";
+    }
+
     public function getMinMaxPrice($category_id)
     {
         $customer_group_id = $this->config->get('config_customer_group_id');
@@ -356,6 +569,10 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
             $sql .= " AND p.manufacturer_id = '" . (int)$data['manufacturer_id'] . "'";
         }
 
+        if (!empty($data['warehouses'])) {
+            $sql .= $this->defGetWarehouseFilterSql('p.luceed_uid', $data['warehouses']);
+        }
+
         $sql .= " AND pa.language_id = '" . (int)$this->config->get('config_language_id') . "'" .
             " AND ad.language_id = '" . (int)$this->config->get('config_language_id') . "'" .
             " AND agd.language_id = '" . (int)$this->config->get('config_language_id') . "'" .
@@ -433,6 +650,10 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                 " AND ((ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW( )) AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW( )))";
         }
 
+        if (!empty($data['warehouses'])) {
+            $sql .= $this->defGetWarehouseFilterSql('p.luceed_uid', $data['warehouses']);
+        }
+
         $sql .= " ORDER BY ";
 
         switch ($DEF_settings['advance']['manufacturers']['sort']) {
@@ -462,6 +683,9 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
             " LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON(p.product_id=p2s.product_id) " .
             " WHERE c.status=1 AND c.parent_id = '" . (int)$category_id . "' AND cd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id =" . (int)$this->config->get('config_store_id');
 
+        if (!empty($data['warehouses'])) {
+            $sql .= $this->defGetWarehouseFilterSql('p.luceed_uid', $data['warehouses']);
+        }
 
         $sql .= " GROUP BY cd.category_id ORDER BY ";
 
@@ -511,6 +735,11 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
         if (isset($data['manufacturer_id']) && $data['manufacturer_id']) {
             $sql .= " AND p.manufacturer_id = '" . (int)$data['manufacturer_id'] . "'";
         }
+
+        if (!empty($data['warehouses'])) {
+            $sql .= $this->defGetWarehouseFilterSql('p.luceed_uid', $data['warehouses']);
+        }
+
         $sql .= " ORDER BY ";
 
         switch ($DEF_settings['advance']['options']['sort']) {
@@ -805,6 +1034,10 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
         }
 
         $sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1'  AND p.price > '0' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$store_id . "'";
+
+        if (!empty($data['warehouses'])) {
+            $sql .= $this->defGetWarehouseFilterSql('p.luceed_uid', $data['warehouses']);
+        }
 
         //OPTIONS WHERE BEGIN
         if ($data['options']) {

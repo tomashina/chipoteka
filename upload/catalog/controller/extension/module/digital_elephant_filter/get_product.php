@@ -117,6 +117,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
             'manufacturers'      => $data_url['manufacturers'],
             'options'            => $data_url['option'],
             'attributes'         => $data_url['attribute'],
+            'warehouses'         => $data_url['warehouse'],
             'price'              => $data_url['price'],
             'sort'               => $data_url['sort'],
             'order'              => $data_url['order'],

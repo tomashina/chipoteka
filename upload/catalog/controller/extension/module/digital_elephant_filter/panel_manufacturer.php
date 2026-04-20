@@ -31,16 +31,18 @@ Class ControllerExtensionModuleDigitalElephantFilterPanelManufacturer extends Co
 
         if (($this->helperUrl->isAjaxRequest() || !$section_groups || !isset($setting['DEF_settings']['cache']['isset']))
             && !isset($manufacturers_setting['hide'])) {
+            $urlBase = $this->helperUrl->getUrlData();
 
             $args = array(
                 'category_id' => $category_id,
                 'filter_sub_category' => true
             );
 
-            $manufacturers = $this->model_extension_module_digitalElephantFilter->getManufacturers($setting['DEF_settings'], $args);
+            if (!empty($urlBase['warehouse'])) {
+                $args['warehouses'] = $urlBase['warehouse'];
+            }
 
-            // --- NOVO: base URL state + primarni kontekst ---
-            $urlBase = $this->helperUrl->getUrlData();
+            $manufacturers = $this->model_extension_module_digitalElephantFilter->getManufacturers($setting['DEF_settings'], $args);
 
             $primary = isset($urlBase['def_primary']) ? (string)$urlBase['def_primary'] : '';
 

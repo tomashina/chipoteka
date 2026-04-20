@@ -26,6 +26,11 @@ Class ControllerExtensionModuleDigitalElephantFilterPanel extends Controller
     private $panelManufacturer = null;
 
     /**
+     * @var ControllerExtensionModuleDigitalElephantFilterPanelWarehouse
+     */
+    private $panelWarehouse = null;
+
+    /**
      * @var ControllerExtensionModuleDigitalElephantFilterPanelOption
      */
     private $panelOption = null;
@@ -49,6 +54,7 @@ Class ControllerExtensionModuleDigitalElephantFilterPanel extends Controller
         $this->getProduct = $this->load->controller('extension/module/digital_elephant_filter/get_product/prototype');
         $this->panelCategory = $this->load->controller('extension/module/digital_elephant_filter/panel_category/prototype');
         $this->panelManufacturer = $this->load->controller('extension/module/digital_elephant_filter/panel_manufacturer/prototype');
+        $this->panelWarehouse = $this->load->controller('extension/module/digital_elephant_filter/panel_warehouse/prototype');
         $this->panelOption = $this->load->controller('extension/module/digital_elephant_filter/panel_option/prototype');
         $this->panelAttribute = $this->load->controller('extension/module/digital_elephant_filter/panel_attribute/prototype');
     }
@@ -144,6 +150,7 @@ Class ControllerExtensionModuleDigitalElephantFilterPanel extends Controller
                 $this->isPackageShow['price']
                 || $this->isPackageShow['category']
                 || $this->isPackageShow['manufacturer']
+                || $this->isPackageShow['warehouse']
                 || $this->isPackageShow['option']
                 || $this->isPackageShow['attribute']
             )
@@ -160,6 +167,7 @@ Class ControllerExtensionModuleDigitalElephantFilterPanel extends Controller
         $packages = [
             'category',
             'manufacturer',
+            'warehouse',
             'option',
             'attribute'
         ];

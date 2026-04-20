@@ -70,6 +70,9 @@ $(function () {
 
     function hasFilterSelectionOrChange() {
         var hasChecked = $('#digitalElephantFilter_form').find('input:checked').length > 0;
+        var hasSelectedOption = $('#digitalElephantFilter_form').find('select').filter(function () {
+            return ($(this).val() || '') !== '';
+        }).length > 0;
 
         var minNow = $('#digitalElephantFilter_changing_price_min').val();
         var maxNow = $('#digitalElephantFilter_changing_price_max').val();
@@ -84,7 +87,7 @@ $(function () {
 
         var hasPrice = String(minNow) !== String(minPeak) || String(maxNow) !== String(maxPeak);
 
-        return hasChecked || hasPrice;
+        return hasChecked || hasSelectedOption || hasPrice;
     }
 
     function getFacetKeyFromInput($el) {
