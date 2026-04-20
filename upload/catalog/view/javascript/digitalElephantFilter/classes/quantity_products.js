@@ -23,6 +23,7 @@ function DigitalElephantFilterQuantityProducts() {
             function(result, status)
             {
                 if (status === 'success') {
+                    $this.syncTopBadge(result);
                     $this.off();
                     $this.sync.addLoadedElements($this.selector);
                 }
@@ -36,6 +37,17 @@ function DigitalElephantFilterQuantityProducts() {
 
     this.off = function() {
         $(this.selector).css('display', 'none');
+    };
+
+    this.syncTopBadge = function(result) {
+        var text = $('<div>').html(result || '').text().replace(/\s+/g, ' ').trim();
+        var numbers = text.match(/\d+/g);
+
+        if (!numbers || numbers.length < 2) {
+            return;
+        }
+
+        $('#filter-results-badge').text(numbers[numbers.length - 2]);
     };
 }
 
