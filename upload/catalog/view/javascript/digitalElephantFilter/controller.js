@@ -31,7 +31,7 @@ function DigitalElephantFilterController() {
     this.config             = DEFConfig;
 
     this.$_GET_string = function() {
-        if (this.url.isFilterParamsInUrl) {
+        if (this.url.isFilterParamsInUrl()) {
             var filterParams = this.url.removeEmptyParams(this.getFilterParams());
             return '&' + filterParams + this.url.getNativeParams();
         } else {

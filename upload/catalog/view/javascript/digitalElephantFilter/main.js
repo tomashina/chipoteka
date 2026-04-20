@@ -50,6 +50,8 @@ $(function () {
         // makni page da ne radi gluposti
         qs = qs.replace(/(^|&)page=\d+(&|$)/g, '$1').replace(/^&+|&+$/g, '');
 
+        qs = DEFController.url.removeEmptyParams(qs);
+
         return qs;
     }
 
@@ -150,7 +152,7 @@ $(function () {
     function toggleTopFilterButtons() {
         var hasSelection = hasFilterSelectionOrChange();
         $('#filter-apply-top').toggle(hasSelection && !defFiltersApplied);
-        $('#filter-clear-top').toggle(defFiltersApplied);
+        $('#filter-clear-top').toggle(hasSelection || defFiltersApplied);
     }
 
     function updateTotalFromDEF() {

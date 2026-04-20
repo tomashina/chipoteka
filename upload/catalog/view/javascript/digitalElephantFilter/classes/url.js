@@ -89,8 +89,19 @@ function DigitalElephantFilterUrl() {
     };
 
     this.isFilterParamsInUrl = function() {
-        var $_GET = window.location.href;
-        return (this.getGetParam($_GET, 'ajax_digitalElephantFilter') != '');
+        var link = window.location.href;
+        var filterParams =
+            this.getGetParam(link, 'price') +
+            this.getGetParam(link, 'category') +
+            this.getGetParam(link, 'manufacturers') +
+            this.getGetParam(link, 'warehouse') +
+            this.getGetParam(link, 'option') +
+            this.getGetParam(link, 'attribute');
+
+        filterParams = this.removeEmptyParams(filterParams);
+        filterParams = (filterParams || '').replace(/^[?&]+|[?&]+$/g, '');
+
+        return filterParams !== '';
     };
 
     this.changeUrlAddress = function ($_GET_string) {

@@ -3,6 +3,29 @@ class ControllerExtensionModuleDigitalElephantFilterHelperUrl extends Controller
 {
     private $storageUrlData = null;
 
+    private function normalizeNestedFilterValues($value)
+    {
+        if (!is_array($value)) {
+            $value = trim((string)$value);
+
+            return ($value === '') ? null : $value;
+        }
+
+        $normalized = array();
+
+        foreach ($value as $key => $item) {
+            $clean_item = $this->normalizeNestedFilterValues($item);
+
+            if ($clean_item === null || $clean_item === array()) {
+                continue;
+            }
+
+            $normalized[$key] = $clean_item;
+        }
+
+        return $normalized;
+    }
+
     public function prototype()
     {
         return $this;
@@ -82,7 +105,11 @@ class ControllerExtensionModuleDigitalElephantFilterHelperUrl extends Controller
 
             $data_url['warehouse'] = [];
             if (isset($this->request->get['warehouse'])) {
-                $data_url['warehouse'] = $this->request->get['warehouse'];
+                $data_url['warehouse'] = $this->normalizeNestedFilterValues($this->request->get['warehouse']);
+
+                if (!is_array($data_url['warehouse'])) {
+                    $data_url['warehouse'] = [];
+                }
             }
 
             if (isset($this->request->get['sort'])) {
