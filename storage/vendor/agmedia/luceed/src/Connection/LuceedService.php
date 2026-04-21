@@ -554,7 +554,7 @@ class LuceedService
      *
      * @return array
      */
-    private function performGetRequest(string $url, int $connectTimeoutMs = 500, int $timeoutSeconds = 0): array
+    private function performGetRequest(string $url, int $connectTimeoutMs = 1000, int $timeoutSeconds = 0): array
     {
         $ch = curl_init($this->base_url . $url);
         curl_setopt($ch, CURLOPT_USERPWD, $this->username . ":" . $this->password);
