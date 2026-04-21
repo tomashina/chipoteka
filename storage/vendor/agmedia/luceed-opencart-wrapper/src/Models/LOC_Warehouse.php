@@ -107,7 +107,10 @@ class LOC_Warehouse
         $units = $this->getUnitsQuery($houses);
         $houses_default = $this->getDefaultWarehouses();
         $units_default = $this->getUnitsQuery($houses_default);
-        $houses_stores = $this->getList()->whereIn('skladiste', agconf('import.warehouse.stores'));
+        // Keep the CTA/status aligned with the branch list shown on the page.
+        // If a store is visible in the availability accordion and has stock, it
+        // should also influence the "Btn" status block.
+        $houses_stores = $houses;
 
         $availables_response = LuceedProduct::stock($units, $product);
         $defaults_response = LuceedProduct::stock($units_default, $product);
