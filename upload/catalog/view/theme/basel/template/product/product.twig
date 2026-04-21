@@ -269,7 +269,7 @@
                                             </button>
                                         </div>
                                         <input type="hidden" name="product_id" value="{{ product_id }}" />
-                                        <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100 me-3">{% if ((qty < 1) and (stock_badge_status)) %} {{ basel_text_out_of_stock }} {% else %} {{ button_cart }} {% endif %}</button>
+                                        <button type="button" id="button-cart" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100 me-3">{% if ((qty < 1) and (stock_badge_status) and groupId < 3) %}Provjera dostupnosti...{% elseif ((qty < 1) and (stock_badge_status)) %} {{ basel_text_out_of_stock }} {% else %} {{ button_cart }} {% endif %}</button>
                                         <button class="btn btn-outline-secondary btn-wishlist-v2" onclick="wishlist.add('{{ product_id }}');" type="button"><i class="fal fa-heart fs-lg "></i></button>
                                     </div>
                                     <div class="text-danger porukareach mb-3 d-none" >Dosegli ste maksimum raspoloživosti - {{ qty }}</div>
@@ -410,7 +410,7 @@
                                         </button>
                                     </div>
                                     <input type="hidden" name="product_id" value="{{ product_id }}" />
-                                    <button type="button" id="button-cart2" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
+                                    <button type="button" id="button-cart2" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status) and groupId < 3) %}Provjera dostupnosti...{% elseif ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
                                 </div>
 
                             </div>
@@ -497,7 +497,7 @@
                                             </button>
                                         </div>
                                         <input type="hidden" name="product_id" value="{{ product_id }}" />
-                                        <button type="button" id="button-cart3" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
+                                        <button type="button" id="button-cart3" data-loading-text="{{ text_loading }}" class="btn btn-primary btn-shadow d-block w-100">{% if ((qty < 1) and (stock_badge_status) and groupId < 3) %}Provjera dostupnosti...{% elseif ((qty < 1) and (stock_badge_status)) %}{{ basel_text_out_of_stock }}{% else %}{{ button_cart }}{% endif %}</button>
                                     </div>
                                 </div>
                             {% endif %}
@@ -672,6 +672,7 @@
         $(() => {
             const fallbackAvailabilityTitle = 'Dostupnost po poslovnicama privremeno nije dostupna.';
             const fallbackAvailabilitySubtitle = 'Pokusajte ponovno uskoro.';
+            const defaultCartButtonLabel = '{{ button_cart|e('js') }}';
 
             const resetAvailabilityIcon = () => {
                 $('#availability-icon').removeClass('text-success text-warning text-secondary text-danger');
@@ -752,7 +753,9 @@
                         $('#availability-icon').addClass('text-secondary');
                     }
 
-                    if (title != 'DOSTUPNO ODMAH' && btn_title) {
+                    if (title == 'DOSTUPNO ODMAH') {
+                        $('#button-cart,#button-cart2,#button-cart3').html(defaultCartButtonLabel);
+                    } else if (btn_title) {
                         $('#button-cart,#button-cart2,#button-cart3').html(btn_title);
                     }
                 },
