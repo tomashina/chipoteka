@@ -268,14 +268,13 @@ class LOC_Order
      */
     private function applyPickupMainOrder(): void
     {
-        $pickup_title = trim($this->getPickupTitle());
-        $pickup_note = $pickup_title !== '' ? $pickup_title : ($this->oc_order['comment'] ?? '');
+        $pickup_note = $this->buildPickupDocumentNote();
 
         $this->order['skladiste'] = $this->pickup;
         $this->order['sa__skladiste'] = $this->pickup;
         $this->order['skl_dokument'] = 'DP';
         $this->order['vrsta_isporuke'] = '03';
-        $this->order['napomena'] = 'Osobno preuzimanje: ' . $pickup_note;
+        $this->order['napomena'] = $pickup_note;
         $this->order['poruka_dolje'] = $this->order['napomena'];
         unset($this->order['na__skladiste']);
 
@@ -291,6 +290,32 @@ class LOC_Order
 
 
     /**
+     * @return string
+     */
+    private function buildPickupDocumentNote(): string
+    {
+        $pickup_title = trim($this->getPickupTitle());
+        $customer_comment = trim((string) ($this->oc_order['comment'] ?? ''));
+
+        if ($pickup_title !== '') {
+            $note = 'Osobno preuzimanje: ' . $pickup_title;
+
+            if ($customer_comment !== '') {
+                $note .= ' | Napomena kupca: ' . $customer_comment;
+            }
+
+            return $note;
+        }
+
+        if ($customer_comment !== '') {
+            return 'Osobno preuzimanje: ' . $customer_comment;
+        }
+
+        return 'Osobno preuzimanje';
+    }
+
+
+    /**
      * Keep only true split nalogs (suffix -1, -2, ...).
      * If Availability cannot build those but there are still required items,
      * create a fallback split from central warehouse 101 to selected pickup.
@@ -302,6 +327,7 @@ class LOC_Order
     private function preparePickupSplitNalozi(array $pickup_nalozi): array
     {
         $split_nalozi = [];
+        $pickup_note = $this->buildPickupDocumentNote();
 
         foreach ($pickup_nalozi as $nalog) {
             $broj_naloga = isset($nalog['broj_naloga']) ? (string) $nalog['broj_naloga'] : '';
@@ -311,6 +337,7 @@ class LOC_Order
                 continue;
             }
 
+            $nalog['napomena'] = $pickup_note;
             $split_nalozi[] = $nalog;
         }
 
@@ -349,8 +376,6 @@ class LOC_Order
             $pickup_warehouse['pj'] = $this->getPickupPjId();
         }
 
-        $pickup_title = trim($this->getPickupTitle());
-        $pickup_note = $pickup_title !== '' ? $pickup_title : ($this->oc_order['comment'] ?? '');
         $next_nalog_index = $this->getNextSplitNalogIndex($split_nalozi);
 
         $fallback_nalog = OrderHelper::getNalog(
@@ -359,7 +384,7 @@ class LOC_Order
             (string) $next_nalog_index,
             '101',
             $pickup_warehouse,
-            'Osobno preuzimanje: ' . $pickup_note
+            $pickup_note
         );
 
         $this->log('[FLOW] pickup:split:fallback_create', [
@@ -452,8 +477,7 @@ class LOC_Order
             $pickup_warehouse['pj'] = $this->getPickupPjId();
         }
 
-        $pickup_title = trim($this->getPickupTitle());
-        $pickup_note = $pickup_title !== '' ? $pickup_title : ($this->oc_order['comment'] ?? '');
+        $pickup_note = $this->buildPickupDocumentNote();
         $next_nalog_index = $this->getNextSplitNalogIndex($existing_split_nalozi);
 
         $supplier_nalog = OrderHelper::getNalog(
@@ -462,7 +486,7 @@ class LOC_Order
             (string) $next_nalog_index,
             $pickup_skladiste,
             $pickup_warehouse,
-            'Osobno preuzimanje: ' . $pickup_note
+            $pickup_note
         );
 
         $supplier_nalog['status'] = '01.2';
