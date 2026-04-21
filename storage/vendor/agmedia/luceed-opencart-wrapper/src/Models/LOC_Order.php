@@ -81,6 +81,7 @@ class LOC_Order
     private $regular_products = [];
     private $pickup_partner_id_map = null;
     private $pickup_partner_mapping_missing_reason = '';
+    private $supplier_stock_cache = [];
 
     /**
      * @var bool|array
@@ -313,27 +314,49 @@ class LOC_Order
             $split_nalozi[] = $nalog;
         }
 
-        if ( ! empty($split_nalozi)) {
+        $required_items = [];
+
+        if ($this->availability && ! empty($this->availability->items_required) && is_array($this->availability->items_required)) {
+            $required_items = $this->availability->items_required;
+        }
+
+        $supplier_required_items = $this->extractSupplierRequiredItems($required_items);
+
+        if ( ! empty($supplier_required_items)) {
+            $split_nalozi[] = $this->buildSupplierSplitNalog($supplier_required_items, $split_nalozi);
+        }
+
+        $required_items = $this->removeResolvedRequiredItems($required_items, $supplier_required_items);
+
+        if (empty($required_items)) {
             return $split_nalozi;
         }
 
-        if ( ! $this->availability || empty($this->availability->items_required)) {
-            return [];
+        $pickup_warehouse = $this->getPickupWarehouseData();
+        $pickup_skladiste = isset($pickup_warehouse['skladiste']) ? (string) $pickup_warehouse['skladiste'] : $this->pickup;
+
+        if ($pickup_skladiste === '') {
+            $this->log('[FLOW] pickup:split:fallback_skip', ['reason' => 'pickup_skladiste_missing']);
+
+            return $split_nalozi;
         }
 
-        $pickup_warehouse = $this->getPickupWarehouseData();
+        if ( ! isset($pickup_warehouse['skladiste']) || $pickup_warehouse['skladiste'] === '') {
+            $pickup_warehouse['skladiste'] = $pickup_skladiste;
+        }
 
-        if ( ! isset($pickup_warehouse['skladiste'])) {
-            return [];
+        if ( ! isset($pickup_warehouse['pj']) || $pickup_warehouse['pj'] === '') {
+            $pickup_warehouse['pj'] = $this->getPickupPjId();
         }
 
         $pickup_title = trim($this->getPickupTitle());
         $pickup_note = $pickup_title !== '' ? $pickup_title : ($this->oc_order['comment'] ?? '');
+        $next_nalog_index = $this->getNextSplitNalogIndex($split_nalozi);
 
         $fallback_nalog = OrderHelper::getNalog(
-            $this->availability->items_required,
+            $required_items,
             $this->oc_order['order_id'],
-            '1',
+            (string) $next_nalog_index,
             '101',
             $pickup_warehouse,
             'Osobno preuzimanje: ' . $pickup_note
@@ -346,7 +369,199 @@ class LOC_Order
             'stavke_count'     => isset($fallback_nalog['stavke']) ? count($fallback_nalog['stavke']) : 0,
         ]);
 
-        return [$fallback_nalog];
+        $split_nalozi[] = $fallback_nalog;
+
+        return $split_nalozi;
+    }
+
+
+    /**
+     * Keep only required items that are available on supplier stock.
+     *
+     * @param array $required_items
+     *
+     * @return array
+     */
+    private function extractSupplierRequiredItems(array $required_items): array
+    {
+        $supplier_required_items = [];
+
+        foreach ($required_items as $artikl => $item) {
+            $qty = isset($item['qty']) ? (int) $item['qty'] : 0;
+
+            if ($qty <= 0) {
+                continue;
+            }
+
+            $supplier_qty = $this->getSupplierAvailableQty((string) $artikl);
+
+            if ($supplier_qty >= $qty) {
+                $supplier_required_items[(string) $artikl] = ['qty' => $qty];
+            }
+        }
+
+        return $supplier_required_items;
+    }
+
+
+    /**
+     * @param array $required_items
+     * @param array $resolved_items
+     *
+     * @return array
+     */
+    private function removeResolvedRequiredItems(array $required_items, array $resolved_items): array
+    {
+        if (empty($resolved_items)) {
+            return $required_items;
+        }
+
+        foreach ($resolved_items as $artikl => $item) {
+            if (isset($required_items[$artikl])) {
+                unset($required_items[$artikl]);
+            }
+        }
+
+        return $required_items;
+    }
+
+
+    /**
+     * Build supplier split nalog:
+     * - sa__skladiste = pickup store
+     * - na__skladiste = pickup store
+     * - skl_dokument  = MSI
+     * - vrsta_isporuke = 07
+     * - status = 01.2 (za naruciti)
+     *
+     * @param array $supplier_required_items
+     * @param array $existing_split_nalozi
+     *
+     * @return array
+     */
+    private function buildSupplierSplitNalog(array $supplier_required_items, array $existing_split_nalozi): array
+    {
+        $pickup_warehouse = $this->getPickupWarehouseData();
+        $pickup_skladiste = isset($pickup_warehouse['skladiste']) ? (string) $pickup_warehouse['skladiste'] : $this->pickup;
+
+        if ( ! isset($pickup_warehouse['skladiste']) || $pickup_warehouse['skladiste'] === '') {
+            $pickup_warehouse['skladiste'] = $pickup_skladiste;
+        }
+
+        if ( ! isset($pickup_warehouse['pj']) || $pickup_warehouse['pj'] === '') {
+            $pickup_warehouse['pj'] = $this->getPickupPjId();
+        }
+
+        $pickup_title = trim($this->getPickupTitle());
+        $pickup_note = $pickup_title !== '' ? $pickup_title : ($this->oc_order['comment'] ?? '');
+        $next_nalog_index = $this->getNextSplitNalogIndex($existing_split_nalozi);
+
+        $supplier_nalog = OrderHelper::getNalog(
+            $supplier_required_items,
+            $this->oc_order['order_id'],
+            (string) $next_nalog_index,
+            $pickup_skladiste,
+            $pickup_warehouse,
+            'Osobno preuzimanje: ' . $pickup_note
+        );
+
+        $supplier_nalog['status'] = '01.2';
+
+        $this->log('[FLOW] pickup:split:supplier_create', [
+            'broj_naloga'      => $supplier_nalog['broj_naloga'] ?? '',
+            'sa__skladiste'    => $supplier_nalog['sa__skladiste'] ?? '',
+            'na__skladiste'    => $supplier_nalog['na__skladiste'] ?? '',
+            'status'           => $supplier_nalog['status'],
+            'vrsta_isporuke'   => $supplier_nalog['vrsta_isporuke'] ?? '',
+            'skl_dokument'     => $supplier_nalog['skl_dokument'] ?? '',
+            'stavke_count'     => isset($supplier_nalog['stavke']) ? count($supplier_nalog['stavke']) : 0,
+        ]);
+
+        return $supplier_nalog;
+    }
+
+
+    /**
+     * @param array $existing_split_nalozi
+     *
+     * @return int
+     */
+    private function getNextSplitNalogIndex(array $existing_split_nalozi): int
+    {
+        $max_index = 0;
+
+        foreach ($existing_split_nalozi as $nalog) {
+            $broj_naloga = isset($nalog['broj_naloga']) ? (string) $nalog['broj_naloga'] : '';
+            $index = (int) ltrim($broj_naloga, '-');
+
+            if ($index > $max_index) {
+                $max_index = $index;
+            }
+        }
+
+        return $max_index + 1;
+    }
+
+
+    /**
+     * Resolve available supplier qty for article by Luceed supplier stock endpoint.
+     *
+     * @param string $article_uid
+     *
+     * @return int
+     */
+    private function getSupplierAvailableQty(string $article_uid): int
+    {
+        if (isset($this->supplier_stock_cache[$article_uid])) {
+            return $this->supplier_stock_cache[$article_uid];
+        }
+
+        $this->supplier_stock_cache[$article_uid] = 0;
+
+        try {
+            $raw = $this->service->getSuplierStock($article_uid);
+            $json = json_decode((string) $raw);
+        } catch (\Exception $e) {
+            $this->log('[FLOW] pickup:supplier_stock_query_failed', [
+                'artikl' => $article_uid,
+                'message' => $e->getMessage(),
+            ]);
+
+            return 0;
+        }
+
+        if (
+            ! $json ||
+            ! isset($json->result[0]) ||
+            ! isset($json->result[0]->artikli_dobavljaci) ||
+            ! is_array($json->result[0]->artikli_dobavljaci)
+        ) {
+            return 0;
+        }
+
+        $dobavljaci = $json->result[0]->artikli_dobavljaci;
+        $supplier_qty = 0;
+
+        foreach ($dobavljaci as $dobavljac) {
+            if ( ! is_object($dobavljac)) {
+                continue;
+            }
+
+            if (($dobavljac->main ?? '') !== 'D') {
+                continue;
+            }
+
+            $supplier_qty += max((int) ($dobavljac->dobavljac_stanje ?? 0), 0);
+        }
+
+        $this->supplier_stock_cache[$article_uid] = $supplier_qty;
+
+        $this->log('[FLOW] pickup:supplier_stock_checked', [
+            'artikl' => $article_uid,
+            'supplier_qty' => $supplier_qty,
+        ]);
+
+        return $supplier_qty;
     }
 
 
@@ -536,7 +751,7 @@ class LOC_Order
             'sa__skladiste'             => $nalog['sa__skladiste'],
             'na__skladiste'             => $nalog['na__skladiste'],
             //'pj_id'                     => $nalog['pj'],
-            'status'                    => $this->getStatus(),
+            'status'                    => isset($nalog['status']) && $nalog['status'] !== '' ? (string) $nalog['status'] : $this->getStatus(),
             'napomena'                  => $nalog['napomena'],
             'poruka_dolje'              => $nalog['napomena'],
             'komercijalist__radnik_uid' => '206-1063',
