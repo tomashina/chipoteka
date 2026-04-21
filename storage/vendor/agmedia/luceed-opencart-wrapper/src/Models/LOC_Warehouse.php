@@ -108,17 +108,14 @@ class LOC_Warehouse
         $houses_default = $this->getDefaultWarehouses();
         $units_default = $this->getUnitsQuery($houses_default);
         $houses_stores = $this->getList()->whereIn('skladiste', agconf('import.warehouse.stores'));
-        $units_stores = $this->getUnitsQuery($houses_stores);
 
         $availables_response = LuceedProduct::stock($units, $product);
         $defaults_response = LuceedProduct::stock($units_default, $product);
-        $stores_response = LuceedProduct::stock($units_stores, $product);
         $supplier_response = LuceedProduct::getSuplierStock($product);
 
         if (
             ! $this->hasValidAvailabilityPayload($availables_response)
             && ! $this->hasValidAvailabilityPayload($defaults_response)
-            && ! $this->hasValidAvailabilityPayload($stores_response)
             && ! $this->hasValidSupplierPayload($supplier_response)
         ) {
             throw new \RuntimeException('Luceed availability response is missing or invalid.');
@@ -127,8 +124,6 @@ class LOC_Warehouse
         $availables = collect($this->setAvailables($availables_response));
 
         $defaults = collect($this->setAvailables($defaults_response));
-
-        $stores = collect($this->setAvailables($stores_response));
 
         $suplier = collect($this->setSuplierStock($supplier_response))->where('main', 'D')->first();
 
@@ -182,8 +177,10 @@ class LOC_Warehouse
 
         $qty_stores = 0;
         // STORES WAREHOUSE COUNT
+        // Use the same availability payload that renders the store list so the
+        // status banner stays consistent with the visible per-store quantities.
         foreach ($houses_stores as $house) {
-            $has = $stores->where('skladiste_uid', $house['skladiste_uid'])->first();
+            $has = $availables->where('skladiste_uid', $house['skladiste_uid'])->first();
 
             if ($has && $has->raspolozivo_kol >= 0) {
                 $qty_stores += $has->raspolozivo_kol;
