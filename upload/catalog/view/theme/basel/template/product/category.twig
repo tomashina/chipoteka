@@ -412,13 +412,50 @@
                 return true;
             }
 
+            function shouldResetPriceForActionChange() {
+                var $form = $('#digitalElephantFilter_form');
+                var $priceMin = $form.find('input[name="price[min]"]');
+                var $priceMax = $form.find('input[name="price[max]"]');
+
+                if (
+                    !$form.length ||
+                    !$priceMin.length ||
+                    !$priceMax.length ||
+                    typeof window.DEFConfig === 'undefined' ||
+                    !window.DEFConfig.peakPrice
+                ) {
+                    return false;
+                }
+
+                return String($.trim($priceMin.val() || '')) === String(window.DEFConfig.peakPrice.min)
+                    && String($.trim($priceMax.val() || '')) === String(window.DEFConfig.peakPrice.max);
+            }
+
+            function resetPriceForActionChange() {
+                var $form = $('#digitalElephantFilter_form');
+
+                if (!shouldResetPriceForActionChange()) {
+                    return false;
+                }
+
+                $form.find('input[name="price[min]"], input[name="price[max]"]').val('');
+
+                return true;
+            }
+
             function applyActionFilterFallback() {
                 var currentUrl = new URL(window.location.href);
+                var resetPrice = shouldResetPriceForActionChange();
 
                 currentUrl.searchParams.delete('ajax_digitalElephantFilter');
                 currentUrl.searchParams.delete('page');
                 currentUrl.searchParams.delete('action_filter');
                 currentUrl.searchParams.delete('action_category_id');
+
+                if (resetPrice) {
+                    currentUrl.searchParams.delete('price[min]');
+                    currentUrl.searchParams.delete('price[max]');
+                }
 
                 if ($actionToggle.is(':checked')) {
                     currentUrl.searchParams.set('action_filter', '1');
@@ -433,6 +470,7 @@
 
             function applyActionFilter() {
                 if (syncActionInputsToDefForm()) {
+                    resetPriceForActionChange();
                     window.DEFIgnoreActionFilterInUrl = !$actionToggle.is(':checked');
                     window.DEFActionAutoApplyInProgress = true;
                     $('#filter-apply-top').css('display', 'none');
