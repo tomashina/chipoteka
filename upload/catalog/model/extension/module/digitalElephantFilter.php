@@ -660,7 +660,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                 SELECT
                   p.product_id,
                   p.price,
-                  MIN(ps.price) AS discount,
+                  MIN(pd2.price) AS discount,
                   MIN(ps.price) AS special,
                   AVG(rating) AS total,
                   fixed_tax,
@@ -1229,7 +1229,24 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
 
             $sql .= ") AS t GROUP BY t.tax_class_id) AS tr2 ON (tr2.tax_class_id = p.tax_class_id)";
 
-            $sql .= "LEFT JOIN " . DB_PREFIX . "product_special AS ps ON (ps.product_id = p.product_id)";
+            $sql .= " LEFT JOIN (
+                SELECT pd2.product_id, MIN(pd2.price) AS price
+                FROM " . DB_PREFIX . "product_discount pd2
+                WHERE pd2.customer_group_id = '" . (int)$customer_group_id . "'
+                    AND pd2.quantity = '1'
+                    AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW())
+                        AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW()))
+                GROUP BY pd2.product_id
+            ) AS pd2 ON (pd2.product_id = p.product_id)";
+
+            $sql .= " LEFT JOIN (
+                SELECT ps.product_id, MIN(ps.price) AS price
+                FROM " . DB_PREFIX . "product_special ps
+                WHERE ps.customer_group_id = '" . (int)$customer_group_id . "'
+                    AND ((ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW())
+                        AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW()))
+                GROUP BY ps.product_id
+            ) AS ps ON (ps.product_id = p.product_id)";
         }
         //PRICE JOIN END
 
@@ -1394,8 +1411,8 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
             $price_min = $this->currency->convert($data['price']['min'], $this->session->data['currency'], $this->config->get('config_currency'));
             $price_max = $this->currency->convert($data['price']['max'], $this->session->data['currency'], $this->config->get('config_currency'));
 
-            $sql .= " AND (IF(ps.price IS NOT NULL, ps.price, IF(ps.price IS NOT NULL, p.price, p.price)) * (1 + IFNULL(percent_tax, 0)/100) + IFNULL(fixed_tax, 0)) >= '" . $this->db->escape($price_min) . "'";
-            $sql .= " AND (IF(ps.price IS NOT NULL, ps.price, IF(ps.price IS NOT NULL, p.price, p.price)) * (1 + IFNULL(percent_tax, 0)/100) + IFNULL(fixed_tax, 0)) <= '" . $this->db->escape($price_max) . "'";
+            $sql .= " AND (IF(ps.price IS NOT NULL, ps.price, IF(pd2.price IS NOT NULL, pd2.price, p.price)) * (1 + IFNULL(percent_tax, 0)/100) + IFNULL(fixed_tax, 0)) >= '" . $this->db->escape($price_min) . "'";
+            $sql .= " AND (IF(ps.price IS NOT NULL, ps.price, IF(pd2.price IS NOT NULL, pd2.price, p.price)) * (1 + IFNULL(percent_tax, 0)/100) + IFNULL(fixed_tax, 0)) <= '" . $this->db->escape($price_max) . "'";
         }
 
         //PRICE WHERE END
