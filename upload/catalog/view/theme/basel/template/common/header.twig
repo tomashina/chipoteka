@@ -88,8 +88,12 @@
   {% endif %}
   <script id="mcjs">
     const MAILCHIMP_CONNECTED_SITE_SCRIPT = "https://chimpstatic.com/mcjs-connected/js/users/a42edaf1f170c1646921949fd/91005810918a81f7e8a50079f.js";
+    const MAILCHIMP_DIRECT_FORMS_SCRIPT = "https://form-assets.mailchimp.com/snippet/account/43502465?site=91005810918a81f7e8a50079f";
     const MAILCHIMP_ACCOUNT_ID = "43502465";
+    const MAILCHIMP_EXPERIENCE_ID = 314377;
+    const MAILCHIMP_VARIATION_ID = 369538;
     const MAILCHIMP_LAUNCHER_POLL_MS = 150;
+    const MAILCHIMP_FORCE_SHOW_TIMEOUT_MS = 3600;
     const MAILCHIMP_POPUP_TEXTS = [
       "Prijavi se na newsletter!",
       "Jos samo e-mail adresa",
@@ -100,6 +104,7 @@
     const MAILCHIMP_FALLBACK_TEXT = "Keep Me Updated";
     let mailchimpScriptPromise;
     let mailchimpLauncherWatcherId;
+    let mailchimpOriginalHash;
 
     function normalizeMailchimpText(value) {
       return (value || "")
@@ -112,6 +117,10 @@
       return new Promise(function(resolve) {
         window.setTimeout(resolve, timeoutMs);
       });
+    }
+
+    function encodeMailchimpDebugCommands(commands) {
+      return window.btoa(unescape(encodeURIComponent(JSON.stringify(commands))));
     }
 
     function expireMailchimpCookie(name) {
@@ -139,12 +148,54 @@
         wrapper.remove();
       });
 
-      document.querySelectorAll('script[src="' + MAILCHIMP_CONNECTED_SITE_SCRIPT + '"], script[src^="https://form-assets.mailchimp.com/snippet/account/' + MAILCHIMP_ACCOUNT_ID + '"]').forEach(function(script) {
+      document.querySelectorAll('script[src="' + MAILCHIMP_CONNECTED_SITE_SCRIPT + '"], script[src="' + MAILCHIMP_DIRECT_FORMS_SCRIPT + '"], script[src^="https://form-assets.mailchimp.com/snippet/account/' + MAILCHIMP_ACCOUNT_ID + '"]').forEach(function(script) {
         script.remove();
       });
 
       window.mailchimpFormsLoaded = false;
+      delete window.mailchimpFormsSettings;
       mailchimpScriptPromise = null;
+    }
+
+    function appendMailchimpScript(src) {
+      return new Promise(function(resolve, reject) {
+        const script = document.createElement("script");
+        script.async = true;
+        script.src = src;
+        script.addEventListener("load", function() {
+          resolve();
+        }, { once: true });
+        script.addEventListener("error", function() {
+          reject(new Error("Mailchimp popup script failed to load."));
+        }, { once: true });
+        (document.body || document.head || document.documentElement).appendChild(script);
+      });
+    }
+
+    function setMailchimpDebugHash(commands) {
+      if (typeof mailchimpOriginalHash === "undefined") {
+        mailchimpOriginalHash = window.location.hash || "";
+      }
+
+      window.history.replaceState(
+        null,
+        "",
+        window.location.pathname + window.location.search + "#mailchimp_config:" + encodeMailchimpDebugCommands(commands)
+      );
+    }
+
+    function restoreMailchimpDebugHash() {
+      if (typeof mailchimpOriginalHash === "undefined") {
+        return;
+      }
+
+      window.history.replaceState(
+        null,
+        "",
+        window.location.pathname + window.location.search + mailchimpOriginalHash
+      );
+
+      mailchimpOriginalHash = undefined;
     }
 
     function getMailchimpClickableElement(element) {
@@ -187,7 +238,7 @@
         rect.height > 0;
     }
 
-    function findMailchimpElementByText(text) {
+    function findMailchimpElementByText(text, includeHidden) {
       const normalizedNeedle = normalizeMailchimpText(text);
       const roots = getMailchimpShadowRoots();
 
@@ -195,7 +246,7 @@
         const elements = root.querySelectorAll("*");
 
         for (const element of elements) {
-          if (!isMailchimpElementVisible(element)) {
+          if (!includeHidden && !isMailchimpElementVisible(element)) {
             continue;
           }
 
@@ -211,7 +262,7 @@
     }
 
     function hideMailchimpLauncher() {
-      const fallbackElement = findMailchimpElementByText(MAILCHIMP_FALLBACK_TEXT);
+      const fallbackElement = findMailchimpElementByText(MAILCHIMP_FALLBACK_TEXT, true);
 
       if (!fallbackElement) {
         return false;
@@ -243,7 +294,7 @@
 
     function isMailchimpPopupVisible() {
       return MAILCHIMP_POPUP_TEXTS.some(function(text) {
-        return !!findMailchimpElementByText(text);
+        return !!findMailchimpElementByText(text, false);
       });
     }
 
@@ -262,12 +313,12 @@
       return true;
     }
 
-    async function waitForMailchimpElement(text, timeoutMs) {
+    async function waitForMailchimpElement(text, timeoutMs, includeHidden) {
       const timeout = timeoutMs || 2500;
       const startedAt = Date.now();
 
       while (Date.now() - startedAt < timeout) {
-        const mailchimpElement = findMailchimpElementByText(text);
+        const mailchimpElement = findMailchimpElementByText(text, includeHidden);
 
         if (mailchimpElement) {
           return mailchimpElement;
@@ -276,7 +327,7 @@
         await waitForTimeout(120);
       }
 
-      return findMailchimpElementByText(text);
+      return findMailchimpElementByText(text, includeHidden);
     }
 
     async function waitForMailchimpPopup(timeoutMs) {
@@ -299,7 +350,7 @@
         return true;
       }
 
-      const fallbackButton = await waitForMailchimpElement(MAILCHIMP_FALLBACK_TEXT, timeoutMs || 1800);
+      const fallbackButton = await waitForMailchimpElement(MAILCHIMP_FALLBACK_TEXT, timeoutMs || 2200, true);
 
       if (!fallbackButton) {
         return false;
@@ -310,7 +361,79 @@
       return waitForMailchimpPopup(1400);
     }
 
-    function ensureMailchimpScriptLoaded() {
+    async function waitForMailchimpRuntime(timeoutMs) {
+      const timeout = timeoutMs || 5000;
+      const startedAt = Date.now();
+
+      while (Date.now() - startedAt < timeout) {
+        if (window.mailchimpFormsLoaded || document.querySelector(".mcforms-wrapper")) {
+          return true;
+        }
+
+        await waitForTimeout(120);
+      }
+
+      return window.mailchimpFormsLoaded || !!document.querySelector(".mcforms-wrapper");
+    }
+
+    function injectMailchimpScript(src) {
+      return new Promise(function(resolve, reject) {
+        let script = document.querySelector('script[src="' + src + '"]');
+        let settled = false;
+
+        const cleanup = function() {
+          if (!script) {
+            return;
+          }
+
+          script.removeEventListener("load", onLoad);
+          script.removeEventListener("error", onError);
+        };
+
+        const finish = function(callback) {
+          return function(value) {
+            if (settled) {
+              return;
+            }
+
+            settled = true;
+            cleanup();
+            callback(value);
+          };
+        };
+
+        const onLoad = finish(async function() {
+          if (await waitForMailchimpRuntime(5000)) {
+            resolve();
+            return;
+          }
+
+          reject(new Error("Mailchimp popup runtime did not initialize."));
+        });
+
+        const onError = finish(function() {
+          reject(new Error("Mailchimp popup script failed to load."));
+        });
+
+        if (!script) {
+          script = document.createElement("script");
+          script.async = true;
+          script.src = src;
+          document.head.appendChild(script);
+        }
+
+        script.addEventListener("load", onLoad);
+        script.addEventListener("error", onError);
+
+        waitForMailchimpRuntime(5000).then(function(isReady) {
+          if (isReady) {
+            onLoad();
+          }
+        });
+      });
+    }
+
+    function ensureMailchimpScriptLoaded(preferredScript) {
       if (window.mailchimpFormsLoaded || document.querySelector(".mcforms-wrapper")) {
         return Promise.resolve();
       }
@@ -319,74 +442,96 @@
         return mailchimpScriptPromise;
       }
 
-      mailchimpScriptPromise = new Promise(function(resolve, reject) {
-        let script = document.querySelector('script[src="' + MAILCHIMP_CONNECTED_SITE_SCRIPT + '"]');
+      mailchimpScriptPromise = (async function() {
+        const orderedScripts = [];
+        const primaryScript = preferredScript || MAILCHIMP_DIRECT_FORMS_SCRIPT;
 
-        const finish = function() {
-          resolve();
-        };
+        orderedScripts.push(primaryScript);
 
-        const fail = function() {
-          reject(new Error("Mailchimp popup script failed to load."));
-        };
-
-        if (!script) {
-          script = document.createElement("script");
-          script.async = true;
-          script.src = MAILCHIMP_CONNECTED_SITE_SCRIPT;
-          script.addEventListener("error", fail, { once: true });
-          document.head.appendChild(script);
+        if (!orderedScripts.includes(MAILCHIMP_DIRECT_FORMS_SCRIPT)) {
+          orderedScripts.push(MAILCHIMP_DIRECT_FORMS_SCRIPT);
         }
 
-        const startedAt = Date.now();
-        const intervalId = window.setInterval(function() {
-          if (window.mailchimpFormsLoaded || document.querySelector(".mcforms-wrapper")) {
-            window.clearInterval(intervalId);
-            finish();
-            return;
-          }
+        if (!orderedScripts.includes(MAILCHIMP_CONNECTED_SITE_SCRIPT)) {
+          orderedScripts.push(MAILCHIMP_CONNECTED_SITE_SCRIPT);
+        }
 
-          if (Date.now() - startedAt > 8000) {
-            window.clearInterval(intervalId);
-            finish();
+        let lastError;
+
+        for (const scriptSrc of orderedScripts) {
+          try {
+            await injectMailchimpScript(scriptSrc);
+            return;
+          } catch (error) {
+            lastError = error;
           }
-        }, 120);
+        }
+
+        throw lastError || new Error("Mailchimp popup script failed to load.");
+      })().catch(function(error) {
+        mailchimpScriptPromise = null;
+        throw error;
       });
 
       return mailchimpScriptPromise;
     }
 
+    async function forceShowMailchimpPopup() {
+      setMailchimpDebugHash([
+        {
+          type: "force_show_variation_immediately",
+          experienceId: MAILCHIMP_EXPERIENCE_ID,
+          variationId: MAILCHIMP_VARIATION_ID
+        }
+      ]);
+
+      try {
+        document.querySelectorAll(".mcforms-wrapper").forEach(function(wrapper) {
+          wrapper.remove();
+        });
+
+        document.querySelectorAll('script[src*="mailchimp"], script[src*="chimpstatic"]').forEach(function(script) {
+          script.remove();
+        });
+
+        window.mailchimpFormsLoaded = false;
+        mailchimpScriptPromise = null;
+        await appendMailchimpScript(MAILCHIMP_DIRECT_FORMS_SCRIPT);
+        const popupOpened = await waitForMailchimpPopup(MAILCHIMP_FORCE_SHOW_TIMEOUT_MS);
+        hideMailchimpLauncher();
+        return popupOpened;
+      } finally {
+        restoreMailchimpDebugHash();
+      }
+    }
+
     function prepareMailchimpPopup() {
       startMailchimpLauncherWatcher();
-
-      ensureMailchimpScriptLoaded()
-        .then(function() {
-          hideMailchimpLauncher();
-        })
-        .catch(function(error) {
-          console.error("Unable to preload Mailchimp popup.", error);
-        });
     }
 
     async function showPopup() {
       try {
-        await ensureMailchimpScriptLoaded();
-        hideMailchimpLauncher();
-
-        if (await openExistingMailchimpUi(1800)) {
+        if (isMailchimpPopupVisible()) {
           return;
         }
 
-        resetMailchimpPopupState();
-        resetMailchimpRuntime();
-        await ensureMailchimpScriptLoaded();
-        hideMailchimpLauncher();
-
-        if (await openExistingMailchimpUi(2600)) {
+        if (!window.mailchimpFormsLoaded && !document.querySelector(".mcforms-wrapper")) {
+          await forceShowMailchimpPopup();
           return;
         }
 
-        await waitForMailchimpPopup(1800);
+        await ensureMailchimpScriptLoaded(MAILCHIMP_DIRECT_FORMS_SCRIPT);
+        hideMailchimpLauncher();
+
+        if (await openExistingMailchimpUi(1200)) {
+          return;
+        }
+
+        if (await forceShowMailchimpPopup()) {
+          return;
+        }
+
+        await openExistingMailchimpUi(2400);
       } catch (error) {
         console.error("Unable to open Mailchimp popup.", error);
       }
