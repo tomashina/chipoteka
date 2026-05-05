@@ -101,6 +101,8 @@
       "PRIJAVA USPJEŠNA!"
     ];
     let mailchimpRuntimePromise;
+    let mailchimpPopupOpenPromise;
+    let mailchimpLastOpenAttemptAt = 0;
     let mailchimpTeaserWatcherId;
     let mailchimpObserver;
 
@@ -450,17 +452,10 @@
         }
       }
 
-      enqueueMailchimpCommand({
-        command: "trigger-campaign",
-        experienceId: MAILCHIMP_EXPERIENCE_ID,
-        variationId: MAILCHIMP_VARIATION_ID
-      });
-
-      if (await waitForMailchimpPopup(2200)) {
-        return true;
+      if (canUseMailchimpDebugApi()) {
+        return false;
       }
 
-      await waitForTimeout(150);
       enqueueMailchimpCommand({
         command: "trigger-campaign",
         experienceId: MAILCHIMP_EXPERIENCE_ID,
@@ -480,6 +475,14 @@
     }
 
     async function showPopup() {
+      const now = Date.now();
+
+      if (mailchimpPopupOpenPromise || now - mailchimpLastOpenAttemptAt < 1200) {
+        return;
+      }
+
+      mailchimpLastOpenAttemptAt = now;
+      mailchimpPopupOpenPromise = (async function() {
       try {
         hideMailchimpTeaser();
 
@@ -491,7 +494,15 @@
         forceMailchimpPopupVisible();
       } catch (error) {
         console.error("Unable to open Mailchimp popup.", error);
+      } finally {
+        window.setTimeout(function() {
+          mailchimpLastOpenAttemptAt = 0;
+        }, 1200);
+        mailchimpPopupOpenPromise = null;
       }
+      })();
+
+      return mailchimpPopupOpenPromise;
     }
 
     if (document.readyState === "loading") {
