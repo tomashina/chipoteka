@@ -98,12 +98,10 @@ class LOC_Manufacturer
      */
     public function updateByUids()
     {
-        $manufacturers = Manufacturer::select('manufacturer_id', 'luceed_uid')->get();
-        $new           = $this->getManufacturers()
-                              ->where('enabled', 'D')
-                              ->where('robna_marka', '!=', '')
-                              ->where('naziv', '!=', '')
-                              ->all();
+        $new = $this->getManufacturers()
+                    ->where('robna_marka', '!=', '')
+                    ->where('robna_marka_uid', '!=', '')
+                    ->all();
 
         foreach ($new as $item) {
             Manufacturer::where('luceed_uid', $item->robna_marka)->update([

@@ -912,6 +912,12 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $updated = 0;
         $lp      = new LOC_Price();
 
+        try {
+            (new LOC_Manufacturer(LuceedManufacturer::all()))->updateByUids();
+        } catch (\Throwable $e) {
+            Log::store('updateB2BPrices(manufacturer_uid_sync) ::: ' . $e->getMessage());
+        }
+
         $lp->deleteProductDiscountDB();
 
         foreach ($lp->getGroups() as $group) {
