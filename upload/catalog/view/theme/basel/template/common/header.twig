@@ -355,7 +355,7 @@
     }
 
     function isMailchimpRuntimeReady() {
-      return !!window.mailchimpFormsLoaded && !!window._mcfq && typeof window._mcfq.tick === "function";
+      return !!window.mailchimpFormsLoaded || canUseMailchimpDebugApi() || (!!window._mcfq && typeof window._mcfq.tick === "function");
     }
 
     function canUseMailchimpDebugApi() {
@@ -434,7 +434,7 @@
     async function openForcedMailchimpPopup() {
       const runtimeReady = await ensureMailchimpRuntimeReady(7000);
 
-      if (!runtimeReady) {
+      if (!runtimeReady && !hasMailchimpDirectScript()) {
         throw new Error("Mailchimp popup runtime failed to initialize.");
       }
 
@@ -447,13 +447,9 @@
           }
         ]);
 
-        if (await waitForMailchimpPopup(2200)) {
+        if (await waitForMailchimpPopup(3500)) {
           return true;
         }
-      }
-
-      if (canUseMailchimpDebugApi()) {
-        return false;
       }
 
       enqueueMailchimpCommand({
@@ -462,7 +458,7 @@
         variationId: MAILCHIMP_VARIATION_ID
       });
 
-      return waitForMailchimpPopup(2200);
+      return waitForMailchimpPopup(7000);
     }
 
     function warmupMailchimpRuntime() {
@@ -577,7 +573,7 @@
           </div>
         </a>
 
-        <a style="cursor: pointer" class="navbar-tool"  onclick="showPopup()">
+        <a style="cursor: pointer" class="navbar-tool" href="https://mailchi.mp/chipoteka/newsletter-prijava" onclick="showPopup(); return false;">
           <span class="navbar-tool-tooltip">
 Newsletter prijava
 </span>
