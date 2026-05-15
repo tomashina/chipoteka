@@ -10,6 +10,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
     private $storageWarehouseProductIds = array();
     private $storageWarehouseSnapshot = null;
     private $storageWarehouseTableAvailable = null;
+    private $storageWarehouseTableAvailableBySelection = array();
 
     private function defGetSaleSortReferencePriceSql($price_field = 'p.price')
     {
@@ -360,30 +361,97 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
         return array_values($warehouse_uids);
     }
 
-    private function defCanUseWarehouseStockTable()
+    private function defGetWarehouseTablePairSql(array $warehouse_codes)
+    {
+        $warehouse_uids_by_code = array();
+
+        foreach ($this->defGetAvailabilityWarehouses() as $warehouse) {
+            $warehouse_code = trim((string)($warehouse['skladiste'] ?? ''));
+            $warehouse_uid = trim((string)($warehouse['skladiste_uid'] ?? ''));
+
+            if ($warehouse_code === '' || $warehouse_uid === '') {
+                continue;
+            }
+
+            if (in_array($warehouse_code, $warehouse_codes, true)) {
+                $warehouse_uids_by_code[$warehouse_code] = $warehouse_uid;
+            }
+        }
+
+        if ( ! $warehouse_uids_by_code) {
+            return '';
+        }
+
+        $clauses = array();
+
+        foreach ($warehouse_uids_by_code as $warehouse_code => $warehouse_uid) {
+            $clauses[] = "(pws.warehouse_code = '" . $this->db->escape($warehouse_code) . "'
+                AND pws.warehouse_uid = '" . $this->db->escape($warehouse_uid) . "')";
+        }
+
+        return '(' . implode(' OR ', $clauses) . ')';
+    }
+
+    private function defCanUseWarehouseStockTable(array $warehouse_codes = array())
     {
         if ($this->storageWarehouseTableAvailable !== null) {
-            return $this->storageWarehouseTableAvailable;
+            if ( ! $this->storageWarehouseTableAvailable) {
+                return false;
+            }
+        } else {
+            $table_name = DB_PREFIX . 'product_warehouse_stock';
+            $escaped_table_name = str_replace(
+                array('_', '%'),
+                array('\\_', '\\%'),
+                $this->db->escape($table_name)
+            );
+            $query = $this->db->query("SHOW TABLES LIKE '" . $escaped_table_name . "'");
+
+            if ( ! $query->num_rows) {
+                $this->storageWarehouseTableAvailable = false;
+
+                return false;
+            }
+
+            $sample_query = $this->db->query("SELECT 1 FROM `" . $table_name . "` LIMIT 1");
+            $this->storageWarehouseTableAvailable = (bool)$sample_query->num_rows;
+
+            if ( ! $this->storageWarehouseTableAvailable) {
+                return false;
+            }
         }
 
         $table_name = DB_PREFIX . 'product_warehouse_stock';
-        $escaped_table_name = str_replace(
-            array('_', '%'),
-            array('\\_', '\\%'),
-            $this->db->escape($table_name)
-        );
-        $query = $this->db->query("SHOW TABLES LIKE '" . $escaped_table_name . "'");
 
-        if ( ! $query->num_rows) {
-            $this->storageWarehouseTableAvailable = false;
+        if ( ! $warehouse_codes) {
+            return true;
+        }
+
+        sort($warehouse_codes);
+
+        $storage_key = implode('|', $warehouse_codes);
+
+        if (isset($this->storageWarehouseTableAvailableBySelection[$storage_key])) {
+            return $this->storageWarehouseTableAvailableBySelection[$storage_key];
+        }
+
+        $pair_sql = $this->defGetWarehouseTablePairSql($warehouse_codes);
+
+        if ($pair_sql === '') {
+            $this->storageWarehouseTableAvailableBySelection[$storage_key] = false;
 
             return false;
         }
 
-        $sample_query = $this->db->query("SELECT 1 FROM `" . $table_name . "` LIMIT 1");
-        $this->storageWarehouseTableAvailable = (bool)$sample_query->num_rows;
+        $selection_query = $this->db->query("SELECT 1
+            FROM `" . $table_name . "` pws
+            WHERE pws.quantity > 0
+                AND " . $pair_sql . "
+            LIMIT 1");
 
-        return $this->storageWarehouseTableAvailable;
+        $this->storageWarehouseTableAvailableBySelection[$storage_key] = (bool)$selection_query->num_rows;
+
+        return $this->storageWarehouseTableAvailableBySelection[$storage_key];
     }
 
     private function defLoadWarehouseProductUidsFromCacheOrApi(array $warehouse_codes)
@@ -543,18 +611,10 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
             return '';
         }
 
-        if ($this->defCanUseWarehouseStockTable()) {
-            $escaped_codes = array();
+        if ($this->defCanUseWarehouseStockTable($warehouse_codes)) {
+            $pair_sql = $this->defGetWarehouseTablePairSql($warehouse_codes);
 
-            foreach ($warehouse_codes as $warehouse_code) {
-                $warehouse_code = trim((string)$warehouse_code);
-
-                if ($warehouse_code !== '') {
-                    $escaped_codes[] = "'" . $this->db->escape($warehouse_code) . "'";
-                }
-            }
-
-            if ( ! $escaped_codes) {
+            if ($pair_sql === '') {
                 return " AND 1 = 0";
             }
 
@@ -562,7 +622,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                 SELECT pws.product_id
                 FROM `" . DB_PREFIX . "product_warehouse_stock` pws
                 WHERE pws.quantity > 0
-                  AND pws.warehouse_code IN (" . implode(',', $escaped_codes) . ")
+                  AND " . $pair_sql . "
                 GROUP BY pws.product_id
             )";
         }
