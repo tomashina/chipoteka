@@ -567,20 +567,32 @@ class ModelCatalogProduct extends Model {
 	public function getProductRelated($product_id) {
 		$product_data = array();
 
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_related pr LEFT JOIN " . DB_PREFIX . "product p ON (pr.related_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pr.product_id = '" . (int)$product_id . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'");
+        $query = $this->db->query("SELECT pr.related_id FROM " . DB_PREFIX . "product_related pr LEFT JOIN " . DB_PREFIX . "product p ON (pr.related_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pr.product_id = '" . (int)$product_id . "' AND p.status = '1' AND p.price > '0' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'");
 
         if ($query->num_rows) {
             foreach ($query->rows as $result) {
-                $product_data[$result['related_id']] = $this->getProduct($result['related_id']);
+                $product_info = $this->getProduct($result['related_id']);
+
+                if ($product_info) {
+                    $product_data[$result['related_id']] = $product_info;
+                }
             }
 
         } else {
-            $getCat = $this->db->query("SELECT product_id, min(category_id) as category_id FROM " . DB_PREFIX . "product_to_category WHERE product_id = '" . (int)$product_id . "' AND category_id not in (SELECT distinct parent_id as category_id FROM oc_category)");
-            $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_to_category WHERE category_id = '" . (int)$getCat->row['category_id'] . "' AND product_id != '" . (int)$product_id . "'  LIMIT 0,5");
+            $excluded_category_ids = array(303);
+            $excluded_category_sql = implode(',', array_map('intval', $excluded_category_ids));
+            $getCat = $this->db->query("SELECT MIN(category_id) as category_id FROM " . DB_PREFIX . "product_to_category WHERE product_id = '" . (int)$product_id . "' AND category_id NOT IN (" . $excluded_category_sql . ") AND category_id NOT IN (SELECT DISTINCT parent_id as category_id FROM " . DB_PREFIX . "category)");
 
-            foreach ($query->rows as $result) {
-                //$product_data[$result['related_id']] = $this->getProduct($result['related_id']);
-                $product_data[$result['product_id']] = $this->getProduct($result['product_id']);
+            if ($getCat->num_rows && (int)$getCat->row['category_id']) {
+                $query = $this->db->query("SELECT p.product_id FROM " . DB_PREFIX . "product_to_category p2c LEFT JOIN " . DB_PREFIX . "product p ON (p2c.product_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p2c.category_id = '" . (int)$getCat->row['category_id'] . "' AND p2c.product_id != '" . (int)$product_id . "' AND p.status = '1' AND p.price > '0' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' GROUP BY p.product_id ORDER BY p.sort_order ASC, p.date_added DESC LIMIT 0,5");
+
+                foreach ($query->rows as $result) {
+                    $product_info = $this->getProduct($result['product_id']);
+
+                    if ($product_info) {
+                        $product_data[$result['product_id']] = $product_info;
+                    }
+                }
             }
         }
 
