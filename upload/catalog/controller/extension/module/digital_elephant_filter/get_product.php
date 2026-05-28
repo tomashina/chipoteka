@@ -2,6 +2,7 @@
 class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controller
 {
     private $log = null;
+    private $hitCijenaProductCache = array();
 
     /**
      * @var ControllerExtensionModuleDigitalElephantFilterHelperUrl
@@ -35,6 +36,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 
         $data = $this->getText();
         $data += $this->getFixCoreNotice();
+        $data['config_url'] = $this->config->get('config_url');
 
         $data_filter = $this->getFilterDataByUrl($data_url);
 
@@ -296,6 +298,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 
             $products[] = array(
                 'product_id'  => $result['product_id'],
+                'is_hit_cijena' => $this->isHitCijenaProduct($result['product_id']),
                 'thumb'       => $image,
 				'thumb2' 	 => $this->model_tool_image->resize($image2, $image_width, $image_height),
 				'sale_end_date' => $date_end['date_end'] ?? '',
@@ -326,6 +329,18 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
         }
 
         return $products;
+    }
+
+    private function isHitCijenaProduct($product_id) {
+        $product_id = (int)$product_id;
+
+        if (!array_key_exists($product_id, $this->hitCijenaProductCache)) {
+            $query = $this->db->query("SELECT product_id FROM " . DB_PREFIX . "product_to_category WHERE product_id = '" . $product_id . "' AND category_id = '303' LIMIT 1");
+
+            $this->hitCijenaProductCache[$product_id] = $query->num_rows > 0;
+        }
+
+        return $this->hitCijenaProductCache[$product_id];
     }
 
 
