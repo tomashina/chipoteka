@@ -41,6 +41,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 		$data['items_mobile_fw'] = $this->config->get('items_mobile_fw');
 
         $data['shopping_cart'] = $this->url->link('checkout/cart');
+        $data['config_url'] = $this->config->get('config_url');
 		
 		if (!empty($setting['title_pl'][$this->config->get('config_language_id')])) {
 		$data['title_preline'] = html_entity_decode($setting['title_pl'][$this->config->get('config_language_id')], ENT_QUOTES, 'UTF-8');
@@ -247,6 +248,7 @@ class ControllerExtensionModuleBaselProducts extends Controller {
 					
 					$products[] = array(
 						'product_id' => $result['product_id'],
+						'is_hit_cijena' => !empty($result['is_hit_cijena']),
 						'quantity'  => $result['quantity'],
 						'thumb'   	 => $image,
 						'thumb2' 	 => $this->model_tool_image->resize($image2, $setting['image_width'], $setting['image_height']),

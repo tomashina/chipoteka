@@ -17,6 +17,7 @@ class ControllerProductCategory extends Controller {
         }
 
         $data['shopping_cart'] = $this->url->link('checkout/cart');
+        $data['config_url'] = $this->config->get('config_url');
 
 		if (isset($this->request->get['filter'])) {
 			$filter = $this->request->get['filter'];
@@ -325,6 +326,7 @@ class ControllerProductCategory extends Controller {
 
 				$data['products'][] = array(
                     'product_id'   => $result['product_id'],
+                    'is_hit_cijena' => !empty($result['is_hit_cijena']),
                     'thumb'        => $image,
                     'name'         => $result['name'],
                     'price'        => $price,

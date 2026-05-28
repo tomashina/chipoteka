@@ -43,6 +43,29 @@
 
     }
 
+    .product-gallery-preview-item {
+        .hit-cijena-badge--detail {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            z-index: 12;
+            width: 16rem;
+            max-width: 44%;
+            filter: drop-shadow(0 0.45rem 0.65rem rgba($black, 0.24));
+
+            @include media-breakpoint-down(sm) {
+                top: 0.75rem;
+                right: 0.75rem;
+                width: 12rem;
+                max-width: 52%;
+            }
+
+            @media screen and (max-width: 370px) {
+                width: 10rem;
+            }
+        }
+    }
+
     // - - - - - - - - - - - - - - - - - 
     // Product Features
     .product-features {

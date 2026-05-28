@@ -352,6 +352,8 @@ class ControllerProductProduct extends Controller {
 			$data['tab_review'] = sprintf($this->language->get('tab_review'), $product_info['reviews']);
 
             $data['shopping_cart'] = $this->url->link('checkout/cart');
+            $data['config_url'] = $this->config->get('config_url');
+            $data['is_hit_cijena'] = !empty($product_info['is_hit_cijena']);
 
             $data['pj'] = $this->model_catalog_product->getWebActions($product_id);
 
@@ -797,6 +799,7 @@ class ControllerProductProduct extends Controller {
 
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
+					'is_hit_cijena' => !empty($result['is_hit_cijena']),
 					'thumb'       => $image,
 					'name'        => $result['name'],
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',

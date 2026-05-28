@@ -1,11 +1,29 @@
 <?php
 class ModelCatalogProduct extends Model {
+	private $product_category_cache = array();
+
 	public function updateViewed($product_id) {
 		$this->db->query("UPDATE " . DB_PREFIX . "product SET viewed = (viewed + 1) WHERE product_id = '" . (int)$product_id . "'");
 	}
 
 	public function cacheEprelJanIfMissing($product_id, $jan) {
 		$this->db->query("UPDATE " . DB_PREFIX . "product SET jan = '" . $this->db->escape($jan) . "' WHERE product_id = '" . (int)$product_id . "' AND (jan IS NULL OR jan = '')");
+	}
+
+	public function isProductInCategory($product_id, $category_id) {
+		$cache_key = (int)$product_id . ':' . (int)$category_id;
+
+		if (!array_key_exists($cache_key, $this->product_category_cache)) {
+			$query = $this->db->query("SELECT product_id FROM " . DB_PREFIX . "product_to_category WHERE product_id = '" . (int)$product_id . "' AND category_id = '" . (int)$category_id . "' LIMIT 1");
+
+			$this->product_category_cache[$cache_key] = $query->num_rows > 0;
+		}
+
+		return $this->product_category_cache[$cache_key];
+	}
+
+	public function isHitCijenaProduct($product_id) {
+		return $this->isProductInCategory($product_id, 303);
 	}
 
 	public function getProduct($product_id) {
@@ -23,6 +41,7 @@ class ModelCatalogProduct extends Model {
 
 			return array(
 				'product_id'       => $query->row['product_id'],
+				'is_hit_cijena'    => $this->isHitCijenaProduct($query->row['product_id']),
 				'name'             => $query->row['name'],
 				'description'      => $query->row['description'],
                 'short_description'      => $query->row['short_description'],

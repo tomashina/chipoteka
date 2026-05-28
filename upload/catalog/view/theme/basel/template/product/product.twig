@@ -67,6 +67,9 @@
                                         {% if thumb or images %}
                                             {% if thumb %}
                                                 <div class="product-gallery-preview-item active" id="first"><a class="gallery-item rounded-3" href="{{ popup }}" data-sub-html="&lt;h6 class=&quot;fs-sm text-light&quot;&gt;{{ heading_title }}&lt;/h6&gt;"><img  src="{{ thumb }}"  data-zoom="{{ popup }}" alt="{{ heading_title }}" title="{{ heading_title }}"></a>
+                                                    {% if is_hit_cijena %}
+                                                        <img class="hit-cijena-badge hit-cijena-badge--detail" src="{{ config_url }}image/hit-cijena.svg" alt="Hit cijena">
+                                                    {% endif %}
                                                 </div>
                                             {% endif %}
                                             {% for image in images %}
@@ -583,6 +586,9 @@
                                         <button class="btn btn-primary btn-basket" type="button" onclick="cart.add('{{ product.product_id }}', '{{ product.minimum }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
                                     {% endif %}
                                     <div class="card-img-top d-block overflow-hidden" href="{{ product.href }}"><img src="{{ product.thumb }}" loading="lazy" title="{{ product.name }}" alt="{{ product.name }}"></div>
+                                    {% if product.is_hit_cijena %}
+                                        <img class="hit-cijena-badge hit-cijena-badge--card" src="{{ config_url }}image/hit-cijena.svg" alt="Hit cijena" loading="lazy">
+                                    {% endif %}
                                     {% if product.freeshipping and groupId < 3 %}
                                         <div class="product-badge-cpta product-badge-cpta__free-shipping">
                                             <span> Besplatna dostava</span>
