@@ -19,9 +19,50 @@
     </div>
     <div id="content" class="container-fluid pb-3 mb-2 mb-md-4">
 
-        {% if izborkarte=='servis' %}
-            <p>Status Vaše reklamacije možete provjeriti <a class="text-primary" href="index.php?route=information/servis">ovdje.</a></p>
-        {% endif  %}
+        {% if izborkarte == 'servis' %}
+            <h3>Elektronika je super dok radi. Kad ne radi, tu smo mi.</h3>
+
+            <p>
+                U Chipotekinom servisu pregledavaju se i popravljaju različite vrste elektroničkih uređaja,
+                od manjih kvarova do složenijih popravaka. Nakon dijagnostike javljamo može li se uređaj
+                popraviti, što je potrebno napraviti i koliki će biti trošak.
+            </p>
+
+            <p>
+                Popravke obavljaju iskusni tehničari, a svaki uređaj prolazi završnu provjeru prije preuzimanja.
+            </p>
+
+            <h4>Cjenik servisa</h4>
+
+            <ol>
+                <li>
+                    <strong>Radni sat za popravak uređaja konzumne elektronike</strong><br>
+                    13,27 € <small>(PDV uključen)</small>
+                </li>
+                <li>
+                    <strong>Radni sat za popravak profesionalnih uređaja</strong><br>
+                    50,00 € <small>(PDV uključen)</small>
+                </li>
+                <li>
+                    <strong>Dijagnostika u slučaju odustajanja od popravka</strong><br>
+                    9,95 € <small>(PDV uključen)</small>
+                </li>
+            </ol>
+
+            <p>
+                <strong>Napomena:</strong> cjenik vrijedi za usluge servisa Z-EL d.o.o.
+                Ako se popravak obavlja izvan servisa Z-EL d.o.o.
+                <small>(popis ovlaštenih servisa naveden je u jamstvenom listu)</small>,
+                usluga se naplaćuje prema računu ovlaštenog servisa.
+            </p>
+
+            <h4>Provjera statusa reklamacije</h4>
+
+            <p>
+                Status Vaše reklamacije možete provjeriti
+                <a class="text-primary" href="index.php?route=information/servis">ovdje.</a>
+            </p>
+        {% endif %}
         {% if izborkarte=='servis' %}
             <script src="https://apps.elfsight.com/p/platform.js" defer></script>
             <div class="elfsight-app-82207754-9f67-4a35-a682-d9f14fccb35a"></div>
