@@ -93,7 +93,7 @@ class ControllerExtensionFeedOzam extends Controller {
                     $output .= '<brand>' . $this->wrapInCDATA($product['manufacturer']) . '</brand>';
                     $output .= '<kratki_opis>' . $this->wrapInCDATA($kratki) . '</kratki_opis>';
                     $output .= '<mpc>' . number_format($price, '2', '.', '') . '</mpc>';
-                    $output .= '<nabavna_cijena>' . number_format($nabavna_cijena, '2', '.', '') . '</nabavna_cijena>';
+
                     $output .= '<url>' . $this->url->link('product/product', 'product_id=' . $product['product_id']) . '</url>';
                     $output .= '<category>' . $this->wrapInCDATA($this->getCategoriesName($product['product_id'])) . '</category>';
                     $output .= '<image_url>' . $this->wrapInCDATA('https://www.chipoteka.hr/image/' . $product['image']) . '</image_url>';
