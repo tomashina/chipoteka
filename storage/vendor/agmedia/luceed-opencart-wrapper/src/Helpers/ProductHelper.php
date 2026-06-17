@@ -40,7 +40,7 @@ class ProductHelper
         if ($actual && $actual->count()) {
             $response[0] = $actual->category_id;
 
-            if ($product['licenca'] == 'SUPER DEAL') {
+            if ($product['licenca'] == 'HIT CIJENA') {
                 $response[1] = 303;
             }
 
