@@ -296,6 +296,7 @@ class ControllerSaleContractWithdrawal extends Controller {
 			'entry_lastname',
 			'entry_telephone',
 			'entry_address',
+			'entry_refund_iban',
 			'entry_scope',
 			'entry_comment',
 			'entry_notify',

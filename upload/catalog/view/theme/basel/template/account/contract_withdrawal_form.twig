@@ -48,6 +48,12 @@
                   <td><b>{{ entry_email }}</b></td>
                   <td>{{ form.email }}</td>
                 </tr>
+                {% if form.refund_iban %}
+                  <tr>
+                    <td><b>{{ entry_refund_iban }}</b></td>
+                    <td>{{ form.refund_iban }}</td>
+                  </tr>
+                {% endif %}
                 <tr>
                   <td><b>{{ entry_scope }}</b></td>
                   <td>{% if form.withdrawal_scope == 'items' %}{{ text_selected_items }}{% else %}{{ text_full_order }}{% endif %}</td>
@@ -66,6 +72,7 @@
             <input type="hidden" name="email" value="{{ form.email }}" />
             <input type="hidden" name="telephone" value="{{ form.telephone }}" />
             <input type="hidden" name="address" value="{{ form.address }}" />
+            <input type="hidden" name="refund_iban" value="{{ form.refund_iban }}" />
             <input type="hidden" name="withdrawal_scope" value="{{ form.withdrawal_scope }}" />
             <input type="hidden" name="comment" value="{{ form.comment }}" />
             {% for order_product_id in form.order_products %}
@@ -133,6 +140,13 @@
                 <textarea name="address" rows="3" id="input-address" class="form-control">{{ form.address }}</textarea>
                 {% if errors.address %}
                   <div class="text-danger">{{ errors.address }}</div>
+                {% endif %}
+              </div>
+              <div class="mb-3">
+                <label for="input-refund-iban" class="form-label">{{ entry_refund_iban }}</label>
+                <input type="text" name="refund_iban" value="{{ form.refund_iban }}" id="input-refund-iban" class="form-control" />
+                {% if errors.refund_iban %}
+                  <div class="text-danger">{{ errors.refund_iban }}</div>
                 {% endif %}
               </div>
             </fieldset>

@@ -51,6 +51,7 @@ $_['entry_firstname'] = 'First name';
 $_['entry_lastname'] = 'Last name';
 $_['entry_telephone'] = 'Telephone';
 $_['entry_address'] = 'Address';
+$_['entry_refund_iban'] = 'Refund IBAN';
 $_['entry_scope'] = 'Scope';
 $_['entry_comment'] = 'Comment';
 $_['entry_notify'] = 'Notify customer';

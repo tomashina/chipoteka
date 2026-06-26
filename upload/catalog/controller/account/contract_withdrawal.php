@@ -29,6 +29,7 @@ class ControllerAccountContractWithdrawal extends Controller {
 					'email'            => trim($this->request->post['email']),
 					'telephone'        => trim($this->request->post['telephone']),
 					'address'          => trim($this->request->post['address']),
+					'refund_iban'      => $this->request->post['refund_iban'],
 					'withdrawal_scope' => $this->request->post['withdrawal_scope'],
 					'products'         => $selected_products,
 					'statement'        => $statement,
@@ -134,6 +135,7 @@ class ControllerAccountContractWithdrawal extends Controller {
 			'entry_email',
 			'entry_telephone',
 			'entry_address',
+			'entry_refund_iban',
 			'entry_scope',
 			'entry_comment',
 			'button_preview',
@@ -167,6 +169,7 @@ class ControllerAccountContractWithdrawal extends Controller {
 			'email'            => $this->customer->isLogged() ? $this->customer->getEmail() : '',
 			'telephone'        => $this->customer->isLogged() ? $this->customer->getTelephone() : '',
 			'address'          => '',
+			'refund_iban'      => '',
 			'withdrawal_scope' => 'full',
 			'comment'          => '',
 			'order_products'   => array()
@@ -219,11 +222,13 @@ class ControllerAccountContractWithdrawal extends Controller {
 	}
 
 	private function validate($order_products) {
-		foreach (array('order_id', 'firstname', 'lastname', 'email', 'telephone', 'address', 'withdrawal_scope', 'comment') as $key) {
+		foreach (array('order_id', 'firstname', 'lastname', 'email', 'telephone', 'address', 'refund_iban', 'withdrawal_scope', 'comment') as $key) {
 			if (!isset($this->request->post[$key])) {
 				$this->request->post[$key] = '';
 			}
 		}
+
+		$this->request->post['refund_iban'] = $this->normalizeIban($this->request->post['refund_iban']);
 
 		if (!empty($this->request->post['website'])) {
 			$this->error['warning'] = $this->language->get('error_confirm');
@@ -251,6 +256,10 @@ class ControllerAccountContractWithdrawal extends Controller {
 
 		if (utf8_strlen(trim($this->request->post['address'])) > 1000) {
 			$this->error['address'] = $this->language->get('error_address');
+		}
+
+		if ($this->request->post['refund_iban'] && !$this->isValidIban($this->request->post['refund_iban'])) {
+			$this->error['refund_iban'] = $this->language->get('error_refund_iban');
 		}
 
 		if (!isset($this->request->post['withdrawal_scope']) || !in_array($this->request->post['withdrawal_scope'], array('full', 'items'))) {
@@ -304,6 +313,10 @@ class ControllerAccountContractWithdrawal extends Controller {
 			$lines[] = 'Napomena: ' . trim($this->request->post['comment']);
 		}
 
+		if ($this->request->post['refund_iban']) {
+			$lines[] = 'IBAN za povrat sredstava: ' . $this->request->post['refund_iban'];
+		}
+
 		$lines[] = 'E-mail za potvrdu: ' . trim($this->request->post['email']);
 		$lines[] = 'Vrijeme podnošenja: ' . $this->formatDateTime(date('Y-m-d H:i:s'));
 
@@ -353,6 +366,9 @@ class ControllerAccountContractWithdrawal extends Controller {
 		$lines[] = 'Broj narudžbe: #' . $withdrawal_info['order_id'];
 		$lines[] = 'Potrošač: ' . $withdrawal_info['firstname'] . ' ' . $withdrawal_info['lastname'];
 		$lines[] = 'E-mail: ' . $withdrawal_info['email'];
+		if (!empty($withdrawal_info['refund_iban'])) {
+			$lines[] = 'IBAN za povrat sredstava: ' . $withdrawal_info['refund_iban'];
+		}
 		$lines[] = 'Vrijeme zaprimanja: ' . $this->formatDateTime($withdrawal_info['date_submitted']);
 		$lines[] = '';
 		$lines[] = 'Sadržaj izjave:';
@@ -381,6 +397,14 @@ class ControllerAccountContractWithdrawal extends Controller {
 		} catch (Exception $e) {
 			$this->log->write('Contract withdrawal mail error: ' . $e->getMessage());
 		}
+	}
+
+	private function normalizeIban($iban) {
+		return strtoupper(preg_replace('/\s+/', '', trim($iban)));
+	}
+
+	private function isValidIban($iban) {
+		return (bool)preg_match('/^[A-Z]{2}[0-9A-Z]{13,32}$/', $iban);
 	}
 
 	private function formatDateTime($date) {

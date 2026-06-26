@@ -29,6 +29,7 @@ $_['entry_lastname'] = 'Last name';
 $_['entry_email'] = 'Confirmation email';
 $_['entry_telephone'] = 'Telephone';
 $_['entry_address'] = 'Address';
+$_['entry_refund_iban'] = 'Refund IBAN';
 $_['entry_scope'] = 'Withdrawal scope';
 $_['entry_comment'] = 'Comment';
 
@@ -46,5 +47,6 @@ $_['error_lastname'] = 'Last name must be between 1 and 64 characters.';
 $_['error_email'] = 'Enter a valid email address.';
 $_['error_telephone'] = 'Telephone may contain up to 32 characters.';
 $_['error_address'] = 'Address may contain up to 1000 characters.';
+$_['error_refund_iban'] = 'Enter a valid IBAN or leave the field empty.';
 $_['error_scope'] = 'Select at least one item or full order withdrawal.';
 $_['error_confirm'] = 'You must confirm the statement before submitting the request.';

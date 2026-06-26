@@ -51,6 +51,7 @@ $_['entry_firstname'] = 'Ime';
 $_['entry_lastname'] = 'Prezime';
 $_['entry_telephone'] = 'Telefon';
 $_['entry_address'] = 'Adresa';
+$_['entry_refund_iban'] = 'IBAN za povrat sredstava';
 $_['entry_scope'] = 'Opseg';
 $_['entry_comment'] = 'Komentar';
 $_['entry_notify'] = 'Pošalji obavijest kupcu';

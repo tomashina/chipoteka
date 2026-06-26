@@ -29,6 +29,7 @@ $_['entry_lastname'] = 'Prezime';
 $_['entry_email'] = 'E-mail za potvrdu';
 $_['entry_telephone'] = 'Telefon';
 $_['entry_address'] = 'Adresa';
+$_['entry_refund_iban'] = 'IBAN za povrat sredstava';
 $_['entry_scope'] = 'Opseg raskida';
 $_['entry_comment'] = 'Napomena';
 
@@ -46,5 +47,6 @@ $_['error_lastname'] = 'Prezime mora imati između 1 i 64 znaka.';
 $_['error_email'] = 'Upišite ispravnu e-mail adresu.';
 $_['error_telephone'] = 'Telefon može imati najviše 32 znaka.';
 $_['error_address'] = 'Adresa može imati najviše 1000 znakova.';
+$_['error_refund_iban'] = 'Upišite ispravan IBAN ili ostavite polje prazno.';
 $_['error_scope'] = 'Odaberite barem jedan artikl ili raskid za cijelu narudžbu.';
 $_['error_confirm'] = 'Za slanje zahtjeva potrebno je potvrditi izjavu.';
