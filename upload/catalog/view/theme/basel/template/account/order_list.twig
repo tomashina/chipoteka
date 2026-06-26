@@ -65,6 +65,7 @@
                 <td class="py-3">
                   {% if reorder_status %} <a href="{{ order.reorder }}" data-toggle="tooltip" class="nav-link-style me-2" title="{{ button_repeat }}"><i class="fas fa-repeat"></i></a> {% endif %}
                   <a class="nav-link-style me-2" href="{{ order.view }}" data-bs-toggle="tooltip" title="{{ button_view }}"><i class="fas fa-eye"></i></a>
+                  <a class="nav-link-style me-2" href="{{ order.contract_withdrawal }}" data-bs-toggle="tooltip" title="Raskid ugovora"><i class="fas fa-file-signature"></i></a>
                 </td>
               </tr>
             {% endfor %}

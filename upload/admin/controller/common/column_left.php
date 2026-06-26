@@ -289,6 +289,14 @@ class ControllerCommonColumnLeft extends Controller {
 				);
 			}
 
+            if ($this->user->hasPermission('access', 'sale/contract_withdrawal')) {
+                $sale[] = array(
+                    'name'	   => 'Raskidi ugovora',
+                    'href'     => $this->url->link('sale/contract_withdrawal', 'user_token=' . $this->session->data['user_token'], true),
+                    'children' => array()
+                );
+            }
+
 			// Voucher
 			$voucher = array();
 
