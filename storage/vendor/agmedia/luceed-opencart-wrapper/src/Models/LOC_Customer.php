@@ -203,9 +203,7 @@ class LOC_Customer
                             'luceed_uid' => $l_customer->partner_uid
                         ]);
 
-                        $this->customer['uid'] = $l_customer->partner_uid;
-                        $this->customer['partner_uid'] = $l_customer->partner_uid;
-                        $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
+                        $this->setMatchedCustomerUid($l_customer);
                     }
 
                     Log::store('1', 'test_customers');
@@ -221,9 +219,7 @@ class LOC_Customer
                 $l_customer = $this->resolveLegalEntityCustomerMatch($exist);
 
                 if ($l_customer) {
-                    $this->customer['uid'] = $l_customer->partner_uid;
-                    $this->customer['partner_uid'] = $l_customer->partner_uid;
-                    $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
+                    $this->setMatchedCustomerUid($l_customer);
                     $this->customer['naziv'] = $l_customer->naziv;
                     $this->customer['tip_komitenta'] = 'P';
                     $this->syncLocalLuceedUid((string) $l_customer->partner_uid);
@@ -357,9 +353,7 @@ class LOC_Customer
                         foreach ($main_exist as $l_customer) {
                             if ($l_customer->enabled == 'D' ) {
                                 if ( ! $l_customer->grupacija) {
-                                    $this->customer['uid'] = $l_customer->partner_uid;
-                                    $this->customer['partner_uid'] = $l_customer->partner_uid;
-                                    $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
+                                    $this->setMatchedCustomerUid($l_customer);
                                 }
                             }
                         }
@@ -594,7 +588,18 @@ class LOC_Customer
             return '';
         }
 
-        return $places->resolveUID($zip, $city)->mjesto_uid;
+        return $place->mjesto_uid;
+    }
+
+
+    private function setMatchedCustomerUid($customer): void
+    {
+        $this->customer['uid'] = $customer->partner_uid;
+        $this->customer['partner_uid'] = $customer->partner_uid;
+
+        if (empty($this->customer['mjesto_uid'])) {
+            $this->customer['mjesto_uid'] = $customer->mjesto_uid ?? '';
+        }
     }
 
 
@@ -606,6 +611,7 @@ class LOC_Customer
         if (
             $this->normalizeLookupValue((string) $this->order_customer['address']) === $this->normalizeLookupValue((string) $this->order_customer['shipping_address'])
             && $this->normalizeLookupValue((string) $this->order_customer['zip']) === $this->normalizeLookupValue((string) $this->order_customer['shipping_zip'])
+            && $this->normalizeLookupValue((string) $this->order_customer['city']) === $this->normalizeLookupValue((string) $this->order_customer['shipping_city'])
         ) {
             return false;
         }
@@ -617,14 +623,30 @@ class LOC_Customer
     private function matchesShippingAddress($customer): bool
     {
         return $this->normalizeLookupValue((string) $this->order_customer['shipping_address']) === $this->normalizeLookupValue((string) ($customer->adresa ?? ''))
-            && $this->normalizeLookupValue((string) $this->order_customer['shipping_zip']) === $this->normalizeLookupValue((string) ($customer->postanski_broj ?? ''));
+            && $this->normalizeLookupValue((string) $this->order_customer['shipping_zip']) === $this->normalizeLookupValue((string) ($customer->postanski_broj ?? ''))
+            && $this->matchesLuceedCustomerCity((string) $this->order_customer['shipping_city'], $customer);
     }
 
 
     private function matchesBillingAddress($customer): bool
     {
         return $this->normalizeLookupValue((string) $this->order_customer['address']) === $this->normalizeLookupValue((string) ($customer->adresa ?? ''))
-            && $this->normalizeLookupValue((string) $this->order_customer['zip']) === $this->normalizeLookupValue((string) ($customer->postanski_broj ?? ''));
+            && $this->normalizeLookupValue((string) $this->order_customer['zip']) === $this->normalizeLookupValue((string) ($customer->postanski_broj ?? ''))
+            && $this->matchesLuceedCustomerCity((string) $this->order_customer['city'], $customer);
+    }
+
+
+    private function getLuceedCustomerCity($customer): string
+    {
+        return (string) ($customer->naziv_mjesta ?? $customer->mjesto ?? '');
+    }
+
+
+    private function matchesLuceedCustomerCity(string $city, $customer): bool
+    {
+        $luceed_city = $this->normalizeLookupValue($this->getLuceedCustomerCity($customer));
+
+        return $luceed_city === '' || $this->normalizeLookupValue($city) === $luceed_city;
     }
 
 

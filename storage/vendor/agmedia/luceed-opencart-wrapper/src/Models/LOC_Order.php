@@ -820,7 +820,11 @@ class LOC_Order
      */
     private function checkAddress()
     {
-        if ($this->oc_order['payment_address_1'] == $this->oc_order['shipping_address_1']) {
+        if (
+            $this->oc_order['payment_address_1'] == $this->oc_order['shipping_address_1'] &&
+            $this->oc_order['payment_postcode'] == $this->oc_order['shipping_postcode'] &&
+            $this->oc_order['payment_city'] == $this->oc_order['shipping_city']
+        ) {
             return false;
         }
 
