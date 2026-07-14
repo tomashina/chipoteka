@@ -107,7 +107,7 @@ php scripts/collection_jsonld_audit.php "https://www.chipoteka.hr/<brand-url>" b
 
 ## Stavka 5 - AI product feed prema OpenAI/ChatGPT product discovery shemi
 
-Status: implementirano u repo-u, produkcija treba deploy.
+Status: implementirano u repo-u i potvrdeno na produkciji.
 
 Napravljeno:
 
@@ -117,7 +117,8 @@ Napravljeno:
 - `is_eligible_checkout` je postavljen na `false`, jer direktni ChatGPT checkout nije dio ove stavke.
 - Cijene se salju kao EUR s porezom. Regularna cijena ide u `price`, a aktivni special u `sale_price`.
 - Availability koristi `quantity`, Luceed/dobavljacki `quantityws` i `stock_status`.
-- Dodani su optional signali gdje postoje: GTIN, MPN/model, category path, dodatne slike, cijena zadnjih 30 dana, tezina/dimenzije, review count/rating i osnovni shipping.
+- Dodani su optional signali gdje postoje: GTIN, MPN, category path, dodatne slike, cijena zadnjih 30 dana, tezina/dimenzije, review count/rating i osnovni shipping.
+- `offer_id` koristi stabilni interni `product_id`, a `mpn` se filtrira kako se ne bi slali tekstovi tipa garancija/dostava.
 - Dodan je `scripts/openai_product_feed_audit.php` za provjeru JSONL feeda.
 
 Primjer provjere nakon deploya:
@@ -130,6 +131,29 @@ Napomena:
 
 - OpenAI dokumentacija navodi da je product feed onboarding u ChatGPT trenutno dostupan approved partnerima. Ovaj feed priprema katalog za prijavu i buducu isporuku kroz OpenAI podrzane kanale.
 
+## Stavka 6 - OpenAI/ChatGPT merchant priprema
+
+Status: implementirano u repo-u.
+
+Napravljeno:
+
+- Dodan je merchant pripremni dokument `docs/openai-chatgpt-merchant-prep.md`.
+- Dokument sadrzi copy/paste podatke za `https://chatgpt.com/merchants/`, preporucenu primarnu kategoriju `Electronics & Appliances`, feed opis, delivery napomenu i tekst za polje "Anything else".
+- Dodana je mapping tablica prema OpenAI stable product feed shemi.
+- Dodana je gap analiza: trenutni HTTPS JSONL feed je spreman za QA/prijavu, a nakon OpenAI odobrenja treba sloziti stabilni `jsonl.gz` full snapshot i SFTP upload job.
+- Dodan je `scripts/openai_merchant_readiness.php` za sazetak feed coveragea, OpenAI feed size bucketa, optional field coveragea i merchant copy/paste podataka.
+
+Primjeri provjere:
+
+```bash
+php scripts/openai_product_feed_audit.php "https://www.chipoteka.hr/openai-products.jsonl?limit=100" 100
+php scripts/openai_merchant_readiness.php "https://www.chipoteka.hr/openai-products.jsonl?limit=1000"
+```
+
+Napomena:
+
+- OpenAI docs navode da se produkcijski file-upload feed dostavlja kao full snapshot kroz podrzane kanale poput SFTP-a, uz stabilan file name i barem dnevni refresh. To je sljedeci korak tek nakon odobrenja merchant pristupa.
+
 ## Sljedeca stavka
 
-Stavka 6: OpenAI/ChatGPT merchant priprema.
+Stavka 7: Opcionalna genericka feed kompatibilnost za buduce Google/druga trzista.
