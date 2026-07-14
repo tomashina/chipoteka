@@ -105,6 +105,31 @@ php scripts/collection_jsonld_audit.php "https://www.chipoteka.hr/<category-url>
 php scripts/collection_jsonld_audit.php "https://www.chipoteka.hr/<brand-url>" brand
 ```
 
+## Stavka 5 - AI product feed prema OpenAI/ChatGPT product discovery shemi
+
+Status: implementirano u repo-u, produkcija treba deploy.
+
+Napravljeno:
+
+- Dodan je javni JSONL snapshot feed na `/openai-products.jsonl`.
+- Feed koristi OpenAI stable file-upload product schema polja za non-Ads discovery feed.
+- Svaki zapis sadrzi required discovery polja: `is_eligible_search`, `is_eligible_checkout`, `item_id`, `title`, `description`, `url`, `brand`, `image_url`, `price`, `availability`, `seller_name`, `seller_url`, `return_policy`, `target_countries` i `store_country`.
+- `is_eligible_checkout` je postavljen na `false`, jer direktni ChatGPT checkout nije dio ove stavke.
+- Cijene se salju kao EUR s porezom. Regularna cijena ide u `price`, a aktivni special u `sale_price`.
+- Availability koristi `quantity`, Luceed/dobavljacki `quantityws` i `stock_status`.
+- Dodani su optional signali gdje postoje: GTIN, MPN/model, category path, dodatne slike, cijena zadnjih 30 dana, tezina/dimenzije, review count/rating i osnovni shipping.
+- Dodan je `scripts/openai_product_feed_audit.php` za provjeru JSONL feeda.
+
+Primjer provjere nakon deploya:
+
+```bash
+php scripts/openai_product_feed_audit.php "https://www.chipoteka.hr/openai-products.jsonl?limit=50" 50
+```
+
+Napomena:
+
+- OpenAI dokumentacija navodi da je product feed onboarding u ChatGPT trenutno dostupan approved partnerima. Ovaj feed priprema katalog za prijavu i buducu isporuku kroz OpenAI podrzane kanale.
+
 ## Sljedeca stavka
 
-Stavka 5: AI product feed prema OpenAI/ChatGPT product discovery shemi.
+Stavka 6: OpenAI/ChatGPT merchant priprema.
