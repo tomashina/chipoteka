@@ -108,6 +108,44 @@ class ModelCatalogCategory extends Model {
 		}
 	}
 
+	public function getCategoryFaqs($category_id) {
+		if (!$this->hasCategoryFaqTable()) {
+			return array();
+		}
+
+		$category_faq_data = array();
+		$query = $this->db->query("SELECT question, answer FROM " . DB_PREFIX . "category_faq WHERE category_id = '" . (int)$category_id . "' AND language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY sort_order ASC, category_faq_id ASC");
+
+		foreach ($query->rows as $result) {
+			$question = trim((string)$result['question']);
+			$answer = trim((string)$result['answer']);
+
+			if ($question === '' || $answer === '') {
+				continue;
+			}
+
+			$category_faq_data[] = array(
+				'question' => $question,
+				'answer' => $answer
+			);
+		}
+
+		return $category_faq_data;
+	}
+
+	private function hasCategoryFaqTable(): bool {
+		static $has_table = null;
+
+		if ($has_table !== null) {
+			return $has_table;
+		}
+
+		$query = $this->db->query("SHOW TABLES LIKE '" . $this->db->escape(DB_PREFIX . "category_faq") . "'");
+		$has_table = (bool)$query->num_rows;
+
+		return $has_table;
+	}
+
 	public function getTotalCategoriesByCategoryId($parent_id = 0) {
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "category c LEFT JOIN " . DB_PREFIX . "category_to_store c2s ON (c.category_id = c2s.category_id) WHERE c.parent_id = '" . (int)$parent_id . "' AND c2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND c.status = '1'");
 

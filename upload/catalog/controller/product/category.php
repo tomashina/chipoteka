@@ -143,6 +143,8 @@ class ControllerProductCategory extends Controller {
 			}
 
 			$data['description'] = html_entity_decode($category_info['description'], ENT_QUOTES, 'UTF-8');
+			$data['category_faq_heading'] = $this->language->get('text_category_faq_heading');
+			$data['category_faqs'] = $this->model_catalog_category->getCategoryFaqs($category_id);
 			$data['compare'] = $this->url->link('product/compare');
 
 			$url = '';
@@ -545,7 +547,8 @@ class ControllerProductCategory extends Controller {
 				$structured_products,
 				$canonical_url,
 				(int)$product_total,
-				(int)(($page - 1) * $limit)
+				(int)(($page - 1) * $limit),
+				$data['category_faqs']
 			);
 
 			$data['sort'] = $sort;

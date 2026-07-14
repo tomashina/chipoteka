@@ -21,6 +21,10 @@ $_['entry_description']      = 'Description';
 $_['entry_meta_title'] 	     = 'Meta Tag Title';
 $_['entry_meta_keyword']     = 'Meta Tag Keywords';
 $_['entry_meta_description'] = 'Meta Tag Description';
+$_['entry_category_faq']     = 'Category FAQ';
+$_['entry_faq_question']     = 'Question';
+$_['entry_faq_answer']       = 'Answer';
+$_['entry_faq_sort_order']   = 'Sort Order';
 $_['entry_store']            = 'Stores';
 $_['entry_keyword']          = 'Keyword';
 $_['entry_parent']           = 'Parent';
@@ -36,6 +40,10 @@ $_['entry_layout']           = 'Layout Override';
 $_['help_filter']            = '(Autocomplete)';
 $_['help_top']               = 'Display in the top menu bar. Only works for the top parent categories.';
 $_['help_column']            = 'Number of columns to use for the bottom 3 categories. Only works for the top parent categories.';
+$_['help_category_faq']      = 'FAQ is shown at the bottom of the category, below products, and is used for FAQPage JSON-LD.';
+
+// Button
+$_['button_add_faq']         = 'Add FAQ';
 
 // Error
 $_['error_warning']          = 'Warning: Please check the form carefully for errors!';

@@ -267,6 +267,32 @@ Primjer cPanel cron komande:
 cd /home/CPANEL_USER/path/to/chipoteka && /usr/local/bin/php scripts/ai_regression_monitor.php https://www.chipoteka.hr --quick >> /home/CPANEL_USER/logs/chipoteka-ai-regression.log 2>&1
 ```
 
+## Stavka 11 - Content/attribute normalizacija
+
+Status: implementirano u repo-u za kategorijski FAQ, produkcija treba deploy i unos FAQ sadrzaja u adminu.
+
+Napravljeno:
+
+- Dodan je admin editor za FAQ na kategorijama: `Catalog > Categories > Edit category`, po jeziku.
+- FAQ se sprema u novu tablicu `category_faq`, koju admin model automatski kreira pri otvaranju/spremanju kategorije.
+- Svaki FAQ red ima pitanje, odgovor i redoslijed sortiranja.
+- Frontend dohvat je obramben: ako tablica jos ne postoji ili kategorija nema FAQ, kategorija radi normalno bez FAQ bloka.
+- Kategorijski FAQ se prikazuje na dnu kategorije, ispod artikala/paginacije.
+- Postojeci kategorijski opis ostaje kako je bio.
+- Ako kategorija ima FAQ, isti sadrzaj se dodaje i u category JSON-LD kao `FAQPage`, uz postojece `CollectionPage`, `ItemList` i `BreadcrumbList`.
+- Dodan je `scripts/category_faq_audit.php` za provjeru kategorije nakon sto se FAQ unese u adminu.
+
+Primjer provjere nakon deploya i unosa FAQ-a na kategoriju:
+
+```bash
+php scripts/category_faq_audit.php "https://www.chipoteka.hr/<category-url>"
+php scripts/collection_jsonld_audit.php "https://www.chipoteka.hr/<category-url>" category
+```
+
+Napomena:
+
+- `category_faq_audit.php` treba pokrenuti samo za kategorije na kojima je FAQ stvarno unesen.
+
 ## Sljedeca stavka
 
-Stavka 11: Content/attribute normalizaciju.
+Stavka 12: IndexNow / brze dojave promjena.

@@ -27,4 +27,5 @@ $_['text_model_desc']   = 'Model (Z -&gt; A)';
 $_['text_limit']        = 'Prikaži:';
 $_['text_action_only']   = 'Akcija';
 $_['text_action_all']    = 'Sve akcije';
+$_['text_category_faq_heading'] = 'Česta pitanja';
 $_['text_pagination_limit']       = 'Ukupno %d ';

@@ -1,6 +1,6 @@
 <?php
 class ModelCatalogStructuredData extends Model {
-	public function buildCategoryCollection(array $category_info, array $breadcrumbs, array $products, string $canonical_url, int $total_products, int $offset = 0): string {
+	public function buildCategoryCollection(array $category_info, array $breadcrumbs, array $products, string $canonical_url, int $total_products, int $offset = 0, array $faq_items = array()): string {
 		$canonical_url = $this->normalizeUrl($canonical_url);
 		$page_node_id = $canonical_url . '#webpage';
 		$list_node_id = $canonical_url . '#itemlist';
@@ -29,6 +29,12 @@ class ModelCatalogStructuredData extends Model {
 			$this->buildItemList($list_node_id, $products, $total_products, $offset),
 			$this->buildBreadcrumbList($canonical_url, $breadcrumbs)
 		);
+
+		$faq_node = $this->buildFaqPageNode($canonical_url, $faq_items);
+
+		if ($faq_node) {
+			$graph[] = $faq_node;
+		}
 
 		return $this->encodeGraph($graph);
 	}

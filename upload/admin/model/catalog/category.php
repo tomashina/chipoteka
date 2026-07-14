@@ -13,6 +13,8 @@ class ModelCatalogCategory extends Model {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "category_description SET category_id = '" . (int)$category_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
 		}
 
+		$this->saveCategoryFaqs($category_id, $data['category_faq'] ?? array());
+
 		// MySQL Hierarchical Data Closure Table Pattern
 		$level = 0;
 
@@ -72,6 +74,8 @@ class ModelCatalogCategory extends Model {
 		foreach ($data['category_description'] as $language_id => $value) {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "category_description SET category_id = '" . (int)$category_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
 		}
+
+		$this->saveCategoryFaqs($category_id, $data['category_faq'] ?? array());
 
 		// MySQL Hierarchical Data Closure Table Pattern
 		$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "category_path` WHERE path_id = '" . (int)$category_id . "' ORDER BY level ASC");
@@ -182,6 +186,10 @@ class ModelCatalogCategory extends Model {
 		$this->db->query("DELETE FROM " . DB_PREFIX . "seo_url WHERE query = 'category_id=" . (int)$category_id . "'");
 		$this->db->query("DELETE FROM " . DB_PREFIX . "coupon_category WHERE category_id = '" . (int)$category_id . "'");
 
+		if ($this->hasCategoryFaqTable()) {
+			$this->db->query("DELETE FROM " . DB_PREFIX . "category_faq WHERE category_id = '" . (int)$category_id . "'");
+		}
+
 		$this->cache->delete('category');
 	}
 
@@ -281,6 +289,64 @@ class ModelCatalogCategory extends Model {
 		}
 
 		return $category_description_data;
+	}
+
+	public function getCategoryFaqs($category_id) {
+		$this->ensureCategoryFaqTable();
+
+		$category_faq_data = array();
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "category_faq WHERE category_id = '" . (int)$category_id . "' ORDER BY language_id ASC, sort_order ASC, category_faq_id ASC");
+
+		foreach ($query->rows as $result) {
+			$category_faq_data[(int)$result['language_id']][] = array(
+				'question' => $result['question'],
+				'answer' => $result['answer'],
+				'sort_order' => (int)$result['sort_order']
+			);
+		}
+
+		return $category_faq_data;
+	}
+
+	private function saveCategoryFaqs($category_id, array $category_faqs): void {
+		$this->ensureCategoryFaqTable();
+		$this->db->query("DELETE FROM " . DB_PREFIX . "category_faq WHERE category_id = '" . (int)$category_id . "'");
+
+		foreach ($category_faqs as $language_id => $faqs) {
+			if (!is_array($faqs)) {
+				continue;
+			}
+
+			foreach ($faqs as $faq) {
+				$question = trim((string)($faq['question'] ?? ''));
+				$answer = trim((string)($faq['answer'] ?? ''));
+
+				if ($question === '' || $answer === '') {
+					continue;
+				}
+
+				$this->db->query("INSERT INTO " . DB_PREFIX . "category_faq SET category_id = '" . (int)$category_id . "', language_id = '" . (int)$language_id . "', question = '" . $this->db->escape($question) . "', answer = '" . $this->db->escape($answer) . "', sort_order = '" . (int)($faq['sort_order'] ?? 0) . "'");
+			}
+		}
+	}
+
+	private function ensureCategoryFaqTable(): void {
+		$this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "category_faq` (
+			`category_faq_id` int(11) NOT NULL AUTO_INCREMENT,
+			`category_id` int(11) NOT NULL,
+			`language_id` int(11) NOT NULL,
+			`question` text NOT NULL,
+			`answer` text NOT NULL,
+			`sort_order` int(11) NOT NULL DEFAULT 0,
+			PRIMARY KEY (`category_faq_id`),
+			KEY `category_language` (`category_id`, `language_id`, `sort_order`)
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci");
+	}
+
+	private function hasCategoryFaqTable(): bool {
+		$query = $this->db->query("SHOW TABLES LIKE '" . $this->db->escape(DB_PREFIX . "category_faq") . "'");
+
+		return (bool)$query->num_rows;
 	}
 	
 	public function getCategoryPath($category_id) {

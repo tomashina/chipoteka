@@ -26,3 +26,4 @@ $_['text_model_desc']   = 'Model (Z - A)';
 $_['text_limit']        = 'Show:';
 $_['text_action_only']   = 'Products on promotion';
 $_['text_action_all']    = 'All promotions';
+$_['text_category_faq_heading'] = 'Frequently asked questions';

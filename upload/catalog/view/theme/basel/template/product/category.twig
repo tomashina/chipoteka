@@ -167,6 +167,28 @@
                 </div>
             {% endif %}
 
+            {% if category_faqs %}
+                <section class="category-faq mt-5">
+                    <h2 class="h4 mb-3">{{ category_faq_heading }}</h2>
+                    <div class="accordion" id="category-faq">
+                        {% for faq in category_faqs %}
+                            <div class="accordion-item">
+                                <h3 class="accordion-header" id="category-faq-heading-{{ loop.index }}">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#category-faq-collapse-{{ loop.index }}" aria-expanded="false" aria-controls="category-faq-collapse-{{ loop.index }}">
+                                        {{ faq.question }}
+                                    </button>
+                                </h3>
+                                <div id="category-faq-collapse-{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="category-faq-heading-{{ loop.index }}" data-bs-parent="#category-faq">
+                                    <div class="accordion-body">
+                                        {{ faq.answer }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
 
         </div>
     </div>
