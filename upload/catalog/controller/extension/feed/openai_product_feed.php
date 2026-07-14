@@ -72,10 +72,11 @@ class ControllerExtensionFeedOpenaiProductFeed extends Controller {
 
 		$url = $this->normalizeUrl($this->url->link('product/product', 'product_id=' . (int)$product['product_id'], true));
 		$brand = $this->truncateText($this->cleanText(($product['manufacturer'] ?? '') ?: ($this->config->get('config_name') ?: 'Chipoteka')), 70);
+		$item_id = (string)(int)$product['product_id'];
 		$record = array(
 			'is_eligible_search' => 'true',
 			'is_eligible_checkout' => 'false',
-			'item_id' => (string)(int)$product['product_id'],
+			'item_id' => $item_id,
 			'title' => $title,
 			'description' => $description,
 			'url' => $url,
@@ -93,7 +94,8 @@ class ControllerExtensionFeedOpenaiProductFeed extends Controller {
 			'return_policy' => $this->url->link('information/information', 'information_id=3', true),
 			'target_countries' => array('HR'),
 			'store_country' => 'HR',
-			'is_digital' => 'false'
+			'is_digital' => 'false',
+			'offer_id' => $item_id
 		);
 
 		$gtin = $this->getGtin($product);
@@ -102,11 +104,10 @@ class ControllerExtensionFeedOpenaiProductFeed extends Controller {
 			$record['gtin'] = $gtin;
 		}
 
-		$mpn = $this->truncateText($this->cleanText(($product['mpn'] ?? '') ?: ($product['model'] ?? '')), 70);
+		$mpn = $this->getMpn($product);
 
 		if ($mpn !== '') {
 			$record['mpn'] = $mpn;
-			$record['offer_id'] = $mpn;
 		}
 
 		if (!empty($product['product_category'])) {
@@ -227,6 +228,40 @@ class ControllerExtensionFeedOpenaiProductFeed extends Controller {
 		}
 
 		return '';
+	}
+
+	private function getMpn(array $product): string {
+		foreach (array($product['mpn'] ?? '', $product['model'] ?? '') as $candidate) {
+			$identifier = $this->truncateText($this->cleanText($candidate), 70);
+
+			if ($this->isUsableManufacturerIdentifier($identifier)) {
+				return $identifier;
+			}
+		}
+
+		return '';
+	}
+
+	private function isUsableManufacturerIdentifier(string $identifier): bool {
+		if ($identifier === '' || $identifier === '-' || $identifier === '0') {
+			return false;
+		}
+
+		if (strlen($identifier) < 3) {
+			return false;
+		}
+
+		$normalized = $this->normalizeText($identifier);
+
+		if (preg_match('/^\d+\s*(godin|mjesec|mj|year|years|month|months)/', $normalized)) {
+			return false;
+		}
+
+		if (preg_match('/\b(garanc|jamstvo|warranty|dobavlj|naruc|narud|isporuk)\b/', $normalized)) {
+			return false;
+		}
+
+		return (bool)preg_match('/[a-z0-9]/i', $identifier);
 	}
 
 	private function getAdditionalImageUrls(array $product, string $primary_image_url): array {

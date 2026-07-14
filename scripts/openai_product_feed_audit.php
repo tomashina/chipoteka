@@ -91,6 +91,12 @@ foreach (preg_split('/\R/', $content) as $line) {
         $errors[] = "{$prefix}: gtin must be 8, 12, 13 or 14 digits";
     }
 
+    foreach (['mpn', 'offer_id'] as $field) {
+        if (!empty($record[$field]) && isSuspiciousIdentifier((string)$record[$field])) {
+            $errors[] = "{$prefix}: {$field} looks like warranty, delivery or policy text";
+        }
+    }
+
     if ($checked >= $limit) {
         break;
     }
@@ -135,4 +141,29 @@ function readFeed(string $source)
     }
 
     return $body;
+}
+
+function isSuspiciousIdentifier(string $identifier): bool
+{
+    $identifier = trim($identifier);
+
+    if ($identifier === '' || $identifier === '-' || $identifier === '0') {
+        return true;
+    }
+
+    $normalized = strtolower($identifier);
+
+    if (function_exists('iconv')) {
+        $converted = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $normalized);
+
+        if ($converted !== false) {
+            $normalized = $converted;
+        }
+    }
+
+    if (preg_match('/^\d+\s*(godin|mjesec|mj|year|years|month|months)/', $normalized)) {
+        return true;
+    }
+
+    return (bool)preg_match('/\b(garanc|jamstvo|warranty|dobavlj|naruc|narud|isporuk)\b/', $normalized);
 }
