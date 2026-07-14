@@ -4,7 +4,7 @@ Datum: 2026-07-14
 
 ## Stavka 1 - AI crawler i Cloudflare/WAF audit
 
-Status: djelomicno implementirano u repo-u, produkcijska WAF promjena jos potrebna.
+Status: djelomicno implementirano u repo-u, produkcijska WAF promjena jos potrebna za `OAI-SearchBot`.
 
 Napravljeno:
 
@@ -15,12 +15,13 @@ Napravljeno:
 Zadnja live provjera:
 
 - `Browser`, `Googlebot` i `Bingbot` vracaju HTTP 200.
-- `OAI-SearchBot`, `ChatGPT-User`, `Claude-SearchBot`, `Claude-User`, `PerplexityBot` i `Perplexity-User` vracaju HTTP 403 na homepageu i `sitemap-index.xml`.
-- `robots.txt` je dostupan tim botovima, ali to nije dovoljno ako ih WAF blokira na stvarnim URL-ovima.
+- `ChatGPT-User`, `Claude-SearchBot`, `Claude-User`, `PerplexityBot` i `Perplexity-User` vracaju HTTP 200 na homepageu i `sitemap-index.xml`.
+- `OAI-SearchBot` jos vraca HTTP 403 na homepageu i `sitemap-index.xml`.
+- `GPTBot` i `ClaudeBot` mogu ostati blokirani kao training botovi, ako je to poslovna odluka.
 
 Sljedece izvan repo-a:
 
-- U Cloudflare/WAF-u dozvoliti korisne AI discovery botove.
+- U Cloudflare/WAF-u rijesiti `OAI-SearchBot`, najvjerojatnije kroz Bot Fight Mode / Cloudflare AI Crawl Control ogranicenja.
 - Nakon toga ponovno pokrenuti:
 
 ```bash
@@ -29,7 +30,7 @@ php scripts/ai_crawler_audit.php https://www.chipoteka.hr
 
 ## Stavka 2 - Robots.txt i sitemap uskladenje
 
-Status: implementirano u repo-u, produkcija treba deploy i regeneraciju sitemapova.
+Status: implementirano u repo-u i potvrdeno na produkciji nakon deploya/regeneracije.
 
 Napravljeno:
 
@@ -49,11 +50,11 @@ Live primjer koji je potvrdio problem:
 - Ta slika vraca HTTP 404.
 - Isti product live stranica sada koristi nove slike `...UPBJQM5LF...` i `...SAHXN7UJZ...`, sto potvrduje da je sitemap chunk zastario.
 
-Sljedece nakon deploya:
+Provjera nakon deploya:
 
-- U adminu pokrenuti Boost Sitemap generate za product, category, category_product, manufacturer, manufacturer_product i information.
-- Provjeriti da `sitemap-index.xml` ima svjeze `lastmod` datume.
-- Provjeriti da uzorak product sitemap URL-ova i image sitemap URL-ova vise ne vraca 404.
+- `robots.txt` sadrzi AI discovery botove i pokazuje na `https://www.chipoteka.hr/sitemap-index.xml`.
+- `sitemap-index.xml` ima svjeze `lastmod` datume.
+- Uzorak product sitemap URL-ova i image sitemap URL-ova vraca HTTP 200.
 
 Primjer provjere:
 
@@ -61,6 +62,29 @@ Primjer provjere:
 php scripts/sitemap_url_audit.php https://www.chipoteka.hr/sitemaps/sitemap_0_2_product_12.xml 50
 ```
 
+## Stavka 3 - Product JSON-LD refaktor
+
+Status: implementirano u repo-u, produkcija treba deploy.
+
+Napravljeno:
+
+- Rucni Product JSON-LD u Twig templateu zamijenjen je jednim `product_json_ld` blokom generiranim u PHP controlleru preko `json_encode`.
+- JSON-LD sada koristi jedan canonical URL za `Product.url`, `mainEntityOfPage`, `Offer.url`, canonical link i OG URL.
+- Product schema sada sadrzi `@id`, `name`, `url`, `description`, `sku`, `model`, `brand`, slike, GTIN gdje je dostupan, `Offer`, `AggregateRating` kada postoje reviewi i `additionalProperty` iz product atributa.
+- Availability se vise ne postavlja uvijek na `InStock`; mapira se iz Luceed-sync polja `quantity`, `quantityws` i `stock_status`.
+- Dodan je `BreadcrumbList` u istom `@graph` JSON-LD bloku.
+- Dodan je `scripts/product_jsonld_audit.php` za provjeru live product JSON-LD blokova.
+
+Primjer provjere nakon deploya:
+
+```bash
+php scripts/product_jsonld_audit.php https://www.chipoteka.hr/napajanje-750w-asus-tuf-gaming-750b-90ye00d0-b0na00-80-bronze-120mm-fan-9150055067
+```
+
+Napomena:
+
+- Live stranica prije deploya jos pokazuje staru shemu; audit trenutno javlja npr. `missing url`, sto treba nestati nakon deploya nove verzije.
+
 ## Sljedeca stavka
 
-Stavka 3: Product JSON-LD refaktor.
+Stavka 4: Category/brand structured data.

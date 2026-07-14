@@ -1,29 +1,7 @@
 {{ header }}
-<script type="application/ld+json">
-                    {
-                      "@context": "http://schema.org/",
-                      "@type": "Product",
-                        "name": "{{ heading_title }}",
-                        "description": "{{description [:220] | striptags }} ...",
-                        "image" : "{{ slika }}",
-                        "sku": "{{ model }}",
-                        "gtin14": "{{ upc }}",
-                        "brand": {
-                            "@type": "Brand",
-                            "name": "{{ manufacturer }}"
-                         },
-                        "offers": {
-                        "@type": "Offer",
-                         "url": "{{ url }}",
-                        "priceCurrency": "EUR",
-                        {% if price %}"price": "{{ price|replace({'€': '', ',' : '.', '.' : ''}) }}",
-                        {% else %}"price": "{{ special|replace({'€': '', ',' : '.', '.' : ''}) }}",{% endif %}
-                        "priceValidUntil": "{{ pricevaliduntil }}",
-                        "itemCondition" : "http://schema.org/NewCondition",
-                        "availability" : "https://schema.org/InStock"
-                      }
-                    }
-                    </script>
+{% if product_json_ld %}
+    <script type="application/ld+json">{{ product_json_ld|raw }}</script>
+{% endif %}
 <main class="offcanvas-enabled product-container">
     <div class="page-title-overlap  pt-4">
         <div class="container-fluid py-2">
