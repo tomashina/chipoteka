@@ -1,3 +1,11 @@
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Googlebot
+User-agent: Bingbot
 User-agent: *
 Disallow: /*route=account/
 Disallow: /*route=affiliate/
@@ -29,7 +37,7 @@ Disallow: /login
 Disallow: /index.php?route=product/manufacturer
 Disallow: /index.php?route=product/compare
 Disallow: /index.php?route=product/category
-Sitemap: https://www.chipoteka.hr/sitemap.xml
+Sitemap: https://www.chipoteka.hr/sitemap-index.xml
 
 User-agent: Yandex
 Disallow: /*route=account/
@@ -57,7 +65,6 @@ Disallow: /login
 Disallow: /index.php?route=product/manufacturer
 Disallow: /index.php?route=product/compare
 Disallow: /index.php?route=product/category
-Sitemap: https://www.chipoteka.hr/sitemap.xml
-
+Sitemap: https://www.chipoteka.hr/sitemap-index.xml
 
 

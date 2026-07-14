@@ -355,6 +355,8 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 			$this->model_setting_setting->editSetting('feed_boost_sitemap', $this->request->post);
 			
 			$items = isset($this->request->post['feed_boost_sitemap_item']) ? $this->request->post['feed_boost_sitemap_item'] : [];
+			$this->prepareSitemapDirectory();
+			$this->deleteGeneratedSitemapFiles($items);
 			
 			/* Journal3 Blog */
 			if(defined('JOURNAL3_INSTALLED')){
@@ -402,6 +404,65 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 		
 		$this->response->setOutput(json_encode($json));
 	}
+
+	protected function prepareSitemapDirectory() {
+		if (!is_dir($this->directory)) {
+			umask(0);
+			mkdir($this->directory, 0777, true);
+		}
+	}
+
+	protected function deleteGeneratedSitemapFiles($items) {
+		$item_types = [
+			'product' => 'product',
+			'category' => 'category',
+			'category_product' => 'category_product',
+			'manufacturer' => 'manufacturer',
+			'manufacturer_product' => 'manufacturer_product',
+			'information' => 'information',
+			'custom_link' => 'custom_link',
+			'journal3blogpost' => 'blog_post',
+			'journal3blogcategory' => 'blog_category'
+		];
+
+		$types = [];
+
+		foreach ($items as $item) {
+			if (isset($item_types[$item])) {
+				$types[] = $item_types[$item];
+			}
+		}
+
+		if (!$types || !is_dir($this->directory)) {
+			return;
+		}
+
+		foreach (glob($this->directory . 'sitemap_*.xml') as $file) {
+			$name = basename($file, '.xml');
+			$parts = explode('_', $name);
+
+			if (count($parts) < 3 || $parts[0] !== 'sitemap') {
+				continue;
+			}
+
+			array_shift($parts);
+			array_shift($parts);
+
+			if (isset($parts[0]) && ctype_digit($parts[0])) {
+				array_shift($parts);
+			}
+
+			if ($parts && ctype_digit(end($parts))) {
+				array_pop($parts);
+			}
+
+			$type = implode('_', $parts);
+
+			if (in_array($type, $types, true) && is_file($file)) {
+				unlink($file);
+			}
+		}
+	}
 	
 	/**
 	 * Get products of category recursively
@@ -413,7 +474,7 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 	 * @param int $store_id
 	 * @return array
 	 */
-	public function getCategories($parent_id, $current_path = '', $language_id, $store_id) {
+	public function getCategories($parent_id, $current_path = '', $language_id = 0, $store_id = 0) {
 		$this->load->model('extension/feed/boost_sitemap');
 		
 		$output = [];
@@ -473,7 +534,7 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 		}
 		
         if ($conf_height) { 
-			$width = $conf_height;
+			$height = $conf_height;
 		}
 				
 		foreach ($this->stores as $store) {
@@ -492,13 +553,7 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 						$output .= '  <changefreq>weekly</changefreq>';
 						$output .= '  <priority>1.0</priority>';
 						
-						if ($product['image']) {
-							$output .= '  <image:image>';
-							$output .= '  <image:loc>' . $this->model_extension_feed_boost_sitemap->resizeImage($product['image'], $width, $height, $store['url']) . '</image:loc>';
-							$output .= '  <image:caption><![CDATA[' . $product['name'] . ']]></image:caption>';
-							$output .= '  <image:title><![CDATA[' . $product['name'] . ']]></image:title>';
-							$output .= '  </image:image>';
-						}
+						$this->appendImage($output, $product['image'], $product['name'], $store['url']);
 
 						$output .= '</url>';
 					}
@@ -544,7 +599,7 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 		}
 		
         if ($conf_height) { 
-			$width = $conf_height;
+			$height = $conf_height;
 		}
 		
 		foreach ($this->stores as $store) {
@@ -580,13 +635,7 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 							$output .= '  <changefreq>weekly</changefreq>';
 							$output .= '  <priority>1.0</priority>';
 							
-							if ($product['image']) {
-								$output .= '  <image:image>';
-								$output .= '  <image:loc>' . $this->model_extension_feed_boost_sitemap->resizeImage($product['image'], $width, $height, $store['url']) . '</image:loc>';
-								$output .= '  <image:caption><![CDATA[' . $product['name'] . ']]></image:caption>';
-								$output .= '  <image:title><![CDATA[' . $product['name'] . ']]></image:title>';
-								$output .= '  </image:image>';
-							}
+							$this->appendImage($output, $product['image'], $product['name'], $store['url']);
 							
 							$output .= '</url>';
 						}
@@ -698,7 +747,7 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 		}
 		
         if ($conf_height) { 
-			$width = $conf_height;
+			$height = $conf_height;
 		}
 		
 		foreach ($this->stores as $store) {
@@ -730,13 +779,7 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 							$output .= '  <changefreq>monthly</changefreq>';
 							$output .= '  <priority>0.5</priority>';
 								
-							if ($manufacturer['image']) {
-								$output .= '  <image:image>';
-								$output .= '  <image:loc>' . $this->model_extension_feed_boost_sitemap->resizeImage($manufacturer['image'], $width, $height, $store['url']) . '</image:loc>';
-								$output .= '  <image:caption><![CDATA[' . $manufacturer['name'] . ']]></image:caption>';
-								$output .= '  <image:title><![CDATA[' . $manufacturer['name'] . ']]></image:title>';
-								$output .= '  </image:image>';
-							}
+							$this->appendImage($output, $manufacturer['image'], $manufacturer['name'], $store['url']);
 								
 							$output .= '</url>';
 						}
@@ -812,13 +855,7 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 							$output .= '  <lastmod>' . date('c', strtotime($category['date_updated'])) . '</lastmod>';
 							$output .= '  <priority>0.5</priority>';
 							
-							if ($category['image']) {
-								$output .= '  <image:image>';								
-                                $output .= '  <image:loc>' . $this->model_extension_feed_boost_sitemap->resizeImage($category['image'], $width, $height, $store['url']) . '</image:loc>';
-								$output .= '  <image:caption>' . $category['name'] . '</image:caption>';
-								$output .= '  <image:title>' . $category['name'] . '</image:title>';
-								$output .= '  </image:image>';
-							}
+							$this->appendImage($output, $category['image'], $category['name'], $store['url']);
 							
 							$output .= '</url>';
 						}
@@ -865,7 +902,7 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 			}
 			
             if ($conf_height) {
-				$width = $conf_height;
+				$height = $conf_height;
 			}
         
 			foreach ($this->languages as $language) {
@@ -897,19 +934,13 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 						$posts = $this->model_extension_feed_boost_sitemap->getBlogPosts($params);
 					
 						foreach ($posts as $post) {
-							if ($post['image']) {
-								$output .= '<url>';
-								$output .= '  <loc>' . $this->link($store['url'], 'journal3/blog/post', 'journal_blog_post_id=' . $post['post_id'], $store['store_id'], $language['language_id']) . '</loc>';
-								$output .= '  <changefreq>weekly</changefreq>';
-								$output .= '  <lastmod>' . date('c', strtotime($post['date_updated'])) . '</lastmod>';
-								$output .= '  <priority>1.0</priority>';
-								$output .= '  <image:image>';
-                                $output .= '  <image:loc>' . $this->model_extension_feed_boost_sitemap->resizeImage($post['image'], $width, $height, $store['url']) . '</image:loc>';
-                                $output .= '  <image:caption>' . $post['name'] . '</image:caption>';
-								$output .= '  <image:title>' . $post['name'] . '</image:title>';
-								$output .= '  </image:image>';
-								$output .= '</url>';
-							}
+							$output .= '<url>';
+							$output .= '  <loc>' . $this->link($store['url'], 'journal3/blog/post', 'journal_blog_post_id=' . $post['post_id'], $store['store_id'], $language['language_id']) . '</loc>';
+							$output .= '  <changefreq>weekly</changefreq>';
+							$output .= '  <lastmod>' . date('c', strtotime($post['date_updated'])) . '</lastmod>';
+							$output .= '  <priority>1.0</priority>';
+							$this->appendImage($output, $post['image'], $post['name'], $store['url']);
+							$output .= '</url>';
 						}
 					
 						$output .= '</urlset>';
@@ -953,7 +984,7 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 		}
 		
         if ($conf_height) { 
-			$width = $conf_height;
+			$height = $conf_height;
 		}
 		
 		foreach ($this->stores as $store) {
@@ -984,19 +1015,13 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 						$products = $this->model_extension_feed_boost_sitemap->getProducts($params);
 					
 						foreach ($products as $product) {
-							if ($product['image']) {
-								$output .= '<url>';
-								$output .= '  <loc>' . $this->link($store['url'], 'product/product', 'product_id=' . $product['product_id'], $store['store_id'], $language['language_id']) . '</loc>';
-								$output .= '  <changefreq>weekly</changefreq>';
-								$output .= '  <lastmod>' . date('c', strtotime($product['date_modified'])) . '</lastmod>';
-								$output .= '  <priority>1.0</priority>';
-								$output .= '  <image:image>';
-								$output .= '  <image:loc>' . $this->model_extension_feed_boost_sitemap->resizeImage($product['image'], $width, $height, $store['url']) . '</image:loc>';
-								$output .= '  <image:caption><![CDATA[' . $product['name'] . ']]></image:caption>';
-								$output .= '  <image:title><![CDATA[' . $product['name'] . ']]></image:title>';
-								$output .= '  </image:image>';
-								$output .= '</url>';
-							}
+							$output .= '<url>';
+							$output .= '  <loc>' . $this->link($store['url'], 'product/product', 'product_id=' . $product['product_id'], $store['store_id'], $language['language_id']) . '</loc>';
+							$output .= '  <changefreq>weekly</changefreq>';
+							$output .= '  <lastmod>' . date('c', strtotime($product['date_modified'])) . '</lastmod>';
+							$output .= '  <priority>1.0</priority>';
+							$this->appendImage($output, $product['image'], $product['name'], $store['url']);
+							$output .= '</url>';
 						}
 					
 						$output .= '</urlset>';
@@ -1039,7 +1064,7 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 		}
 		
         if ($conf_height) { 
-			$width = $conf_height;
+			$height = $conf_height;
 		}
 		
 		foreach ($this->stores as $store) {
@@ -1076,13 +1101,7 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 							$output .= '  <lastmod>' . date('c', strtotime($category['date_modified'])) . '</lastmod>';
 							$output .= '  <priority>0.5</priority>';
 							
-							if ($category['image']) {
-								$output .= '  <image:image>';
-								$output .= '  <image:loc>' . $this->model_extension_feed_boost_sitemap->resizeImage($category['image'], $width, $height, $store['url']) . '</image:loc>';
-								$output .= '  <image:caption><![CDATA[' . $category['name'] . ']]></image:caption>';
-								$output .= '  <image:title><![CDATA[' . $category['name'] . ']]></image:title>';
-								$output .= '  </image:image>';
-							}
+							$this->appendImage($output, $category['image'], $category['name'], $store['url']);
 							
 							$output .= '</url>';
 						}
@@ -1171,6 +1190,30 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 				}
 			//}
 		}
+	}
+
+	protected function appendImage(&$output, $filename, $title, $store_url) {
+		$image = $this->model_extension_feed_boost_sitemap->getSitemapImage($filename, $store_url);
+
+		if (!$image) {
+			return;
+		}
+
+		$title = $this->cdata($title);
+
+		$output .= '  <image:image>';
+		$output .= '  <image:loc>' . $this->xml($image) . '</image:loc>';
+		$output .= '  <image:caption><![CDATA[' . $title . ']]></image:caption>';
+		$output .= '  <image:title><![CDATA[' . $title . ']]></image:title>';
+		$output .= '  </image:image>';
+	}
+
+	protected function xml($value) {
+		return htmlspecialchars((string)$value, ENT_QUOTES | ENT_XML1, 'UTF-8');
+	}
+
+	protected function cdata($value) {
+		return str_replace(']]>', ']]]]><![CDATA[>', (string)$value);
 	}
 	
 	/**

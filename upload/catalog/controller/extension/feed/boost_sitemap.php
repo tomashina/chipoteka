@@ -4,6 +4,7 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 		if ($this->config->get('feed_boost_sitemap_status')) {
 			$directory = str_replace('system', 'sitemaps', DIR_SYSTEM);
 			$files = glob($directory. '*.xml', GLOB_BRACE);
+			$base_url = $this->config->get('config_ssl') ?: $this->config->get('config_url');
 			
 			if (!$files) {
 				$files = [];
@@ -22,7 +23,7 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 					
 					if ($store_id == (int)$this->config->get('config_store_id')) {
 						$output .= '<sitemap>';
-						$output .= '<loc>' . $this->config->get('config_url') . 'sitemaps/' . $file . '</loc>';
+						$output .= '<loc>' . $this->xml(rtrim($base_url, '/') . '/sitemaps/' . $file) . '</loc>';
 						$output .= '<lastmod>' . date('c', $time) . '</lastmod>';
 						$output .= '</sitemap>';
 					}
@@ -31,11 +32,16 @@ class ControllerExtensionFeedBoostSitemap extends Controller {
 		
 			$output .= '</sitemapindex>';
 
-			$this->response->addHeader('Content-Type: application/xml');
+			$this->response->addHeader('Content-Type: application/xml; charset=UTF-8');
+			$this->response->addHeader('Cache-Control: public, max-age=3600');
 			$this->response->setOutput($output);
 		} else {
 			$this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . ' 404 Not Found');
 			$this->response->setOutput('404 Not Found');
 		}
+	}
+
+	private function xml($value) {
+		return htmlspecialchars((string)$value, ENT_QUOTES | ENT_XML1, 'UTF-8');
 	}
 }
