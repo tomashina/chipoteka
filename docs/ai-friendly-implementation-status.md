@@ -179,6 +179,31 @@ Zadnja live provjera:
 - `availability`, `price`, `brand`, `product_type`, `shipping` su prisutni na uzorku.
 - GTIN coverage na uzorku: 85/100.
 
+## Stavka 8 - `/llms.txt` i AI landing kontekst
+
+Status: implementirano u repo-u, produkcija treba deploy.
+
+Napravljeno:
+
+- Dodana je javna ruta `/llms.txt` koja se servira dinamicki kroz OpenCart controller, jer `.htaccess` sigurnosno blokira fizicke `.txt` datoteke osim `robots.txt`.
+- `llms.txt` koristi Markdown strukturu: H1 naslov, kratki sazetak, sekcije i opisne linkove prema stabilnim resursima.
+- Dodana je javna `/ai-context` stranica s ljudski citljivim pregledom AI resursa, sitemapova, feedova, kontakata i policy stranica.
+- Dodana su rewrite pravila u `upload/.htaccess` za `/llms.txt` i `/ai-context`.
+- Dodan je `scripts/llms_txt_audit.php` za provjeru osnovne Markdown strukture, content-typea i obaveznih resursa.
+
+Primjeri provjere nakon deploya:
+
+```bash
+curl -I https://www.chipoteka.hr/llms.txt
+curl -s https://www.chipoteka.hr/llms.txt | head -40
+php scripts/llms_txt_audit.php https://www.chipoteka.hr/llms.txt
+curl -I https://www.chipoteka.hr/ai-context
+```
+
+Napomena:
+
+- `/llms.txt` nije zamjena za `robots.txt` ili `sitemap-index.xml`; to je sazet, kurirani Markdown ulaz za AI sustave koji trebaju brzo razumjeti glavne izvore i ogranicenja weba.
+
 ## Sljedeca stavka
 
-Stavka 8: `/llms.txt` i AI landing kontekst.
+Stavka 9: FAQ i policy schema.

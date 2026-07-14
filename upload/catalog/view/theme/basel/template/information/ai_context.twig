@@ -1,0 +1,55 @@
+{{ header }}
+
+<main class="offcanvas-enabled">
+  <div class="page-title-overlap pt-4 pe-lg-3">
+    <div class="container-fluid py-2">
+      <div class="pe-lg-4 text-center text-lg-start">
+        <h1 class="category-page-title text-primary" id="page-title">{{ heading_title }}</h1>
+      </div>
+      <div class="mb-3 mb-lg-0">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb flex-lg-nowrap justify-content-center justify-content-lg-start">
+            {% for breadcrumb in breadcrumbs %}
+              <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+            {% endfor %}
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div id="content" class="container-fluid pb-5 mb-2 mb-md-4">
+    {{ content_top }}
+
+    <div class="info-wrapper pb-3 mb-3">
+      <p class="mb-4">{{ intro }}</p>
+
+      <p class="mb-4">
+        <a class="btn btn-primary" href="{{ llms_url }}">llms.txt</a>
+      </p>
+
+      {% for section in sections %}
+        <section class="mb-4">
+          <h2 class="h4 mb-3">{{ section.title }}</h2>
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+              <tbody>
+                {% for item in section.items %}
+                  <tr>
+                    <th scope="row" class="text-nowrap">
+                      <a href="{{ item.url }}">{{ item.label }}</a>
+                    </th>
+                    <td>{{ item.description }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      {% endfor %}
+
+      {{ content_bottom }}
+    </div>
+  </div>
+
+{{ footer }}
