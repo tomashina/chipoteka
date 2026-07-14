@@ -48,6 +48,7 @@ class ModelCatalogManufacturer extends Model {
 		}
 		
 		$this->cache->delete('manufacturer');
+		$this->queueIndexNow('manufacturer', $manufacturer_id, 'updated');
 
 		return $manufacturer_id;
 	}
@@ -86,9 +87,11 @@ class ModelCatalogManufacturer extends Model {
 		}
 
 		$this->cache->delete('manufacturer');
+		$this->queueIndexNow('manufacturer', $manufacturer_id, 'updated');
 	}
 
 	public function deleteManufacturer($manufacturer_id) {
+		$this->queueIndexNow('manufacturer', $manufacturer_id, 'deleted');
 
         $this->db->query("DELETE FROM " . DB_PREFIX . "manufacturer_description WHERE manufacturer_id = '" . (int)$manufacturer_id . "'");
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "manufacturer` WHERE manufacturer_id = '" . (int)$manufacturer_id . "'");
@@ -173,5 +176,14 @@ class ModelCatalogManufacturer extends Model {
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "manufacturer");
 
 		return $query->row['total'];
+	}
+
+	private function queueIndexNow($entity_type, $entity_id, $action = 'updated'): void {
+		try {
+			$this->load->library('indexnow');
+			$this->indexnow->queueEntity($entity_type, $entity_id, $action);
+		} catch (Exception $e) {
+			$this->log->write('IndexNow queue error: ' . $e->getMessage());
+		}
 	}
 }

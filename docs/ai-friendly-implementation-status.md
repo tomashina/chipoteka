@@ -293,6 +293,35 @@ Napomena:
 
 - `category_faq_audit.php` treba pokrenuti samo za kategorije na kojima je FAQ stvarno unesen.
 
+## Stavka 12 - IndexNow / brze dojave promjena
+
+Status: implementirano u repo-u, produkcija treba deploy, prvu provjeru key filea i cPanel cron za submit queuea.
+
+Napravljeno:
+
+- Dodan je javni IndexNow key file: `/ea81e5ea0e88a48ec19291ea3e853459.txt`.
+- Dodana je `indexnow_queue` tablica, automatski kreirana kod prvog queueanja ili pokretanja submit skripte.
+- Product add/edit/delete queuea product URL, pripadajuce category URL-ove i brand URL.
+- Category add/edit/delete queuea category URL.
+- Manufacturer add/edit/delete queuea brand URL.
+- Information add/edit/delete queuea information URL.
+- Vanjski IndexNow API se ne zove direktno iz admin save akcije; queue se salje kroz CLI/cron kako admin i Luceed sync ne bi ovisili o vanjskoj mrezi.
+- Dodane su skripte `scripts/indexnow_audit.php` i `scripts/indexnow_submit.php`.
+- Dodan je dokument `docs/indexnow.md` s post-deploy i cPanel cron uputama.
+
+Primjeri provjere nakon deploya:
+
+```bash
+php scripts/indexnow_audit.php https://www.chipoteka.hr
+php scripts/indexnow_submit.php https://www.chipoteka.hr --dry-run
+```
+
+Primjer cPanel cron komande:
+
+```bash
+cd /home/CPANEL_USER/path/to/chipoteka && /usr/local/bin/php scripts/indexnow_submit.php https://www.chipoteka.hr --limit=1000 >> /home/CPANEL_USER/logs/chipoteka-indexnow.log 2>&1
+```
+
 ## Sljedeca stavka
 
-Stavka 12: IndexNow / brze dojave promjena.
+Paket od 12 dogovorenih stavki je implementiran u repo-u. Nakon deploya ostaju produkcijske provjere, unos FAQ sadrzaja i zavrsni onboarding za OpenAI merchant/SFTP kada dobijemo pristupne podatke.
