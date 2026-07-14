@@ -154,6 +154,31 @@ Napomena:
 
 - OpenAI docs navode da se produkcijski file-upload feed dostavlja kao full snapshot kroz podrzane kanale poput SFTP-a, uz stabilan file name i barem dnevni refresh. To je sljedeci korak tek nakon odobrenja merchant pristupa.
 
+## Stavka 7 - Opcionalna genericka feed kompatibilnost za buduce Google/druga trzista
+
+Status: implementirano u repo-u.
+
+Napravljeno:
+
+- Dodan je dokument `docs/generic-feed-compatibility.md`.
+- Dodan je alat `scripts/generic_merchant_feed.php`.
+- Alat koristi postojeci OpenAI JSONL feed kao source of truth i mapira ga u Google-like TSV spine: `id`, `title`, `description`, `link`, `image_link`, `availability`, `price`, `brand`, `gtin`, `mpn`, `condition`, `product_type`, `shipping`.
+- Skripta moze raditi samo audit ili audit + TSV export.
+- Dokumentirana je napomena da ovo nije live Google HR launch: sluzbeni Google Merchant Center popis podrzanih jezika/zemalja trenutno ne navodi Croatian/Hrvatsku za Shopping ads/free listings.
+
+Primjeri provjere:
+
+```bash
+php scripts/generic_merchant_feed.php "https://www.chipoteka.hr/openai-products.jsonl?limit=100"
+php scripts/generic_merchant_feed.php "https://www.chipoteka.hr/openai-products.jsonl?limit=100" /tmp/chipoteka-generic-products.tsv
+```
+
+Zadnja live provjera:
+
+- 100/100 proizvoda iz uzorka ima required generic merchant spine.
+- `availability`, `price`, `brand`, `product_type`, `shipping` su prisutni na uzorku.
+- GTIN coverage na uzorku: 85/100.
+
 ## Sljedeca stavka
 
-Stavka 7: Opcionalna genericka feed kompatibilnost za buduce Google/druga trzista.
+Stavka 8: `/llms.txt` i AI landing kontekst.
