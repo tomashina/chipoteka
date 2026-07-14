@@ -1,4 +1,7 @@
 {{ header }}
+{% if contact_json_ld %}
+    <script type="application/ld+json">{{ contact_json_ld|raw }}</script>
+{% endif %}
 <main class="offcanvas-enabled">
     <!-- Custom page title-->
     <div class="page-title-overlap pt-4 pe-lg-3 ">
@@ -62,6 +65,18 @@
                 Status reklamacije provjeri
                 <a class="text-primary" href="index.php?route=information/servis">ovdje.</a>
             </p>
+
+            {% if contact_faq_items %}
+                <section class="mt-4">
+                    <h4>{{ contact_faq_heading }}</h4>
+                    <dl>
+                        {% for item in contact_faq_items %}
+                            <dt>{{ item.question }}</dt>
+                            <dd>{{ item.answer }}</dd>
+                        {% endfor %}
+                    </dl>
+                </section>
+            {% endif %}
         {% endif %}
         {% if izborkarte=='servis' %}
             <script src="https://apps.elfsight.com/p/platform.js" defer></script>

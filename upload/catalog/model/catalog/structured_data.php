@@ -68,6 +68,101 @@ class ModelCatalogStructuredData extends Model {
 		return $this->encodeGraph($graph);
 	}
 
+	public function buildInformationPolicyPage(array $information_info, int $information_id, array $breadcrumbs, string $canonical_url, array $faq_items = array()): string {
+		$canonical_url = $this->normalizeUrl($canonical_url);
+		$page_node_id = $canonical_url . '#webpage';
+		$organization_node_id = $this->getStoreBaseUrl() . '/#organization';
+		$title = $this->cleanText($information_info['title'] ?? '');
+		$description = $this->truncateText($this->cleanText($information_info['meta_description'] ?? $information_info['description'] ?? ''), 800);
+		$organization_node = $this->buildOrganizationNode($organization_node_id);
+		$policy_nodes = $this->buildPolicyNodes($information_id, $canonical_url);
+
+		foreach ($policy_nodes as $policy_node) {
+			if (($policy_node['@type'] ?? '') === 'MerchantReturnPolicy' && !empty($policy_node['@id'])) {
+				$organization_node['hasMerchantReturnPolicy'] = array('@id' => $policy_node['@id']);
+			}
+		}
+
+		$graph = array(
+			array_filter(array(
+				'@type' => 'WebPage',
+				'@id' => $page_node_id,
+				'url' => $canonical_url,
+				'name' => $title,
+				'description' => $description,
+				'inLanguage' => 'hr-HR',
+				'isPartOf' => array('@id' => $this->getStoreBaseUrl() . '/#website'),
+				'publisher' => array('@id' => $organization_node_id),
+				'about' => $this->buildPolicyAbout($information_id)
+			)),
+			$organization_node,
+			$this->buildWebsiteNode(),
+			$this->buildBreadcrumbList($canonical_url, $breadcrumbs)
+		);
+
+		foreach ($policy_nodes as $policy_node) {
+			$graph[] = $policy_node;
+		}
+
+		$faq_node = $this->buildFaqPageNode($canonical_url, $faq_items);
+
+		if ($faq_node) {
+			$graph[] = $faq_node;
+		}
+
+		return $this->encodeGraph($graph);
+	}
+
+	public function buildContactPage(array $locations, array $breadcrumbs, string $canonical_url, string $page_key = 'poslovnice', array $faq_items = array()): string {
+		$canonical_url = $this->normalizeUrl($canonical_url);
+		$page_node_id = $canonical_url . '#webpage';
+		$organization_node_id = $this->getStoreBaseUrl() . '/#organization';
+		$location_list = $this->buildLocationItemList($locations, $canonical_url);
+		$service_node = $page_key === 'servis' ? $this->buildServiceNode($canonical_url, $organization_node_id) : array();
+		$main_entity = array();
+
+		if ($location_list) {
+			$main_entity[] = array('@id' => $location_list['@id']);
+		}
+
+		if ($service_node) {
+			$main_entity[] = array('@id' => $service_node['@id']);
+		}
+
+		$graph = array(
+			array_filter(array(
+				'@type' => 'ContactPage',
+				'@id' => $page_node_id,
+				'url' => $canonical_url,
+				'name' => $this->getContactPageName($page_key),
+				'description' => $this->getContactPageDescription($page_key),
+				'inLanguage' => 'hr-HR',
+				'isPartOf' => array('@id' => $this->getStoreBaseUrl() . '/#website'),
+				'publisher' => array('@id' => $organization_node_id),
+				'mainEntity' => $main_entity
+			)),
+			$this->buildOrganizationNode($organization_node_id),
+			$this->buildWebsiteNode(),
+			$this->buildBreadcrumbList($canonical_url, $breadcrumbs)
+		);
+
+		if ($location_list) {
+			$graph[] = $location_list;
+		}
+
+		if ($service_node) {
+			$graph[] = $service_node;
+		}
+
+		$faq_node = $this->buildFaqPageNode($canonical_url, $faq_items);
+
+		if ($faq_node) {
+			$graph[] = $faq_node;
+		}
+
+		return $this->encodeGraph($graph);
+	}
+
 	private function buildItemList(string $list_node_id, array $products, int $total_products, int $offset): array {
 		$items = array();
 		$position = max($offset, 0) + 1;
@@ -156,6 +251,226 @@ class ModelCatalogStructuredData extends Model {
 			'@id' => $canonical_url . '#breadcrumb',
 			'itemListElement' => $items
 		);
+	}
+
+	private function buildOrganizationNode(string $organization_node_id): array {
+		$base_url = $this->getStoreBaseUrl();
+		$telephone = $this->cleanText($this->config->get('config_telephone'));
+		$contact_point = array_filter(array(
+			'@type' => 'ContactPoint',
+			'contactType' => 'customer support',
+			'url' => $base_url . '/poslovnice',
+			'telephone' => $telephone,
+			'areaServed' => 'HR',
+			'availableLanguage' => array('hr')
+		));
+
+		return array_filter(array(
+			'@type' => array('Organization', 'Store'),
+			'@id' => $organization_node_id,
+			'name' => $this->cleanText($this->config->get('config_name') ?: 'Chipoteka'),
+			'url' => $base_url,
+			'telephone' => $telephone,
+			'contactPoint' => $contact_point,
+			'areaServed' => array(
+				'@type' => 'Country',
+				'name' => 'Croatia'
+			),
+			'currenciesAccepted' => 'EUR'
+		));
+	}
+
+	private function buildWebsiteNode(): array {
+		$base_url = $this->getStoreBaseUrl();
+
+		return array(
+			'@type' => 'WebSite',
+			'@id' => $base_url . '/#website',
+			'name' => $this->cleanText($this->config->get('config_name') ?: 'Chipoteka'),
+			'url' => $base_url,
+			'inLanguage' => 'hr-HR'
+		);
+	}
+
+	private function buildPolicyNodes(int $information_id, string $canonical_url): array {
+		if ($information_id !== 3) {
+			return array();
+		}
+
+		return array(
+			array(
+				'@type' => 'MerchantReturnPolicy',
+				'@id' => $canonical_url . '#return-policy',
+				'name' => 'Uvjeti povrata',
+				'url' => $canonical_url,
+				'applicableCountry' => 'HR',
+				'returnPolicyCountry' => 'HR',
+				'merchantReturnDays' => 14
+			)
+		);
+	}
+
+	private function buildPolicyAbout(int $information_id): array {
+		$topics = array();
+
+		if ($information_id === 3) {
+			$topics = array('Placanje', 'Dostava', 'Povrat', 'Jamstvo', 'Servis');
+		} elseif ($information_id === 5) {
+			$topics = array('Opci uvjeti koristenja', 'Online kupnja', 'Korisnicki racun');
+		} elseif ($information_id === 6) {
+			$topics = array('Privatnost', 'Zastita osobnih podataka', 'Korisnicka prava');
+		}
+
+		return array_map(function (string $topic): array {
+			return array(
+				'@type' => 'Thing',
+				'name' => $topic
+			);
+		}, $topics);
+	}
+
+	private function buildFaqPageNode(string $canonical_url, array $faq_items): array {
+		$questions = array();
+
+		foreach ($faq_items as $item) {
+			$question = $this->cleanText($item['question'] ?? '');
+			$answer = $this->cleanText($item['answer'] ?? '');
+
+			if ($question === '' || $answer === '') {
+				continue;
+			}
+
+			$questions[] = array(
+				'@type' => 'Question',
+				'name' => $question,
+				'acceptedAnswer' => array(
+					'@type' => 'Answer',
+					'text' => $answer
+				)
+			);
+		}
+
+		if (!$questions) {
+			return array();
+		}
+
+		return array(
+			'@type' => 'FAQPage',
+			'@id' => $canonical_url . '#faq',
+			'mainEntity' => $questions
+		);
+	}
+
+	private function buildLocationItemList(array $locations, string $canonical_url): array {
+		$items = array();
+		$position = 1;
+
+		foreach ($locations as $location) {
+			$store = $this->buildLocalBusinessNode($location, $canonical_url, $position);
+
+			if (!$store) {
+				continue;
+			}
+
+			$items[] = array(
+				'@type' => 'ListItem',
+				'position' => $position++,
+				'item' => $store
+			);
+		}
+
+		if (!$items) {
+			return array();
+		}
+
+		return array(
+			'@type' => 'ItemList',
+			'@id' => $canonical_url . '#locations',
+			'name' => 'Chipoteka poslovnice',
+			'itemListElement' => $items
+		);
+	}
+
+	private function buildLocalBusinessNode(array $location, string $canonical_url, int $position): array {
+		$name = $this->cleanText($location['name'] ?? '');
+
+		if ($name === '') {
+			return array();
+		}
+
+		$image = !empty($location['image']) ? $this->normalizeUrl($location['image']) : '';
+
+		return array_filter(array(
+			'@type' => 'ElectronicsStore',
+			'@id' => $canonical_url . '#location-' . $position,
+			'name' => $name,
+			'url' => $canonical_url,
+			'image' => $image,
+			'telephone' => $this->cleanText($location['telephone'] ?? ''),
+			'address' => array_filter(array(
+				'@type' => 'PostalAddress',
+				'streetAddress' => $this->cleanText($location['address'] ?? ''),
+				'addressCountry' => 'HR'
+			)),
+			'openingHours' => $this->cleanText($location['open'] ?? ''),
+			'geo' => $this->buildGeoNode($location['geocode'] ?? '')
+		));
+	}
+
+	private function buildGeoNode($geocode): array {
+		$geocode = trim((string)$geocode);
+
+		if ($geocode === '') {
+			return array();
+		}
+
+		$parts = preg_split('/\s*,\s*/', $geocode);
+
+		if (!$parts || count($parts) < 2 || !is_numeric($parts[0]) || !is_numeric($parts[1])) {
+			return array();
+		}
+
+		return array(
+			'@type' => 'GeoCoordinates',
+			'latitude' => (float)$parts[0],
+			'longitude' => (float)$parts[1]
+		);
+	}
+
+	private function buildServiceNode(string $canonical_url, string $organization_node_id): array {
+		return array(
+			'@type' => 'Service',
+			'@id' => $canonical_url . '#service',
+			'name' => 'Chipoteka servis',
+			'serviceType' => 'Servis i popravak elektronike',
+			'areaServed' => 'HR',
+			'provider' => array('@id' => $organization_node_id),
+			'url' => $canonical_url
+		);
+	}
+
+	private function getContactPageName(string $page_key): string {
+		if ($page_key === 'servis') {
+			return 'Chipoteka servis';
+		}
+
+		if ($page_key === 'veleprodaja') {
+			return 'Chipoteka veleprodaja';
+		}
+
+		return 'Chipoteka poslovnice';
+	}
+
+	private function getContactPageDescription(string $page_key): string {
+		if ($page_key === 'servis') {
+			return 'Informacije o Chipoteka servisu, popravcima i provjeri statusa reklamacije.';
+		}
+
+		if ($page_key === 'veleprodaja') {
+			return 'Kontakt informacije za Chipoteka veleprodaju i B2B upite.';
+		}
+
+		return 'Pregled Chipoteka poslovnica i kontakt informacija.';
 	}
 
 	private function addProductIdentifiers(array &$product_node, array $product): void {

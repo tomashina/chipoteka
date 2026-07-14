@@ -13,6 +13,13 @@ $_['text_fax']       = 'Fax';
 $_['text_open']      = 'Radno vrijeme (sa strankama)';
 $_['text_comment']   = 'Info';
 $_['text_success']   = '<p>Vaš upit uspješno je poslan vlasniku trgovine!</p>';
+$_['text_faq_heading'] = 'Česta pitanja';
+$_['faq_service_status_question'] = 'Kako provjeriti status reklamacije?';
+$_['faq_service_status_answer'] = 'Status reklamacije provjerava se putem servisne stranice upisom servisnog koda u zadanom formatu.';
+$_['faq_service_price_question'] = 'Kako se naplaćuje servis?';
+$_['faq_service_price_answer'] = 'Cjenik servisa naveden je na stranici servisa. Ako korisnik odustane od popravka, dijagnostika se naplaćuje prema objavljenom cjeniku.';
+$_['faq_service_external_question'] = 'Što ako se popravak obavlja kod ovlaštenog servisa?';
+$_['faq_service_external_answer'] = 'Ako se popravak obavlja izvan servisa Z-EL d.o.o., usluga se naplaćuje prema računu ovlaštenog servisa.';
 
 // Entry
 $_['entry_name']     = 'Vaše ime';

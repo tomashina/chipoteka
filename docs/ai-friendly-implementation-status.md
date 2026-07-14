@@ -204,6 +204,36 @@ Napomena:
 
 - `/llms.txt` nije zamjena za `robots.txt` ili `sitemap-index.xml`; to je sazet, kurirani Markdown ulaz za AI sustave koji trebaju brzo razumjeti glavne izvore i ogranicenja weba.
 
+## Stavka 9 - FAQ i policy schema
+
+Status: implementirano u repo-u, produkcija treba deploy.
+
+Napravljeno:
+
+- Info/policy stranice sada dobivaju `WebPage`, `WebSite`, `Organization/Store` i `BreadcrumbList` JSON-LD.
+- `Uvjeti kupovine` (`information_id=3`) dobivaju i `MerchantReturnPolicy` s HR policy signalima i rokom od 14 dana.
+- Za policy stranice dodan je vidljivi FAQ blok i odgovarajuci `FAQPage` JSON-LD:
+  - `uvjeti-kupovine`: placanje, dostava, povrat, jamstvo, servis/reklamacije
+  - `opci-uvjeti-koristenja`: pravila koristenja i korisnicki racun
+  - `zastita-privatnosti-i-podataka`: obrada podataka i korisnicka prava
+- `poslovnice`, `servis` i `veleprodaja` dobivaju `ContactPage` JSON-LD.
+- `poslovnice` dobivaju `ItemList` s `ElectronicsStore` lokacijama iz OpenCart konfiguracije poslovnica.
+- `servis` dobiva `Service` i vidljivi servisni FAQ s odgovarajucim `FAQPage` JSON-LD.
+- Dodan je `scripts/policy_schema_audit.php` za provjeru policy, FAQ, locations i service schema blokova.
+
+Primjeri provjere nakon deploya:
+
+```bash
+php scripts/policy_schema_audit.php https://www.chipoteka.hr/uvjeti-kupovine policy
+php scripts/policy_schema_audit.php https://www.chipoteka.hr/uvjeti-kupovine faq
+php scripts/policy_schema_audit.php https://www.chipoteka.hr/poslovnice locations
+php scripts/policy_schema_audit.php https://www.chipoteka.hr/servis service
+```
+
+Napomena:
+
+- FAQ schema je vezana uz vidljiv FAQ sadrzaj na stranici, kako ne bi postojao skriveni schema-only tekst.
+
 ## Sljedeca stavka
 
-Stavka 9: FAQ i policy schema.
+Stavka 10: Monitoring i regresijske testove.
