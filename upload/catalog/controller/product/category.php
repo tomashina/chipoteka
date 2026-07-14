@@ -9,6 +9,8 @@ class ControllerProductCategory extends Controller {
 
 		$this->load->model('tool/image');
 
+		$this->load->model('catalog/structured_data');
+
         if ($this->customer->isLogged()) {
             $data['groupId'] = $this->customer->getGroupId();
 
@@ -186,6 +188,7 @@ class ControllerProductCategory extends Controller {
 			}
 
 			$data['products'] = array();
+			$structured_products = array();
 
 			$filter_data = array(
 				'filter_category_id' => $category_id,
@@ -323,6 +326,8 @@ class ControllerProductCategory extends Controller {
 
                     $pj ='';
                 }
+
+				$structured_products[] = $result;
 
 				$data['products'][] = array(
                     'product_id'   => $result['product_id'],
@@ -484,8 +489,13 @@ class ControllerProductCategory extends Controller {
 
 			$url .= $action_url;
 
+			if ($page == 1) {
+				$canonical_url = $this->url->link('product/category', 'path=' . $category_info['category_id'], true);
+			} else {
+				$canonical_url = $this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page=' . $page, true);
+			}
 
-            $this->document->addOGMeta('property="og:url"', $this->url->link('product/category', 'path=' . $category_info['category_id'] . ( ($page != 1) ? '&page='. $page : '' ), true) );
+            $this->document->addOGMeta('property="og:url"', $canonical_url);
 
 			$pagination = new Pagination();
 			$pagination->total = $product_total;
@@ -519,11 +529,7 @@ class ControllerProductCategory extends Controller {
             $data['results'] = $product_total;
 
 			// http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html
-			if ($page == 1) {
-			    $this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id']), 'canonical');
-			} else {
-				$this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page='. $page), 'canonical');
-			}
+			$this->document->addLink($canonical_url, 'canonical');
 			
 			if ($page > 1) {
 			    $this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . (($page - 2) ? '&page='. ($page - 1) : '')), 'prev');
@@ -532,6 +538,15 @@ class ControllerProductCategory extends Controller {
 			if ($limit && ceil($product_total / $limit) > $page) {
 			    $this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page='. ($page + 1)), 'next');
 			}
+
+			$data['category_json_ld'] = $this->model_catalog_structured_data->buildCategoryCollection(
+				$category_info,
+				$data['breadcrumbs'],
+				$structured_products,
+				$canonical_url,
+				(int)$product_total,
+				(int)(($page - 1) * $limit)
+			);
 
 			$data['sort'] = $sort;
 			$data['order'] = $order;

@@ -1,4 +1,7 @@
 {{ header }}
+{% if category_json_ld %}
+    <script type="application/ld+json">{{ category_json_ld|raw }}</script>
+{% endif %}
 <main class="offcanvas-enabled">
 
 

@@ -74,6 +74,8 @@ class ControllerProductManufacturer extends Controller {
 
 		$this->load->model('tool/image');
 
+		$this->load->model('catalog/structured_data');
+
 		if (isset($this->request->get['manufacturer_id'])) {
 			$manufacturer_id = (int)$this->request->get['manufacturer_id'];
 		} else {
@@ -161,6 +163,7 @@ class ControllerProductManufacturer extends Controller {
 			$data['compare'] = $this->url->link('product/compare');
 
 			$data['products'] = array();
+			$structured_products = array();
 
 			$filter_data = array(
 				'filter_manufacturer_id' => $manufacturer_id,
@@ -272,6 +275,8 @@ class ControllerProductManufacturer extends Controller {
                 $rokisporuke = $result['isbn'];
 
                 $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + $rokisporuke, date('Y')));
+
+				$structured_products[] = $result;
 
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
@@ -414,8 +419,13 @@ class ControllerProductManufacturer extends Controller {
 			if (isset($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
+			if ($page == 1) {
+				$canonical_url = $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $manufacturer_id, true);
+			} else {
+				$canonical_url = $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $manufacturer_id . '&page=' . $page, true);
+			}
 
-            $this->document->addOGMeta('property="og:url"', $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . ( ($page != 1) ? '&page='. $page : '' ), true) );
+            $this->document->addOGMeta('property="og:url"', $canonical_url);
 
 			$pagination = new Pagination();
 			$pagination->total = $product_total;
@@ -430,11 +440,7 @@ class ControllerProductManufacturer extends Controller {
             $data['results'] = $product_total;
 
 			// http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html
-			if ($page == 1) {
-				$this->document->addLink($this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id']), 'canonical');
-			} else {
-				$this->document->addLink($this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . '&page=' . $page), 'canonical');
-			}
+			$this->document->addLink($canonical_url, 'canonical');
 			
 			if ($page > 1) {
 				$this->document->addLink($this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . (($page - 2) ? '&page=' . ($page - 1) : '')), 'prev');
@@ -443,6 +449,15 @@ class ControllerProductManufacturer extends Controller {
 			if ($limit && ceil($product_total / $limit) > $page) {
 				$this->document->addLink($this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . '&page=' . ($page + 1)), 'next');
 			}
+
+			$data['manufacturer_json_ld'] = $this->model_catalog_structured_data->buildBrandCollection(
+				$manufacturer_info,
+				$data['breadcrumbs'],
+				$structured_products,
+				$canonical_url,
+				(int)$product_total,
+				(int)(($page - 1) * $limit)
+			);
 
 			$data['sort'] = $sort;
 			$data['order'] = $order;

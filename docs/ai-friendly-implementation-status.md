@@ -85,6 +85,26 @@ Napomena:
 
 - Live stranica prije deploya jos pokazuje staru shemu; audit trenutno javlja npr. `missing url`, sto treba nestati nakon deploya nove verzije.
 
+## Stavka 4 - Category/brand structured data
+
+Status: implementirano u repo-u, produkcija treba deploy.
+
+Napravljeno:
+
+- Category stranice dobivaju JSON-LD `CollectionPage`, kategorijski `Thing`, `ItemList` i `BreadcrumbList`.
+- Manufacturer/brand stranice dobivaju JSON-LD `CollectionPage`, `Brand`, `ItemList` i `BreadcrumbList`.
+- `ItemList` koristi proizvode s trenutne paginacije i ukupni broj proizvoda iz postojeceg queryja, bez dodatnih teskih upita.
+- Product list itemi unutar category/brand schema bloka sadrze `Product`, canonical product URL, sliku, SKU/model, brand, GTIN/MPN gdje je dostupan i `Offer`.
+- Availability u listama koristi `quantity`, Luceed/dobavljacki `quantityws` i `stock_status`, isto kao Product JSON-LD.
+- Dodan je `scripts/collection_jsonld_audit.php` za provjeru category i brand JSON-LD blokova.
+
+Primjeri provjere nakon deploya:
+
+```bash
+php scripts/collection_jsonld_audit.php "https://www.chipoteka.hr/<category-url>" category
+php scripts/collection_jsonld_audit.php "https://www.chipoteka.hr/<brand-url>" brand
+```
+
 ## Sljedeca stavka
 
-Stavka 4: Category/brand structured data.
+Stavka 5: AI product feed prema OpenAI/ChatGPT product discovery shemi.
