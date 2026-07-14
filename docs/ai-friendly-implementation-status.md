@@ -234,6 +234,39 @@ Napomena:
 
 - FAQ schema je vezana uz vidljiv FAQ sadrzaj na stranici, kako ne bi postojao skriveni schema-only tekst.
 
+## Stavka 10 - Monitoring i regresijske testove
+
+Status: implementirano u repo-u, produkcija treba deploy i prvi full run nakon deploya.
+
+Napravljeno:
+
+- Dodan je umbrella regression runner `scripts/ai_regression_monitor.php`.
+- Runner objedinjuje postojece audit skripte i HTTP smoke testove za:
+  - `robots.txt`, `sitemap-index.xml`, `/openai-products.jsonl`, `/llms.txt`, `/ai-context`
+  - OpenAI product feed
+  - genericki merchant feed spine
+  - Product JSON-LD na jednom proizvodu iz live feeda
+  - category i brand JSON-LD primjere
+  - policy, FAQ, poslovnice i servis schema blokove
+  - uzorak product sitemap URL-ova
+- Dodani su modovi `--quick`, `--include-crawler`, `--strict`, `--json` i `--dry-run`.
+- Crawler/WAF audit je opcionalan i po defaultu je warning provjera, jer training/discovery bot policy moze biti poslovna odluka.
+- Dodan je dokument `docs/ai-monitoring-regression.md` s post-deploy i cPanel cron uputama.
+
+Primjeri provjere nakon deploya:
+
+```bash
+php scripts/ai_regression_monitor.php https://www.chipoteka.hr
+php scripts/ai_regression_monitor.php https://www.chipoteka.hr --quick
+php scripts/ai_regression_monitor.php https://www.chipoteka.hr --include-crawler
+```
+
+Primjer cPanel cron komande:
+
+```bash
+cd /home/CPANEL_USER/path/to/chipoteka && /usr/local/bin/php scripts/ai_regression_monitor.php https://www.chipoteka.hr --quick >> /home/CPANEL_USER/logs/chipoteka-ai-regression.log 2>&1
+```
+
 ## Sljedeca stavka
 
-Stavka 10: Monitoring i regresijske testove.
+Stavka 11: Content/attribute normalizaciju.
