@@ -26,6 +26,10 @@ $_['entry_store']            = 'Web trgovine';
 $_['entry_meta_title'] 	     = 'Meta Tag (oznaka) - naziv';
 $_['entry_meta_keyword'] 	 = 'Meta Tag (oznaka) - ključne riječi';
 $_['entry_meta_description'] = 'Meta Tag (oznaka) - opis';
+$_['entry_information_faq']  = 'FAQ za info stranicu';
+$_['entry_faq_question']     = 'Pitanje';
+$_['entry_faq_answer']       = 'Odgovor';
+$_['entry_faq_sort_order']   = 'Redoslijed';
 $_['entry_keyword']          = 'SEO URL';
 $_['entry_bottom']           = 'Dno (bottom)';
 $_['entry_status']           = 'Status';
@@ -35,6 +39,10 @@ $_['entry_layout']           = 'Nadređeni izgled (Layout Override)';
 // Help
 $_['help_keyword']           = 'Nemojte koristiti razmak. Umjesto razmaka koristite - i budite sigurni da je SEO URL globalno jedinstven za cijelu trgovinu/trgovine.';
 $_['help_bottom']            = 'Prikaži u dnu footera.';
+$_['help_information_faq']   = 'FAQ se prikazuje na info stranici i koristi se za FAQPage JSON-LD. Ako nema FAQ redova, schema se ne prikazuje.';
+
+// Button
+$_['button_add_faq']         = 'Dodaj FAQ';
 
 // Error
 $_['error_warning']          = 'Upozorenje: Molim detaljno provjerite gdje ste napravili grešku kod unosa u formu!';

@@ -278,6 +278,13 @@ class ControllerCatalogInformation extends Controller {
 			$data['error_meta_title'] = array();
 		}
 
+		$data['entry_information_faq'] = $this->language->get('entry_information_faq');
+		$data['entry_faq_question'] = $this->language->get('entry_faq_question');
+		$data['entry_faq_answer'] = $this->language->get('entry_faq_answer');
+		$data['entry_faq_sort_order'] = $this->language->get('entry_faq_sort_order');
+		$data['button_add_faq'] = $this->language->get('button_add_faq');
+		$data['help_information_faq'] = $this->language->get('help_information_faq');
+
 		if (isset($this->error['keyword'])) {
 			$data['error_keyword'] = $this->error['keyword'];
 		} else {
@@ -337,6 +344,14 @@ class ControllerCatalogInformation extends Controller {
 			$data['information_description'] = $this->model_catalog_information->getInformationDescriptions($this->request->get['information_id']);
 		} else {
 			$data['information_description'] = array();
+		}
+
+		if (isset($this->request->post['information_faq'])) {
+			$data['information_faq'] = $this->request->post['information_faq'];
+		} elseif (isset($this->request->get['information_id'])) {
+			$data['information_faq'] = $this->model_catalog_information->getInformationFaqs($this->request->get['information_id']);
+		} else {
+			$data['information_faq'] = array();
 		}
 
 		$this->load->model('setting/store');

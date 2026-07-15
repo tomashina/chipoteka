@@ -55,6 +55,7 @@ $breadcrumbs = [];
 $item_lists = [];
 $stores = [];
 $services = [];
+$visible_text = normalizeText(html_entity_decode(strip_tags($html), ENT_QUOTES, 'UTF-8'));
 
 foreach ($decoded_blocks as $decoded) {
     $web_pages = array_merge($web_pages, findSchemaNodes($decoded, 'WebPage'));
@@ -91,6 +92,17 @@ if ($mode === 'policy') {
 
             if (empty($question['acceptedAnswer']['text'])) {
                 $errors[] = "{$prefix}: missing acceptedAnswer text";
+            }
+
+            $question_text = normalizeText((string)($question['name'] ?? ''));
+            $answer_text = normalizeText((string)($question['acceptedAnswer']['text'] ?? ''));
+
+            if ($question_text !== '' && strpos($visible_text, $question_text) === false) {
+                $errors[] = "{$prefix}: question is not visible in page HTML";
+            }
+
+            if ($answer_text !== '' && strpos($visible_text, $answer_text) === false) {
+                $errors[] = "{$prefix}: answer is not visible in page HTML";
             }
         }
     }
@@ -175,4 +187,11 @@ function findSchemaNodes(array $node, string $type): array
     }
 
     return $found;
+}
+
+function normalizeText(string $text): string
+{
+    $text = preg_replace('/\s+/u', ' ', $text);
+
+    return trim($text ?? '');
 }

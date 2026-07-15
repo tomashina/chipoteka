@@ -127,7 +127,7 @@ function buildChecks(string $base_url, array $options): array
     $checks[] = phpScriptCheck('Category JSON-LD sample', 'collection_jsonld_audit.php', [$base_url . '/fotoaparati?page=2', 'category']);
     $checks[] = phpScriptCheck('Brand JSON-LD sample', 'collection_jsonld_audit.php', [$base_url . '/nikon', 'brand']);
     $checks[] = phpScriptCheck('Policy WebPage schema', 'policy_schema_audit.php', [$base_url . '/uvjeti-kupovine', 'policy']);
-    $checks[] = phpScriptCheck('Policy FAQ schema', 'policy_schema_audit.php', [$base_url . '/uvjeti-kupovine', 'faq']);
+    $checks[] = phpScriptCheck('Policy FAQ schema', 'policy_schema_audit.php', [$base_url . '/uvjeti-kupovine', 'faq'], 'warning');
     $checks[] = phpScriptCheck('Stores schema', 'policy_schema_audit.php', [$base_url . '/poslovnice', 'locations']);
     $checks[] = phpScriptCheck('Service schema', 'policy_schema_audit.php', [$base_url . '/servis', 'service']);
 

@@ -15,10 +15,10 @@ Skripta provjerava:
 - genericki merchant feed spine
 - Product JSON-LD na jednom proizvodu iz live product feeda
 - category i brand JSON-LD na poznatim primjerima
-- policy, FAQ, poslovnice i servis schema blokove
+- policy, opcionalni FAQ, poslovnice i servis schema blokove
 - uzorak product sitemap URL-ova i image URL-ova
 
-Ako bilo koja kriticna provjera padne, skripta zavrsava s exit code `1`.
+Ako bilo koja kriticna provjera padne, skripta zavrsava s exit code `1`. Policy FAQ provjera je upozorenje jer `FAQPage` postoji samo na info stranicama na kojima je FAQ stvarno unesen u adminu.
 
 ## Brza provjera
 
@@ -69,6 +69,7 @@ Preporuka:
 - `/llms.txt` vraca 404 ili HTML: provjeriti `.htaccess` rewrite i sigurnosni `FilesMatch` iznimku za `llms.txt`.
 - `openai-products.jsonl` pada: provjeriti feed rutu, content-type, PHP error log i zadnji deploy.
 - Product/category/brand schema pada: provjeriti JSON-LD blok u izvoru stranice i je li deployana zadnja verzija controller/template izmjena.
-- Policy/FAQ schema pada: provjeriti jesu li deployane stavke 9 controller, language i template promjene.
+- Policy schema pada: provjeriti jesu li deployane stavke 9 controller/model/template promjene.
+- Policy FAQ schema je WARN: unijeti FAQ u adminu na toj info stranici ili ignorirati ako stranica namjerno nema FAQ.
 - Sitemap URL audit pada: otvoriti prijavljeni URL i regenerirati sitemap ako pokazuje stare ili 404 image URL-ove.
 - Crawler audit pada samo za training botove (`GPTBot`, `ClaudeBot`): to moze biti prihvatljiva policy odluka. Ako pada `ChatGPT-User`, `Claude-SearchBot`, `PerplexityBot`, `Googlebot` ili `Bingbot`, treba provjeriti Cloudflare/WAF.

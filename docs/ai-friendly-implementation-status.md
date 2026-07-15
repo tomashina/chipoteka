@@ -206,16 +206,18 @@ Napomena:
 
 ## Stavka 9 - FAQ i policy schema
 
-Status: implementirano u repo-u, produkcija treba deploy.
+Status: implementirano u repo-u, produkcija treba deploy i unos FAQ sadrzaja u adminu za info stranice koje trebaju FAQ.
 
 Napravljeno:
 
 - Info/policy stranice sada dobivaju `WebPage`, `WebSite`, `Organization/Store` i `BreadcrumbList` JSON-LD.
 - `Uvjeti kupovine` (`information_id=3`) dobivaju i `MerchantReturnPolicy` s HR policy signalima i rokom od 14 dana.
-- Za policy stranice dodan je vidljivi FAQ blok i odgovarajuci `FAQPage` JSON-LD:
-  - `uvjeti-kupovine`: placanje, dostava, povrat, jamstvo, servis/reklamacije
-  - `opci-uvjeti-koristenja`: pravila koristenja i korisnicki racun
-  - `zastita-privatnosti-i-podataka`: obrada podataka i korisnicka prava
+- FAQ za info/policy stranice vise nije hardkodiran u controlleru ili language fileovima.
+- Dodan je admin editor za FAQ na info stranicama: `Catalog > Information > Edit`, po jeziku.
+- FAQ se sprema u novu tablicu `information_faq`, koju admin model automatski kreira pri otvaranju/spremanju info stranice.
+- Svaki FAQ red ima pitanje, odgovor i redoslijed sortiranja.
+- Ako info stranica ima FAQ, isti sadrzaj se prikazuje kao vidljivi FAQ blok i dodaje u JSON-LD kao `FAQPage`.
+- Ako info stranica nema FAQ, `FAQPage` schema se ne prikazuje.
 - `poslovnice`, `servis` i `veleprodaja` dobivaju `ContactPage` JSON-LD.
 - `poslovnice` dobivaju `ItemList` s `ElectronicsStore` lokacijama iz OpenCart konfiguracije poslovnica.
 - `servis` dobiva `Service` i vidljivi servisni FAQ s odgovarajucim `FAQPage` JSON-LD.
@@ -225,14 +227,19 @@ Primjeri provjere nakon deploya:
 
 ```bash
 php scripts/policy_schema_audit.php https://www.chipoteka.hr/uvjeti-kupovine policy
-php scripts/policy_schema_audit.php https://www.chipoteka.hr/uvjeti-kupovine faq
 php scripts/policy_schema_audit.php https://www.chipoteka.hr/poslovnice locations
 php scripts/policy_schema_audit.php https://www.chipoteka.hr/servis service
 ```
 
+Nakon sto se FAQ unese u adminu na info stranici:
+
+```bash
+php scripts/policy_schema_audit.php https://www.chipoteka.hr/uvjeti-kupovine faq
+```
+
 Napomena:
 
-- FAQ schema je vezana uz vidljiv FAQ sadrzaj na stranici, kako ne bi postojao skriveni schema-only tekst.
+- FAQ schema je vezana uz vidljiv FAQ sadrzaj iz admina, kako ne bi postojao skriveni schema-only tekst.
 
 ## Stavka 10 - Monitoring i regresijske testove
 

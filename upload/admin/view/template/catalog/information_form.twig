@@ -75,6 +75,54 @@
                       <textarea name="information_description[{{ language.language_id }}][meta_keyword]" rows="5" placeholder="{{ entry_meta_keyword }}" id="input-meta-keyword{{ language.language_id }}" class="form-control">{{ information_description[language.language_id] ? information_description[language.language_id].meta_keyword }}</textarea>
                     </div>
                   </div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label">{{ entry_information_faq }}</label>
+                    <div class="col-sm-10">
+                      <div class="table-responsive">
+                        <table id="information-faq{{ language.language_id }}" class="table table-bordered table-hover">
+                          <thead>
+                            <tr>
+                              <td class="text-left">{{ entry_faq_question }}</td>
+                              <td class="text-left">{{ entry_faq_answer }}</td>
+                              <td class="text-left" style="width: 120px;">{{ entry_faq_sort_order }}</td>
+                              <td style="width: 60px;"></td>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% set faq_row = 0 %}
+                            {% if information_faq[language.language_id] %}
+                              {% for faq in information_faq[language.language_id] %}
+                                <tr id="information-faq-row{{ language.language_id }}-{{ faq_row }}">
+                                  <td class="text-left">
+                                    <input type="text" name="information_faq[{{ language.language_id }}][{{ faq_row }}][question]" value="{{ faq.question }}" placeholder="{{ entry_faq_question }}" class="form-control" />
+                                  </td>
+                                  <td class="text-left">
+                                    <textarea name="information_faq[{{ language.language_id }}][{{ faq_row }}][answer]" rows="3" placeholder="{{ entry_faq_answer }}" class="form-control">{{ faq.answer }}</textarea>
+                                  </td>
+                                  <td class="text-left">
+                                    <input type="text" name="information_faq[{{ language.language_id }}][{{ faq_row }}][sort_order]" value="{{ faq.sort_order }}" placeholder="{{ entry_faq_sort_order }}" class="form-control" />
+                                  </td>
+                                  <td class="text-right">
+                                    <button type="button" data-row="information-faq-row{{ language.language_id }}-{{ faq_row }}" data-toggle="tooltip" title="{{ button_remove }}" class="btn btn-danger information-faq-remove"><i class="fa fa-minus-circle"></i></button>
+                                  </td>
+                                </tr>
+                                {% set faq_row = faq_row + 1 %}
+                              {% endfor %}
+                            {% endif %}
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <td colspan="3"><span class="help-block">{{ help_information_faq }}</span></td>
+                              <td class="text-right">
+                                <button type="button" onclick="addInformationFaq({{ language.language_id }});" data-toggle="tooltip" title="{{ button_add_faq }}" class="btn btn-primary"><i class="fa fa-plus-circle"></i></button>
+                              </td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                        <input type="hidden" id="information-faq-next{{ language.language_id }}" value="{{ faq_row }}" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 {% endfor %}</div>
             </div>
@@ -239,6 +287,30 @@
   <link href="view/javascript/summernote/summernote.css" rel="stylesheet" />
   <script type="text/javascript" src="view/javascript/summernote/summernote-image-attributes.js"></script> 
   <script type="text/javascript" src="view/javascript/summernote/opencart.js"></script> 
+  <script type="text/javascript"><!--
+function addInformationFaq(language_id) {
+	var faq_row = parseInt($('#information-faq-next' + language_id).val(), 10) || 0;
+	var entry_question = "{{ entry_faq_question|escape('js') }}";
+	var entry_answer = "{{ entry_faq_answer|escape('js') }}";
+	var entry_sort_order = "{{ entry_faq_sort_order|escape('js') }}";
+	var button_remove = "{{ button_remove|escape('js') }}";
+	var html = '';
+
+	html += '<tr id="information-faq-row' + language_id + '-' + faq_row + '">';
+	html += '  <td class="text-left"><input type="text" name="information_faq[' + language_id + '][' + faq_row + '][question]" value="" placeholder="' + entry_question + '" class="form-control" /></td>';
+	html += '  <td class="text-left"><textarea name="information_faq[' + language_id + '][' + faq_row + '][answer]" rows="3" placeholder="' + entry_answer + '" class="form-control"></textarea></td>';
+	html += '  <td class="text-left"><input type="text" name="information_faq[' + language_id + '][' + faq_row + '][sort_order]" value="0" placeholder="' + entry_sort_order + '" class="form-control" /></td>';
+	html += '  <td class="text-right"><button type="button" data-row="information-faq-row' + language_id + '-' + faq_row + '" data-toggle="tooltip" title="' + button_remove + '" class="btn btn-danger information-faq-remove"><i class="fa fa-minus-circle"></i></button></td>';
+	html += '</tr>';
+
+	$('#information-faq' + language_id + ' tbody').append(html);
+	$('#information-faq-next' + language_id).val(faq_row + 1);
+}
+
+$(document).on('click', '.information-faq-remove', function() {
+	$('#' + $(this).data('row')).remove();
+});
+//--></script>
   <script type="text/javascript"><!--
 $('#language a:first').tab('show');
 //--></script></div>

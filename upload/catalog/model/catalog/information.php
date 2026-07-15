@@ -21,4 +21,42 @@ class ModelCatalogInformation extends Model {
 			return 0;
 		}
 	}
+
+	public function getInformationFaqs($information_id) {
+		if (!$this->hasInformationFaqTable()) {
+			return array();
+		}
+
+		$information_faq_data = array();
+		$query = $this->db->query("SELECT question, answer FROM " . DB_PREFIX . "information_faq WHERE information_id = '" . (int)$information_id . "' AND language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY sort_order ASC, information_faq_id ASC");
+
+		foreach ($query->rows as $result) {
+			$question = trim((string)$result['question']);
+			$answer = trim((string)$result['answer']);
+
+			if ($question === '' || $answer === '') {
+				continue;
+			}
+
+			$information_faq_data[] = array(
+				'question' => $question,
+				'answer' => $answer
+			);
+		}
+
+		return $information_faq_data;
+	}
+
+	private function hasInformationFaqTable(): bool {
+		static $has_table = null;
+
+		if ($has_table !== null) {
+			return $has_table;
+		}
+
+		$query = $this->db->query("SHOW TABLES LIKE '" . $this->db->escape(DB_PREFIX . "information_faq") . "'");
+		$has_table = (bool)$query->num_rows;
+
+		return $has_table;
+	}
 }

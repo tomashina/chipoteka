@@ -47,7 +47,7 @@ class ControllerInformationInformation extends Controller {
 
 			$data['description'] = html_entity_decode($information_info['description'], ENT_QUOTES, 'UTF-8');
 			$data['policy_faq_heading'] = $this->language->get('text_policy_faq_heading');
-			$data['policy_faq_items'] = $this->getPolicyFaqItems($information_id);
+			$data['policy_faq_items'] = $this->model_catalog_information->getInformationFaqs($information_id);
 
 			$this->load->model('catalog/structured_data');
 			$data['policy_json_ld'] = $this->model_catalog_structured_data->buildInformationPolicyPage(
@@ -93,61 +93,6 @@ class ControllerInformationInformation extends Controller {
 
 			$this->response->setOutput($this->load->view('error/not_found', $data));
 		}
-	}
-
-	private function getPolicyFaqItems(int $information_id): array {
-		if ($information_id === 3) {
-			return array(
-				array(
-					'question' => $this->language->get('faq_purchase_payment_question'),
-					'answer' => $this->language->get('faq_purchase_payment_answer')
-				),
-				array(
-					'question' => $this->language->get('faq_purchase_delivery_question'),
-					'answer' => $this->language->get('faq_purchase_delivery_answer')
-				),
-				array(
-					'question' => $this->language->get('faq_purchase_return_question'),
-					'answer' => $this->language->get('faq_purchase_return_answer')
-				),
-				array(
-					'question' => $this->language->get('faq_purchase_warranty_question'),
-					'answer' => $this->language->get('faq_purchase_warranty_answer')
-				),
-				array(
-					'question' => $this->language->get('faq_purchase_service_question'),
-					'answer' => $this->language->get('faq_purchase_service_answer')
-				)
-			);
-		}
-
-		if ($information_id === 5) {
-			return array(
-				array(
-					'question' => $this->language->get('faq_terms_scope_question'),
-					'answer' => $this->language->get('faq_terms_scope_answer')
-				),
-				array(
-					'question' => $this->language->get('faq_terms_account_question'),
-					'answer' => $this->language->get('faq_terms_account_answer')
-				)
-			);
-		}
-
-		if ($information_id === 6) {
-			return array(
-				array(
-					'question' => $this->language->get('faq_privacy_data_question'),
-					'answer' => $this->language->get('faq_privacy_data_answer')
-				),
-				array(
-					'question' => $this->language->get('faq_privacy_rights_question'),
-					'answer' => $this->language->get('faq_privacy_rights_answer')
-				)
-			);
-		}
-
-		return array();
 	}
 
 	public function agree() {
