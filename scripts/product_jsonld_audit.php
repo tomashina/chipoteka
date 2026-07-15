@@ -52,10 +52,16 @@ foreach ($matches[1] as $index => $json) {
             $errors[] = "{$prefix}: missing brand.name";
         }
 
+        foreach (['gtin', 'gtin8', 'gtin12', 'gtin13', 'gtin14'] as $gtin_field) {
+            if (!empty($product[$gtin_field]) && !isValidGtin((string)$product[$gtin_field], $gtin_field)) {
+                $errors[] = "{$prefix}: invalid {$gtin_field}";
+            }
+        }
+
         $offers = isset($product['offers'][0]) ? $product['offers'] : [$product['offers'] ?? []];
 
         foreach ($offers as $offer_index => $offer) {
-            foreach (['price', 'priceCurrency', 'availability', 'url'] as $field) {
+            foreach (['price', 'priceCurrency', 'availability', 'url', 'validFrom', 'shippingDetails', 'hasMerchantReturnPolicy'] as $field) {
                 if (empty($offer[$field])) {
                     $errors[] = "{$prefix}: offer #" . ($offer_index + 1) . " missing {$field}";
                 }
@@ -124,4 +130,28 @@ function findSchemaNodes(array $node, string $type): array
     }
 
     return $found;
+}
+
+function isValidGtin(string $gtin, string $field): bool
+{
+    $gtin = preg_replace('/\D+/', '', $gtin);
+    $length = strlen($gtin);
+
+    if ($field !== 'gtin' && $field !== 'gtin' . $length) {
+        return false;
+    }
+
+    if (!in_array($length, [8, 12, 13, 14], true)) {
+        return false;
+    }
+
+    $check_digit = (int)substr($gtin, -1);
+    $payload = strrev(substr($gtin, 0, -1));
+    $sum = 0;
+
+    for ($index = 0, $payload_length = strlen($payload); $index < $payload_length; $index++) {
+        $sum += (int)$payload[$index] * ($index % 2 === 0 ? 3 : 1);
+    }
+
+    return (10 - ($sum % 10)) % 10 === $check_digit;
 }

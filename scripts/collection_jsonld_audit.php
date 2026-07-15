@@ -99,18 +99,24 @@ if (!$item_lists) {
                 continue;
             }
 
-            foreach (['name', 'url', 'offers'] as $field) {
+            foreach (['name', 'url', 'description', 'offers'] as $field) {
                 if (empty($list_item['item'][$field])) {
                     $errors[] = "{$item_prefix}: Product missing {$field}";
                 }
             }
 
-            if (empty($list_item['item']['offers']['price'])) {
-                $errors[] = "{$item_prefix}: Offer missing price";
+            $offer = $list_item['item']['offers'] ?? [];
+
+            foreach (['price', 'availability', 'validFrom', 'shippingDetails', 'hasMerchantReturnPolicy'] as $field) {
+                if (empty($offer[$field])) {
+                    $errors[] = "{$item_prefix}: Offer missing {$field}";
+                }
             }
 
-            if (empty($list_item['item']['offers']['availability'])) {
-                $errors[] = "{$item_prefix}: Offer missing availability";
+            foreach (['gtin', 'gtin8', 'gtin12', 'gtin13', 'gtin14'] as $gtin_field) {
+                if (!empty($list_item['item'][$gtin_field]) && !isValidGtin((string)$list_item['item'][$gtin_field], $gtin_field)) {
+                    $errors[] = "{$item_prefix}: invalid {$gtin_field}";
+                }
             }
         }
     }
@@ -201,4 +207,28 @@ function findSchemaNodes(array $node, string $type): array
     }
 
     return $found;
+}
+
+function isValidGtin(string $gtin, string $field): bool
+{
+    $gtin = preg_replace('/\D+/', '', $gtin);
+    $length = strlen($gtin);
+
+    if ($field !== 'gtin' && $field !== 'gtin' . $length) {
+        return false;
+    }
+
+    if (!in_array($length, [8, 12, 13, 14], true)) {
+        return false;
+    }
+
+    $check_digit = (int)substr($gtin, -1);
+    $payload = strrev(substr($gtin, 0, -1));
+    $sum = 0;
+
+    for ($index = 0, $payload_length = strlen($payload); $index < $payload_length; $index++) {
+        $sum += (int)$payload[$index] * ($index % 2 === 0 ? 3 : 1);
+    }
+
+    return (10 - ($sum % 10)) % 10 === $check_digit;
 }

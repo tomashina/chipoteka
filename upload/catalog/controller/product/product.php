@@ -873,14 +873,16 @@ class ControllerProductProduct extends Controller {
 
         $offer_price = $this->getProductSchemaPrice($product_info);
         $image_urls = $this->getProductSchemaImages($product_info, $product_images);
+        $category = $this->getProductSchemaCategory($breadcrumbs);
+        $description = $this->getProductSchemaDescription($product_info, $description, $category);
 
         $product = [
             '@type' => 'Product',
             '@id' => $canonical_url . '#product',
             'mainEntityOfPage' => ['@id' => $canonical_url],
-            'name' => $this->cleanSchemaText($product_info['name']),
+            'name' => $this->truncateSchemaText($this->cleanSchemaText($product_info['name']), 150),
             'url' => $canonical_url,
-            'description' => $this->truncateSchemaText($this->cleanSchemaText($description ?: $product_info['meta_description']), 1200),
+            'description' => $description,
             'sku' => $this->cleanSchemaText($product_info['sku'] ?: $product_info['model']),
             'model' => $this->cleanSchemaText($product_info['model']),
             'itemCondition' => 'https://schema.org/NewCondition',
@@ -888,11 +890,14 @@ class ControllerProductProduct extends Controller {
                 '@type' => 'Offer',
                 '@id' => $canonical_url . '#offer',
                 'url' => $canonical_url,
+                'validFrom' => $this->getProductSchemaValidFrom($product_info),
                 'priceCurrency' => $currency,
                 'price' => number_format($offer_price, 2, '.', ''),
                 'priceValidUntil' => date('Y-m-d', strtotime('+30 days')),
                 'availability' => $this->getProductSchemaAvailability($product_info),
                 'itemCondition' => 'https://schema.org/NewCondition',
+                'shippingDetails' => $this->buildProductSchemaShippingDetails($offer_price, $currency),
+                'hasMerchantReturnPolicy' => $this->buildProductSchemaReturnPolicy(),
                 'seller' => [
                     '@type' => 'Organization',
                     'name' => $this->cleanSchemaText($this->config->get('config_name') ?: 'Chipoteka'),
@@ -912,7 +917,6 @@ class ControllerProductProduct extends Controller {
             ];
         }
 
-        $category = $this->getProductSchemaCategory($breadcrumbs);
         if ($category) {
             $product['category'] = $category;
         }
@@ -988,6 +992,88 @@ class ControllerProductProduct extends Controller {
         return 'https://schema.org/OutOfStock';
     }
 
+    private function getProductSchemaDescription(array $product_info, string $description, string $category): string
+    {
+        $description = $this->cleanSchemaText($description ?: ($product_info['meta_description'] ?? ''));
+
+        if ($description === '') {
+            $parts = array_filter([
+                $product_info['name'] ?? '',
+                $product_info['manufacturer'] ?? '',
+                $product_info['model'] ?? '',
+                $category
+            ]);
+
+            $description = $this->cleanSchemaText(implode(' ', $parts));
+        }
+
+        return $this->truncateSchemaText($description, 1200);
+    }
+
+    private function getProductSchemaValidFrom(array $product_info): string
+    {
+        foreach (['date_available', 'date_added', 'date_modified'] as $field) {
+            if (empty($product_info[$field]) || $product_info[$field] === '0000-00-00' || $product_info[$field] === '0000-00-00 00:00:00') {
+                continue;
+            }
+
+            $timestamp = strtotime((string)$product_info[$field]);
+
+            if ($timestamp !== false) {
+                return date('Y-m-d', $timestamp);
+            }
+        }
+
+        return date('Y-m-d');
+    }
+
+    private function buildProductSchemaShippingDetails(float $offer_price, string $currency): array
+    {
+        $shipping_price = $offer_price >= 66.36 ? 0.0 : 5.17;
+
+        return [
+            '@type' => 'OfferShippingDetails',
+            'shippingDestination' => [
+                '@type' => 'DefinedRegion',
+                'addressCountry' => 'HR'
+            ],
+            'shippingRate' => [
+                '@type' => 'MonetaryAmount',
+                'value' => number_format($shipping_price, 2, '.', ''),
+                'currency' => $currency
+            ],
+            'deliveryTime' => [
+                '@type' => 'ShippingDeliveryTime',
+                'handlingTime' => [
+                    '@type' => 'QuantitativeValue',
+                    'minValue' => 0,
+                    'maxValue' => 1,
+                    'unitCode' => 'DAY'
+                ],
+                'transitTime' => [
+                    '@type' => 'QuantitativeValue',
+                    'minValue' => 1,
+                    'maxValue' => 5,
+                    'unitCode' => 'DAY'
+                ]
+            ]
+        ];
+    }
+
+    private function buildProductSchemaReturnPolicy(): array
+    {
+        return [
+            '@type' => 'MerchantReturnPolicy',
+            'applicableCountry' => 'HR',
+            'returnPolicyCountry' => 'HR',
+            'returnPolicyCategory' => 'https://schema.org/MerchantReturnFiniteReturnWindow',
+            'merchantReturnDays' => 14,
+            'returnMethod' => 'https://schema.org/ReturnByMail',
+            'returnFees' => 'https://schema.org/ReturnFeesCustomerResponsibility',
+            'url' => $this->getStoreBaseUrl() . '/uvjeti-kupovine'
+        ];
+    }
+
     private function getProductSchemaImages(array $product_info, array $product_images): array
     {
         $images = [];
@@ -1033,7 +1119,7 @@ class ControllerProductProduct extends Controller {
 
         $ean = trim((string)($product_info['ean'] ?? ''));
         if ($ean !== '') {
-            if (!$this->addProductSchemaGtin($product, $ean) && empty($product['mpn'])) {
+            if (!$this->addProductSchemaGtin($product, $ean) && empty($product['mpn']) && $this->isSafeProductSchemaMpn($ean)) {
                 $product['mpn'] = $this->cleanSchemaText($ean);
             }
         }
@@ -1043,7 +1129,7 @@ class ControllerProductProduct extends Controller {
     {
         $gtin = preg_replace('/\D+/', '', $identifier);
 
-        if ($gtin === '') {
+        if ($gtin === '' || !$this->isValidProductSchemaGtin($gtin)) {
             return false;
         }
 
@@ -1073,6 +1159,34 @@ class ControllerProductProduct extends Controller {
         }
 
         return false;
+    }
+
+    private function isValidProductSchemaGtin(string $gtin): bool
+    {
+        if (!in_array(strlen($gtin), [8, 12, 13, 14], true)) {
+            return false;
+        }
+
+        $check_digit = (int)substr($gtin, -1);
+        $payload = strrev(substr($gtin, 0, -1));
+        $sum = 0;
+
+        for ($index = 0, $length = strlen($payload); $index < $length; $index++) {
+            $sum += (int)$payload[$index] * ($index % 2 === 0 ? 3 : 1);
+        }
+
+        return (10 - ($sum % 10)) % 10 === $check_digit;
+    }
+
+    private function isSafeProductSchemaMpn(string $mpn): bool
+    {
+        $mpn = $this->cleanSchemaText($mpn);
+
+        if ($mpn === '' || strlen($mpn) > 70 || preg_match('/^\d+$/', $mpn)) {
+            return false;
+        }
+
+        return !preg_match('/\b(garanc|jamstvo|warranty|dobavlj|naruc|narud|isporuk|dostav)\b/iu', $mpn);
     }
 
     private function getProductSchemaCategory(array $breadcrumbs): string

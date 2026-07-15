@@ -201,11 +201,14 @@ class ModelCatalogStructuredData extends Model {
 		}
 
 		$url = $this->normalizeUrl($this->url->link('product/product', 'product_id=' . (int)$product['product_id'], true));
+		$offer_price = $this->getOfferPrice($product);
+		$currency = $this->getCurrencyCode();
 		$product_node = array_filter(array(
 			'@type' => 'Product',
 			'@id' => $url . '#product',
-			'name' => $this->cleanText($product['name'] ?? ''),
+			'name' => $this->truncateText($this->cleanText($product['name'] ?? ''), 150),
 			'url' => $url,
+			'description' => $this->getProductListDescription($product),
 			'image' => $this->getImageUrl($product['image'] ?? ''),
 			'sku' => $this->cleanText(($product['sku'] ?? '') ?: ($product['model'] ?? '')),
 			'model' => $this->cleanText($product['model'] ?? '')
@@ -223,10 +226,14 @@ class ModelCatalogStructuredData extends Model {
 		$product_node['offers'] = array(
 			'@type' => 'Offer',
 			'url' => $url,
-			'priceCurrency' => $this->getCurrencyCode(),
-			'price' => number_format($this->getOfferPrice($product), 2, '.', ''),
+			'validFrom' => $this->getOfferValidFrom($product),
+			'priceCurrency' => $currency,
+			'price' => number_format($offer_price, 2, '.', ''),
+			'priceValidUntil' => date('Y-m-d', strtotime('+30 days')),
 			'availability' => $this->getAvailability($product),
-			'itemCondition' => 'https://schema.org/NewCondition'
+			'itemCondition' => 'https://schema.org/NewCondition',
+			'shippingDetails' => $this->buildOfferShippingDetails($offer_price, $currency),
+			'hasMerchantReturnPolicy' => $this->buildOfferReturnPolicy()
 		);
 
 		return $product_node;
@@ -483,7 +490,7 @@ class ModelCatalogStructuredData extends Model {
 		$this->addGtin($product_node, $product['upc'] ?? '');
 		$ean = trim((string)($product['ean'] ?? ''));
 
-		if ($ean !== '' && !$this->addGtin($product_node, $ean)) {
+		if ($ean !== '' && !$this->addGtin($product_node, $ean) && $this->isSafeMpn($ean)) {
 			$product_node['mpn'] = $this->cleanText($ean);
 		}
 	}
@@ -491,15 +498,11 @@ class ModelCatalogStructuredData extends Model {
 	private function addGtin(array &$product_node, $identifier): bool {
 		$gtin = preg_replace('/\D+/', '', (string)$identifier);
 
-		if ($gtin === '') {
+		if ($gtin === '' || !$this->isValidGtin($gtin)) {
 			return false;
 		}
 
-		$property = 'gtin';
-
-		if (in_array(strlen($gtin), array(8, 12, 13, 14), true)) {
-			$property = 'gtin' . strlen($gtin);
-		}
+		$property = 'gtin' . strlen($gtin);
 
 		if (!isset($product_node[$property])) {
 			$product_node[$property] = $gtin;
@@ -507,6 +510,107 @@ class ModelCatalogStructuredData extends Model {
 		}
 
 		return false;
+	}
+
+	private function isValidGtin(string $gtin): bool {
+		if (!in_array(strlen($gtin), array(8, 12, 13, 14), true)) {
+			return false;
+		}
+
+		$check_digit = (int)substr($gtin, -1);
+		$payload = strrev(substr($gtin, 0, -1));
+		$sum = 0;
+
+		for ($index = 0, $length = strlen($payload); $index < $length; $index++) {
+			$sum += (int)$payload[$index] * ($index % 2 === 0 ? 3 : 1);
+		}
+
+		return (10 - ($sum % 10)) % 10 === $check_digit;
+	}
+
+	private function isSafeMpn($mpn): bool {
+		$mpn = $this->cleanText($mpn);
+
+		if ($mpn === '' || strlen($mpn) > 70 || preg_match('/^\d+$/', $mpn)) {
+			return false;
+		}
+
+		return !preg_match('/\b(garanc|jamstvo|warranty|dobavlj|naruc|narud|isporuk|dostav)\b/iu', $mpn);
+	}
+
+	private function getProductListDescription(array $product): string {
+		$description = $this->cleanText(($product['description'] ?? '') ?: ($product['meta_description'] ?? ''));
+
+		if ($description === '') {
+			$description = $this->cleanText(implode(' ', array_filter(array(
+				$product['name'] ?? '',
+				$product['manufacturer'] ?? '',
+				$product['model'] ?? ''
+			))));
+		}
+
+		return $this->truncateText($description, 800);
+	}
+
+	private function getOfferValidFrom(array $product): string {
+		foreach (array('date_available', 'date_added', 'date_modified') as $field) {
+			if (empty($product[$field]) || $product[$field] === '0000-00-00' || $product[$field] === '0000-00-00 00:00:00') {
+				continue;
+			}
+
+			$timestamp = strtotime((string)$product[$field]);
+
+			if ($timestamp !== false) {
+				return date('Y-m-d', $timestamp);
+			}
+		}
+
+		return date('Y-m-d');
+	}
+
+	private function buildOfferShippingDetails(float $offer_price, string $currency): array {
+		$shipping_price = $offer_price >= 66.36 ? 0.0 : 5.17;
+
+		return array(
+			'@type' => 'OfferShippingDetails',
+			'shippingDestination' => array(
+				'@type' => 'DefinedRegion',
+				'addressCountry' => 'HR'
+			),
+			'shippingRate' => array(
+				'@type' => 'MonetaryAmount',
+				'value' => number_format($shipping_price, 2, '.', ''),
+				'currency' => $currency
+			),
+			'deliveryTime' => array(
+				'@type' => 'ShippingDeliveryTime',
+				'handlingTime' => array(
+					'@type' => 'QuantitativeValue',
+					'minValue' => 0,
+					'maxValue' => 1,
+					'unitCode' => 'DAY'
+				),
+				'transitTime' => array(
+					'@type' => 'QuantitativeValue',
+					'minValue' => 1,
+					'maxValue' => 5,
+					'unitCode' => 'DAY'
+				)
+			)
+		);
+	}
+
+	private function buildOfferReturnPolicy(): array {
+		return array(
+			'@type' => 'MerchantReturnPolicy',
+			'applicableCountry' => 'HR',
+			'returnPolicyCountry' => 'HR',
+			'returnPolicyCategory' => 'https://schema.org/MerchantReturnFiniteReturnWindow',
+			'merchantReturnDays' => 14,
+			'returnMethod' => 'https://schema.org/ReturnByMail',
+			'returnFees' => 'https://schema.org/ReturnFeesCustomerResponsibility',
+			'url' => $this->getStoreBaseUrl() . '/uvjeti-kupovine'
+		);
 	}
 
 	private function getOfferPrice(array $product): float {
