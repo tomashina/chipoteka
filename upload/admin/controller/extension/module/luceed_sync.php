@@ -34,6 +34,8 @@ use Carbon\Carbon;
 class ControllerExtensionModuleLuceedSync extends Controller
 {
 
+    const DURATION_MAIL_ACTIVATED_AT = '2026-07-17 13:35:10';
+
     private $error = array();
 
 
@@ -1654,37 +1656,18 @@ class ControllerExtensionModuleLuceedSync extends Controller
     public function checkOrderStatusDuration()
     {
         try {
-            $this->prepareLongRunningOrderStatusSync();
+            require_once DIR_SYSTEM . 'library/order_duration_rules.php';
 
-            $cursor    = isset($this->request->get['cursor']) ? (int) $this->request->get['cursor'] : 0;
-            $batchSize = $this->getOrderStatusBatchSize();
-            $batch     = $this->getDurationStatusBatch($cursor, $batchSize);
+            $this->ensureDurationNotificationTables();
+            $activatedAt = $this->getDurationStatusActivationTime();
 
-            if ($batch->isEmpty()) {
-                return $this->output([
-                    'status'      => 200,
-                    'processed'   => 0,
-                    'updated'     => 0,
-                    'done'        => true,
-                    'empty'       => ($cursor === 0),
-                    'next_cursor' => 0
-                ]);
+            if ($this->shouldRunFullDurationStatusCronSync()) {
+                return $this->output($this->checkAllDurationStatusBatches($activatedAt));
             }
 
-            $notifications = $this->collectDurationStatusNotifications($batch);
+            $cursor = isset($this->request->get['cursor']) ? (int) $this->request->get['cursor'] : 0;
 
-            foreach ($notifications as $order) {
-                $this->sendMail($order);
-            }
-
-            return $this->output([
-                'status'      => 200,
-                'processed'   => $batch->count(),
-                'updated'     => count($notifications),
-                'done'        => ($batch->count() < $batchSize),
-                'empty'       => false,
-                'next_cursor' => ($batch->count() < $batchSize) ? 0 : (int) $batch->last()->order_id
-            ]);
+            return $this->output($this->checkDurationStatusBatch($activatedAt, $cursor));
         } catch (\Throwable $e) {
             Log::store($e->getMessage(), 'luceed_order_duration_sync_error');
             Log::store($e->getTraceAsString(), 'luceed_order_duration_sync_error');
@@ -1698,17 +1681,210 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
 
     /**
+     * The first cron run after deployment becomes the activation point. Orders
+     * created before this value are never considered for duration mail.
+     *
+     * @return Carbon
+     */
+    private function getDurationStatusActivationTime(): Carbon
+    {
+        $activatedAt = self::DURATION_MAIL_ACTIVATED_AT;
+
+        $this->db->query(
+            "INSERT IGNORE INTO `" . DB_PREFIX . "order_duration_notification_state`
+                (state_key, state_value, date_modified)
+             VALUES (
+                'activated_at',
+                '" . $this->db->escape($activatedAt) . "',
+                '" . $this->db->escape($activatedAt) . "'
+             )"
+        );
+
+        $query = $this->db->query(
+            "SELECT state_value
+             FROM `" . DB_PREFIX . "order_duration_notification_state`
+             WHERE state_key = 'activated_at'
+             LIMIT 1"
+        );
+
+        if ( ! $query->num_rows || ! $query->row['state_value']) {
+            throw new \RuntimeException('Nije moguće odrediti datum aktivacije vremenskih mailova.');
+        }
+
+        $storedActivation = Carbon::make($query->row['state_value']);
+        $minimumActivation = Carbon::make(self::DURATION_MAIL_ACTIVATED_AT);
+
+        return $storedActivation->greaterThan($minimumActivation) ? $storedActivation : $minimumActivation;
+    }
+
+
+    /**
+     * @param Carbon $activatedAt
+     * @param int $cursor
+     *
+     * @return array
+     */
+    private function checkDurationStatusBatch(Carbon $activatedAt, int $cursor = 0): array
+    {
+        $this->prepareLongRunningOrderStatusSync();
+
+        $batchSize = $this->getOrderStatusBatchSize();
+        $batch     = $this->getDurationStatusBatch($activatedAt, $cursor, $batchSize);
+
+        if ($batch->isEmpty()) {
+            return [
+                'status'      => 200,
+                'processed'   => 0,
+                'eligible'    => 0,
+                'updated'     => 0,
+                'failed'      => 0,
+                'skipped'     => 0,
+                'done'        => true,
+                'empty'       => ($cursor === 0),
+                'next_cursor' => 0
+            ];
+        }
+
+        $notifications = $this->collectDurationStatusNotifications($batch);
+        $sent          = 0;
+        $failed        = 0;
+        $skipped       = 0;
+
+        foreach ($notifications as $notification) {
+            $result = $this->sendDurationStatusNotification($notification);
+
+            if ($result === 'sent') {
+                $sent++;
+            } elseif ($result === 'failed') {
+                $failed++;
+            } else {
+                $skipped++;
+            }
+        }
+
+        return [
+            'status'      => 200,
+            'processed'   => $batch->count(),
+            'eligible'    => count($notifications),
+            'updated'     => $sent,
+            'failed'      => $failed,
+            'skipped'     => $skipped,
+            'done'        => ($batch->count() < $batchSize),
+            'empty'       => false,
+            'next_cursor' => ($batch->count() < $batchSize) ? 0 : (int) $batch->last()->order_id
+        ];
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function shouldRunFullDurationStatusCronSync(): bool
+    {
+        if (isset($this->request->get['cron']) && (int) $this->request->get['cron'] === 1) {
+            return true;
+        }
+
+        if (isset($this->request->get['user_token']) && $this->request->get['user_token']) {
+            return false;
+        }
+
+        return ! isset($this->request->get['cursor']) || (int) $this->request->get['cursor'] <= 0;
+    }
+
+
+    /**
+     * @param Carbon $activatedAt
+     *
+     * @return array
+     */
+    private function checkAllDurationStatusBatches(Carbon $activatedAt): array
+    {
+        $processed = 0;
+        $eligible  = 0;
+        $sent      = 0;
+        $failed    = 0;
+        $skipped   = 0;
+        $cursor    = 0;
+        $empty     = true;
+
+        do {
+            $result = $this->checkDurationStatusBatch($activatedAt, $cursor);
+
+            if ((int) $result['status'] !== 200) {
+                return $result;
+            }
+
+            $processed += isset($result['processed']) ? (int) $result['processed'] : 0;
+            $eligible  += isset($result['eligible']) ? (int) $result['eligible'] : 0;
+            $sent      += isset($result['updated']) ? (int) $result['updated'] : 0;
+            $failed    += isset($result['failed']) ? (int) $result['failed'] : 0;
+            $skipped   += isset($result['skipped']) ? (int) $result['skipped'] : 0;
+            $empty      = $empty && ! empty($result['empty']);
+
+            if ( ! empty($result['done'])) {
+                return [
+                    'status'      => 200,
+                    'processed'   => $processed,
+                    'eligible'    => $eligible,
+                    'updated'     => $sent,
+                    'failed'      => $failed,
+                    'skipped'     => $skipped,
+                    'done'        => true,
+                    'empty'       => $empty,
+                    'next_cursor' => 0
+                ];
+            }
+
+            $nextCursor = isset($result['next_cursor']) ? (int) $result['next_cursor'] : 0;
+
+            if ($nextCursor <= 0 || $nextCursor === $cursor) {
+                return [
+                    'status'      => 300,
+                    'processed'   => $processed,
+                    'eligible'    => $eligible,
+                    'updated'     => $sent,
+                    'failed'      => $failed,
+                    'skipped'     => $skipped,
+                    'done'        => false,
+                    'empty'       => $empty,
+                    'next_cursor' => $nextCursor,
+                    'message'     => 'Cron provjera vremenskih mailova je prekinuta zbog neispravnog kursora.'
+                ];
+            }
+
+            $cursor = $nextCursor;
+        } while (true);
+    }
+
+
+    /**
+     * @param Carbon $activatedAt
      * @param int $cursor
      * @param int $limit
      *
      * @return \Illuminate\Support\Collection
      */
-    private function getDurationStatusBatch(int $cursor, int $limit)
+    private function getDurationStatusBatch(Carbon $activatedAt, int $cursor, int $limit)
     {
+        $bounds = $this->getDurationThresholdBounds();
+
+        if ($bounds['min'] <= 0 || $bounds['max'] <= 0) {
+            return collect();
+        }
+
+        $now        = Carbon::now();
+        $oldestTime = $now->copy()->subHours($bounds['max'] + OrderDurationRules::DELIVERY_WINDOW_HOURS);
+        $newestTime = $now->copy()->subHours($bounds['min']);
+
         $query = Order::query()
-                      ->select('order_id', 'email', 'payment_code', 'order_status_id', 'order_status_changed')
+                      ->select('order_id', 'email', 'payment_code', 'order_status_id', 'order_status_changed', 'date_added')
                       ->where('order_status_id', '!=', 0)
-                      ->whereNotNull('order_status_changed');
+                      ->whereNotNull('order_status_changed')
+                      ->where('date_added', '>=', $activatedAt->toDateTimeString())
+                      ->where('order_status_changed', '>=', $oldestTime->toDateTimeString())
+                      ->where('order_status_changed', '<=', $newestTime->toDateTimeString())
+                      ->where('email', '!=', '');
 
         if ($cursor > 0) {
             $query->where('order_id', '<', $cursor);
@@ -1729,43 +1905,41 @@ class ControllerExtensionModuleLuceedSync extends Controller
     {
         $notifications = [];
         $statuses      = OrderStatus::query()->where('luceed_status_id', '!=', '')->get()->keyBy('order_status_id');
+        $configuration = $this->getDurationMailConfiguration();
         $now           = Carbon::now();
 
         foreach ($batch as $order) {
             $status = $statuses->get($order->order_status_id);
 
-            if ( ! $status || ! $order->order_status_changed) {
+            if ( ! $status || ! $order->order_status_changed || ! isset($configuration[$order->payment_code])) {
                 continue;
             }
 
-            $changedAt  = Carbon::make($order->order_status_changed);
-            $longerThen = null;
+            $statusCode = (string) $status->luceed_status_id;
 
-            if ($changedAt < $now->copy()->subHour(168) && $changedAt > $now->copy()->subHour(72) && $status->luceed_status_id == '11') {
-                $longerThen = 168;
-            } elseif ($changedAt < $now->copy()->subHour(72) && $changedAt > $now->copy()->subHour(48) && in_array($status->luceed_status_id, ['02', '05'])) {
-                $longerThen = 72;
-            } elseif ($changedAt < $now->copy()->subHour(48) && $changedAt > $now->copy()->subHour(24) && in_array($status->luceed_status_id, ['12', '01'])) {
-                $longerThen = 48;
-            } elseif ($changedAt < $now->copy()->subHour(24) && $changedAt > $now && in_array($status->luceed_status_id, ['02', '05', '12', '01'])) {
-                $longerThen = 24;
-            }
-
-            if ( ! $longerThen) {
+            if ( ! isset($configuration[$order->payment_code][$statusCode])) {
                 continue;
             }
 
-            $mailKey = $this->resolveDurationStatusMail($order->payment_code, (string) $status->luceed_status_id, $longerThen);
+            $changedAt = Carbon::make($order->order_status_changed);
 
-            if ( ! $mailKey) {
-                continue;
+            foreach ($configuration[$order->payment_code][$statusCode] as $thresholdHours => $mailKey) {
+                $thresholdHours = (int) $thresholdHours;
+
+                if ( ! $mailKey || ! OrderDurationRules::isDue($changedAt, $now, $thresholdHours)) {
+                    continue;
+                }
+
+                $notifications[] = [
+                    'order_id'             => (int) $order->order_id,
+                    'order_status_id'      => (int) $order->order_status_id,
+                    'order_status_changed' => $changedAt->toDateTimeString(),
+                    'payment_code'         => (string) $order->payment_code,
+                    'threshold_hours'      => $thresholdHours,
+                    'email'                => $order->email,
+                    'mail'                 => $mailKey
+                ];
             }
-
-            $notifications[] = [
-                'order_id' => (int) $order->order_id,
-                'email'    => $order->email,
-                'mail'     => $mailKey
-            ];
         }
 
         return $notifications;
@@ -1773,33 +1947,273 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
 
     /**
-     * @param string $payment
-     * @param string $status
-     * @param int    $longerThen
-     *
-     * @return int|string|null
+     * @return array
      */
-    private function resolveDurationStatusMail(string $payment, string $status, int $longerThen)
+    private function getDurationMailConfiguration(): array
     {
-        $items = agconf('mail.' . $payment);
+        $mailConfiguration = agconf('mail');
+        $durationRules     = [];
 
-        if ( ! is_array($items) || ! isset($items[0]) || ! is_array($items[0])) {
-            return null;
+        if ( ! is_array($mailConfiguration)) {
+            return $durationRules;
         }
 
-        foreach ($items[0] as $key => $hours) {
-            if ($status != $key || ! is_array($hours)) {
+        foreach ($mailConfiguration as $paymentCode => $items) {
+            if ( ! is_array($items) || ! isset($items[0]) || ! is_array($items[0])) {
                 continue;
             }
 
-            foreach ($hours as $hour => $mail) {
-                if ((int) $hour === $longerThen) {
-                    return $mail;
+            $durationRules[$paymentCode] = $items[0];
+        }
+
+        return $durationRules;
+    }
+
+
+    /**
+     * @return array
+     */
+    private function getDurationThresholdBounds(): array
+    {
+        $minimum = null;
+        $maximum = null;
+
+        foreach ($this->getDurationMailConfiguration() as $statuses) {
+            foreach ($statuses as $thresholds) {
+                if ( ! is_array($thresholds)) {
+                    continue;
+                }
+
+                foreach ($thresholds as $hours => $mailKey) {
+                    $hours = (int) $hours;
+
+                    if ($hours <= 0 || ! $mailKey) {
+                        continue;
+                    }
+
+                    $minimum = $minimum === null ? $hours : min($minimum, $hours);
+                    $maximum = $maximum === null ? $hours : max($maximum, $hours);
                 }
             }
         }
 
-        return null;
+        return [
+            'min' => $minimum ?: 0,
+            'max' => $maximum ?: 0
+        ];
+    }
+
+
+    /**
+     * @param array $notification
+     *
+     * @return string
+     */
+    private function sendDurationStatusNotification(array $notification): string
+    {
+        $notificationId = $this->reserveDurationStatusNotification($notification);
+
+        if ( ! $notificationId) {
+            return 'skipped';
+        }
+
+        $now       = Carbon::now()->toDateTimeString();
+        $staleTime = Carbon::now()->subMinutes(30)->toDateTimeString();
+
+        $this->db->query(
+            "UPDATE `" . DB_PREFIX . "order_duration_notification`
+             SET status = 'processing',
+                 attempts = attempts + 1,
+                 mail_id = '" . $this->db->escape((string) $notification['mail']) . "',
+                 last_error = NULL,
+                 date_modified = '" . $this->db->escape($now) . "'
+             WHERE order_duration_notification_id = " . (int) $notificationId . "
+               AND (
+                   status IN ('pending', 'failed')
+                   OR (status = 'processing' AND date_modified < '" . $this->db->escape($staleTime) . "')
+               )"
+        );
+
+        if ($this->db->countAffected() !== 1) {
+            return 'skipped';
+        }
+
+        if ( ! $this->isDurationNotificationStillCurrent($notification)) {
+            $this->markDurationNotificationSkipped($notificationId, 'Status narudžbe promijenjen je prije slanja.');
+
+            return 'skipped';
+        }
+
+        try {
+            $this->sendMail($notification);
+        } catch (\Throwable $e) {
+            $this->markDurationNotificationFailed($notificationId, $e->getMessage());
+            Log::store(
+                'Order ' . (int) $notification['order_id'] . ', mail ' . (string) $notification['mail'] . ': ' . $e->getMessage(),
+                'luceed_order_duration_mail_error'
+            );
+
+            return 'failed';
+        }
+
+        $this->db->query(
+            "UPDATE `" . DB_PREFIX . "order_duration_notification`
+             SET status = 'sent',
+                 last_error = NULL,
+                 date_sent = '" . $this->db->escape($now) . "',
+                 date_modified = '" . $this->db->escape($now) . "'
+             WHERE order_duration_notification_id = " . (int) $notificationId
+        );
+
+        return 'sent';
+    }
+
+
+    /**
+     * @param array $notification
+     *
+     * @return int
+     */
+    private function reserveDurationStatusNotification(array $notification): int
+    {
+        $now                  = Carbon::now()->toDateTimeString();
+        $orderStatusChanged   = $this->db->escape($notification['order_status_changed']);
+        $paymentCode          = $this->db->escape($notification['payment_code']);
+        $mailId               = $this->db->escape((string) $notification['mail']);
+
+        $this->db->query(
+            "INSERT IGNORE INTO `" . DB_PREFIX . "order_duration_notification`
+                (order_id, order_status_id, order_status_changed, payment_code, threshold_hours, mail_id, status, attempts, last_error, date_added, date_modified, date_sent)
+             VALUES (
+                " . (int) $notification['order_id'] . ",
+                " . (int) $notification['order_status_id'] . ",
+                '" . $orderStatusChanged . "',
+                '" . $paymentCode . "',
+                " . (int) $notification['threshold_hours'] . ",
+                '" . $mailId . "',
+                'pending',
+                0,
+                NULL,
+                '" . $this->db->escape($now) . "',
+                '" . $this->db->escape($now) . "',
+                NULL
+             )"
+        );
+
+        $query = $this->db->query(
+            "SELECT order_duration_notification_id
+             FROM `" . DB_PREFIX . "order_duration_notification`
+             WHERE order_id = " . (int) $notification['order_id'] . "
+               AND order_status_id = " . (int) $notification['order_status_id'] . "
+               AND order_status_changed = '" . $orderStatusChanged . "'
+               AND threshold_hours = " . (int) $notification['threshold_hours'] . "
+             LIMIT 1"
+        );
+
+        return $query->num_rows ? (int) $query->row['order_duration_notification_id'] : 0;
+    }
+
+
+    /**
+     * @param array $notification
+     *
+     * @return bool
+     */
+    private function isDurationNotificationStillCurrent(array $notification): bool
+    {
+        $query = $this->db->query(
+            "SELECT order_status_id, order_status_changed
+             FROM `" . DB_PREFIX . "order`
+             WHERE order_id = " . (int) $notification['order_id'] . "
+             LIMIT 1"
+        );
+
+        if ( ! $query->num_rows || ! $query->row['order_status_changed']) {
+            return false;
+        }
+
+        $currentChangedAt = Carbon::make($query->row['order_status_changed'])->toDateTimeString();
+
+        return (int) $query->row['order_status_id'] === (int) $notification['order_status_id']
+            && $currentChangedAt === $notification['order_status_changed'];
+    }
+
+
+    /**
+     * @param int    $notificationId
+     * @param string $message
+     *
+     * @return void
+     */
+    private function markDurationNotificationFailed(int $notificationId, string $message): void
+    {
+        $now = Carbon::now()->toDateTimeString();
+
+        $this->db->query(
+            "UPDATE `" . DB_PREFIX . "order_duration_notification`
+             SET status = 'failed',
+                 last_error = '" . $this->db->escape(substr($message, 0, 2000)) . "',
+                 date_modified = '" . $this->db->escape($now) . "'
+             WHERE order_duration_notification_id = " . $notificationId
+        );
+    }
+
+
+    /**
+     * @param int    $notificationId
+     * @param string $message
+     *
+     * @return void
+     */
+    private function markDurationNotificationSkipped(int $notificationId, string $message): void
+    {
+        $now = Carbon::now()->toDateTimeString();
+
+        $this->db->query(
+            "UPDATE `" . DB_PREFIX . "order_duration_notification`
+             SET status = 'skipped',
+                 last_error = '" . $this->db->escape(substr($message, 0, 2000)) . "',
+                 date_modified = '" . $this->db->escape($now) . "'
+             WHERE order_duration_notification_id = " . $notificationId
+        );
+    }
+
+
+    /**
+     * @return void
+     */
+    private function ensureDurationNotificationTables(): void
+    {
+        $this->db->query(
+            "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "order_duration_notification` (
+                `order_duration_notification_id` INT(11) NOT NULL AUTO_INCREMENT,
+                `order_id` INT(11) NOT NULL,
+                `order_status_id` INT(11) NOT NULL,
+                `order_status_changed` DATETIME NOT NULL,
+                `payment_code` VARCHAR(128) NOT NULL,
+                `threshold_hours` SMALLINT(5) UNSIGNED NOT NULL,
+                `mail_id` VARCHAR(32) NOT NULL,
+                `status` VARCHAR(16) NOT NULL DEFAULT 'pending',
+                `attempts` SMALLINT(5) UNSIGNED NOT NULL DEFAULT 0,
+                `last_error` TEXT NULL,
+                `date_added` DATETIME NOT NULL,
+                `date_modified` DATETIME NOT NULL,
+                `date_sent` DATETIME NULL,
+                PRIMARY KEY (`order_duration_notification_id`),
+                UNIQUE KEY `uk_order_duration_notification` (`order_id`, `order_status_id`, `order_status_changed`, `threshold_hours`),
+                KEY `idx_duration_notification_status` (`status`, `date_modified`),
+                KEY `idx_duration_notification_order` (`order_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8"
+        );
+
+        $this->db->query(
+            "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "order_duration_notification_state` (
+                `state_key` VARCHAR(64) NOT NULL,
+                `state_value` VARCHAR(255) NOT NULL,
+                `date_modified` DATETIME NOT NULL,
+                PRIMARY KEY (`state_key`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8"
+        );
     }
     
     
