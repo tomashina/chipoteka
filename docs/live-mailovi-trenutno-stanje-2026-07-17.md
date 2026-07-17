@@ -218,14 +218,6 @@ Predmet: **Chipoteka.hr - Vaše zadovoljstvo nam je bitno**
 >
 > Svaki dan radimo na tome da vaše zadovoljstvo bude što veće, ukoliko nam javite kakvo je Vaše iskustvo pri kupovini bilo, možemo povećati kvalitetu.
 
-## 4. Napuštena košarica
 
-Za napuštenu košaricu trenutačno ne postoji uvjet/triger ni tekst maila. Chipoteka aplikacija kupcu ne šalje abandoned-cart poruku.
 
-## 5. Kada se ne šalje mail
 
-- Ako promjena statusa nije izričito navedena u gornjim tablicama, mail se ne šalje.
-- Za prijelaz u status `04 Storno` nema konfiguriranog statusnog maila.
-- Za načine plaćanja izvan `cod`, `bank_transfer` i `wspay` nema ovih automatiziranih mailova.
-- Ručno uključivanje „obavijesti kupca” pri promjeni statusa ne šalje standardni OpenCart statusni mail.
-- Virman narudžba korisničke grupe točno `2` ne zadovoljava ni B2C uvjet `< 2` ni B2B uvjet `> 2`, pa nema odabran početni custom mail.
