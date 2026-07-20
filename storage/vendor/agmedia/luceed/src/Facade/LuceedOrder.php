@@ -13,10 +13,11 @@ class LuceedOrder extends Facade
      * @param string      $statuses
      * @param string|null $date
      * @param bool        $b2b
+     * @param int         $timeoutSeconds
      *
      * @return false|mixed
      */
-    public static function get(string $statuses, string $date = null, bool $b2b = false)
+    public static function get(string $statuses, string $date = null, bool $b2b = false, int $timeoutSeconds = 0)
     {
         $luceed = new Luceed();
 
@@ -24,7 +25,7 @@ class LuceedOrder extends Facade
             $statuses .= '/' . $date;
         }
 
-        return $luceed->getOrders($statuses, $b2b);
+        return $luceed->getOrders($statuses, $b2b, $timeoutSeconds);
     }
 
 

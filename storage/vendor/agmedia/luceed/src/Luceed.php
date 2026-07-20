@@ -359,14 +359,16 @@ class Luceed
 
     /**
      * @param string $query
+     * @param bool   $b2b
+     * @param int    $timeoutSeconds
      *
      * @return false|mixed
      */
-    public function getOrders(string $query, bool $b2b = false)
+    public function getOrders(string $query, bool $b2b = false, int $timeoutSeconds = 0)
     {
         $this->checkOrderService($b2b);
 
-        return $this->service->get($this->end_points['orders_get'], $query);
+        return $this->service->get($this->end_points['orders_get'], $query, $timeoutSeconds);
     }
 
 

@@ -152,45 +152,47 @@ Važno za novu komunikaciju: ovaj se tekst trenutačno šalje i za prijelaze pre
 
 ## 3. Vremenski mailovi
 
-Sljedeći uvjeti i tekstovi postoje u live konfiguraciji. Na trenutačnom live kodu ne šalju se zbog pogrešnih vremenskih uvjeta u mehanizmu.
+Vrijeme se računa od zadnje promjene statusa. Mail se šalje samo ako je narudžba na pragu slanja i dalje u navedenom statusu, i to samo jednom.
 
 ### Uplata nije zaprimljena nakon 24 sata
 
 Konfigurirani uvjet: plaćanje virmanom i narudžba je 24 sata ostala u statusu `12 Rezervacija`.
 
-Predmet: **Chipoteka.hr - I dalje čekamo uplatu za vašu narudžbu broj %s**
+Predmet: **Chipoteka.hr - Podsjetnik za uplatu narudžbe broj %s**
 
 > Poštovani/a,
 >
-> do ovog trena, nismo zaprimili uplatu za narudžbu broj %s koju ste obavili na našem webshopu. Podsjećamo Vas da robu možemo držati rezerviranu još samo 24h nakon čega, ukoliko ne zaprimimo uplatu ćemo morati poništiti Vašu narudžbu.
+> u ovom trenutku još nemamo evidentiranu uplatu za narudžbu broj %s.
 >
-> Ako ste uplatu već napravili, molimo zanemarite ovu obavijest
+> Ako ste uplatu već izvršili, molimo zanemarite ovu poruku jer evidentiranje uplate može potrajati. Ako uplatu još niste izvršili, podatke za plaćanje možete pronaći u ponudi koju smo Vam poslali.
+>
+> Hvala Vam.
 
 ### Uplata nije zaprimljena nakon 48 sati
 
 Konfigurirani uvjet: plaćanje virmanom i narudžba je 48 sati ostala u statusu `12 Rezervacija`.
 
-Predmet: **Chipoteka.hr - Vaša narudžba broj %s je otkazana**
+Predmet: **Chipoteka.hr - Uplata za narudžbu broj %s nije evidentirana**
 
 > Poštovani/a,
 >
-> rezervacija za Vašu narudžbu broj %s je automatski otkazana s obzirom da niste napravili uplatu u roku od 48h. Ukoliko ste uplatu zaboravili napraviti, a proizvodi su Vam i dalje potrebni, molimo Vas da kupnju ponovite na našem webshopu chipoteka.hr.
+> ni nakon 48 sati još nemamo evidentiranu uplatu za narudžbu broj %s.
 >
-> Narudžbu, pored plaćanja virmanom, možete platiti I karticama kao i pouzećem (prilikom preuzimanja od naše dostavne službe).
+> Ako ste uplatu već izvršili, molimo javite nam se na webnarudzba@chipoteka.hr kako bismo je provjerili. Ako uplatu još niste izvršili, a želite nastaviti s narudžbom, također nam se javite kako bismo prije uplate provjerili dostupnost proizvoda.
 >
 > Hvala Vam.
-
-Važno: ovaj mail tvrdi da je narudžba automatski otkazana, ali postojeći mail mehanizam sam ne mijenja status narudžbe u Storno.
 
 ### Narudžba nije poslana nakon 24 sata
 
 Konfigurirani uvjet: pouzeće, virman ili WSPay; narudžba je 24 sata ostala u statusu `02 Odobren` ili `05 Odobren – komisioniranje`.
 
-Predmet: **Chipoteka.hr - Molimo Vas za malo strpljenja za narudžbu broj %s**
+Predmet: **Chipoteka.hr - Obrada narudžbe broj %s traje nešto dulje**
 
 > Poštovani/a,
 >
-> dio Vaše naručene robe (ili sva) se nalazi na našem izdvojenom skladištu. Bit će nam potrebno još malo više vremena kako bi je prikupili i poslali Vam je.
+> Vaša narudžba broj %s još je u obradi. Ispričavamo se što obrada traje nešto dulje od očekivanog.
+>
+> Čim narudžba bude predana dostavnoj službi, poslat ćemo Vam obavijest e-mailom.
 >
 > Hvala Vam na strpljenju i razumijevanju.
 
@@ -198,26 +200,29 @@ Predmet: **Chipoteka.hr - Molimo Vas za malo strpljenja za narudžbu broj %s**
 
 Konfigurirani uvjet: pouzeće, virman ili WSPay; narudžba je 72 sata ostala u statusu `02 Odobren` ili `05 Odobren – komisioniranje`.
 
-Predmet: **Chipoteka.hr - I dalje Vas molimo za strpljenje za narudžbu broj %s**
+Predmet: **Chipoteka.hr - Obavijest o statusu narudžbe broj %s**
 
 > Poštovani/a,
 >
-> znamo da ste nestrpljivi, ali imamo neuobičajeno veliki broj narudžbi. A s obzirom da je dodatno i dio Vaše naručene robe (ili sva) na vanjskom skladištu, dolazi do malog kašnjenja.
+> Vaša narudžba broj %s još je u obradi i nije predana dostavnoj službi. Ispričavamo se zbog kašnjenja i radimo na tome da je pripremimo što prije.
 >
-> Hvala Vam puno na strpljenju i razumijevanju.
+> Ako trebate dodatne informacije, slobodno nam se javite na webnarudzba@chipoteka.hr.
+>
+> Hvala Vam na strpljenju i razumijevanju.
 
 ### Sedam dana nakon statusa „Isporučeno”
 
 Konfigurirani uvjet: pouzeće, virman ili WSPay; narudžba je 168 sati ostala u statusu `11 Isporučeno`.
 
-Predmet: **Chipoteka.hr - Vaše zadovoljstvo nam je bitno**
+Predmet: **Chipoteka.hr - Je li sve u redu s narudžbom broj %s?**
 
 > Poštovani/a,
 >
-> prije sedam dana ste obavili kupnju na webshopu Chipoteka.hr i puno Vam hvala na povjerenju.
+> prije otprilike sedam dana Vaša narudžba broj %s označena je kao isporučena. Nadamo se da je sve proteklo u redu i da ste zadovoljni kupnjom.
 >
-> Svaki dan radimo na tome da vaše zadovoljstvo bude što veće, ukoliko nam javite kakvo je Vaše iskustvo pri kupovini bilo, možemo povećati kvalitetu.
-
+> Ako imate pitanje ili trebate pomoć, slobodno nam se javite na webnarudzba@chipoteka.hr.
+>
+> Hvala Vam na povjerenju.
 
 
 

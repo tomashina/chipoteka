@@ -81,10 +81,11 @@ class LuceedService
     /**
      * @param string $url
      * @param string $option
+     * @param int    $timeoutSeconds
      *
      * @return mixed
      */
-    public function get(string $url, string $option = '')
+    public function get(string $url, string $option = '', int $timeoutSeconds = 0)
     {
         $targetUrl = $url . $option;
 
@@ -97,7 +98,7 @@ class LuceedService
 
         // Production or live enviroment.
         try {
-            $result    = $this->performGetRequest($targetUrl);
+            $result    = $this->performGetRequest($targetUrl, 1000, $timeoutSeconds);
             $response  = $result['response'];
             $curlError = $result['error'];
             $httpCode  = $result['http_code'];

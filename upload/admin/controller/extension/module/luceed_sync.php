@@ -35,6 +35,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
 {
 
     const DURATION_MAIL_ACTIVATED_AT = '2026-07-17 13:35:10';
+    const ORDER_STATUS_REQUEST_TIMEOUT_SECONDS = 10;
 
     private $error = array();
 
@@ -1021,6 +1022,12 @@ class ControllerExtensionModuleLuceedSync extends Controller
             Log::store($e->getMessage(), 'luceed_order_status_sync_error');
             Log::store($e->getTraceAsString(), 'luceed_order_status_sync_error');
 
+            $protocol = isset($this->request->server['SERVER_PROTOCOL'])
+                ? $this->request->server['SERVER_PROTOCOL']
+                : 'HTTP/1.1';
+
+            $this->response->addHeader($protocol . ' 503 Service Unavailable');
+
             return $this->output([
                 'status'  => 300,
                 'message' => 'Greška kod sinkronizacije statusa narudžbi: ' . $e->getMessage()
@@ -1129,23 +1136,63 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     private function syncAllOrderStatusBatches(Carbon $cutoff, array $excludedLuceedStatuses = []): array
     {
+        $this->prepareLongRunningOrderStatusSync();
+
         $processed = 0;
         $updated   = 0;
         $cursor    = 0;
         $empty     = true;
+        $batchSize = $this->getOrderStatusBatchSize();
+        $batch     = $this->getOrderStatusBatch($cutoff, false, $cursor, $batchSize, $excludedLuceedStatuses);
+
+        if ($batch->isEmpty()) {
+            return [
+                'status'      => 200,
+                'processed'   => 0,
+                'updated'     => 0,
+                'done'        => true,
+                'empty'       => true,
+                'next_cursor' => 0
+            ];
+        }
+
+        $loc              = new LOC_Order();
+        $statuses         = $this->getSyncOrderStatusesCollection($excludedLuceedStatuses);
+        $statusesById     = $statuses->keyBy('order_status_id');
+        $statusesByLuceed = $statuses->keyBy('luceed_status_id');
+        $statusList       = $loc->collectStatuses($statuses->all());
+        $startDate        = $cutoff->format('d.m.Y');
+        $luceedOrderSets  = [];
+
+        foreach ([false, true] as $b2b) {
+            $luceedOrderSets[] = $this->getLuceedOrdersByUid($statusList, $startDate, $b2b);
+        }
 
         do {
-            $result = $this->syncOrderStatusBatch($cutoff, false, $excludedLuceedStatuses, $cursor);
+            $updates = [];
 
-            if ((int) $result['status'] !== 200) {
-                return $result;
+            foreach ($luceedOrderSets as $luceedOrdersByUid) {
+                $updates = $this->collectOrderStatusUpdatesFromLuceedOrders(
+                    $updates,
+                    $batch,
+                    $statusesById,
+                    $statusesByLuceed,
+                    $luceedOrdersByUid,
+                    true
+                );
             }
 
-            $processed += isset($result['processed']) ? (int) $result['processed'] : 0;
-            $updated   += isset($result['updated']) ? (int) $result['updated'] : 0;
-            $empty      = $empty && ! empty($result['empty']);
+            $batchUpdated = $this->applyOrderStatusUpdates(array_values($updates), true);
 
-            if ( ! empty($result['done'])) {
+            foreach ($updates as $update) {
+                $this->sendMail($update);
+            }
+
+            $processed += $batch->count();
+            $updated   += $batchUpdated;
+            $empty      = false;
+
+            if ($batch->count() < $batchSize) {
                 return [
                     'status'      => 200,
                     'processed'   => $processed,
@@ -1156,7 +1203,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
                 ];
             }
 
-            $nextCursor = isset($result['next_cursor']) ? (int) $result['next_cursor'] : 0;
+            $nextCursor = (int) $batch->last()->order_id;
 
             if ($nextCursor <= 0 || $nextCursor === $cursor) {
                 return [
@@ -1171,6 +1218,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
             }
 
             $cursor = $nextCursor;
+            $batch  = $this->getOrderStatusBatch($cutoff, false, $cursor, $batchSize, $excludedLuceedStatuses);
         } while (true);
     }
 
@@ -1478,15 +1526,67 @@ class ControllerExtensionModuleLuceedSync extends Controller
         bool $withMail = true
     ): array
     {
-        $luceedOrders = $this->extractLuceedOrders(
-            LuceedOrder::get($statusList, $startDate, $b2b)
+        return $this->collectOrderStatusUpdatesFromLuceedOrders(
+            $updates,
+            $batch,
+            $statusesById,
+            $statusesByLuceed,
+            $this->getLuceedOrdersByUid($statusList, $startDate, $b2b),
+            $withMail
+        );
+    }
+
+
+    /**
+     * @param string $statusList
+     * @param string $startDate
+     * @param bool   $b2b
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function getLuceedOrdersByUid(string $statusList, string $startDate, bool $b2b)
+    {
+        $response = LuceedOrder::get(
+            $statusList,
+            $startDate,
+            $b2b,
+            self::ORDER_STATUS_REQUEST_TIMEOUT_SECONDS
         );
 
-        if ($luceedOrders->isEmpty()) {
-            return $updates;
+        if ( ! is_string($response) || trim($response) === '') {
+            throw new \RuntimeException(
+                'Luceed nije vratio podatke o statusima ' . ($b2b ? 'B2B' : 'B2C') . ' narudžbi.'
+            );
         }
 
-        $luceedOrdersByUid = $luceedOrders->keyBy('nalog_prodaje_uid');
+        $luceedOrders = $this->extractLuceedOrders($response);
+
+        return $luceedOrders->keyBy('nalog_prodaje_uid');
+    }
+
+
+    /**
+     * @param array                          $updates
+     * @param \Illuminate\Support\Collection $batch
+     * @param \Illuminate\Support\Collection $statusesById
+     * @param \Illuminate\Support\Collection $statusesByLuceed
+     * @param \Illuminate\Support\Collection $luceedOrdersByUid
+     * @param bool                           $withMail
+     *
+     * @return array
+     */
+    private function collectOrderStatusUpdatesFromLuceedOrders(
+        array $updates,
+        $batch,
+        $statusesById,
+        $statusesByLuceed,
+        $luceedOrdersByUid,
+        bool $withMail = true
+    ): array
+    {
+        if ($luceedOrdersByUid->isEmpty()) {
+            return $updates;
+        }
 
         foreach ($batch as $order) {
             $luceedOrder = $luceedOrdersByUid->get($order->luceed_uid);
@@ -1539,8 +1639,12 @@ class ControllerExtensionModuleLuceedSync extends Controller
     {
         $json = json_decode($response);
 
-        if ( ! isset($json->result[0]->nalozi_prodaje)) {
-            return collect();
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \RuntimeException('Luceed je vratio neispravan JSON za statuse narudžbi.');
+        }
+
+        if ( ! isset($json->result[0]) || ! property_exists($json->result[0], 'nalozi_prodaje')) {
+            throw new \RuntimeException('Luceed odgovor za statuse narudžbi nema očekivanu strukturu.');
         }
 
         return collect($json->result[0]->nalozi_prodaje)->filter(function($order) {
