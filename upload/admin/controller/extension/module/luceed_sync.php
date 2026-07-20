@@ -35,7 +35,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
 {
 
     const DURATION_MAIL_ACTIVATED_AT = '2026-07-17 13:35:10';
-    const ORDER_STATUS_REQUEST_TIMEOUT_SECONDS = 10;
+    const ORDER_STATUS_REQUEST_TIMEOUT_SECONDS = 60;
 
     private $error = array();
 
