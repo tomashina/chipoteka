@@ -1511,7 +1511,35 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $mail->setSubject(sprintf($email['subject'], $order['order_id']));
             $mail->setHtml($this->load->view('mail/mail', $data));
             $mail->send();
+
+            if ( ! empty($order['reminder'])) {
+                $this->markReminderMailSent($order);
+            }
         }
+    }
+
+
+    /**
+     * @param array $order
+     *
+     * @return void
+     */
+    private function markReminderMailSent(array $order): void
+    {
+        if (empty($order['order_id']) || empty($order['mail'])) {
+            return;
+        }
+
+        $order_status_id = isset($order['order_status_id']) ? (int) $order['order_status_id'] : 0;
+
+        if ($order_status_id <= 0) {
+            $order_data = Order::query()->select('order_status_id')->where('order_id', (int) $order['order_id'])->first();
+            $order_status_id = $order_data ? (int) $order_data->order_status_id : 0;
+        }
+
+        $comment = 'luceed_reminder_mail:' . (int) $order['mail'] . ':' . Carbon::now()->format('Y-m-d');
+
+        $this->db->query("INSERT INTO " . DB_PREFIX . "order_history SET order_id = '" . (int) $order['order_id'] . "', order_status_id = '" . (int) $order_status_id . "', notify = '0', comment = '" . $this->db->escape($comment) . "', date_added = NOW()");
     }
 
 

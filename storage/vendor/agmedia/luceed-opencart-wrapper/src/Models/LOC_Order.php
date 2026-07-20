@@ -24,6 +24,57 @@ class LOC_Order
 {
     private const KORISNIK_PARTNER_SETTING_KEY = 'luceed_sync_korisnik_partner_ids';
     private const KORISNIK_PARTNER_UID_SUFFIX = '1063';
+    private const REMINDER_MAIL_COMMENT_PREFIX = 'luceed_reminder_mail:';
+    private const PICKUP_MAIL_CONFIG = [
+        'cod' => [
+            0 => [
+                '_repeat' => [
+                    'statuses' => ['05', '09'],
+                    'stop' => ['11', '04'],
+                    'hours' => 48,
+                    'mail' => 5,
+                ],
+            ],
+            6 => ['from' => '*', 'to' => '05'],
+            3 => ['from' => '*', 'to' => '09'],
+        ],
+        'cod_preuzimanje' => [
+            0 => [
+                '_repeat' => [
+                    'statuses' => ['05', '09'],
+                    'stop' => ['11', '04'],
+                    'hours' => 48,
+                    'mail' => 5,
+                ],
+            ],
+            6 => ['from' => '*', 'to' => '05'],
+            3 => ['from' => '*', 'to' => '09'],
+        ],
+        'bank_transfer' => [
+            0 => [
+                '_repeat' => [
+                    'statuses' => ['05', '10'],
+                    'stop' => ['11', '04'],
+                    'hours' => 48,
+                    'mail' => 1,
+                ],
+            ],
+            4 => ['from' => '*', 'to' => '05'],
+            1 => ['from' => '*', 'to' => '10'],
+        ],
+        'wspay' => [
+            0 => [
+                '_repeat' => [
+                    'statuses' => ['05', '10'],
+                    'stop' => ['11', '04'],
+                    'hours' => 48,
+                    'mail' => 1,
+                ],
+            ],
+            4 => ['from' => '*', 'to' => '05'],
+            1 => ['from' => '*', 'to' => '10'],
+        ],
+    ];
 
     /**
      * @var array
@@ -261,8 +312,8 @@ class LOC_Order
 
 
     /**
-     * Pickup glavni nalog always points to selected pickup store
-     * and carries pickup-specific delivery metadata.
+     * Pickup reservation stays as DP in the pickup store.
+     * Paid/prepaid pickup orders are transferred from pickup store to 099 as MSM.
      *
      * @return void
      */
@@ -270,22 +321,39 @@ class LOC_Order
     {
         $pickup_note = $this->buildPickupDocumentNote();
 
-        $this->order['skladiste'] = $this->pickup;
         $this->order['sa__skladiste'] = $this->pickup;
-        $this->order['skl_dokument'] = 'DP';
-        $this->order['vrsta_isporuke'] = '03';
         $this->order['napomena'] = $pickup_note;
         $this->order['poruka_dolje'] = $this->order['napomena'];
-        unset($this->order['na__skladiste']);
+
+        if ($this->isPickupReservationPayment()) {
+            $this->order['skladiste'] = $this->pickup;
+            $this->order['skl_dokument'] = 'DP';
+            $this->order['vrsta_isporuke'] = '03';
+            unset($this->order['na__skladiste']);
+        } else {
+            $this->order['skladiste'] = '099';
+            $this->order['na__skladiste'] = '099';
+            $this->order['skl_dokument'] = 'MSM';
+        }
 
         $this->log('[FLOW] pickup:apply_main_override', [
             'pickup'         => $this->pickup,
+            'payment_code'    => $this->oc_order['payment_code'] ?? '',
             'skladiste'      => $this->order['skladiste'] ?? '',
             'sa__skladiste'  => $this->order['sa__skladiste'] ?? '',
             'na__skladiste'  => $this->order['na__skladiste'] ?? '',
             'skl_dokument'   => $this->order['skl_dokument'] ?? '',
             'vrsta_isporuke' => $this->order['vrsta_isporuke'] ?? '',
         ]);
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function isPickupReservationPayment(): bool
+    {
+        return in_array($this->oc_order['payment_code'] ?? '', ['cod', 'cod_preuzimanje'], true);
     }
 
 
@@ -1455,17 +1523,21 @@ class LOC_Order
                 $this->resolvePickup($this->collection[$i]['shipping']);
 
                 if ($this->pickup != '') {
-                    foreach (agconf('mail_pickup.' . $this->collection[$i]['payment']) as $p_key => $p_item) {
+                    foreach ($this->getPickupMailConfig((string) $this->collection[$i]['payment']) as $p_key => $p_item) {
                         if ($p_key) {
-                            if ($this->collection[$i]['status_from'] == $p_item['from'] && $this->collection[$i]['status_to'] == $p_item['to']) {
+                            $from_matches = ($p_item['from'] ?? '') === '*' || $this->collection[$i]['status_from'] == ($p_item['from'] ?? '');
+
+                            if ($from_matches && $this->collection[$i]['status_to'] == ($p_item['to'] ?? '')) {
                                 $this->collection[$i]['mail'] = $p_key;
                             }
                         }
                     }
                 } else {
-                    foreach (agconf('mail.' . $this->collection[$i]['payment']) as $key => $item) {
+                    foreach ((array) agconf('mail.' . $this->collection[$i]['payment'], []) as $key => $item) {
                         if ($key) {
-                            if ($this->collection[$i]['status_from'] == $item['from'] && $this->collection[$i]['status_to'] == $item['to']) {
+                            $from_matches = ($item['from'] ?? '') === '*' || $this->collection[$i]['status_from'] == ($item['from'] ?? '');
+
+                            if ($from_matches && $this->collection[$i]['status_to'] == ($item['to'] ?? '')) {
                                 $this->collection[$i]['mail'] = $key;
                             }
                         }
@@ -1524,6 +1596,30 @@ class LOC_Order
                 continue;
             }
 
+            $this->resolvePickup($order->shipping_code);
+
+            if ($this->pickup != '') {
+                $reminder_rule = $this->resolvePickupReminderRule((string) $order->payment_code, (string) $status->luceed_status_id);
+
+                if ($reminder_rule && $order->order_status_changed <= Carbon::now()->subHours($reminder_rule['hours'])->toDateTimeString()) {
+                    if ( ! $this->hasRecentReminderMail((int) $order->order_id, (string) $reminder_rule['mail'], (int) $reminder_rule['hours'])) {
+                        $this->collection[] = [
+                            'order_id'        => $order->order_id,
+                            'longer_then'     => $reminder_rule['hours'],
+                            'status'          => $status->luceed_status_id,
+                            'payment'         => $order->payment_code,
+                            'shipping'        => $order->shipping_code,
+                            'email'           => $order->email,
+                            'mail'            => $reminder_rule['mail'],
+                            'reminder'        => true,
+                            'order_status_id' => $order->order_status_id,
+                        ];
+                    }
+                }
+
+                continue;
+            }
+
             if ($order->order_status_changed > Carbon::now()->subHour(168)->toDateTimeString() && $order->order_status_changed < Carbon::now()->subHour(72)->toDateTimeString() && in_array($status->luceed_status_id, ['11', '09'])) {
                 $this->collection[] = [
                     'order_id'    => $order->order_id,
@@ -1572,10 +1668,21 @@ class LOC_Order
 
         // Get the apropriate mail.
         for ($i = 0; $i < count($this->collection); $i++) {
+            if (isset($this->collection[$i]['mail'])) {
+                continue;
+            }
+
             $this->resolvePickup($this->collection[$i]['shipping']);
 
             if ($this->pickup != '') {
-                foreach (agconf('mail_pickup.' . $this->collection[$i]['payment'])[0] as $key => $items) {
+                $pickup_mail_config = $this->getPickupMailConfig((string) $this->collection[$i]['payment']);
+                $pickup_duration_rules = isset($pickup_mail_config[0]) && is_array($pickup_mail_config[0]) ? $pickup_mail_config[0] : [];
+
+                foreach ($pickup_duration_rules as $key => $items) {
+                    if ($key === '_repeat') {
+                        continue;
+                    }
+
                     if ($this->collection[$i]['status'] == $key) {
                         foreach ($items as $hour => $mail) {
                             if ($this->collection[$i]['longer_then'] == $hour) {
@@ -1585,7 +1692,10 @@ class LOC_Order
                     }
                 }
             } else {
-                foreach (agconf('mail.' . $this->collection[$i]['payment'])[0] as $key => $items) {
+                $mail_config = (array) agconf('mail.' . $this->collection[$i]['payment'], []);
+                $duration_rules = isset($mail_config[0]) && is_array($mail_config[0]) ? $mail_config[0] : [];
+
+                foreach ($duration_rules as $key => $items) {
                     if ($this->collection[$i]['status'] == $key) {
                         foreach ($items as $hour => $mail) {
                             if ($this->collection[$i]['longer_then'] == $hour) {
@@ -1598,6 +1708,82 @@ class LOC_Order
         }
 
         return count($this->collection);
+    }
+
+
+    /**
+     * @param string $payment_code
+     * @param string $luceed_status
+     *
+     * @return array|null
+     */
+    private function resolvePickupReminderRule(string $payment_code, string $luceed_status): ?array
+    {
+        $config = $this->getPickupMailConfig($payment_code);
+        $duration_rules = isset($config[0]) && is_array($config[0]) ? $config[0] : [];
+        $repeat_rule = isset($duration_rules['_repeat']) && is_array($duration_rules['_repeat']) ? $duration_rules['_repeat'] : [];
+
+        if (empty($repeat_rule)) {
+            return null;
+        }
+
+        $stop_statuses = array_map('strval', $repeat_rule['stop'] ?? []);
+
+        if (in_array($luceed_status, $stop_statuses, true)) {
+            return null;
+        }
+
+        $statuses = array_map('strval', $repeat_rule['statuses'] ?? []);
+
+        if ( ! empty($statuses) && ! in_array($luceed_status, $statuses, true)) {
+            return null;
+        }
+
+        $mail = isset($repeat_rule['mail']) ? (int) $repeat_rule['mail'] : 0;
+        $hours = isset($repeat_rule['hours']) ? (int) $repeat_rule['hours'] : 48;
+
+        if ($mail <= 0 || $hours <= 0) {
+            return null;
+        }
+
+        return [
+            'mail'  => $mail,
+            'hours' => $hours,
+        ];
+    }
+
+
+    /**
+     * @param string $payment_code
+     *
+     * @return array
+     */
+    private function getPickupMailConfig(string $payment_code): array
+    {
+        if (isset(self::PICKUP_MAIL_CONFIG[$payment_code])) {
+            return self::PICKUP_MAIL_CONFIG[$payment_code];
+        }
+
+        return (array) agconf('mail_pickup.' . $payment_code, []);
+    }
+
+
+    /**
+     * @param int    $order_id
+     * @param string $mail
+     * @param int    $hours
+     *
+     * @return bool
+     */
+    private function hasRecentReminderMail(int $order_id, string $mail, int $hours): bool
+    {
+        $this->db = new Database(DB_DATABASE);
+        $prefix = self::REMINDER_MAIL_COMMENT_PREFIX . $mail . ':%';
+        $sent_after = Carbon::now()->subHours($hours)->toDateTimeString();
+
+        $query = $this->db->query("SELECT order_history_id FROM " . DB_PREFIX . "order_history WHERE order_id = '" . (int) $order_id . "' AND comment LIKE '" . $this->db->escape($prefix) . "' AND date_added >= '" . $this->db->escape($sent_after) . "' LIMIT 1");
+
+        return ! empty($query->row);
     }
 
     /*******************************************************************************

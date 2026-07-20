@@ -552,6 +552,9 @@ class ControllerCheckoutConfirm extends Controller {
 
             $data['payment_name'] = $this->session->data['payment_method']['title'];
             $data['shipping_name'] = $this->session->data['shipping_method']['title'];
+            $payment_code = $this->session->data['payment_method']['code'] ?? '';
+            $shipping_code = $this->session->data['shipping_method']['code'] ?? '';
+            $data['is_pickup_reservation'] = ($payment_code === 'cod_preuzimanje' && strpos($shipping_code, 'pickup.pickup_') === 0);
 			$data['payment'] = $this->load->controller('extension/payment/' . $this->session->data['payment_method']['code']);
 
 
