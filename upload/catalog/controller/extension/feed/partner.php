@@ -1,6 +1,7 @@
 <?php
 class ControllerExtensionFeedPartner extends Controller {
 	private const PUBLIC_BASE_URL = 'https://chipoteka.pluschip.lin29.host25.com/';
+	private const PRODUCT_BASE_URL = 'https://chipoteka.hr';
 
 	public function index() {
 		$this->render(array(
@@ -52,7 +53,7 @@ class ControllerExtensionFeedPartner extends Controller {
 			$output .= '<mpc>' . number_format((float)$price, 2, '.', '') . '</mpc>';
 			$output .= '<vpc>' . number_format((float)$product['vpc'], 2, '.', '') . '</vpc>';
 			$output .= '<nabavna_cijena>' . number_format((float)$product['partner_price'], 2, '.', '') . '</nabavna_cijena>';
-			$output .= '<url>' . $this->xml(self::PUBLIC_BASE_URL . 'index.php?route=product/product&product_id=' . (int)$product['product_id']) . '</url>';
+			$output .= '<url>' . $this->xml($this->productUrl($product['product_id'])) . '</url>';
 			$output .= '<category>' . $this->cdata($product['category']) . '</category>';
 			$output .= '<image_url>' . $this->cdata(self::PUBLIC_BASE_URL . 'image/' . ltrim($product['image'], '/')) . '</image_url>';
 			$output .= '<description>' . $this->cdata($description) . '</description>';
@@ -78,6 +79,14 @@ class ControllerExtensionFeedPartner extends Controller {
 
 	private function keysMatch($expected, $provided) {
 		return function_exists('hash_equals') ? hash_equals((string)$expected, (string)$provided) : (string)$expected === (string)$provided;
+	}
+
+	private function productUrl($product_id) {
+		$generated_url = $this->url->link('product/product', 'product_id=' . (int)$product_id, true);
+		$generated_url = html_entity_decode($generated_url, ENT_QUOTES, 'UTF-8');
+		$product_url = preg_replace('#^https?://[^/]+#i', self::PRODUCT_BASE_URL, $generated_url);
+
+		return $product_url ? $product_url : self::PRODUCT_BASE_URL . '/index.php?route=product/product&product_id=' . (int)$product_id;
 	}
 
 	private function cdata($value) {
