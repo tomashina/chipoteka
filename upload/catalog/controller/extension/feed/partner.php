@@ -1,7 +1,7 @@
 <?php
 class ControllerExtensionFeedPartner extends Controller {
 	private const PUBLIC_BASE_URL = 'https://chipoteka.pluschip.lin29.host25.com/';
-	private const PRODUCT_BASE_URL = 'https://chipoteka.hr';
+	private const PRODUCT_BASE_URL = 'https://www.chipoteka.hr';
 
 	public function index() {
 		$this->render(array(
