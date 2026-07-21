@@ -912,25 +912,26 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateB2BPrices()
     {
-        $updated = 0;
-        $lp      = new LOC_Price();
-
         try {
             (new LOC_Manufacturer(LuceedManufacturer::all()))->updateByUids();
         } catch (\Throwable $e) {
             Log::store('updateB2BPrices(manufacturer_uid_sync) ::: ' . $e->getMessage());
         }
 
-        $lp->deleteProductDiscountDB();
+		$this->load->model('extension/module/partner_feed');
+		$this->model_extension_module_partner_feed->install(false);
 
-        foreach ($lp->getGroups() as $group) {
-            $_loc = new LOC_Price(
-                LuceedProduct::getB2BPrices($group['url']),
-                $group['id']
-            );
+		try {
+			$result = $this->model_extension_module_partner_feed->syncMappings();
+			$updated = $result['total'];
 
-            $updated += $_loc->collectB2B()->update('b2b');
-        }
+			if (!empty($result['errors'])) {
+				Log::store('updateB2BPrices(partial) ::: ' . implode(' | ', $result['errors']));
+			}
+		} catch (\Throwable $e) {
+			Log::store('updateB2BPrices(partner_sync) ::: ' . $e->getMessage());
+			$updated = 0;
+		}
 
         return $this->response($updated, 'update');
     }

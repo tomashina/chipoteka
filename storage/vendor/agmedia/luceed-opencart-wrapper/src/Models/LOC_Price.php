@@ -59,6 +59,24 @@ class LOC_Price
      */
     public function getGroups(): array
     {
+		$table = $this->db->query("SHOW TABLES LIKE '" . $this->db->escape(DB_PREFIX . "partner_feed") . "'");
+
+		if ($table->num_rows) {
+			$query = $this->db->query("SELECT customer_group_id, name, luceed_partner_id FROM `" . DB_PREFIX . "partner_feed` WHERE status = 1 ORDER BY sort_order ASC, partner_feed_id ASC");
+			$groups = [];
+
+			foreach ($query->rows as $row) {
+				$groups[] = [
+					'id' => (string)$row['customer_group_id'],
+					'title' => $row['name'],
+					'url' => $row['luceed_partner_id']
+				];
+			}
+
+			return $groups;
+		}
+
+		// Deployment fallback until the admin module/SQL migration is installed.
         return [
             [
                 'id' => '3',

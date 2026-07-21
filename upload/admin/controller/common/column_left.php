@@ -179,6 +179,14 @@ class ControllerCommonColumnLeft extends Controller {
                     'children' => array()
                 );
             }
+
+            if ($this->user->hasPermission('access', 'extension/module/partner_feed')) {
+                $marketplace[] = array(
+                    'name'     => 'Luceed partneri i XML feedovi',
+                    'href'     => $this->url->link('extension/module/partner_feed', 'user_token=' . $this->session->data['user_token'], true),
+                    'children' => array()
+                );
+            }
             // END ::: fj.agmedia.hr
 
 			if ($this->user->hasPermission('access', 'marketplace/event')) {
