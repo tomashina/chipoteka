@@ -1,5 +1,7 @@
 <?php
 class ControllerExtensionModulePartnerFeed extends Controller {
+	private const PARTNER_BASE_URL = 'https://chipoteka.pluschip.lin29.host25.com/';
+
 	private $error = array();
 
 	public function install() {
@@ -30,7 +32,7 @@ class ControllerExtensionModulePartnerFeed extends Controller {
 		foreach ($this->model_extension_module_partner_feed->getPartnerFeeds() as $result) {
 			$feed_url = '';
 			if ($result['feed_status'] && $result['access_key']) {
-				$feed_url = HTTPS_CATALOG . 'index.php?route=extension/feed/partner&code=' . rawurlencode($result['code']) . '&key=' . rawurlencode($result['access_key']);
+				$feed_url = self::PARTNER_BASE_URL . 'index.php?route=extension/feed/partner&code=' . rawurlencode($result['code']) . '&key=' . rawurlencode($result['access_key']);
 			}
 
 			$data['partner_feeds'][] = array(

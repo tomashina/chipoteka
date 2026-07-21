@@ -1,5 +1,7 @@
 <?php
 class ControllerExtensionFeedPartner extends Controller {
+	private const PUBLIC_BASE_URL = 'https://chipoteka.pluschip.lin29.host25.com/';
+
 	public function index() {
 		$this->render(array(
 			'code' => isset($this->request->get['code']) ? $this->request->get['code'] : '',
@@ -50,9 +52,9 @@ class ControllerExtensionFeedPartner extends Controller {
 			$output .= '<mpc>' . number_format((float)$price, 2, '.', '') . '</mpc>';
 			$output .= '<vpc>' . number_format((float)$product['vpc'], 2, '.', '') . '</vpc>';
 			$output .= '<nabavna_cijena>' . number_format((float)$product['partner_price'], 2, '.', '') . '</nabavna_cijena>';
-			$output .= '<url>' . $this->xml($this->url->link('product/product', 'product_id=' . (int)$product['product_id'])) . '</url>';
+			$output .= '<url>' . $this->xml(self::PUBLIC_BASE_URL . 'index.php?route=product/product&product_id=' . (int)$product['product_id']) . '</url>';
 			$output .= '<category>' . $this->cdata($product['category']) . '</category>';
-			$output .= '<image_url>' . $this->cdata('https://www.chipoteka.hr/image/' . $product['image']) . '</image_url>';
+			$output .= '<image_url>' . $this->cdata(self::PUBLIC_BASE_URL . 'image/' . ltrim($product['image'], '/')) . '</image_url>';
 			$output .= '<description>' . $this->cdata($description) . '</description>';
 			$output .= '</product>';
 		}
