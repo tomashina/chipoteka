@@ -1,15 +1,15 @@
 <?php
 
 if ($argc < 2) {
-    fwrite(STDERR, "Usage: php scripts/policy_schema_audit.php <url-or-file> [policy|faq|locations|service]\n");
+    fwrite(STDERR, "Usage: php scripts/policy_schema_audit.php <url-or-file> [policy|faq|locations|service|website]\n");
     exit(2);
 }
 
 $source = $argv[1];
 $mode = $argv[2] ?? 'policy';
 
-if (!in_array($mode, ['policy', 'faq', 'locations', 'service'], true)) {
-    fwrite(STDERR, "Mode must be policy, faq, locations or service.\n");
+if (!in_array($mode, ['policy', 'faq', 'locations', 'service', 'website'], true)) {
+    fwrite(STDERR, "Mode must be policy, faq, locations, service or website.\n");
     exit(2);
 }
 
@@ -55,6 +55,8 @@ $breadcrumbs = [];
 $item_lists = [];
 $stores = [];
 $services = [];
+$websites = [];
+$search_actions = [];
 $visible_text = normalizeText(html_entity_decode(strip_tags($html), ENT_QUOTES, 'UTF-8'));
 
 foreach ($decoded_blocks as $decoded) {
@@ -68,6 +70,8 @@ foreach ($decoded_blocks as $decoded) {
     $item_lists = array_merge($item_lists, findSchemaNodes($decoded, 'ItemList'));
     $stores = array_merge($stores, findSchemaNodes($decoded, 'ElectronicsStore'));
     $services = array_merge($services, findSchemaNodes($decoded, 'Service'));
+    $websites = array_merge($websites, findSchemaNodes($decoded, 'WebSite'));
+    $search_actions = array_merge($search_actions, findSchemaNodes($decoded, 'SearchAction'));
 }
 
 if ($mode === 'policy') {
@@ -114,6 +118,13 @@ if ($mode === 'policy') {
     requireNodes($errors, $contact_pages, 'ContactPage');
     requireNodes($errors, $services, 'Service');
     requireNodes($errors, $faq_pages, 'FAQPage');
+} elseif ($mode === 'website') {
+    requireNodes($errors, $websites, 'WebSite');
+    requireNodes($errors, $search_actions, 'SearchAction');
+}
+
+foreach ($search_actions as $index => $search_action) {
+    validateSearchAction($errors, $search_action, $index + 1);
 }
 
 if ($return_policies) {
@@ -139,6 +150,35 @@ function requireNodes(array &$errors, array $nodes, string $label): void
 {
     if (!$nodes) {
         $errors[] = "No {$label} schema found.";
+    }
+}
+
+function validateSearchAction(array &$errors, array $search_action, int $index): void
+{
+    $prefix = 'SearchAction #' . $index;
+
+    if (empty($search_action['query-input'])) {
+        $errors[] = "{$prefix}: missing query-input";
+    }
+
+    if (empty($search_action['target'])) {
+        $errors[] = "{$prefix}: missing target";
+        return;
+    }
+
+    $target = $search_action['target'];
+    $url_template = '';
+
+    if (is_string($target)) {
+        $url_template = $target;
+    } elseif (is_array($target)) {
+        $url_template = (string)($target['urlTemplate'] ?? '');
+    }
+
+    if ($url_template === '') {
+        $errors[] = "{$prefix}: missing target urlTemplate";
+    } elseif (strpos($url_template, '{search_term_string}') === false) {
+        $errors[] = "{$prefix}: urlTemplate must include {search_term_string}";
     }
 }
 

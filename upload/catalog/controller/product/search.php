@@ -9,6 +9,10 @@ class ControllerProductSearch extends Controller {
 
 		$this->load->model('tool/image');
 
+		$this->load->model('catalog/structured_data');
+
+		$data['website_json_ld'] = $this->model_catalog_structured_data->buildWebsiteSearchAction();
+
 		if (isset($this->request->get['search'])) {
 			$search = $this->request->get['search'];
 		} else {

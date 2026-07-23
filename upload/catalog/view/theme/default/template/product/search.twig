@@ -1,3 +1,6 @@
+{% if website_json_ld %}
+  <script type="application/ld+json">{{ website_json_ld|raw }}</script>
+{% endif %}
 {{ header }}
 <div id="product-search" class="container">
   <ul class="breadcrumb">

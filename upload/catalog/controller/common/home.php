@@ -6,6 +6,9 @@ class ControllerCommonHome extends Controller {
 		$this->document->setKeywords($this->config->get('config_meta_keyword'));
 		$this->document->addLink($this->config->get('config_url'), 'canonical');
 
+		$this->load->model('catalog/structured_data');
+
+		$data['website_json_ld'] = $this->model_catalog_structured_data->buildWebsiteSearchAction();
 
         if ($this->customer->isLogged()) {
             $data['groupId'] = $this->customer->getGroupId();

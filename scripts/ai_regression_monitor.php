@@ -115,6 +115,8 @@ function buildChecks(string $base_url, array $options): array
     $checks[] = phpScriptCheck('OpenAI product feed schema', 'openai_product_feed_audit.php', [$base_url . '/openai-products.jsonl?limit=50', '50']);
     $checks[] = phpScriptCheck('Generic merchant feed spine', 'generic_merchant_feed.php', [$base_url . '/openai-products.jsonl?limit=50']);
     $checks[] = phpScriptCheck('llms.txt schema', 'llms_txt_audit.php', [$base_url . '/llms.txt']);
+    $checks[] = phpScriptCheck('Homepage SearchAction schema', 'policy_schema_audit.php', [$base_url . '/', 'website']);
+    $checks[] = phpScriptCheck('Search page SearchAction schema', 'policy_schema_audit.php', [$base_url . '/index.php?route=product/search&search=test', 'website']);
 
     $product_url = $options['dry_run'] ? '<first-product-url-from-feed>' : findFirstProductUrl($base_url);
 

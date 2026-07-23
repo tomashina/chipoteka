@@ -169,6 +169,10 @@ class ModelCatalogStructuredData extends Model {
 		return $this->encodeGraph($graph);
 	}
 
+	public function buildWebsiteSearchAction(): string {
+		return $this->encodeGraph(array($this->buildWebsiteNode()));
+	}
+
 	private function buildItemList(string $list_node_id, array $products, int $total_products, int $offset): array {
 		$items = array();
 		$position = max($offset, 0) + 1;
@@ -301,7 +305,15 @@ class ModelCatalogStructuredData extends Model {
 			'@id' => $base_url . '/#website',
 			'name' => $this->cleanText($this->config->get('config_name') ?: 'Chipoteka'),
 			'url' => $base_url,
-			'inLanguage' => 'hr-HR'
+			'inLanguage' => 'hr-HR',
+			'potentialAction' => array(
+				'@type' => 'SearchAction',
+				'target' => array(
+					'@type' => 'EntryPoint',
+					'urlTemplate' => $base_url . '/index.php?route=product/search&search={search_term_string}'
+				),
+				'query-input' => 'required name=search_term_string'
+			)
 		);
 	}
 
