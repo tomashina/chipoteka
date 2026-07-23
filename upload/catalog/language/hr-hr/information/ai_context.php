@@ -14,6 +14,7 @@ $_['resource_sitemap'] = 'XML sitemap index za otkrivanje proizvoda, kategorija 
 $_['resource_robots'] = 'Pravila za crawlere i poveznica na aktivni sitemap.';
 $_['resource_openai_feed'] = 'JSONL feed za AI/product discovery s proizvodima, cijenama, dostupnosti i identifikatorima.';
 $_['resource_home'] = 'Pocetna stranica web trgovine.';
+$_['resource_about'] = 'Osnovne informacije o Chipoteci i kontekst poslovanja.';
 $_['resource_brands'] = 'Popis proizvodaca i brandova.';
 $_['resource_stores'] = 'Poslovnice i kontakt informacije.';
 $_['resource_service'] = 'Servis i korisnicka podrska.';
@@ -23,6 +24,7 @@ $_['resource_terms'] = 'Opci uvjeti koristenja web stranice.';
 $_['resource_privacy'] = 'Privatnost i zastita osobnih podataka.';
 
 $_['link_home'] = 'Pocetna';
+$_['link_about'] = 'O Chipoteci';
 $_['link_brands'] = 'Brandovi';
 $_['link_stores'] = 'Poslovnice';
 $_['link_service'] = 'Servis';

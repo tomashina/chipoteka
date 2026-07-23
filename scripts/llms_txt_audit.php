@@ -52,7 +52,7 @@ foreach ($link_matches as $match) {
     }
 }
 
-foreach (array('/robots.txt', '/sitemap-index.xml', '/openai-products.jsonl', '/ai-context') as $required_path) {
+foreach (array('/robots.txt', '/sitemap-index.xml', '/openai-products.jsonl', '/ai-context', '/o-chipoteci') as $required_path) {
     if (strpos($content, $required_path) === false) {
         $errors[] = 'Missing required resource reference: ' . $required_path;
     }

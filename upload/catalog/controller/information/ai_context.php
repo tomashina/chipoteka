@@ -80,6 +80,11 @@ class ControllerInformationAiContext extends Controller {
 						'description' => $this->language->get('resource_home')
 					),
 					array(
+						'label' => $this->language->get('link_about'),
+						'url' => $base_url . '/o-chipoteci',
+						'description' => $this->language->get('resource_about')
+					),
+					array(
 						'label' => $this->language->get('link_brands'),
 						'url' => $base_url . '/brandovi',
 						'description' => $this->language->get('resource_brands')
@@ -145,6 +150,7 @@ class ControllerInformationAiContext extends Controller {
 			'- [OpenAI product discovery feed](' . $base_url . '/openai-products.jsonl): JSONL product discovery feed with product URLs, prices, availability, identifiers and policy links.',
 			'',
 			'## Shopping Context',
+			'- [About Chipoteka](' . $base_url . '/o-chipoteci): Basic company and store context.',
 			'- [Brands](' . $base_url . '/brandovi): Manufacturer and brand listing.',
 			'- [Stores](' . $base_url . '/poslovnice): Store locations and contact information.',
 			'- [Service](' . $base_url . '/servis): Service and support information.',
