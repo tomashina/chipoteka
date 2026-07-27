@@ -21,9 +21,11 @@ class ControllerCheckoutPaymentMethod extends Controller {
 
 
         //set var for payment box now
-       if(isset($this->session->data['shipping_method']['code'])){
-           $data['shipping_method'] = $this->session->data['shipping_method']['code'];
-       }
+        if(isset($this->session->data['shipping_method']['code'])){
+            $data['shipping_method'] = $this->session->data['shipping_method']['code'];
+        }
+        $shipping_code = $this->session->data['shipping_method']['code'] ?? '';
+        $data['is_pickup_shipping'] = (strpos($shipping_code, 'pickup.pickup_') === 0);
 
 
 		if (isset($this->session->data['payment_address'])) {

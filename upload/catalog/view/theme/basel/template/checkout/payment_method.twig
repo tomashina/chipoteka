@@ -129,12 +129,22 @@
 
 <div class=" d-flex pt-4 mt-3">
     <div class="w-50 pe-3"><a class="btn btn-outline-primary d-flex align-items-center justify-content-center w-100" href="javascript:;" id="button-back-to-shipping-method" ><i class="fal fa-chevron-left mt-sm-0 me-1"></i><span class="d-none d-sm-inline">Povratak</span><span class="d-inline d-sm-none">Povratak</span></a></div>
-    <div class="w-50 ps-2"><button type="button" value="{{ button_continue }}" id="button-payment-method" onclick="window.scrollTo(0, 0)" class="btn btn-primary d-flex align-items-center justify-content-center w-100" ><span class="d-none d-sm-inline">Provjeri narudžbu</span><span class="d-inline d-sm-none">Provjeri</span><i class="fal fa-chevron-right mt-sm-0 ms-1"></i></button></div>
+    <div class="w-50 ps-2"><button type="button" value="{{ button_continue }}" id="button-payment-method" onclick="window.scrollTo(0, 0)" class="btn btn-primary d-flex align-items-center justify-content-center w-100" ><span class="d-none d-sm-inline checkout-review-label">{% if is_pickup_shipping and code == 'cod_preuzimanje' %}Provjeri rezervaciju{% else %}Provjeri narudžbu{% endif %}</span><span class="d-inline d-sm-none">Provjeri</span><i class="fal fa-chevron-right mt-sm-0 ms-1"></i></button></div>
 </div>
 
 
 <script>
     jQuery(function($) {
+        var isPickupShipping = {{ is_pickup_shipping ? 'true' : 'false' }};
+
+        function updateReservationReviewLabel() {
+            var isReservation = isPickupShipping && $('input[name="payment_method"]:checked').val() === 'cod_preuzimanje';
+            $('#button-payment-method .checkout-review-label').text(isReservation ? 'Provjeri rezervaciju' : 'Provjeri narudžbu');
+        }
+
+        updateReservationReviewLabel();
+        $(document).on('change', 'input[name="payment_method"]', updateReservationReviewLabel);
+
         // $("#PaymentPlan").html("<option value='{{ paymentplan }}' selected='selected'>{{ paymentplan }}</option>");
         $("#CreditCardName").change(function () {
 
@@ -184,6 +194,5 @@
 
     });
 </script>
-
 
 

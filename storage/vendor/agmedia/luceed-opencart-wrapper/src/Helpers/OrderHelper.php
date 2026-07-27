@@ -123,14 +123,6 @@ class OrderHelper
      */
     private static function getVrstaIsporuke($sa, $na): string
     {
-        if (in_array($sa, ['006', '101']) && $na == '001') {
-            return '00';
-        }
-
-        if (in_array($sa, ['006', '001']) && in_array($na, ['101', '099'])) {
-            return '00';
-        }
-
         return '07';
     }
 
