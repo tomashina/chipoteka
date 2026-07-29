@@ -89,6 +89,7 @@ class ControllerCommonHeader extends Controller {
 		}
 
 		$this->load->language('common/header');
+		$data['text_faq'] = $this->language->get('text_faq');
 
 		// Wishlist
 		if ($this->customer->isLogged()) {
@@ -115,6 +116,7 @@ class ControllerCommonHeader extends Controller {
 		$data['shopping_cart'] = $this->url->link('checkout/cart');
 		$data['checkout'] = $this->url->link('checkout/checkout', '', true);
 		$data['contact'] = $this->url->link('information/contact');
+		$data['faq'] = $this->url->link('information/faq');
 		$data['telephone'] = $this->config->get('config_telephone');
 
 

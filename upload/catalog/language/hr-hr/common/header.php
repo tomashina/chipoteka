@@ -15,3 +15,4 @@ $_['text_logout']        = 'Odjava';
 $_['text_checkout']      = 'Naplata';
 $_['text_search']        = 'Traži';
 $_['text_all']           = 'Prikaži sve';
+$_['text_faq']           = 'Česta pitanja';

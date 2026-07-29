@@ -15,5 +15,6 @@ $_['text_account']      = 'Korisnički račun';
 $_['text_order']        = 'Povijest narudžbi';
 $_['text_wishlist']     = 'Lista želja';
 $_['text_newsletter']   = 'Newsletter';
+$_['text_faq']          = 'Česta pitanja';
 //$_['text_powered']      = 'Powered By <a href="http://www.opencart.com">OpenCart</a><br /> %s &copy; %s';
 $_['text_powered']      = '<a href="https://www.agmedia.hr" target="agmedia">AG media</a><br /> %s &copy; %s';

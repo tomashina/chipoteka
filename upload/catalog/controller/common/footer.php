@@ -2,6 +2,7 @@
 class ControllerCommonFooter extends Controller {
 	public function index() {
 		$this->load->language('common/footer');
+		$data['text_faq'] = $this->language->get('text_faq');
 
         if ($this->customer->isLogged()) {
             $data['groupId'] = $this->customer->getGroupId();
@@ -42,6 +43,7 @@ class ControllerCommonFooter extends Controller {
 		}
 
 		$data['contact'] = $this->url->link('information/contact');
+		$data['faq'] = $this->url->link('information/faq');
 		$data['return'] = $this->url->link('account/return/add', '', true);
 		$data['contract_withdrawal'] = $this->url->link('account/contract_withdrawal', '', true);
 		$data['sitemap'] = $this->url->link('information/sitemap');
