@@ -118,6 +118,14 @@ class ControllerCommonColumnLeft extends Controller {
 				);
 			}
 
+			if ($this->user->hasPermission('access', 'catalog/faq')) {
+				$catalog[] = array(
+					'name'	   => $this->language->get('text_faq'),
+					'href'     => $this->url->link('catalog/faq', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()
+				);
+			}
+
 			if ($catalog) {
 				$data['menus'][] = array(
 					'id'       => 'menu-catalog',

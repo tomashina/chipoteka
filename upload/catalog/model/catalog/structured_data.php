@@ -173,6 +173,37 @@ class ModelCatalogStructuredData extends Model {
 		return $this->encodeGraph(array($this->buildWebsiteNode()));
 	}
 
+	public function buildFaqPage(string $title, string $description, array $breadcrumbs, string $canonical_url, array $faq_items): string {
+		$canonical_url = $this->normalizeUrl($canonical_url);
+		$organization_node_id = $this->getStoreBaseUrl() . '/#organization';
+		$faq_node = $this->buildFaqPageNode($canonical_url, $faq_items);
+
+		$page_node = array_filter(array(
+			'@type' => 'WebPage',
+			'@id' => $canonical_url . '#webpage',
+			'url' => $canonical_url,
+			'name' => $this->cleanText($title),
+			'description' => $this->truncateText($this->cleanText($description), 800),
+			'inLanguage' => str_replace('_', '-', (string)($this->config->get('config_language') ?: 'hr-HR')),
+			'isPartOf' => array('@id' => $this->getStoreBaseUrl() . '/#website'),
+			'publisher' => array('@id' => $organization_node_id),
+			'mainEntity' => $faq_node ? array('@id' => $faq_node['@id']) : array()
+		));
+
+		$graph = array(
+			$page_node,
+			$this->buildOrganizationNode($organization_node_id),
+			$this->buildWebsiteNode(),
+			$this->buildBreadcrumbList($canonical_url, $breadcrumbs)
+		);
+
+		if ($faq_node) {
+			$graph[] = $faq_node;
+		}
+
+		return $this->encodeGraph($graph);
+	}
+
 	private function buildItemList(string $list_node_id, array $products, int $total_products, int $offset): array {
 		$items = array();
 		$position = max($offset, 0) + 1;

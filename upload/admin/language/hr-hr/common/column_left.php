@@ -24,6 +24,7 @@ $_['text_extension']                 = 'Proširenja';
 $_['text_filter']                    = 'Filteri';
 $_['text_geo_zone']                  = 'Geo zone';
 $_['text_information']               = 'Informacije';
+$_['text_faq']                       = 'Česta pitanja';
 $_['text_installer']                 = 'Instalater dodataka';
 $_['text_language']                  = 'Jezici';
 $_['text_layout']                    = 'Izgledi (layouts)';
