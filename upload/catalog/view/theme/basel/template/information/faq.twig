@@ -156,7 +156,7 @@
       padding: 25px 28px 28px;
     }
     #information-faq .faq-category-section {
-      scroll-margin-top: 28px;
+      scroll-margin-top: 130px;
     }
     #information-faq .faq-category-section > h2 {
       margin: 0 0 17px;
@@ -270,12 +270,19 @@
 
           link.classList.add('active');
 
+          var pageHeader = document.querySelector('.page-header');
+          var headerOffset = pageHeader ? pageHeader.getBoundingClientRect().height : 0;
+          var targetOffset = Math.max(24, headerOffset + 20);
+
           if (window.jQuery) {
             window.jQuery('html, body').stop().animate({
-              scrollTop: window.jQuery(target).offset().top - 24
+              scrollTop: window.jQuery(target).offset().top - targetOffset
             }, 450);
           } else {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            window.scrollTo({
+              top: target.getBoundingClientRect().top + window.pageYOffset - targetOffset,
+              behavior: 'smooth'
+            });
           }
         });
       });

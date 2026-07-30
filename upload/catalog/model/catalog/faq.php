@@ -15,14 +15,14 @@ class ModelCatalogFaq extends Model {
 			if (!isset($categories[$category_id])) {
 				$categories[$category_id] = array(
 					'faq_category_id' => $category_id,
-					'name'            => $row['name'],
+					'name'            => $this->decodeHtmlEntities((string)$row['name']),
 					'items'           => array()
 				);
 			}
 
 			$categories[$category_id]['items'][] = array(
 				'faq_item_id' => (int)$row['faq_item_id'],
-				'question'    => trim((string)$row['question']),
+				'question'    => trim($this->decodeHtmlEntities((string)$row['question'])),
 				'answer'      => $this->getAnswerText($answer_html),
 				'answer_html' => $answer_html
 			);
@@ -32,7 +32,7 @@ class ModelCatalogFaq extends Model {
 	}
 
 	private function sanitizeAnswerHtml($answer) {
-		$answer = trim((string)$answer);
+		$answer = trim($this->decodeHtmlEntities((string)$answer));
 
 		if ($answer === '') {
 			return '';
@@ -47,7 +47,10 @@ class ModelCatalogFaq extends Model {
 		if (!$purifier) {
 			$config = HTMLPurifier_Config::createDefault();
 			$config->set('Cache.DefinitionImpl', null);
-			$config->set('HTML.Allowed', 'p,br,strong,b,em,i,u,s,ul,ol,li,blockquote,a[href|title]');
+			$config->set('HTML.Allowed', 'p,br,strong,b,em,i,u,s,ul,ol,li,blockquote,a[href|title|target|rel]');
+			$config->set('Attr.AllowedFrameTargets', array('_blank'));
+			$config->set('HTML.TargetNoopener', true);
+			$config->set('HTML.TargetNoreferrer', true);
 			$config->set('URI.AllowedSchemes', array(
 				'http'   => true,
 				'https'  => true,
@@ -62,6 +65,22 @@ class ModelCatalogFaq extends Model {
 		$clean = $purifier->purify($answer);
 
 		return $contains_html ? $clean : nl2br($clean);
+	}
+
+	private function decodeHtmlEntities($value) {
+		$value = (string)$value;
+
+		for ($i = 0; $i < 5; $i++) {
+			$decoded = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+			if ($decoded === $value) {
+				break;
+			}
+
+			$value = $decoded;
+		}
+
+		return $value;
 	}
 
 	private function getAnswerText($html) {

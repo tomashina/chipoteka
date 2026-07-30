@@ -261,6 +261,16 @@ $(document).ready(function() {
     initializeFaqEditor(this);
   });
 
+  $('#form-faq').on('submit', function() {
+    $('.faq-answer-editor').each(function() {
+      var $editor = $(this);
+
+      if ($editor.next('.note-editor').length) {
+        $editor.val($editor.summernote('code'));
+      }
+    });
+  });
+
   $('#language a:first').tab('show');
 });
 //--></script>

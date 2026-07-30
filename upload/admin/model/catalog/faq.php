@@ -59,6 +59,11 @@ class ModelCatalogFaq extends Model {
 
 		$query = $this->db->query($sql);
 
+		foreach ($query->rows as &$row) {
+			$row['name'] = $this->decodeHtmlEntities((string)$row['name']);
+		}
+		unset($row);
+
 		return $query->rows;
 	}
 
@@ -74,7 +79,7 @@ class ModelCatalogFaq extends Model {
 
 		foreach ($query->rows as $result) {
 			$data[(int)$result['language_id']] = array(
-				'name' => $result['name']
+				'name' => $this->decodeHtmlEntities((string)$result['name'])
 			);
 		}
 
@@ -87,8 +92,8 @@ class ModelCatalogFaq extends Model {
 
 		foreach ($query->rows as $result) {
 			$data[(int)$result['language_id']][] = array(
-				'question'   => $result['question'],
-				'answer'     => $result['answer'],
+				'question'   => $this->decodeHtmlEntities((string)$result['question']),
+				'answer'     => $this->decodeHtmlEntities((string)$result['answer']),
 				'sort_order' => (int)$result['sort_order'],
 				'status'     => (int)$result['status']
 			);
@@ -99,7 +104,9 @@ class ModelCatalogFaq extends Model {
 
 	private function saveFaqCategoryDescriptions($faq_category_id, array $descriptions) {
 		foreach ($descriptions as $language_id => $description) {
-			$this->db->query("INSERT INTO " . DB_PREFIX . "faq_category_description SET faq_category_id = '" . (int)$faq_category_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape(trim((string)$description['name'])) . "'");
+			$name = $this->decodeHtmlEntities(trim((string)$description['name']));
+
+			$this->db->query("INSERT INTO " . DB_PREFIX . "faq_category_description SET faq_category_id = '" . (int)$faq_category_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($name) . "'");
 		}
 	}
 
@@ -110,8 +117,8 @@ class ModelCatalogFaq extends Model {
 			}
 
 			foreach ($language_items as $item) {
-				$question = trim((string)($item['question'] ?? ''));
-				$answer = trim((string)($item['answer'] ?? ''));
+				$question = $this->decodeHtmlEntities(trim((string)($item['question'] ?? '')));
+				$answer = $this->decodeHtmlEntities(trim((string)($item['answer'] ?? '')));
 
 				if ($question === '' || $answer === '') {
 					continue;
@@ -120,5 +127,21 @@ class ModelCatalogFaq extends Model {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "faq_item SET faq_category_id = '" . (int)$faq_category_id . "', language_id = '" . (int)$language_id . "', question = '" . $this->db->escape($question) . "', answer = '" . $this->db->escape($answer) . "', sort_order = '" . (int)($item['sort_order'] ?? 0) . "', status = '" . (isset($item['status']) ? (int)$item['status'] : 1) . "', date_added = NOW(), date_modified = NOW()");
 			}
 		}
+	}
+
+	private function decodeHtmlEntities($value) {
+		$value = (string)$value;
+
+		for ($i = 0; $i < 5; $i++) {
+			$decoded = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+			if ($decoded === $value) {
+				break;
+			}
+
+			$value = $decoded;
+		}
+
+		return $value;
 	}
 }

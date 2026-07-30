@@ -204,7 +204,7 @@ class ControllerCatalogFaq extends Controller {
 		$data['languages'] = $this->model_localisation_language->getLanguages();
 
 		if (isset($this->request->post['faq_category_description'])) {
-			$data['faq_category_description'] = $this->request->post['faq_category_description'];
+			$data['faq_category_description'] = $this->normalizeCategoryDescriptionsForForm($this->request->post['faq_category_description']);
 		} elseif ($faq_category_id) {
 			$data['faq_category_description'] = $this->model_catalog_faq->getFaqCategoryDescriptions($faq_category_id);
 		} else {
@@ -212,7 +212,7 @@ class ControllerCatalogFaq extends Controller {
 		}
 
 		if (isset($this->request->post['faq_item'])) {
-			$data['faq_item'] = $this->request->post['faq_item'];
+			$data['faq_item'] = $this->normalizeFaqItemsForForm($this->request->post['faq_item']);
 		} elseif ($faq_category_id) {
 			$data['faq_item'] = $this->model_catalog_faq->getFaqItems($faq_category_id);
 		} else {
@@ -295,10 +295,59 @@ class ControllerCatalogFaq extends Controller {
 	}
 
 	private function getPlainText($html) {
-		$text = preg_replace('/<br\s*\/?>/i', "\n", (string)$html);
+		$html = $this->decodeHtmlEntities((string)$html);
+		$text = preg_replace('/<br\s*\/?>/i', "\n", $html);
 		$text = html_entity_decode(strip_tags($text), ENT_QUOTES, 'UTF-8');
 
 		return trim(str_replace("\xC2\xA0", ' ', $text));
+	}
+
+	private function normalizeCategoryDescriptionsForForm(array $descriptions) {
+		foreach ($descriptions as &$description) {
+			if (is_array($description) && isset($description['name'])) {
+				$description['name'] = $this->decodeHtmlEntities((string)$description['name']);
+			}
+		}
+		unset($description);
+
+		return $descriptions;
+	}
+
+	private function normalizeFaqItemsForForm(array $items) {
+		foreach ($items as &$language_items) {
+			if (!is_array($language_items)) {
+				continue;
+			}
+
+			foreach ($language_items as &$item) {
+				if (!is_array($item)) {
+					continue;
+				}
+
+				$item['question'] = $this->decodeHtmlEntities((string)($item['question'] ?? ''));
+				$item['answer'] = $this->decodeHtmlEntities((string)($item['answer'] ?? ''));
+			}
+			unset($item);
+		}
+		unset($language_items);
+
+		return $items;
+	}
+
+	private function decodeHtmlEntities($value) {
+		$value = (string)$value;
+
+		for ($i = 0; $i < 5; $i++) {
+			$decoded = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+			if ($decoded === $value) {
+				break;
+			}
+
+			$value = $decoded;
+		}
+
+		return $value;
 	}
 
 	protected function validateDelete() {
