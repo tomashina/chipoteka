@@ -68,7 +68,7 @@ class LOC_Product
      */
     public function __construct($products = null)
     {
-        if ($products) {
+        if ($products !== null) {
             $this->products = $this->setProducts($products);
         }
 
@@ -252,39 +252,75 @@ class LOC_Product
         $count = 0;
         $db = new Database(DB_DATABASE);
 
-        $this->checkProductsToDeactivate();
-
         $luceed_products = $this->getProducts()
             ->where('artikl', '!=', '')
             ->where('naziv', '!=', '')
             ->where('webshop', '!=', 'N')
             ->all();
 
-        $query_str = '';
-
-        foreach ($luceed_products as $product) {
-            $product_array = ProductHelper::collectLuceedData($product);
-            $hash = ProductHelper::hashLuceedData($product_array);
-            //$data = collect($product_array)->toJson();
-
-            $query_str .= '("' . $product->artikl_uid . '", "' . $product->artikl . '", "' . base64_encode(serialize($product_array)) . '", "' . $hash . '"),';
-
-            $count++;
+        if ( ! count($luceed_products)) {
+            throw new \UnexpectedValueException('Luceed product response does not contain any valid products.');
         }
 
-        $db->query("TRUNCATE TABLE " . DB_PREFIX . "product_luceed");
-        $db->query("INSERT INTO " . DB_PREFIX . "product_luceed (uid, sifra, `data`, `hash`) VALUES " . substr($query_str, 0, -1) . ";");
+        $target_table = DB_PREFIX . 'product_luceed';
+        $staging_table = DB_PREFIX . 'product_luceed_sync';
+        $insert_rows = [];
 
-        $db->query("TRUNCATE TABLE " . DB_PREFIX . "product_luceed_for_update");
-        $res = $db->query("SELECT p.luceed_uid FROM oc_product p JOIN oc_product_luceed pl ON p.luceed_uid = pl.uid WHERE p.hash <> pl.hash;");
+        $db->query("DROP TEMPORARY TABLE IF EXISTS `" . $staging_table . "`");
+        $db->query("CREATE TEMPORARY TABLE `" . $staging_table . "` LIKE `" . $target_table . "`");
 
-        if ($res->num_rows) {
-            $query_str = '';
-            foreach ($res->rows as $row) {
-                $query_str .= '("' . $row['luceed_uid'] . '"),';
+        try {
+            foreach ($luceed_products as $product) {
+                $product_array = ProductHelper::collectLuceedData($product);
+                $hash = ProductHelper::hashLuceedData($product_array);
+
+                $insert_rows[] = '("' . $db->escape($product->artikl_uid) . '", "' .
+                    $db->escape($product->artikl) . '", "' .
+                    $db->escape(base64_encode(serialize($product_array))) . '", "' .
+                    $db->escape($hash) . '")';
+
+                $count++;
+
+                if (count($insert_rows) >= 250) {
+                    $db->query("INSERT INTO `" . $staging_table . "` (uid, sifra, `data`, `hash`) VALUES " . implode(',', $insert_rows));
+                    $insert_rows = [];
+                }
             }
 
-            $db->query("INSERT INTO " . DB_PREFIX . "product_luceed_for_update (uid) VALUES " . substr($query_str, 0, -1) . ";");
+            if (count($insert_rows)) {
+                $db->query("INSERT INTO `" . $staging_table . "` (uid, sifra, `data`, `hash`) VALUES " . implode(',', $insert_rows));
+            }
+
+            $this->checkProductsToDeactivate();
+
+            $db->query("TRUNCATE TABLE `" . $target_table . "`");
+            $db->query("INSERT INTO `" . $target_table . "` (uid, sifra, `data`, `hash`) SELECT uid, sifra, `data`, `hash` FROM `" . $staging_table . "`");
+        } catch (\Throwable $exception) {
+            $db->query("DROP TEMPORARY TABLE IF EXISTS `" . $staging_table . "`");
+
+            throw $exception;
+        }
+
+        $db->query("DROP TEMPORARY TABLE IF EXISTS `" . $staging_table . "`");
+
+        $db->query("TRUNCATE TABLE " . DB_PREFIX . "product_luceed_for_update");
+        $res = $db->query("SELECT p.luceed_uid FROM `" . DB_PREFIX . "product` p JOIN `" . DB_PREFIX . "product_luceed` pl ON p.luceed_uid = pl.uid WHERE p.hash <> pl.hash");
+
+        if ($res->num_rows) {
+            $insert_rows = [];
+
+            foreach ($res->rows as $row) {
+                $insert_rows[] = '("' . $db->escape($row['luceed_uid']) . '")';
+
+                if (count($insert_rows) >= 500) {
+                    $db->query("INSERT INTO `" . DB_PREFIX . "product_luceed_for_update` (uid) VALUES " . implode(',', $insert_rows));
+                    $insert_rows = [];
+                }
+            }
+
+            if (count($insert_rows)) {
+                $db->query("INSERT INTO `" . DB_PREFIX . "product_luceed_for_update` (uid) VALUES " . implode(',', $insert_rows));
+            }
         }
 
         $products_count = Product::pluck('sku')->count();
@@ -487,7 +523,17 @@ class LOC_Product
      */
     private function setProducts($products): array
     {
+        if ( ! is_string($products) || trim($products) === '') {
+            throw new \UnexpectedValueException('Luceed product service returned an empty response.');
+        }
+
         $prods = json_decode($products);
+
+        if (json_last_error() !== JSON_ERROR_NONE ||
+            ! isset($prods->result[0]->artikli) ||
+            ! is_array($prods->result[0]->artikli)) {
+            throw new \UnexpectedValueException('Luceed product service returned an invalid response.');
+        }
 
         return $prods->result[0]->artikli;
     }

@@ -36,6 +36,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
     const DURATION_MAIL_ACTIVATED_AT = '2026-07-17 13:35:10';
     const ORDER_STATUS_REQUEST_TIMEOUT_SECONDS = 60;
+    const LUCEED_PRODUCT_SYNC_LOCK = 'chipoteka_luceed_product_sync';
 
     private $error = array();
 
@@ -371,49 +372,66 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateProducts()
     {
-        $this->importLuceedProducts();
-
-        $count      = 0;
-        $_loc_ps    = new LOC_ProductSingle();
-        $for_update = LuceedProductForUpdate::all();
-
-        if ($for_update->count()) {
-            foreach ($for_update as $item) {
-                if ($_loc_ps->hasForUpdate()) {
-                    if ( ! isset($_loc_ps->product['naziv'])) {
-                        return $this->output($_loc_ps->finishUpdateError());
-                    }
-
-                    $product = $this->resolveOldProductData($_loc_ps->product_to_update);
-                    // first check known errors
-                    $product_for_update                    = $_loc_ps->makeForUpdate($product);
-                    $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
-                    $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
-
-                    Log::info($product_for_update['sku'], 'log2025');
-
-                    if ($product_for_update['sku'] == '6129256300') {
-                        return $this->output($_loc_ps->finishUpdate());
-                    }
-
-                    $this->model_catalog_product->editProduct(
-                        $_loc_ps->product_to_update['product_id'],
-                        $product_for_update
-                    );
-
-                    $_loc_ps->finishUpdate();
-
-                    LuceedProductForUpdate::where('uid', $_loc_ps->product_to_update['luceed_uid'])->delete();
-
-                    $count++;
-                }
-            }
+        if ( ! $this->acquireLuceedProductSyncLock()) {
+            return $this->output([
+                'status'  => 202,
+                'message' => 'Luceed product sync is already running.'
+            ]);
         }
 
-        //$this->updateQuantities();
-        $this->finishUpdateProduct();
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
 
-        return $this->response($count, 'products');
+        try {
+            $this->refreshLuceedProductsCache();
+
+            $count      = 0;
+            $_loc_ps    = new LOC_ProductSingle();
+            $for_update = LuceedProductForUpdate::all();
+
+            if ($for_update->count()) {
+                foreach ($for_update as $item) {
+                    if ($_loc_ps->hasForUpdate($item->uid)) {
+                        if ( ! isset($_loc_ps->product['naziv'])) {
+                            return $this->output($_loc_ps->finishUpdateError());
+                        }
+
+                        $product = $this->resolveOldProductData($_loc_ps->product_to_update);
+                        // first check known errors
+                        $product_for_update                    = $_loc_ps->makeForUpdate($product);
+                        $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
+                        $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
+
+                        $this->model_catalog_product->editProduct(
+                            $_loc_ps->product_to_update['product_id'],
+                            $product_for_update
+                        );
+
+                        $_loc_ps->finishUpdate();
+
+                        $count++;
+                    }
+                }
+            }
+
+            LuceedProductForUpdate::truncate();
+
+            //$this->updateQuantities();
+            $this->finishUpdateProduct();
+
+            return $this->response($count, 'products');
+        } catch (\Throwable $exception) {
+            Log::info($exception->getMessage(), 'luceed_product_sync_error');
+            $this->response->addHeader('HTTP/1.1 503 Service Unavailable');
+
+            return $this->output([
+                'status'  => 503,
+                'message' => 'Luceed product sync failed. Check luceed_product_sync_error log.'
+            ]);
+        } finally {
+            $this->releaseLuceedProductSyncLock();
+        }
     }
 
 
@@ -423,13 +441,30 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function importLuceedProducts()
     {
+        if ( ! $this->acquireLuceedProductSyncLock()) {
+            return $this->output([
+                'status'  => 202,
+                'message' => 'Luceed product sync is already running.'
+            ]);
+        }
+
         if (function_exists('set_time_limit')) {
             @set_time_limit(0);
         }
 
-        $_loc = new LOC_Product(LuceedProduct::all());
+        try {
+            return $this->output($this->refreshLuceedProductsCache());
+        } catch (\Throwable $exception) {
+            Log::info($exception->getMessage(), 'luceed_product_sync_error');
+            $this->response->addHeader('HTTP/1.1 503 Service Unavailable');
 
-        return $this->output($_loc->populateLuceedData());
+            return $this->output([
+                'status'  => 503,
+                'message' => 'Luceed product cache refresh failed. Check luceed_product_sync_error log.'
+            ]);
+        } finally {
+            $this->releaseLuceedProductSyncLock();
+        }
     }
 
 
@@ -490,10 +525,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $product_for_update                    = $_loc_ps->makeForUpdate($product);
             $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
             $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
-
-            if ($product_for_update['sku'] == '6129256300') {
-                return $this->output($_loc_ps->finishUpdate());
-            }
 
             $this->model_catalog_product->editProduct(
                 $_loc_ps->product_to_update['product_id'],
@@ -2586,6 +2617,37 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $data['product_reward']   = $this->model_catalog_product->getProductRewards($product['product_id']);
 
         return $data;
+    }
+
+
+    /**
+     * @return array
+     */
+    private function refreshLuceedProductsCache(): array
+    {
+        $_loc = new LOC_Product(LuceedProduct::all());
+
+        return $_loc->populateLuceedData();
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function acquireLuceedProductSyncLock(): bool
+    {
+        $result = $this->db->query("SELECT GET_LOCK('" . self::LUCEED_PRODUCT_SYNC_LOCK . "', 0) AS acquired");
+
+        return isset($result->row['acquired']) && (int) $result->row['acquired'] === 1;
+    }
+
+
+    /**
+     * @return void
+     */
+    private function releaseLuceedProductSyncLock(): void
+    {
+        $this->db->query("SELECT RELEASE_LOCK('" . self::LUCEED_PRODUCT_SYNC_LOCK . "')");
     }
 
 

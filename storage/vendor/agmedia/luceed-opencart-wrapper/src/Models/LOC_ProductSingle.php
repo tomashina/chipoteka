@@ -78,15 +78,25 @@ class LOC_ProductSingle
 
 
     /**
+     * @param string|null $uid
+     *
      * @return bool
      */
-    public function hasForUpdate(): bool
+    public function hasForUpdate($uid = null): bool
     {
-        $uid = LuceedProductForUpdate::all()->first();
+        if ( ! $uid) {
+            $pending = LuceedProductForUpdate::query()->first();
+
+            if ( ! $pending) {
+                return false;
+            }
+
+            $uid = $pending->uid;
+        }
 
         if ($uid) {
-            $this->product_to_update = Product::where('luceed_uid', $uid->uid)->first();
-            $this->luceed_product = LuceedProduct::query()->where('uid', $uid->uid)->first();
+            $this->product_to_update = Product::where('luceed_uid', $uid)->first();
+            $this->luceed_product = LuceedProduct::query()->where('uid', $uid)->first();
 
             if ($this->product_to_update && $this->luceed_product) {
                 $this->product = $this->resolveLuceedProductData();

@@ -11,6 +11,8 @@ use Agmedia\Luceed\Connection\LuceedService;
 class Luceed
 {
 
+    private const PRODUCT_LIST_TIMEOUT_SECONDS = 240;
+
     /**
      * @var LuceedService
      */
@@ -158,7 +160,11 @@ class Luceed
      */
     public function getProductsList(array $query = null)
     {
-        return $this->service->get($this->end_points['product_list'] . ($query ?: ''));
+        return $this->service->get(
+            $this->end_points['product_list'] . ($query ?: ''),
+            '',
+            self::PRODUCT_LIST_TIMEOUT_SECONDS
+        );
     }
 
 
