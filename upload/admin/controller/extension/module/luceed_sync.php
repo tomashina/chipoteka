@@ -927,13 +927,29 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updatePrices()
     {
-        $_loc = new LOC_Action(LuceedProduct::getActions());
+        try {
+            $_loc = new LOC_Action(LuceedProduct::getActions());
 
-        $updated = $_loc->collectProductsRegularPrices()
-                        ->collectWebPrices()
-                        ->update();
+            $updated = $_loc->collectProductsRegularPrices()
+                            ->collectWebPrices()
+                            ->update();
 
-        return $this->response($updated, 'update');
+            return $this->response($updated, 'update');
+        } catch (\Throwable $exception) {
+            Log::store($exception->getMessage(), 'luceed_price_sync_error');
+            Log::store($exception->getTraceAsString(), 'luceed_price_sync_error');
+
+            $protocol = isset($this->request->server['SERVER_PROTOCOL'])
+                ? $this->request->server['SERVER_PROTOCOL']
+                : 'HTTP/1.1';
+
+            $this->response->addHeader($protocol . ' 503 Service Unavailable');
+
+            return $this->output([
+                'status'  => 503,
+                'message' => 'Luceed price sync failed. Check luceed_price_sync_error log.'
+            ]);
+        }
     }
 
 
@@ -973,12 +989,28 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateVpcPrices()
     {
-        $_loc = new LOC_Product(LuceedProduct::all());
-        $lp   = new LOC_Price();
+        try {
+            $_loc = new LOC_Product(LuceedProduct::all());
+            $lp   = new LOC_Price();
 
-        $updated = $lp->collectAndStore($_loc->getProducts(), 'vpc');
+            $updated = $lp->collectAndStore($_loc->getProducts(), 'vpc');
 
-        return $this->response($updated, 'update');
+            return $this->response($updated, 'update');
+        } catch (\Throwable $exception) {
+            Log::store($exception->getMessage(), 'luceed_vpc_price_sync_error');
+            Log::store($exception->getTraceAsString(), 'luceed_vpc_price_sync_error');
+
+            $protocol = isset($this->request->server['SERVER_PROTOCOL'])
+                ? $this->request->server['SERVER_PROTOCOL']
+                : 'HTTP/1.1';
+
+            $this->response->addHeader($protocol . ' 503 Service Unavailable');
+
+            return $this->output([
+                'status'  => 503,
+                'message' => 'Luceed VPC price sync failed. Check luceed_vpc_price_sync_error log.'
+            ]);
+        }
     }
 
 

@@ -105,6 +105,10 @@ class LOC_Action
                         ->where('status', '!=', '1')
                         ->where('naziv', '=', 'web_cijene')->first();
 
+        if ( ! $action || ! isset($action->stavke) || ! is_array($action->stavke)) {
+            throw new \UnexpectedValueException('Luceed action response does not contain valid web prices.');
+        }
+
         $categories = collect();
         $manufacturers = collect();
 
@@ -435,7 +439,17 @@ class LOC_Action
      */
     private function setActions($actions): array
     {
+        if ( ! is_string($actions) || trim($actions) === '') {
+            throw new \UnexpectedValueException('Luceed action service returned an empty response.');
+        }
+
         $prods = json_decode($actions);
+
+        if (json_last_error() !== JSON_ERROR_NONE ||
+            ! isset($prods->result[0]->akcije) ||
+            ! is_array($prods->result[0]->akcije)) {
+            throw new \UnexpectedValueException('Luceed action service returned an invalid response.');
+        }
 
         return $prods->result[0]->akcije;
     }
@@ -448,7 +462,17 @@ class LOC_Action
      */
     private function setActionPricesLast30($actions): array
     {
+        if ( ! is_string($actions) || trim($actions) === '') {
+            throw new \UnexpectedValueException('Luceed action prices service returned an empty response.');
+        }
+
         $prods = json_decode($actions);
+
+        if (json_last_error() !== JSON_ERROR_NONE ||
+            ! isset($prods->result[0]->artikli_popusti) ||
+            ! is_array($prods->result[0]->artikli_popusti)) {
+            throw new \UnexpectedValueException('Luceed action prices service returned an invalid response.');
+        }
 
         return $prods->result[0]->artikli_popusti;
     }
