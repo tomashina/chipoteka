@@ -311,8 +311,7 @@ class LOC_Order
 
 
     /**
-     * Pickup reservation stays as DP in the pickup store.
-     * Paid/prepaid pickup orders are transferred from pickup store to 099 as MSM.
+     * Pickup main orders stay anchored to the selected pickup store.
      *
      * @return void
      */
@@ -324,13 +323,13 @@ class LOC_Order
         $this->order['napomena'] = $pickup_note;
         $this->order['poruka_dolje'] = $this->order['napomena'];
 
-        if ($this->isPickupReservationPayment()) {
+        if ($this->isPickupReservationPayment() || ($this->oc_order['payment_code'] ?? '') === 'bank_transfer') {
             $this->order['skladiste'] = $this->pickup;
             $this->order['skl_dokument'] = 'DP';
             $this->order['vrsta_isporuke'] = '03';
             unset($this->order['na__skladiste']);
         } else {
-            $this->order['skladiste'] = '099';
+            $this->order['skladiste'] = $this->pickup;
             $this->order['na__skladiste'] = '099';
             $this->order['skl_dokument'] = 'MSM';
             $this->order['vrsta_isporuke'] = '03';
