@@ -1,0 +1,93 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+          <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    {% if error_warning %}
+      <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endif %}
+
+    {% if success %}
+      <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endif %}
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-google"></i> {{ text_edit }}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_existing_customers_only }}</div>
+
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10">
+              <select name="module_google_login_status" id="input-status" class="form-control">
+                {% if module_google_login_status %}
+                  <option value="1" selected="selected">{{ text_enabled }}</option>
+                  <option value="0">{{ text_disabled }}</option>
+                {% else %}
+                  <option value="1">{{ text_enabled }}</option>
+                  <option value="0" selected="selected">{{ text_disabled }}</option>
+                {% endif %}
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-client-id">{{ entry_client_id }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="module_google_login_client_id" value="{{ module_google_login_client_id }}" placeholder="1234567890-abc.apps.googleusercontent.com" id="input-client-id" class="form-control" autocomplete="off">
+              {% if error_client_id %}<div class="text-danger">{{ error_client_id }}</div>{% endif %}
+            </div>
+          </div>
+
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-client-secret">{{ entry_client_secret }}</label>
+            <div class="col-sm-10">
+              <input type="password" name="module_google_login_client_secret" value="{{ module_google_login_client_secret }}" placeholder="GOCSPX-..." id="input-client-secret" class="form-control" autocomplete="new-password">
+              {% if error_client_secret %}<div class="text-danger">{{ error_client_secret }}</div>{% endif %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-callback-url">{{ entry_callback_url }}</label>
+            <div class="col-sm-10">
+              <div class="input-group">
+                <input type="text" value="{{ callback_url }}" id="input-callback-url" class="form-control" readonly>
+                <span class="input-group-btn"><button type="button" class="btn btn-default" id="button-copy-callback"><i class="fa fa-copy"></i></button></span>
+              </div>
+              <p class="help-block">{{ text_google_cloud_help }}</p>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$('#button-copy-callback').on('click', function () {
+  var callback = document.getElementById('input-callback-url');
+  callback.select();
+  document.execCommand('copy');
+});
+</script>
+{{ footer }}

@@ -1,130 +1,191 @@
 {{ header }}
 <main class="offcanvas-enabled">
+  <div class="account-login-page">
+    <div class="account-login-page__shell">
+    <header class="account-login-page__heading">
+      <h1 id="page-title">{{ heading_title }}</h1>
+      <nav aria-label="{{ text_breadcrumb|default('Breadcrumb') }}">
+        <ol class="account-login-breadcrumb">
+          {% for breadcrumb in breadcrumbs %}
+            <li{% if loop.last %} class="is-current" aria-current="page"{% endif %}>
+              {% if loop.first %}
+                <a href="{{ breadcrumb.href }}" aria-label="{{ text_home_label }}"><i class="fas fa-home" aria-hidden="true"></i></a>
+              {% elseif loop.last %}
+                <span>{{ breadcrumb.text }}</span>
+              {% else %}
+                <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ol>
+      </nav>
+    </header>
 
-    <!-- Custom page title-->
-    <div class="page-title-overlap pt-4 pe-lg-3">
-        <div class="container-fluid py-2">
+    {{ content_top }}
 
-            <div class="pe-lg-4 text-center text-lg-start">
-                <h1 class="category-page-title" id="page-title">{{ heading_title }}</h1>
-            </div>
-            <div class=" mb-3 mb-lg-0">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb flex-lg-nowrap justify-content-center justify-content-lg-start">
-                        {% for breadcrumb in breadcrumbs %}
-                            <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-                        {% endfor %}
-                    </ol>
-                </nav>
-            </div>
+    <div id="content" class="account-login-grid">
+      <section class="account-login-card account-login-card--form" aria-labelledby="login-card-title">
+        <div class="account-login-card__intro">
+          <img class="account-login-card__intro-icon" src="catalog/view/theme/basel/image/account/login.webp" alt="" width="84" height="84" aria-hidden="true">
+          <div>
+            <h2 id="login-card-title">{{ text_login }}</h2>
+            <p>{{ text_login_intro }}</p>
+          </div>
         </div>
+
+        {% if success %}
+          <div class="alert alert-success" role="status"><i class="fa fa-check-circle" aria-hidden="true"></i> {{ success }}</div>
+        {% endif %}
+        {% if error_warning %}
+          <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> {{ error_warning }}</div>
+        {% endif %}
+
+        {% if google_login_enabled %}
+          <a class="account-google-button" href="{{ google_login }}" aria-label="{{ text_google_continue }}">
+            <span class="account-google-mark" aria-hidden="true">G</span>
+            <span>{{ text_google_continue }}</span>
+          </a>
+
+          <div class="account-login-divider"><span>{{ text_or }}</span></div>
+        {% endif %}
+
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" class="account-login-form" novalidate>
+          <div class="account-login-field">
+            <label for="input-email">{{ entry_email }}</label>
+            <div class="account-login-control">
+              <i class="fas fa-envelope" aria-hidden="true"></i>
+              <input type="email" name="email" value="{{ email }}" placeholder="{{ text_email_placeholder }}" id="input-email" autocomplete="email" inputmode="email" required>
+            </div>
+          </div>
+
+          <div class="account-login-field">
+            <label for="input-password">{{ entry_password }}</label>
+            <div class="account-login-control">
+              <i class="fas fa-lock-alt" aria-hidden="true"></i>
+              <input type="password" name="password" value="{{ password }}" placeholder="{{ text_password_placeholder }}" id="input-password" autocomplete="current-password" required>
+              <button class="account-password-toggle" type="button" aria-label="{{ text_show_password }}" aria-pressed="false">
+                <i class="fal fa-eye-slash" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="account-login-options">
+            <label class="account-remember">
+              <input type="checkbox" name="remember" value="1">
+              <span>{{ text_remember_me }}</span>
+            </label>
+            <a href="{{ forgotten }}">{{ text_forgotten }}</a>
+          </div>
+
+          {% if site_key %}
+            <div class="account-login-captcha">
+              <div>
+                <div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
+                {% if error_captcha %}<div class="text-danger">{{ error_captcha }}</div>{% endif %}
+              </div>
+            </div>
+          {% elseif captcha %}
+            <div class="account-login-captcha">{{ captcha }}</div>
+          {% endif %}
+
+          {% if redirect %}
+            <input type="hidden" name="redirect" value="{{ redirect }}">
+          {% endif %}
+
+          <div class="account-login-actions">
+            <button class="account-login-cta" type="submit">
+              <i class="fal fa-sign-in" aria-hidden="true"></i>
+              <span>{{ button_login }}</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="account-login-card account-login-card--benefits" aria-labelledby="new-customer-title">
+        <div class="account-new-customer-intro">
+          <img class="account-shopping-bag" src="catalog/view/theme/basel/image/account/bag-register.svg" alt="" width="90" height="90" aria-hidden="true">
+          <div>
+            <h2 id="new-customer-title">{{ text_new_customer_question }}</h2>
+            <p>{{ text_new_customer_intro }}</p>
+          </div>
+        </div>
+
+        <ul class="account-benefits">
+          <li>
+            <img src="catalog/view/theme/basel/image/account/quick-purchase.webp" alt="" width="74" height="74" aria-hidden="true">
+            <div>
+              <h3>{{ text_quick_purchase_title }}</h3>
+              <p>{{ text_quick_purchase_description }}</p>
+            </div>
+          </li>
+          <li>
+            <img src="catalog/view/theme/basel/image/account/order-tracking.webp" alt="" width="74" height="74" aria-hidden="true">
+            <div>
+              <h3>{{ text_order_tracking_title }}</h3>
+              <p>{{ text_order_tracking_description }}</p>
+            </div>
+          </li>
+          <li>
+            <img src="catalog/view/theme/basel/image/account/purchase-history.webp" alt="" width="74" height="74" aria-hidden="true">
+            <div>
+              <h3>{{ text_purchase_history_title }}</h3>
+              <p>{{ text_purchase_history_description }}</p>
+            </div>
+          </li>
+          <li>
+            <img src="catalog/view/theme/basel/image/account/wishlist.webp" alt="" width="74" height="74" aria-hidden="true">
+            <div>
+              <h3>{{ text_wishlist_title }}</h3>
+              <p>{{ text_wishlist_description }}</p>
+            </div>
+          </li>
+        </ul>
+
+        <div class="account-login-actions">
+          <a href="{{ register }}" class="account-login-cta account-login-cta--register">
+            <i class="fal fa-user-plus" aria-hidden="true"></i>
+            <span>{{ button_create_account }}</span>
+          </a>
+        </div>
+      </section>
     </div>
 
+      {{ content_bottom }}
+    </div>
+  </div>
 
-    <section id="account-edit"  class="container-fluid">
-        <div class="">
+<script>
+  (function () {
+    var emailInput = document.getElementById('input-email');
+    var passwordInput = document.getElementById('input-password');
+    var passwordToggle = document.querySelector('.account-password-toggle');
 
-            <section class="d-md-flex justify-content-between align-items-center mb-4 pb-2">
-                {# <div class="row g-0  mb-4"> #}
-                  <div id="content" class="{{ class }}no-min-height w-100">
-                     {{ content_top }}
-                      <div class="row">
-                        <div class="col-md-6 mb-4">
-                            <div class="card border-0 shadow">
-                                <div class="card-body">
-                                        <h2  class="h4 mb-1">{{ button_login }}</h2>
+    if (emailInput) {
+      emailInput.addEventListener('keydown', function (event) {
+        if (event.key === ' ') {
+          event.preventDefault();
+        }
+      });
 
-                                        {% if success %}
-                                        <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}</div>
-                                        {% endif %}
-                                        {% if error_warning %}
-                                        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>
-                                        {% endif %}
+      emailInput.addEventListener('change', function () {
+        this.value = this.value.replace(/\s/g, '');
+      });
+    }
 
-                                <!--    <div class="py-3">
-                                        <h3 class="d-inline-block align-middle fs-base fw-medium mb-2 me-2">Putem socialnih mreža:</h3>
-                                        <div class="d-inline-block align-middle"><a class="btn-social bs-google me-2 mb-2" href="#" data-bs-toggle="tooltip" title="Sign in with Google"><i class="ci-google"></i></a><a class="btn-social bs-facebook me-2 mb-2" href="#" data-bs-toggle="tooltip" title="Sign in with Facebook"><i class="ci-facebook"></i></a><a class="btn-social bs-twitter me-2 mb-2" href="#" data-bs-toggle="tooltip" title="Sign in with Twitter"><i class="ci-twitter"></i></a></div>
-                                    </div>
-                                    <hr>-->
+    if (passwordInput && passwordToggle) {
+      passwordToggle.addEventListener('click', function () {
+        var passwordIsVisible = passwordInput.type === 'text';
+        passwordInput.type = passwordIsVisible ? 'password' : 'text';
+        passwordToggle.setAttribute('aria-pressed', passwordIsVisible ? 'false' : 'true');
+        passwordToggle.setAttribute('aria-label', passwordIsVisible ? '{{ text_show_password|e('js') }}' : '{{ text_hide_password|e('js') }}');
 
-                                    <h3 class="fs-base pt-4 pb-2">Unesi svoje podatke za pristup računu.</h3>
-
-                                        <form action="{{ action }}" method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
-                                            <div class="input-group mb-3"><i class="fas fa-envelope position-absolute top-50 translate-middle-y text-muted fs-base ms-3"></i>
-                                                <input type="text" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-email" class="form-control rounded-start" />
-                                            </div>
-
-                                            <div class="input-group mb-3"><i class="fas fa-lock-alt position-absolute top-50 translate-middle-y text-muted fs-base ms-3"></i>
-                                                <div class="password-toggle w-100">
-                                                    <input class="form-control" name="password" type="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" required>
-                                                    <label class="password-toggle-btn" aria-label="Show/hide password">
-                                                        <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <div class="d-flex flex-wrap justify-content-between">
-                                               <!-- <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" checked id="remember_me">
-                                                    <label class="form-check-label" for="remember_me">Remember me</label>
-                                                </div>-->
-                                                <a class="nav-link-inline fs-sm" href="{{ forgotten }}">{{ text_forgotten }}</a>
-                                            </div>
-                                            <hr class="mt-4">
-                                            <div class="text-end pt-4">
-                                                <button class="btn btn-primary" type="submit"><i class="fal fa-sign-in me-2 ms-n21"></i>{{ button_login }}</button>
-
-
-                                            </div>
-
-
-
-
-
-
-                                          {% if redirect %}
-                                          <input type="hidden" name="redirect" value="{{ redirect }}" />
-                                          {% endif %}
-                                        </form>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6  mb-4">
-                            <div class="card border-0 shadow">
-                                <div class="card-body">
-                                    <h2 class="h4 mb-3">{{ text_new_customer }}</h2>
-
-
-                                    {{ text_register_account }}
-                                    <hr class="mt-4">
-                                    <div class="text-end pt-4">
-                                        <a href="{{ register }}" class="btn btn-primary"><i class="fal fa-user me-2 ms-n1"></i>{{ button_register }}</a>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                      </div>
-                         {{ content_bottom }}
-                   </div>
-                {# </div> #}
-            </section>
-        </div>
-    </section>
-
-    <script>
-        $(function(){
-            $("input#input-email").on({
-                keydown: function(e) {
-                    if (e.which === 32)
-                        return false;
-                },
-                change: function() {
-                    this.value = this.value.replace(/\s/g, "");
-                }
-            });
-        })
-    </script>
-
+        var icon = passwordToggle.querySelector('i');
+        if (icon) {
+          icon.className = passwordIsVisible ? 'fal fa-eye-slash' : 'fal fa-eye';
+        }
+      });
+    }
+  }());
+</script>
 
 {{ footer }}
