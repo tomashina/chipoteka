@@ -328,17 +328,17 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 58px;
-  gap: 18px;
+  min-height: 50px;
+  gap: 12px;
   margin-top: 0;
-  padding: 12px 24px;
+  padding: 10px 20px;
   background: linear-gradient(100deg, #d90000 0%, #e80a16 100%);
   border: 0;
   border-radius: 8px;
   box-shadow: 0 8px 16px rgba(227, 6, 19, 0.14);
   color: #fff;
   font: inherit;
-  font-size: 1.18rem;
+  font-size: 1rem;
   font-weight: 500;
   line-height: 1.2;
   text-align: center;
@@ -348,7 +348,7 @@
 }
 
 .account-login-cta i {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
 .account-login-cta:hover,
@@ -518,8 +518,8 @@
   }
 
   .account-login-cta {
-    min-height: 58px;
-    font-size: 1.15rem;
+    min-height: 50px;
+    font-size: 1rem;
   }
 
   .account-new-customer-intro {

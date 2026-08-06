@@ -15,8 +15,8 @@ class ControllerAccountRegister extends Controller {
 		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js');
 		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js');
 		$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');
-		$this->document->addStyle('catalog/view/theme/basel/stylesheet/account-login.css');
-		$this->document->addStyle('catalog/view/theme/basel/stylesheet/account-register.css');
+		$this->document->addStyle('catalog/view/theme/basel/stylesheet/account-login.css?v=2026080602');
+		$this->document->addStyle('catalog/view/theme/basel/stylesheet/account-register.css?v=2026080602');
 
 		$this->load->model('account/customer');
 

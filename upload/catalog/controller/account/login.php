@@ -48,7 +48,7 @@ class ControllerAccountLogin extends Controller {
 		$this->load->language('account/login');
 
 		$this->document->setTitle($this->language->get('heading_title'));
-		$this->document->addStyle('catalog/view/theme/basel/stylesheet/account-login.css');
+		$this->document->addStyle('catalog/view/theme/basel/stylesheet/account-login.css?v=2026080602');
 
 
 
