@@ -111,14 +111,47 @@ class LOC_Action
             return $this;
         }
 
-        if ( ! isset($action->stavke) || ! is_array($action->stavke)) {
-            throw new \UnexpectedValueException('Luceed action response does not contain valid web prices.');
+        if ( ! property_exists($action, 'stavke')) {
+            throw new \UnexpectedValueException('Luceed web price action does not contain the stavke field.');
+        }
+
+        // Depending on the Luceed serializer, an action without items can be null.
+        if (is_null($action->stavke)) {
+            return $this;
+        }
+
+        $items = $action->stavke;
+
+        // Luceed can serialize a single item, or a numerically keyed item list,
+        // as an object instead of a JSON array.
+        if (is_object($items)) {
+            $is_single_item = property_exists($items, 'artikl') ||
+                              property_exists($items, 'grupa_artikla') ||
+                              property_exists($items, 'robna_marka') ||
+                              property_exists($items, 'mpc') ||
+                              property_exists($items, 'mpc_rabat');
+
+            $items = $is_single_item ? [$items] : array_values(get_object_vars($items));
+        }
+
+        if ( ! is_array($items)) {
+            throw new \UnexpectedValueException(
+                'Luceed web price action contains invalid stavke type: ' . gettype($items) . '.'
+            );
+        }
+
+        foreach ($items as $item) {
+            if ( ! is_object($item)) {
+                throw new \UnexpectedValueException(
+                    'Luceed web price action contains an invalid item type: ' . gettype($item) . '.'
+                );
+            }
         }
 
         $categories = collect();
         $manufacturers = collect();
 
-        foreach ($action->stavke as $item) {
+        foreach ($items as $item) {
             if ($item->grupa_artikla && ! is_null($item->mpc_rabat)) {
 
                 if ($categories->has($item->grupa_artikla)) {
@@ -164,7 +197,7 @@ class LOC_Action
             }
         }
 
-        foreach ($action->stavke as $item) {
+        foreach ($items as $item) {
             if ($item->mpc) {
                 $this->prices_to_update->put($item->artikl, $item->mpc);
             }
