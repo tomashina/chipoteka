@@ -101,22 +101,30 @@ class LOC_Action
      */
     public function collectWebPrices()
     {
-        $action = $this->getActions()
-                        ->where('status', '!=', '1')
-                        ->where('naziv', '=', 'web_cijene')->first();
+        $web_actions = $this->getActions()
+                            ->where('status', '!=', '1')
+                            ->where('naziv', '=', 'web_cijene');
+
+        $action = $web_actions->first(function ($candidate) {
+            return is_object($candidate) &&
+                   property_exists($candidate, 'stavke') &&
+                   ! is_null($candidate->stavke);
+        });
 
         // Luceed legitimately omits web_cijene when no web promotion is active.
         // Regular prices collected before this method must still be synchronized.
-        if ( ! $action) {
+        if ($web_actions->isEmpty()) {
             return $this;
         }
 
-        if ( ! property_exists($action, 'stavke')) {
-            throw new \UnexpectedValueException('Luceed web price action does not contain the stavke field.');
-        }
+        // Depending on the Luceed serializer, an action without items can omit
+        // stavke completely or serialize it as null.
+        if ( ! $action) {
+            Log::store(
+                'Luceed returned web_cijene without stavke; synchronizing regular prices only.',
+                'luceed_price_sync_warning'
+            );
 
-        // Depending on the Luceed serializer, an action without items can be null.
-        if (is_null($action->stavke)) {
             return $this;
         }
 
