@@ -15,6 +15,8 @@ class ControllerAccountRegister extends Controller {
 		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js');
 		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js');
 		$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');
+		$this->document->addStyle('catalog/view/theme/basel/stylesheet/account-login.css');
+		$this->document->addStyle('catalog/view/theme/basel/stylesheet/account-register.css');
 
 		$this->load->model('account/customer');
 
@@ -98,7 +100,6 @@ class ControllerAccountRegister extends Controller {
 		}
 
 		$data['action'] = $this->url->link('account/register', '', true);
-
 		$data['customer_groups'] = array();
 
 		if (is_array($this->config->get('config_customer_group_display'))) {

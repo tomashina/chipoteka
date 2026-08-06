@@ -1,393 +1,262 @@
 {{ header }}
-<main  class="offcanvas-enabled">
-    <!-- Page Title-->
-    <div class=" pt-4 ps-lg-4 pe-lg-3 ">
-        <div class="container d-lg-flex justify-content-between py-2 py-lg-3 ">
-            <div class="order-lg-2 mb-3 mb-lg-0 pt-lg-2">
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb breadcrumb-dark flex-lg-nowrap justify-content-center justify-content-lg-start">
-                        {% for breadcrumb in breadcrumbs %}
-                            <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
-                        {% endfor %}
-                    </ol>
-                </nav>
-            </div>
-            <div class="order-lg-1 pe-lg-4 text-center text-lg-start">
-                <h1 class="category-page-title" id="page-title">{{ heading_title }}</h1>
-                <p class="fs-md">{{ text_account_already }}</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="container pb-5 mb-2 mb-md-4 ps-lg-2 pe-lg-3 justify-content-between" id="account-register">
-
-            <section class="col-lg-8 col-md-10 px-3 ">
-                {% if error_warning %}
-                    <div class="alert alert-primary alert-dismissible fade show" role="alert">
-                        {{ error_warning }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
+<main class="offcanvas-enabled">
+  <div class="account-login-page account-register-page">
+    <div class="account-login-page__shell">
+      <header class="account-login-page__heading account-register-page__heading">
+        <h1 id="page-title">{{ heading_title }}</h1>
+        <p class="account-register-page__lead">{{ text_account_already }}</p>
+        <nav aria-label="{{ text_breadcrumb|default('Breadcrumb') }}">
+          <ol class="account-login-breadcrumb">
+            {% for breadcrumb in breadcrumbs %}
+              <li{% if loop.last %} class="is-current" aria-current="page"{% endif %}>
+                {% if loop.first %}
+                  <a href="{{ breadcrumb.href }}" aria-label="{{ text_home_label }}"><i class="fas fa-home" aria-hidden="true"></i></a>
+                {% elseif loop.last %}
+                  <span>{{ breadcrumb.text }}</span>
+                {% else %}
+                  <a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
                 {% endif %}
-                <div class="row g-0  mb-4">
-                <div id="content" class="{{ class }}">
+              </li>
+            {% endfor %}
+          </ol>
+        </nav>
+      </header>
 
+      {{ content_top }}
 
-                  <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-horizontal">
+      {% if error_warning %}
+        <div class="alert alert-danger account-register-warning" role="alert">
+          <i class="fa fa-exclamation-circle" aria-hidden="true"></i> {{ error_warning }}
+        </div>
+      {% endif %}
 
+      <div id="content" class="account-register-layout">
+        <section class="account-login-card account-register-card" aria-labelledby="register-card-title">
+          <div class="account-login-card__intro account-register-card__intro">
+            <img class="account-register-card__intro-icon" src="catalog/view/theme/basel/image/account/bag-register.svg" alt="" width="76" height="86" aria-hidden="true">
+            <div>
+              <h2 id="register-card-title">{{ text_register_card_title }}</h2>
+              <p>{{ text_register_intro }}</p>
+            </div>
+          </div>
 
-                      <div class="row" id="account" >
+          <form action="{{ action }}" method="post" enctype="multipart/form-data" class="account-register-form" novalidate>
+            <section class="account-register-section" id="account" aria-labelledby="podaci_title">
+              <div class="account-register-section__heading">
+                <div>
+                  <span>{{ text_account_type }}</span>
+                  <h3 id="podaci_title">{{ text_your_details }}</h3>
+                </div>
+                <p>{{ text_required_note }}</p>
+              </div>
 
-                          <h2 class="h6 pt-1 pb-3 mb-3 mx-3 ps-0 border-bottom" id="podaci_title">{{ text_your_details }}</h2>
-                          <div class="col-sm-12">
-                              <div class="form-group mb-3 required" style="display: {% if customer_groups|length > 1 %} block {% else %} none {% endif %};">
-                                  {% for customer_group in customer_groups %}
-                                      {% if customer_group.customer_group_id == customer_group_id %}
-                                          <div class="form-check form-check-inline">
-                                              <label class="form-check-label" for="customer_group_id">
-                                              <input class="form-check-input" type="radio" name="customer_group_id" value="{{ customer_group.customer_group_id }}" id="cg{{ customer_group.customer_group_id }}"  checked="checked">
-                                            {{ customer_group.name }}</label>
-                                          </div>
-                                          {% else %}
-                                          <div class="form-check form-check-inline">
-                                              <label class="form-check-label" for="customer_group_id">
-                                              <input class="form-check-input" type="radio" name="customer_group_id" value="{{ customer_group.customer_group_id }}" id="cg{{ customer_group.customer_group_id }}">
-                                            {{ customer_group.name }}</label>
-                                          </div>
-                                      {% endif %}
-                                  {% endfor %}
-                              </div>
-                          </div>
+              {% if customer_groups|length > 1 %}
+                <div class="account-register-types" role="radiogroup" aria-label="{{ text_account_type }}">
+                  {% for customer_group in customer_groups %}
+                    <label class="account-register-type" for="cg{{ customer_group.customer_group_id }}">
+                      <input type="radio" name="customer_group_id" value="{{ customer_group.customer_group_id }}" id="cg{{ customer_group.customer_group_id }}"{% if customer_group.customer_group_id == customer_group_id %} checked="checked"{% endif %}>
+                      <span>
+                        <i class="fal {% if customer_group.customer_group_id == 2 %}fa-building{% else %}fa-user{% endif %}" aria-hidden="true"></i>
+                        {{ customer_group.name }}
+                      </span>
+                    </label>
+                  {% endfor %}
+                </div>
+              {% else %}
+                {% for customer_group in customer_groups %}
+                  <input type="hidden" name="customer_group_id" value="{{ customer_group.customer_group_id }}">
+                {% endfor %}
+              {% endif %}
 
-
-                          {% for custom_field in custom_fields %}
-                              <div class="col-sm-6 pravna">
-
-                                  {% if custom_field.type == 'text' %}
-                                      <div id="custom-field{{ custom_field.custom_field_id }}" class="form-group custom-field mb-3" data-sort="{{ custom_field.sort_order }}">
-                                          <label class="form-label" for="input-custom-field{{ custom_field.custom_field_id }}">{{ custom_field.name }}<span class="text-danger">*</span></label>
-
-                                          <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{% if register_custom_field[custom_field.custom_field_id] %}{{ register_custom_field[custom_field.custom_field_id] }}{% else %}{{ custom_field.value }}{% endif %}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" class="form-control" />
-                                          {% if error_custom_field[custom_field.custom_field_id] %}
-                                              <div class="text-danger">{{ error_custom_field[custom_field.custom_field_id] }}</div>
-                                          {% endif %}
-                                      </div>
-
-
-                                  {% endif %}
-                              </div>
-
-                          {% endfor %}
-
-
-                          <div class="col-sm-12">
-                              <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom pravna">Kontakt osoba</h2>
-                          </div>
-
-                        <div class="col-sm-6">
-
-                            <div class="form-group mb-3 required">
-                                <label class="form-label" for="input-firstname">{{ entry_firstname }}<span class="text-danger">*</span></label>
-                                <input type="text" name="firstname" value="{{ firstname }}" placeholder="{{ entry_firstname }}" id="input-firstname" class="form-control" />
-                                {% if error_firstname %}
-                                    <div class="text-danger">{{ error_firstname }}</div>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="form-group mb-3 required">
-                                <label class="form-label" for="input-lastname">{{ entry_lastname }} <span class="text-danger">*</span></label>
-
-                                 <input type="text" name="lastname" value="{{ lastname }}" placeholder="{{ entry_lastname }}" id="input-lastname" class="form-control" />
-                                  {% if error_lastname %}
-                                  <div class="text-danger">{{ error_lastname }}</div>
-                                  {% endif %}
-                            </div>
-                        </div>
-
-                          <div class="col-sm-6">
-                              <div class="form-group mb-3  required">
-                                <label class="form-label" for="input-email">{{ entry_email }} <span class="text-danger">*</span></label>
-
-                                  <input type="email" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-email" class="form-control" />
-                                  {% if error_email %}
-                                  <div class="text-danger">{{ error_email }}</div>
-                                  {% endif %}
-                              </div>
-                          </div>
-
-
-                          <div class="col-sm-6">
-                              <div class="form-group mb-3  required">
-                                    <label class="form-label" for="input-telephone">{{ entry_telephone }} <span class="text-danger">*</span></label>
-
-                                      <input type="tel" name="telephone" value="{{ telephone }}" placeholder="{{ entry_telephone }}" id="input-telephone" class="form-control" />
-                                      {% if error_telephone %}
-                                      <div class="text-danger">{{ error_telephone }}</div>
-                                      {% endif %}
-                                </div>
-                          </div>
-
-
-
-                          <div class="col-12">
-                          <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">{{ text_your_password }}</h2>
-
-                          </div>
-
-                          <div class="col-sm-6">
-                              <div class="form-group mb-3 required">
-
-                                <label class="form-label" for="input-password">{{ entry_password }}</label>
-                                  <div class="password-toggle w-100">
-                                  <input type="password" name="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" class="form-control" />
-                                  <label class="password-toggle-btn" aria-label="Show/hide password">
-                                      <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
-                                  </label>
-                                  </div>
-                                  {% if error_password %}
-                                  <div class="text-danger">{{ error_password }}</div>
-                                  {% endif %}
-                              </div>
-                          </div>
-                          <div class="col-sm-6">
-                              <div class="form-group mb-3 required">
-                                <label class="form-label" for="input-confirm">{{ entry_confirm }}</label>
-                                  <div class="password-toggle w-100">
-                                  <input type="password" name="confirm" value="{{ confirm }}" placeholder="{{ entry_confirm }}" id="input-confirm" class="form-control" />
-                                  <label class="password-toggle-btn" aria-label="Show/hide password">
-                                      <input class="password-toggle-check" type="checkbox"><span class="password-toggle-indicator"></span>
-                                  </label>
-                                  </div>
-                                  {% if error_confirm %}
-                                  <div class="text-danger">{{ error_confirm }}</div>
-                                  {% endif %}
-                              </div>
-                          </div>
-
-                          <div class="col-12 d-none">
-                          <h2 class="h6 pt-1 pb-3 mb-3 mt-3 ps-0 border-bottom">{{ text_newsletter }}</h2>
-                          </div>
-                          <div class="col-sm-12 d-none">
-                              <div class="form-group mb-3 required">
-                                  <label class="form-label me-3">{{ entry_newsletter }}</label>
-                                          {% if newsletter %}
-
-                                              <div class="form-check form-check-inline">
-                                                  <input class="form-check-input" type="radio" name="newsletter" value="1" checked="checked">
-                                                  <label class="form-check-label" for="ex-radio-4">{{ text_yes }}</label>
-                                              </div>
-                                              <div class="form-check form-check-inline">
-                                                  <input class="form-check-input" type="radio" name="newsletter" value="0">
-                                                  <label class="form-check-label" for="ex-radio-5">{{ text_no }}</label>
-                                              </div>
-
-                                              {% else %}
-                                                  <div class="form-check form-check-inline">
-                                                      <input class="form-check-input" type="radio" name="newsletter" value="1">
-                                                      <label class="form-check-label" for="ex-radio-4">{{ text_yes }}</label>
-                                                  </div>
-                                                  <div class="form-check form-check-inline">
-                                                      <input class="form-check-input" type="radio" name="newsletter" value="0"  checked="checked">
-                                                      <label class="form-check-label" for="ex-radio-5">{{ text_no }}</label>
-                                                  </div>
-                                              {% endif %}
-
-
-                                 </div>
-                         </div>
-
-
-                    {{ captcha }}
-
-                                {% if text_agree %}
-
-                                      <div class="col-sm-12 mt-3">
-                                            <div class="form-check form-check-inline">
-                                                <label class="form-check-label" >
-
-                                                    {% if agree %}
-                                                        <input type="checkbox" class="form-check-input" name="agree" value="1" checked="checked" />
-                                                    {% else %}
-                                                        <input type="checkbox" class="form-check-input" name="agree" value="1" />
-                                                    {% endif %}
-
-                                                    {{ text_agree }}</label>
-                                            </div>
-
-                                      </div>
-
-
-
-
-                                    <div class="col-sm-12 mt-4 mb-5">
-                                    <input type="submit" value="{{ text_register }}" class="btn btn-primary  mt-3 mt-sm-0 " />
-                                      </div>
-                                {% else %}
-                                    <div class="col-sm-12 mt-4 mb-5">
-                                    <input type="submit" value="{{ text_register }}" class="btn btn-primary mt-3 mt-sm-0 " />
-                                      </div>
-                                {% endif %}
+              <div class="account-register-fields account-register-company-fields">
+                {% for custom_field in custom_fields %}
+                  {% if custom_field.type == 'text' %}
+                    <div id="custom-field{{ custom_field.custom_field_id }}" class="account-register-field custom-field pravna" data-sort="{{ custom_field.sort_order }}">
+                      <label for="input-custom-field{{ custom_field.custom_field_id }}">{{ custom_field.name }} <span aria-hidden="true">*</span></label>
+                      <div class="account-login-control">
+                        <i class="fal fa-building" aria-hidden="true"></i>
+                        <input type="text" name="custom_field[{{ custom_field.location }}][{{ custom_field.custom_field_id }}]" value="{% if register_custom_field[custom_field.custom_field_id] %}{{ register_custom_field[custom_field.custom_field_id] }}{% else %}{{ custom_field.value }}{% endif %}" placeholder="{{ custom_field.name }}" id="input-custom-field{{ custom_field.custom_field_id }}" autocomplete="organization">
                       </div>
+                      {% if error_custom_field[custom_field.custom_field_id] %}
+                        <div class="account-register-error">{{ error_custom_field[custom_field.custom_field_id] }}</div>
+                      {% endif %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
 
-                  </form>
+              <h4 class="account-register-subheading pravna">{{ text_contact_person }}</h4>
+
+              <div class="account-register-fields">
+                <div class="account-register-field{% if error_firstname %} has-error{% endif %}">
+                  <label for="input-firstname">{{ entry_firstname }} <span aria-hidden="true">*</span></label>
+                  <div class="account-login-control">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                    <input type="text" name="firstname" value="{{ firstname }}" placeholder="{{ entry_firstname }}" id="input-firstname" autocomplete="given-name" required{% if error_firstname %} aria-invalid="true"{% endif %}>
                   </div>
-
+                  {% if error_firstname %}<div class="account-register-error">{{ error_firstname }}</div>{% endif %}
                 </div>
 
+                <div class="account-register-field{% if error_lastname %} has-error{% endif %}">
+                  <label for="input-lastname">{{ entry_lastname }} <span aria-hidden="true">*</span></label>
+                  <div class="account-login-control">
+                    <i class="fas fa-user" aria-hidden="true"></i>
+                    <input type="text" name="lastname" value="{{ lastname }}" placeholder="{{ entry_lastname }}" id="input-lastname" autocomplete="family-name" required{% if error_lastname %} aria-invalid="true"{% endif %}>
+                  </div>
+                  {% if error_lastname %}<div class="account-register-error">{{ error_lastname }}</div>{% endif %}
+                </div>
+
+                <div class="account-register-field{% if error_email %} has-error{% endif %}">
+                  <label for="input-email">{{ entry_email }} <span aria-hidden="true">*</span></label>
+                  <div class="account-login-control">
+                    <i class="fas fa-envelope" aria-hidden="true"></i>
+                    <input type="email" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-email" autocomplete="email" inputmode="email" required{% if error_email %} aria-invalid="true"{% endif %}>
+                  </div>
+                  {% if error_email %}<div class="account-register-error">{{ error_email }}</div>{% endif %}
+                </div>
+
+                <div class="account-register-field{% if error_telephone %} has-error{% endif %}">
+                  <label for="input-telephone">{{ entry_telephone }} <span aria-hidden="true">*</span></label>
+                  <div class="account-login-control">
+                    <i class="fas fa-phone" aria-hidden="true"></i>
+                    <input type="tel" name="telephone" value="{{ telephone }}" placeholder="{{ text_phone_placeholder }}" id="input-telephone" autocomplete="tel" inputmode="tel" required{% if error_telephone %} aria-invalid="true"{% endif %}>
+                  </div>
+                  {% if error_telephone %}<div class="account-register-error">{{ error_telephone }}</div>{% endif %}
+                </div>
+              </div>
             </section>
 
+            <section class="account-register-section" aria-labelledby="password-section-title">
+              <div class="account-register-section__heading account-register-section__heading--simple">
+                <h3 id="password-section-title">{{ text_your_password }}</h3>
+              </div>
 
+              <div class="account-register-fields">
+                <div class="account-register-field{% if error_password %} has-error{% endif %}">
+                  <label for="input-password">{{ entry_password }} <span aria-hidden="true">*</span></label>
+                  <div class="account-login-control">
+                    <i class="fas fa-lock-alt" aria-hidden="true"></i>
+                    <input type="password" name="password" value="{{ password }}" placeholder="{{ entry_password }}" id="input-password" autocomplete="new-password" required{% if error_password %} aria-invalid="true"{% endif %}>
+                    <button class="account-password-toggle" type="button" data-password-target="input-password" aria-label="{{ text_show_password }}" aria-pressed="false">
+                      <i class="fal fa-eye-slash" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                  {% if error_password %}<div class="account-register-error">{{ error_password }}</div>{% endif %}
+                </div>
+
+                <div class="account-register-field{% if error_confirm %} has-error{% endif %}">
+                  <label for="input-confirm">{{ entry_confirm }} <span aria-hidden="true">*</span></label>
+                  <div class="account-login-control">
+                    <i class="fas fa-lock-alt" aria-hidden="true"></i>
+                    <input type="password" name="confirm" value="{{ confirm }}" placeholder="{{ entry_confirm }}" id="input-confirm" autocomplete="new-password" required{% if error_confirm %} aria-invalid="true"{% endif %}>
+                    <button class="account-password-toggle" type="button" data-password-target="input-confirm" aria-label="{{ text_show_password }}" aria-pressed="false">
+                      <i class="fal fa-eye-slash" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                  {% if error_confirm %}<div class="account-register-error">{{ error_confirm }}</div>{% endif %}
+                </div>
+              </div>
+            </section>
+
+            <div class="d-none" aria-hidden="true">
+              <input type="radio" name="newsletter" value="1"{% if newsletter %} checked="checked"{% endif %}>
+              <input type="radio" name="newsletter" value="0"{% if not newsletter %} checked="checked"{% endif %}>
+            </div>
+
+            {% if captcha %}
+              <div class="account-register-captcha">{{ captcha }}</div>
+            {% endif %}
+
+            {% if text_agree %}
+              <label class="account-register-agree">
+                <input type="checkbox" name="agree" value="1"{% if agree %} checked="checked"{% endif %}>
+                {{ text_agree }}
+              </label>
+            {% endif %}
+
+            <div class="account-login-actions account-register-actions">
+              <button class="account-login-cta" type="submit">
+                <i class="fal fa-user-plus" aria-hidden="true"></i>
+                <span>{{ text_register }}</span>
+              </button>
+            </div>
+          </form>
+        </section>
+
+      </div>
+
+      {{ content_bottom }}
     </div>
+  </div>
 
+  <script>
+    (function ($) {
+      var personalTitle = '{{ text_your_details|e('js') }}';
+      var companyTitle = '{{ text_company_details|e('js') }}';
+      var showPasswordText = '{{ text_show_password|e('js') }}';
+      var hidePasswordText = '{{ text_hide_password|e('js') }}';
 
-    <script>
-        $(function(){
-            $("input#input-email").on({
-                keydown: function(e) {
-                    if (e.which === 32)
-                        return false;
-                },
-                change: function() {
-                    this.value = this.value.replace(/\s/g, "");
-                }
-            });
-        })
-    </script>
+      function selectedCustomerGroup() {
+        return $('input[name="customer_group_id"]:checked').val() || $('input[name="customer_group_id"]').val();
+      }
 
+      function syncCustomerType() {
+        var isCompany = selectedCustomerGroup() === '2';
+        $('.pravna').toggle(isCompany);
+        $('#podaci_title').text(isCompany ? companyTitle : personalTitle);
+      }
 
-<script><!--
-// Sort the custom fields
-
-
-
-
-
-
-    $(document).ready(function(){
-       // $('.pravna').hide();
-
-        var grupa = $('input:radio[name="customer_group_id"]:checked').val();
-
-
-        if(grupa=="2")
-        {
-            $('.pravna').show();
-
-
-            $('#podaci_title').text('Podaci tvrtke');
+      $('#input-email').on('keydown', function (event) {
+        if (event.which === 32) {
+          event.preventDefault();
         }
-        else if(grupa=="1")
-        {
-            $(".pravna").hide();
+      }).on('change', function () {
+        this.value = this.value.replace(/\s/g, '');
+      });
 
-            $('#podaci_title').text('Vaši osobni podaci');
+      $('.account-password-toggle').on('click', function () {
+        var button = $(this);
+        var input = document.getElementById(button.attr('data-password-target'));
+
+        if (!input) {
+          return;
         }
 
-        $('input:radio[name="customer_group_id"]').change(function(){
-            if($(this).val()=="2")
-            {
-                $('.pravna').show();
+        var passwordIsVisible = input.type === 'text';
+        input.type = passwordIsVisible ? 'password' : 'text';
+        button.attr('aria-pressed', passwordIsVisible ? 'false' : 'true');
+        button.attr('aria-label', passwordIsVisible ? showPasswordText : hidePasswordText);
+        button.find('i').attr('class', passwordIsVisible ? 'fal fa-eye-slash' : 'fal fa-eye');
+      });
 
+      $('input[name="customer_group_id"]').on('change', function () {
+        syncCustomerType();
 
-                $('#podaci_title').text('Podaci tvrtke');
+        $.ajax({
+          url: 'index.php?route=account/register/customfield&customer_group_id=' + encodeURIComponent(this.value),
+          dataType: 'json',
+          success: function (json) {
+            $('.custom-field').hide().removeClass('required');
+
+            for (var i = 0; i < json.length; i++) {
+              var customField = json[i];
+              var field = $('#custom-field' + customField.custom_field_id);
+
+              field.show();
+
+              if (customField.required) {
+                field.addClass('required');
+              }
             }
-            else if($(this).val()=="1")
-            {
-                $(".pravna").hide();
 
-                $('#podaci_title').text('Vaši osobni podaci');
-            }
+            syncCustomerType();
+          }
         });
+      });
 
+      syncCustomerType();
+      $('input[name="customer_group_id"]:checked').trigger('change');
+    }(jQuery));
+  </script>
 
-    });
-
-
-
-    $('input[name=\'customer_group_id\']').on('change', function() {
-        //$(".pravna").show();
-	$.ajax({
-		url: 'index.php?route=account/register/customfield&customer_group_id=' + this.value,
-		dataType: 'json',
-		success: function(json) {
-			$('.custom-field').hide();
-			$('.custom-field').removeClass('required');
-
-			for (i = 0; i < json.length; i++) {
-				custom_field = json[i];
-
-				$('#custom-field' + custom_field['custom_field_id']).show();
-
-
-
-				if (custom_field['required']) {
-					$('#custom-field' + custom_field['custom_field_id']).addClass('required');
-
-
-				}
-			}
-		},
-		error: function(xhr, ajaxOptions, thrownError) {
-			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-		}
-	});
-});
-
-$('input[name=\'customer_group_id\']:checked').trigger('change');
-//--></script> 
-<script><!--
-$('button[id^=\'button-custom-field\']').on('click', function() {
-	var element = this;
-
-	$('#form-upload').remove();
-
-	$('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" /></form>');
-
-	$('#form-upload input[name=\'file\']').trigger('click');
-
-	if (typeof timer != 'undefined') {
-    	clearInterval(timer);
-	}
-
-	timer = setInterval(function() {
-		if ($('#form-upload input[name=\'file\']').val() != '') {
-			clearInterval(timer);
-
-			$.ajax({
-				url: 'index.php?route=tool/upload',
-				type: 'post',
-				dataType: 'json',
-				data: new FormData($('#form-upload')[0]),
-				cache: false,
-				contentType: false,
-				processData: false,
-				beforeSend: function() {
-					$(element).button('loading');
-				},
-				complete: function() {
-					$(element).button('reset');
-				},
-				success: function(json) {
-					$(element).parent().find('.text-danger').remove();
-
-					if (json['error']) {
-						$(node).parent().find('input').after('<div class="text-danger">' + json['error'] + '</div>');
-					}
-
-					if (json['success']) {
-						alert(json['success']);
-
-						$(element).parent().find('input').val(json['code']);
-					}
-				},
-				error: function(xhr, ajaxOptions, thrownError) {
-					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-				}
-			});
-		}
-	}, 500);
-});
-//--></script> 
-
-{{ footer }} 
+{{ footer }}

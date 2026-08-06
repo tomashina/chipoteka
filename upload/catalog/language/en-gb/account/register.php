@@ -10,6 +10,17 @@ $_['text_your_details']    = 'Your Personal Details';
 $_['text_newsletter']      = 'Newsletter';
 $_['text_your_password']   = 'Your Password';
 $_['text_agree']           = 'I have read and agree to the <a href="%s" class="agree"><b>%s</b></a>';
+$_['text_register_card_title'] = 'Create account';
+$_['text_register_intro'] = 'Enter your details to create a customer account.';
+$_['text_account_type'] = 'Account type';
+$_['text_company_details'] = 'Company details';
+$_['text_contact_person'] = 'Contact person';
+$_['text_required_note'] = 'Fields marked with an asterisk are required.';
+$_['text_show_password'] = 'Show password';
+$_['text_hide_password'] = 'Hide password';
+$_['text_home_label'] = 'Home';
+$_['text_breadcrumb'] = 'Breadcrumb';
+$_['text_phone_placeholder'] = 'e.g. 0912345678';
 
 // Entry
 $_['entry_customer_group'] = 'Customer Group';
