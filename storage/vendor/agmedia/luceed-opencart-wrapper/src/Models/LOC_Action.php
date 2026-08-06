@@ -105,7 +105,13 @@ class LOC_Action
                         ->where('status', '!=', '1')
                         ->where('naziv', '=', 'web_cijene')->first();
 
-        if ( ! $action || ! isset($action->stavke) || ! is_array($action->stavke)) {
+        // Luceed legitimately omits web_cijene when no web promotion is active.
+        // Regular prices collected before this method must still be synchronized.
+        if ( ! $action) {
+            return $this;
+        }
+
+        if ( ! isset($action->stavke) || ! is_array($action->stavke)) {
             throw new \UnexpectedValueException('Luceed action response does not contain valid web prices.');
         }
 
