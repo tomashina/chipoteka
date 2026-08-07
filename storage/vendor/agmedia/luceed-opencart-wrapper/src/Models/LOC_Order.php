@@ -714,8 +714,8 @@ class LOC_Order
 
         $this->order['vezani_poziv_na_broj'] = $this->oc_order['poziv_na_broj'];
 
-        // For cash-on-delivery, wipe payment only on secondary (warehouse-to-store) split nalogs.
-        if (in_array($this->oc_order['payment_code'], ['cod', 'cod_preuzimanje'], true) && $nalog['broj_naloga'] !== '') {
+        // Split pickup nalogs are operational transfers; payment stays only on the main order.
+        if ($nalog['broj_naloga'] !== '') {
             $this->order['placanja'] = '';
         }
 
@@ -1075,16 +1075,16 @@ class LOC_Order
     {
         $date = Carbon::now();
 
-        if ($this->hasOIB()) {
-            $date = $date->addDay(7);
+        if ($this->oc_order['payment_code'] == 'wspay') {
+            $date = $date->addDay(14);
         }
 
-        if (in_array($this->oc_order['payment_code'], ['cod', 'wspay'])) {
-            $date = $date->addDay(10);
-        }
-
-        if ($this->oc_order['payment_code'] == 'bank_transfer') {
+        if (in_array($this->oc_order['payment_code'], ['cod', 'cod_preuzimanje', 'bank_transfer'], true)) {
             $date = $date->addDay(4);
+        }
+
+        if ($this->hasOIB() && $date->isToday()) {
+            $date = $date->addDay(7);
         }
 
         return $date->format(agconf('luceed.date'));
