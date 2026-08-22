@@ -235,9 +235,21 @@ class LOC_Stock
                     continue;
                 }
 
-                $value = $stock->dobavljac_stanje ?? null;
+                if ( ! property_exists($stock, 'dobavljac_stanje')) {
+                    $this->dobavljaci_valid = false;
+                    Log::store(['artikl' => $key, 'reason' => 'missing dobavljac_stanje'], $this->log_name . '-DOBAVLJACI-INVALID-QUANTITY');
+                    continue;
+                }
 
-                if ( ! is_numeric($value)) {
+                $value = $stock->dobavljac_stanje;
+
+                // Conservatively treat an explicit Luceed JSON null as zero
+                // supplier stock. Missing and malformed fields still fail closed.
+                if ($value === null) {
+                    $value = 0;
+                }
+
+                if ( ! is_numeric($value) || ! is_finite((float)$value)) {
                     $this->dobavljaci_valid = false;
                     Log::store(['artikl' => $key, 'value' => $value], $this->log_name . '-DOBAVLJACI-INVALID-QUANTITY');
                     continue;
