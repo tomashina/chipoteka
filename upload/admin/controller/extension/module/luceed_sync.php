@@ -37,6 +37,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
     const DURATION_MAIL_ACTIVATED_AT = '2026-07-17 13:35:10';
     const ORDER_STATUS_REQUEST_TIMEOUT_SECONDS = 60;
     const LUCEED_PRODUCT_SYNC_LOCK = 'chipoteka_luceed_product_sync';
+    // Product and stock jobs both mutate product quantities, so they must never overlap.
+    const LUCEED_STOCK_SYNC_LOCK = 'chipoteka_luceed_product_sync';
 
     private $error = array();
 
@@ -402,6 +404,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
                         $product_for_update                    = $_loc_ps->makeForUpdate($product);
                         $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
                         $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
+                        $product_for_update['status']          = min((int)$product_for_update['status'], (int)$_loc_ps->product_to_update['status']);
 
                         $this->model_catalog_product->editProduct(
                             $_loc_ps->product_to_update['product_id'],
@@ -493,6 +496,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
                     $product_for_update                    = $_loc_ps->makeForUpdate($product);
                     $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
                     $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
+                    $product_for_update['status']          = min((int)$product_for_update['status'], (int)$_loc_ps->product_to_update['status']);
 
                     $this->model_catalog_product->editProduct(
                         $_loc_ps->product_to_update['product_id'],
@@ -525,6 +529,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $product_for_update                    = $_loc_ps->makeForUpdate($product);
             $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
             $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
+            $product_for_update['status']          = min((int)$product_for_update['status'], (int)$_loc_ps->product_to_update['status']);
 
             $this->model_catalog_product->editProduct(
                 $_loc_ps->product_to_update['product_id'],
@@ -1024,19 +1029,49 @@ class ControllerExtensionModuleLuceedSync extends Controller
             return $this->output($response);
         }
 
-        $_loc = new LOC_Stock();
+        if ( ! $this->acquireLuceedStockSyncLock()) {
+            return $this->output([
+                'status'  => 409,
+                'message' => 'Sinkronizacija zaliha je već u tijeku.'
+            ]);
+        }
 
-        $_loc->setSkladista(
-            LuceedProduct::getWarehouseStock(agconf('import.warehouse.default'))
-        )->sort();
+        try {
+            $_loc = new LOC_Stock();
 
-        $_loc->setDobavljaci(
-            LuceedProduct::getSuplierStock()
-        )->sort();
+            $_loc->setSkladista(
+                LuceedProduct::getWarehouseStock(agconf('import.warehouse.default'))
+            )->sort();
 
-        $updated = $_loc->createQuery()->update();
+            $_loc->setDobavljaci(
+                LuceedProduct::getSuplierStock()
+            )->sort();
 
-        return $this->response($updated, 'update_stock');
+            if ( ! $_loc->isValid()) {
+                Log::store('Stock sync skipped because a feed was invalid or unexpectedly small.', 'luceed_stock_sync_invalid_feed');
+                $this->addServiceUnavailableHeader();
+
+                return $this->output([
+                    'status'  => 503,
+                    'message' => 'Luceed feed zaliha je neispravan ili nepotpun. Postojeće količine nisu promijenjene.'
+                ]);
+            }
+
+            $updated = $_loc->createQuery()->update();
+
+            return $this->response($updated, 'update_stock');
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_stock_sync_error');
+            Log::store($e->getTraceAsString(), 'luceed_stock_sync_error');
+            $this->addServiceUnavailableHeader();
+
+            return $this->output([
+                'status'  => 503,
+                'message' => 'Sinkronizacija zaliha nije uspjela. Promjene su poništene.'
+            ]);
+        } finally {
+            $this->releaseLuceedStockSyncLock();
+        }
     }
 
 
@@ -1050,16 +1085,45 @@ class ControllerExtensionModuleLuceedSync extends Controller
             return $this->output($response);
         }
 
-        $_loc = new LOC_Stock();
+        if ( ! $this->acquireLuceedStockSyncLock()) {
+            return $this->output([
+                'status'  => 409,
+                'message' => 'Sinkronizacija zaliha je već u tijeku.'
+            ]);
+        }
 
-        $_loc->setSkladista(
-            LuceedProduct::getWarehouseStock(agconf('import.warehouse.default'))
-        )->sort();
+        try {
+            $_loc = new LOC_Stock();
 
+            $_loc->setSkladista(
+                LuceedProduct::getWarehouseStock(agconf('import.warehouse.default'))
+            )->sort();
 
-        $updated = $_loc->createQuery()->updateWithoutSupliers();
+            if ( ! $_loc->isValid()) {
+                Log::store('Warehouse stock sync skipped because the feed was invalid or unexpectedly small.', 'luceed_stock_sync_invalid_feed');
+                $this->addServiceUnavailableHeader();
 
-        return $this->response($updated, 'update_stock');
+                return $this->output([
+                    'status'  => 503,
+                    'message' => 'Luceed warehouse feed je neispravan ili nepotpun. Postojeće količine nisu promijenjene.'
+                ]);
+            }
+
+            $updated = $_loc->createQuery()->updateWithoutSupliers();
+
+            return $this->response($updated, 'update_stock');
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_stock_sync_error');
+            Log::store($e->getTraceAsString(), 'luceed_stock_sync_error');
+            $this->addServiceUnavailableHeader();
+
+            return $this->output([
+                'status'  => 503,
+                'message' => 'Sinkronizacija warehouse zaliha nije uspjela.'
+            ]);
+        } finally {
+            $this->releaseLuceedStockSyncLock();
+        }
     }
 
 
@@ -2679,7 +2743,42 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     private function releaseLuceedProductSyncLock(): void
     {
-        $this->db->query("SELECT RELEASE_LOCK('" . self::LUCEED_PRODUCT_SYNC_LOCK . "')");
+        try {
+            $this->db->query("SELECT RELEASE_LOCK('" . self::LUCEED_PRODUCT_SYNC_LOCK . "')");
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_product_sync_lock_release_error');
+        }
+    }
+
+
+    /**
+     * Prevent overlapping automatic and manually triggered stock updates.
+     */
+    private function acquireLuceedStockSyncLock(): bool
+    {
+        $result = $this->db->query("SELECT GET_LOCK('" . self::LUCEED_STOCK_SYNC_LOCK . "', 0) AS acquired");
+
+        return isset($result->row['acquired']) && (int)$result->row['acquired'] === 1;
+    }
+
+
+    private function releaseLuceedStockSyncLock(): void
+    {
+        try {
+            $this->db->query("SELECT RELEASE_LOCK('" . self::LUCEED_STOCK_SYNC_LOCK . "')");
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_stock_sync_lock_release_error');
+        }
+    }
+
+
+    private function addServiceUnavailableHeader(): void
+    {
+        $protocol = isset($this->request->server['SERVER_PROTOCOL'])
+            ? $this->request->server['SERVER_PROTOCOL']
+            : 'HTTP/1.1';
+
+        $this->response->addHeader($protocol . ' 503 Service Unavailable');
     }
 
 
