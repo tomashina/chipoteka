@@ -1,4 +1,5 @@
 {{ header }}
+{% set reservation_replace = {'Narudžba':'Rezervacija', 'narudžbu':'rezervaciju', 'narudžbe':'rezervacije', 'narudžba':'rezervacija', 'Naruči':'Rezerviraj', 'naruči':'rezerviraj'} %}
 <main class="offcanvas-enabled">
 <div class="container-fluid pb-5 mb-sm-4">
   <div class="pt-5">
@@ -7,7 +8,7 @@
         <h2 class="h4 pb-3">{{ text_tnx }}</h2>
 
         {% if groupId < 3  %}
-              {{ text_message }}
+              {{ is_pickup_reservation ? text_message|replace(reservation_replace) : text_message }}
              <div class="mb-3">
                {% if paymethod=='bank_transfer'%}
                {% if uplatnica =='error' %}
@@ -25,7 +26,7 @@
         <table class="table table-bordered table-striped">
           <thead>
           <tr>
-            <td class="text-left" colspan="2">{{ text_order_detail }}</td>
+            <td class="text-left" colspan="2">{{ is_pickup_reservation ? text_order_detail|replace(reservation_replace) : text_order_detail }}</td>
           </tr>
           </thead>
           <tbody>
@@ -34,7 +35,7 @@
               {% if invoice_no %}
                 <b>{{ text_invoice_no }}</b> {{ invoice_no }}<br />
               {% endif %}
-              <b>{{ text_order_id }}</b> #{{ order_id }}<br />
+              <b>{{ is_pickup_reservation ? text_order_id|replace(reservation_replace) : text_order_id }}</b> #{{ order_id }}<br />
               <b>{{ text_date_added }}</b> {{ date_added }}</td>
             <td class="text-left" style="width: 50%;">
               {% if payment_method %}
@@ -127,7 +128,7 @@
             <tbody>
             {% for total in totals %}
               <tr>
-                <td><b>{{ total.title }}</b></td>
+                <td><b>{{ is_pickup_reservation ? total.title|replace(reservation_replace) : total.title }}</b></td>
                 <td class="text-right">{{ total.text }}</td>
               </tr>
             {% endfor %}
@@ -151,11 +152,10 @@
         {% endif %}
         {% endif %}
        <!-- <a class="btn btn-secondary mt-3 me-3" href="shop-grid-ls.html">Nastavak na trgovinu</a>-->
-        <a class="btn btn-primary mt-3" href="{{ continue }}">&nbsp;Nastavak na trgovinu</a>  {% if order_id %} <a class="btn btn-outline-primary mt-3" href="javascript:if(window.print)window.print()">&nbsp;Isprintaj narudžbu</a> {% endif %}
+        <a class="btn btn-primary mt-3" href="{{ continue }}">&nbsp;Nastavak na trgovinu</a>  {% if order_id %} <a class="btn btn-outline-primary mt-3" href="javascript:if(window.print)window.print()">&nbsp;{% if is_pickup_reservation %}Isprintaj rezervaciju{% else %}Isprintaj narudžbu{% endif %}</a> {% endif %}
       </div>
     </div>
   </div>
 </div>
 
 {{ footer }}
-

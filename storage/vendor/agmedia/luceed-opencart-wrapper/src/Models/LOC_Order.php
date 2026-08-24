@@ -683,7 +683,7 @@ class LOC_Order
             'narudzba'                  => $this->oc_order['order_id'] . '-' . Carbon::now()->year . $nalog['broj_naloga'],
             'datum'                     => Carbon::make($this->oc_order['date_added'])->format(agconf('luceed.date')),
             'raspored'                  => Carbon::make($this->oc_order['date_added'])->format('d.m.Y H:i:s'),
-            'skladiste'                 => $nalog['na__skladiste'],
+            'skladiste'                 => $nalog['sa__skladiste'],
             'sa__skladiste'             => $nalog['sa__skladiste'],
             'na__skladiste'             => $nalog['na__skladiste'],
             //'pj_id'                     => $nalog['pj'],

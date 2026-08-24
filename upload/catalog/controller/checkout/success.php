@@ -7,6 +7,7 @@ class ControllerCheckoutSuccess extends Controller {
 	public function index() {
 		$this->load->language('checkout/success');
 
+        $data['is_pickup_reservation'] = false;
 
 
 		if (isset($this->session->data['order_id'])) {
@@ -22,6 +23,7 @@ class ControllerCheckoutSuccess extends Controller {
                     $data['paymethod'] = $order_info['payment_code'];
                     $data['shmethod'] = $order_info['shipping_code'];
                     $data['order_id'] = $order_id;
+                    $data['is_pickup_reservation'] = ($data['paymethod'] === 'cod_preuzimanje' && strpos($data['shmethod'], 'pickup.pickup_') === 0);
 
                     $this->cart->clear();
 
@@ -338,6 +340,12 @@ class ControllerCheckoutSuccess extends Controller {
                   }
 
 
+
+              }
+
+              elseif ($data['paymethod'] == 'cod_preuzimanje') {
+
+                  $data['text_message'] = sprintf('<p>Uredno smo zaprimili Vašu rezervaciju broj %s</p><p>Naš tim u webshopu će je obraditi u najbržem mogućem roku.</p>', $order_id);
 
               }
 
