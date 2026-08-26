@@ -14,6 +14,7 @@ $_['text_forgotten']               = 'Forgotten Password';
 $_['text_home_label']               = 'Home';
 $_['text_login_intro']              = 'Enter your details to access your account.';
 $_['text_google_continue']          = 'Continue with Google';
+$_['text_google_register']          = 'Registriraj se Google računom';
 $_['text_or']                       = 'or';
 $_['text_email_placeholder']        = 'e.g. name@example.com';
 $_['text_password_placeholder']     = 'Enter your password';

@@ -173,6 +173,15 @@
   line-height: 1;
 }
 
+.account-login-card--form .account-login-card__intro,
+.account-login-card--benefits .account-new-customer-intro {
+  min-height: 90px;
+}
+
+.account-google-button--register {
+  margin-bottom: 4px;
+}
+
 .account-login-divider {
   display: flex;
   align-items: center;
@@ -361,7 +370,7 @@
 }
 
 .account-login-card--benefits {
-  padding: 24px 30px;
+  padding: 26px 30px 24px;
 }
 
 .account-new-customer-intro {
@@ -481,6 +490,11 @@
   .account-login-card__intro,
   .account-new-customer-intro {
     gap: 18px;
+  }
+
+  .account-login-card--form .account-login-card__intro,
+  .account-login-card--benefits .account-new-customer-intro {
+    min-height: 0;
   }
 
   .account-login-card__intro-icon {

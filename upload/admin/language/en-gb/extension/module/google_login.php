@@ -9,7 +9,7 @@ $_['text_edit'] = 'Google Login settings';
 $_['text_enabled'] = 'Enabled';
 $_['text_disabled'] = 'Disabled';
 $_['text_google_cloud_help'] = 'Create an OAuth 2.0 Client ID of type Web application in Google Cloud Console and add this address to Authorized redirect URIs.';
-$_['text_existing_customers_only'] = 'Login is allowed only when the verified Google email already belongs to a webshop customer. New customers are not registered automatically.';
+$_['text_existing_customers_only'] = 'Existing customers sign in with their verified Google email. New customers can start Google registration and must complete the required details, accept the terms, and pass reCAPTCHA before the account is created.';
 
 // Entry
 $_['entry_status'] = 'Status';

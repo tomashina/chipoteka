@@ -23,6 +23,12 @@ $_['text_hide_password'] = 'Sakrij lozinku';
 $_['text_home_label'] = 'Početna';
 $_['text_breadcrumb'] = 'Navigacija';
 $_['text_phone_placeholder'] = 'npr. 0912345678';
+$_['text_google_register'] = 'Registriraj se Google računom';
+$_['text_or'] = 'ili';
+$_['text_google_verified'] = 'Google račun je potvrđen';
+$_['text_google_password_help'] = 'Dovrši obavezne podatke. Lozinka nije potrebna za prijavu putem Googlea.';
+$_['text_google_email_verified'] = 'E-mail je verificirao Google';
+$_['text_use_email_registration'] = 'Registriraj se e-mailom';
 
 // Entry
 $_['entry_customer_group'] = 'Korisnička grupa';

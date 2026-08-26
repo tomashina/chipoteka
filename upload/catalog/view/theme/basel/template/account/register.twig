@@ -40,6 +40,27 @@
             </div>
           </div>
 
+		  {% if success %}
+			<div class="alert alert-success" role="status"><i class="fa fa-check-circle" aria-hidden="true"></i> {{ success }}</div>
+		  {% endif %}
+
+		  {% if google_registration %}
+			<div class="account-google-registration-status">
+			  <span class="account-google-mark" aria-hidden="true">G</span>
+			  <div>
+				<strong>{{ text_google_verified }}</strong>
+				<p>{{ text_google_password_help }}</p>
+			  </div>
+			  <a href="{{ google_cancel }}">{{ text_use_email_registration }}</a>
+			</div>
+		  {% elseif google_registration_enabled %}
+			<a class="account-google-button" href="{{ google_register }}" aria-label="{{ text_google_register }}">
+			  <span class="account-google-mark" aria-hidden="true">G</span>
+			  <span>{{ text_google_register }}</span>
+			</a>
+			<div class="account-login-divider account-register-divider"><span>{{ text_or }}</span></div>
+		  {% endif %}
+
           <form action="{{ action }}" method="post" enctype="multipart/form-data" class="account-register-form" novalidate>
             <section class="account-register-section" id="account" aria-labelledby="podaci_title">
               <div class="account-register-section__heading">
@@ -110,8 +131,9 @@
                   <label for="input-email">{{ entry_email }} <span aria-hidden="true">*</span></label>
                   <div class="account-login-control">
                     <i class="fas fa-envelope" aria-hidden="true"></i>
-                    <input type="email" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-email" autocomplete="email" inputmode="email" required{% if error_email %} aria-invalid="true"{% endif %}>
+					<input type="email" name="email" value="{{ email }}" placeholder="{{ entry_email }}" id="input-email" autocomplete="email" inputmode="email" required{% if google_registration %} readonly aria-describedby="google-email-status"{% endif %}{% if error_email %} aria-invalid="true"{% endif %}>
                   </div>
+				  {% if google_registration %}<div class="account-google-email-status" id="google-email-status"><i class="fas fa-check-circle" aria-hidden="true"></i> {{ text_google_email_verified }}</div>{% endif %}
                   {% if error_email %}<div class="account-register-error">{{ error_email }}</div>{% endif %}
                 </div>
 
@@ -126,7 +148,8 @@
               </div>
             </section>
 
-            <section class="account-register-section" aria-labelledby="password-section-title">
+			{% if not google_registration %}
+			<section class="account-register-section" aria-labelledby="password-section-title">
               <div class="account-register-section__heading account-register-section__heading--simple">
                 <h3 id="password-section-title">{{ text_your_password }}</h3>
               </div>
@@ -156,7 +179,8 @@
                   {% if error_confirm %}<div class="account-register-error">{{ error_confirm }}</div>{% endif %}
                 </div>
               </div>
-            </section>
+			</section>
+			{% endif %}
 
             <div class="d-none" aria-hidden="true">
               <input type="radio" name="newsletter" value="1"{% if newsletter %} checked="checked"{% endif %}>

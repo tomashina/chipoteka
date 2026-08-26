@@ -8,3 +8,4 @@ $_['error_email_authority'] = 'Za izravnu prijavu koristite verificiranu Gmail i
 $_['error_customer_missing'] = 'Za ovu Google e-mail adresu ne postoji korisnički račun. Prijavite se lozinkom ili izradite račun.';
 $_['error_customer_disabled'] = 'Ovaj korisnički račun nije aktivan. Obratite se korisničkoj podršci.';
 $_['error_login'] = 'Prijava na korisnički račun nije uspjela.';
+$_['text_registration_verified'] = 'Google račun je potvrđen. Dovršite podatke za registraciju.';

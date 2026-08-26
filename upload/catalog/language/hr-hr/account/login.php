@@ -15,6 +15,7 @@ $_['text_forgotten']               = 'Zaboravljena lozinka';
 $_['text_home_label']               = 'Početna';
 $_['text_login_intro']              = 'Unesi svoje podatke za pristup računu.';
 $_['text_google_continue']          = 'Nastavi s Google računom';
+$_['text_google_register']          = 'Registriraj se Google računom';
 $_['text_or']                       = 'ili';
 $_['text_email_placeholder']        = 'npr. ime.prezime@email.hr';
 $_['text_password_placeholder']     = 'Unesi svoju lozinku';

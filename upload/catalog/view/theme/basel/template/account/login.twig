@@ -110,6 +110,13 @@
           </div>
         </div>
 
+		{% if google_login_enabled %}
+		  <a class="account-google-button account-google-button--register" href="{{ google_register }}" aria-label="{{ text_google_register }}">
+			<span class="account-google-mark" aria-hidden="true">G</span>
+			<span>{{ text_google_register }}</span>
+		  </a>
+		{% endif %}
+
         <ul class="account-benefits">
           <li>
             <img src="catalog/view/theme/basel/image/account/quick-purchase.webp" alt="" width="74" height="74" aria-hidden="true">

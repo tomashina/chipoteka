@@ -8,3 +8,4 @@ $_['error_email_authority'] = 'Use a verified Gmail or Google Workspace address 
 $_['error_customer_missing'] = 'No customer account exists for this Google email address. Sign in with your password or create an account.';
 $_['error_customer_disabled'] = 'This customer account is not active. Please contact customer support.';
 $_['error_login'] = 'Customer account login failed.';
+$_['text_registration_verified'] = 'Your Google account has been verified. Complete the registration details.';

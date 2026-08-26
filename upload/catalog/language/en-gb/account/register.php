@@ -21,6 +21,12 @@ $_['text_hide_password'] = 'Hide password';
 $_['text_home_label'] = 'Home';
 $_['text_breadcrumb'] = 'Breadcrumb';
 $_['text_phone_placeholder'] = 'e.g. 0912345678';
+$_['text_google_register'] = 'Registriraj se Google računom';
+$_['text_or'] = 'or';
+$_['text_google_verified'] = 'Google account verified';
+$_['text_google_password_help'] = 'Complete the required details. A password is not needed when signing in with Google.';
+$_['text_google_email_verified'] = 'Email verified by Google';
+$_['text_use_email_registration'] = 'Register with email';
 
 // Entry
 $_['entry_customer_group'] = 'Customer Group';

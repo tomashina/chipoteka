@@ -68,6 +68,54 @@
   flex-direction: column;
 }
 
+.account-register-divider {
+  margin-bottom: 20px;
+}
+
+.account-google-registration-status {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+  padding: 14px 16px;
+  background: #f7faf8;
+  border: 1px solid #cfe3d6;
+  border-radius: 8px;
+}
+
+.account-google-registration-status .account-google-mark {
+  font-size: 1.45rem;
+}
+
+.account-google-registration-status strong {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--account-ink);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.account-google-registration-status p {
+  margin: 0;
+  color: var(--account-muted);
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.account-google-registration-status a {
+  color: var(--account-red);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.account-google-registration-status a:hover,
+.account-google-registration-status a:focus-visible {
+  text-decoration: underline;
+}
+
 .account-register-section {
   padding: 2px 0 24px;
 }
@@ -211,6 +259,23 @@
   min-height: 50px;
 }
 
+.account-register-field .account-login-control input[readonly] {
+  background: #f6f7f9;
+  color: #4f5968;
+  cursor: not-allowed;
+}
+
+.account-google-email-status {
+  margin-top: 6px;
+  color: #26834a;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
+.account-google-email-status i {
+  margin-right: 4px;
+}
+
 .account-register-field.has-error .account-login-control input,
 .account-register-field .account-login-control input[aria-invalid="true"] {
   border-color: var(--account-red);
@@ -320,6 +385,15 @@
   .account-register-types {
     grid-template-columns: 1fr;
     gap: 9px;
+  }
+
+  .account-google-registration-status {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .account-google-registration-status > a {
+    grid-column: 2;
+    justify-self: start;
   }
 
   .account-register-captcha {

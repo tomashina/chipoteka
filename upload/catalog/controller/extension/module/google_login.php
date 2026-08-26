@@ -4,13 +4,14 @@ class ControllerExtensionModuleGoogleLogin extends Controller {
 
 	public function index() {
 		$this->load->language('extension/module/google_login');
+		$flow = $this->getRequestedFlow();
 
 		if ($this->customer->isLogged()) {
 			$this->response->redirect($this->url->link('account/account', '', true));
 		}
 
 		if (!$this->isEnabled()) {
-			$this->fail($this->language->get('error_disabled'));
+			$this->fail($this->language->get('error_disabled'), '', $flow);
 		}
 
 		try {
@@ -36,6 +37,7 @@ class ControllerExtensionModuleGoogleLogin extends Controller {
 			'state'         => $state,
 			'nonce'         => $nonce,
 			'code_verifier' => $code_verifier,
+			'flow'          => $flow,
 			'redirect'      => $redirect,
 			'created_at'    => time()
 		);
@@ -61,36 +63,36 @@ class ControllerExtensionModuleGoogleLogin extends Controller {
 			$this->response->redirect($this->url->link('account/account', '', true));
 		}
 
-		if (!$this->isEnabled()) {
-			unset($this->session->data['google_login_transaction']);
-			$this->fail($this->language->get('error_disabled'));
-		}
-
 		$transaction = isset($this->session->data['google_login_transaction']) ? $this->session->data['google_login_transaction'] : array();
 		unset($this->session->data['google_login_transaction']);
+		$flow = isset($transaction['flow']) && $transaction['flow'] === 'register' ? 'register' : 'login';
+
+		if (!$this->isEnabled()) {
+			$this->fail($this->language->get('error_disabled'), '', $flow);
+		}
 
 		if (!$this->isValidTransaction($transaction)) {
-			$this->fail($this->language->get('error_expired'));
+			$this->fail($this->language->get('error_expired'), '', $flow);
 		}
 
 		$state = isset($this->request->get['state']) ? (string)$this->request->get['state'] : '';
 
 		if ($state === '' || !hash_equals($transaction['state'], $state)) {
-			$this->fail($this->language->get('error_invalid_request'), 'OAuth state validation failed.');
+			$this->fail($this->language->get('error_invalid_request'), 'OAuth state validation failed.', $flow);
 		}
 
 		if (!empty($this->request->get['error'])) {
 			if ($this->request->get['error'] === 'access_denied') {
-				$this->fail($this->language->get('error_cancelled'));
+				$this->fail($this->language->get('error_cancelled'), '', $flow);
 			}
 
-			$this->fail($this->language->get('error_service'), 'Google returned OAuth error: ' . preg_replace('/[^a-z0-9_\-]/i', '', $this->request->get['error']));
+			$this->fail($this->language->get('error_service'), 'Google returned OAuth error: ' . preg_replace('/[^a-z0-9_\-]/i', '', $this->request->get['error']), $flow);
 		}
 
 		$code = isset($this->request->get['code']) ? (string)$this->request->get['code'] : '';
 
 		if ($code === '' || strlen($code) > 4096) {
-			$this->fail($this->language->get('error_invalid_request'), 'Authorization code is missing or invalid.');
+			$this->fail($this->language->get('error_invalid_request'), 'Authorization code is missing or invalid.', $flow);
 		}
 
 		try {
@@ -107,28 +109,32 @@ class ControllerExtensionModuleGoogleLogin extends Controller {
 
 			$claims = $this->oidc->verifyIdToken($token_response['id_token'], $client_id, $transaction['nonce']);
 		} catch (\Exception $exception) {
-			$this->fail($this->language->get('error_service'), $exception->getMessage());
+			$this->fail($this->language->get('error_service'), $exception->getMessage(), $flow);
 		}
 
 		$email = utf8_strtolower(trim($claims['email']));
 
 		if (!$this->isAuthoritativeGoogleEmail($email, $claims)) {
-			$this->fail($this->language->get('error_email_authority'));
+			$this->fail($this->language->get('error_email_authority'), '', $flow);
 		}
 
 		$this->load->model('account/customer');
 		$customer_info = $this->model_account_customer->getCustomerByEmail($email);
 
 		if (!$customer_info) {
+			if ($flow === 'register') {
+				$this->startRegistration($email, $claims);
+			}
+
 			$this->fail($this->language->get('error_customer_missing'));
 		}
 
 		if (empty($customer_info['status'])) {
-			$this->fail($this->language->get('error_customer_disabled'));
+			$this->fail($this->language->get('error_customer_disabled'), '', $flow);
 		}
 
 		if (!$this->customer->login($customer_info['email'], '', true)) {
-			$this->fail($this->language->get('error_login'));
+			$this->fail($this->language->get('error_login'), '', $flow);
 		}
 
 		$this->model_account_customer->deleteLoginAttempts($customer_info['email']);
@@ -146,6 +152,7 @@ class ControllerExtensionModuleGoogleLogin extends Controller {
 	}
 
 	private function completeLogin() {
+		unset($this->session->data['google_registration']);
 		unset($this->session->data['guest']);
 
 		$this->load->model('account/address');
@@ -175,10 +182,11 @@ class ControllerExtensionModuleGoogleLogin extends Controller {
 	}
 
 	private function isValidTransaction(array $transaction) {
-		return isset($transaction['state'], $transaction['nonce'], $transaction['code_verifier'], $transaction['created_at'])
+		return isset($transaction['state'], $transaction['nonce'], $transaction['code_verifier'], $transaction['flow'], $transaction['created_at'])
 			&& is_string($transaction['state'])
 			&& is_string($transaction['nonce'])
 			&& is_string($transaction['code_verifier'])
+			&& in_array($transaction['flow'], array('login', 'register'), true)
 			&& is_numeric($transaction['created_at'])
 			&& (int)$transaction['created_at'] >= (time() - self::TRANSACTION_TTL)
 			&& (int)$transaction['created_at'] <= (time() + 60);
@@ -192,6 +200,32 @@ class ControllerExtensionModuleGoogleLogin extends Controller {
 		}
 
 		return !empty($claims['hd']) && is_string($claims['hd']);
+	}
+
+	private function getRequestedFlow() {
+		return isset($this->request->get['flow']) && $this->request->get['flow'] === 'register' ? 'register' : 'login';
+	}
+
+	private function startRegistration($email, array $claims) {
+		$firstname = isset($claims['given_name']) && is_string($claims['given_name']) ? trim($claims['given_name']) : '';
+		$lastname = isset($claims['family_name']) && is_string($claims['family_name']) ? trim($claims['family_name']) : '';
+
+		if ($firstname === '' && !empty($claims['name']) && is_string($claims['name'])) {
+			$name_parts = preg_split('/\s+/u', trim($claims['name']), 2);
+			$firstname = isset($name_parts[0]) ? $name_parts[0] : '';
+			$lastname = isset($name_parts[1]) ? $name_parts[1] : $lastname;
+		}
+
+		$this->session->data['google_registration'] = array(
+			'email'      => $email,
+			'firstname'  => $firstname,
+			'lastname'   => $lastname,
+			'sub'        => $claims['sub'],
+			'created_at' => time()
+		);
+
+		$this->session->data['success'] = $this->language->get('text_registration_verified');
+		$this->response->redirect($this->url->link('account/register', '', true));
 	}
 
 	private function isAllowedRedirect($url) {
@@ -239,12 +273,13 @@ class ControllerExtensionModuleGoogleLogin extends Controller {
 		return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
 	}
 
-	private function fail($message, $log_message = '') {
+	private function fail($message, $log_message = '', $flow = 'login') {
 		if ($log_message !== '') {
 			$this->log->write('Google Login: ' . $log_message);
 		}
 
 		$this->session->data['error'] = $message;
-		$this->response->redirect($this->url->link('account/login', '', true));
+		$route = $flow === 'register' ? 'account/register' : 'account/login';
+		$this->response->redirect($this->url->link($route, '', true));
 	}
 }
