@@ -23,7 +23,7 @@ class ControllerAccountSuccess extends Controller {
 		);
 
 		if ($this->customer->isLogged()) {
-			$data['text_message'] = sprintf($this->language->get('text_message'), $this->url->link('information/contact'));
+			$data['text_message'] = sprintf($this->language->get('text_message'), 'mailto:webnarudzba@chipoteka.hr');
 		} else {
 			$data['text_message'] = sprintf($this->language->get('text_approval'), $this->config->get('config_name'), $this->url->link('information/contact'));
 		}
