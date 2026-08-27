@@ -7,7 +7,10 @@ class ControllerMailRegister extends Controller {
 		$data['text_login'] = $this->language->get('text_login');
 		$data['text_approval'] = $this->language->get('text_approval');
 		$data['text_service'] = $this->language->get('text_service');
+		$data['text_questions'] = $this->language->get('text_questions');
+		$data['text_contact_help'] = $this->language->get('text_contact_help');
 		$data['text_thanks'] = $this->language->get('text_thanks');
+		$data['contact_email'] = 'webnarudzba@chipoteka.hr';
 
 		$this->load->model('account/customer_group');
 			
@@ -41,6 +44,7 @@ class ControllerMailRegister extends Controller {
 		$mail->setSender(html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'));
 		$mail->setSubject(sprintf($this->language->get('text_subject'), html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8')));
 		$mail->setText($this->load->view('mail/register', $data));
+		$mail->setHtml($this->load->view('mail/register_html', $data));
 		$mail->send(); 
 	}
 	
@@ -104,4 +108,4 @@ class ControllerMailRegister extends Controller {
 			}
 		}	
 	}
-}		
+}
