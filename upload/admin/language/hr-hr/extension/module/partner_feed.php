@@ -44,7 +44,7 @@ $_['entry_sort_order'] = 'Redoslijed';
 
 $_['help_code'] = 'Koristi se u XML URL-u. Ako ostane prazno, generira se iz naziva.';
 $_['help_luceed_partner_id'] = 'ID mora ostati tekst, npr. 00983204 ili 14956-N1.';
-$_['help_customer_group'] = 'Odaberite postojeću grupu ili kreirajte novu. Luceed cijena spremat će se u product_discount te grupe.';
+$_['help_customer_group'] = 'Odaberite postojeću grupu ili kreirajte novu. Više feedova može koristiti istu grupu i tada dijele cijene spremljene u product_discount te grupe.';
 $_['help_feed_status'] = 'XML sadrži samo proizvode koji imaju cijenu za odabranu grupu i quantityws veći od nule.';
 
 $_['button_sync_all'] = 'Sinkroniziraj sve';
@@ -60,6 +60,5 @@ $_['error_luceed_partner_exists'] = 'Taj Luceed ID kupca već je dodan.';
 $_['error_customer_group'] = 'Odaberite grupu kupaca ili unesite naziv nove grupe.';
 $_['error_new_customer_group'] = 'Naziv nove grupe mora sadržavati između 2 i 32 znaka.';
 $_['error_customer_group_missing'] = 'Odabrana grupa kupaca više ne postoji.';
-$_['error_customer_group_exists'] = 'Ta grupa kupaca već je povezana s drugim Luceed partnerom.';
 $_['error_not_found'] = 'Partner nije pronađen.';
 $_['error_sync'] = 'Luceed sinkronizacija nije uspjela: %s';

@@ -265,11 +265,6 @@ class ControllerExtensionModulePartnerFeed extends Controller {
 		if ($customer_group_id) {
 			if (!$this->model_extension_module_partner_feed->customerGroupExists($customer_group_id)) {
 				$this->error['customer_group_id'] = $this->language->get('error_customer_group_missing');
-			} else {
-				$owner = $this->model_extension_module_partner_feed->getCustomerGroupOwner($customer_group_id);
-				if ($owner && $owner !== (int)$partner_feed_id) {
-					$this->error['customer_group_id'] = $this->language->get('error_customer_group_exists');
-				}
 			}
 		} else {
 			$new_group_name = isset($this->request->post['new_customer_group_name']) ? trim($this->request->post['new_customer_group_name']) : '';

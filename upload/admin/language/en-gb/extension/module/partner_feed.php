@@ -44,7 +44,7 @@ $_['entry_sort_order'] = 'Sort order';
 
 $_['help_code'] = 'Used in the XML URL. It is generated from the name when left empty.';
 $_['help_luceed_partner_id'] = 'The ID is stored as text, for example 00983204 or 14956-N1.';
-$_['help_customer_group'] = 'Select an existing group or create a new one. Luceed prices are stored in product_discount for this group.';
+$_['help_customer_group'] = 'Select an existing group or create a new one. Multiple feeds may use the same group and will then share the prices stored in product_discount for that group.';
 $_['help_feed_status'] = 'The XML contains products with a price for this group and quantityws greater than zero.';
 
 $_['button_sync_all'] = 'Synchronize all';
@@ -60,6 +60,5 @@ $_['error_luceed_partner_exists'] = 'That Luceed customer ID is already configur
 $_['error_customer_group'] = 'Select a customer group or enter a new group name.';
 $_['error_new_customer_group'] = 'The new customer group name must contain between 2 and 32 characters.';
 $_['error_customer_group_missing'] = 'The selected customer group no longer exists.';
-$_['error_customer_group_exists'] = 'That customer group is already linked to another Luceed partner.';
 $_['error_not_found'] = 'The partner was not found.';
 $_['error_sync'] = 'Luceed synchronization failed: %s';

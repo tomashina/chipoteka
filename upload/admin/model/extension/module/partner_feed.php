@@ -26,9 +26,11 @@ class ModelExtensionModulePartnerFeed extends Model {
 			PRIMARY KEY (`partner_feed_id`),
 			UNIQUE KEY `partner_feed_code` (`code`),
 			UNIQUE KEY `partner_feed_luceed_partner_id` (`luceed_partner_id`),
-			UNIQUE KEY `partner_feed_customer_group_id` (`customer_group_id`),
+			KEY `partner_feed_customer_group_id` (`customer_group_id`),
 			KEY `partner_feed_status` (`status`, `feed_status`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+		$this->ensureCustomerGroupIndex();
 
 		if (!$seed_defaults && $table_existed) {
 			return;
@@ -128,12 +130,6 @@ class ModelExtensionModulePartnerFeed extends Model {
 
 	public function getLuceedPartnerOwner($luceed_partner_id) {
 		$query = $this->db->query("SELECT partner_feed_id FROM `" . DB_PREFIX . "partner_feed` WHERE luceed_partner_id = '" . $this->db->escape($luceed_partner_id) . "' LIMIT 1");
-
-		return $query->num_rows ? (int)$query->row['partner_feed_id'] : 0;
-	}
-
-	public function getCustomerGroupOwner($customer_group_id) {
-		$query = $this->db->query("SELECT partner_feed_id FROM `" . DB_PREFIX . "partner_feed` WHERE customer_group_id = '" . (int)$customer_group_id . "' LIMIT 1");
 
 		return $query->num_rows ? (int)$query->row['partner_feed_id'] : 0;
 	}
@@ -272,5 +268,18 @@ class ModelExtensionModulePartnerFeed extends Model {
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "product_discount`
 			(product_id, customer_group_id, quantity, priority, price, date_start, date_end)
 			VALUES " . implode(',', $values));
+	}
+
+	private function ensureCustomerGroupIndex() {
+		$query = $this->db->query("SHOW INDEX FROM `" . DB_PREFIX . "partner_feed` WHERE Key_name = 'partner_feed_customer_group_id'");
+
+		if ($query->num_rows && !(int)$query->row['Non_unique']) {
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "partner_feed` DROP INDEX `partner_feed_customer_group_id`");
+			$query = $this->db->query("SHOW INDEX FROM `" . DB_PREFIX . "partner_feed` WHERE Key_name = 'partner_feed_customer_group_id'");
+		}
+
+		if (!$query->num_rows) {
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "partner_feed` ADD INDEX `partner_feed_customer_group_id` (`customer_group_id`)");
+		}
 	}
 }

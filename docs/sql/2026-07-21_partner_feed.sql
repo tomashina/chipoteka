@@ -22,9 +22,43 @@ CREATE TABLE IF NOT EXISTS `oc_partner_feed` (
   PRIMARY KEY (`partner_feed_id`),
   UNIQUE KEY `partner_feed_code` (`code`),
   UNIQUE KEY `partner_feed_luceed_partner_id` (`luceed_partner_id`),
-  UNIQUE KEY `partner_feed_customer_group_id` (`customer_group_id`),
+  KEY `partner_feed_customer_group_id` (`customer_group_id`),
   KEY `partner_feed_status` (`status`,`feed_status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Starija verzija modula imala je UNIQUE ograničenje pa ista postojeća grupa
+-- nije mogla biti odabrana za više feedova. Sljedeći dio je idempotentan.
+SET @partner_feed_group_index_is_unique = (
+  SELECT IFNULL(MIN(`NON_UNIQUE`), 1)
+  FROM `information_schema`.`STATISTICS`
+  WHERE `TABLE_SCHEMA` = DATABASE()
+    AND `TABLE_NAME` = 'oc_partner_feed'
+    AND `INDEX_NAME` = 'partner_feed_customer_group_id'
+);
+SET @partner_feed_group_index_sql = IF(
+  @partner_feed_group_index_is_unique = 0,
+  'ALTER TABLE `oc_partner_feed` DROP INDEX `partner_feed_customer_group_id`',
+  'SELECT 1'
+);
+PREPARE partner_feed_group_index_stmt FROM @partner_feed_group_index_sql;
+EXECUTE partner_feed_group_index_stmt;
+DEALLOCATE PREPARE partner_feed_group_index_stmt;
+
+SET @partner_feed_group_index_exists = (
+  SELECT COUNT(*)
+  FROM `information_schema`.`STATISTICS`
+  WHERE `TABLE_SCHEMA` = DATABASE()
+    AND `TABLE_NAME` = 'oc_partner_feed'
+    AND `INDEX_NAME` = 'partner_feed_customer_group_id'
+);
+SET @partner_feed_group_index_sql = IF(
+  @partner_feed_group_index_exists = 0,
+  'ALTER TABLE `oc_partner_feed` ADD INDEX `partner_feed_customer_group_id` (`customer_group_id`)',
+  'SELECT 1'
+);
+PREPARE partner_feed_group_index_stmt FROM @partner_feed_group_index_sql;
+EXECUTE partner_feed_group_index_stmt;
+DEALLOCATE PREPARE partner_feed_group_index_stmt;
 
 INSERT IGNORE INTO `oc_partner_feed`
   (`name`, `code`, `luceed_partner_id`, `customer_group_id`, `access_key`, `status`, `feed_status`, `sort_order`, `date_added`, `date_modified`)
