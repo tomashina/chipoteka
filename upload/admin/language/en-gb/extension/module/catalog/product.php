@@ -86,6 +86,7 @@ $_['text_selection_too_big']            = 'You can only select %d item(s)';
 
 // Buttons
 $_['button_add']                        = 'Add';
+$_['button_export_csv_google']          = 'Refresh Google feed';
 $_['button_add_attribute']              = 'Add Attribute';
 $_['button_add_discount']               = 'Add Discount';
 $_['button_add_special']                = 'Add Special';

@@ -1372,104 +1372,154 @@ class ControllerCatalogProduct extends Controller {
 
 
     public function exportCSV(){
+        $language_id = (int)$this->config->get('config_language_id');
+        $customer_group_id = (int)$this->config->get('config_customer_group_id');
 
-        $this->load->model('catalog/product'); // Loading the Model of Products
+        $sql = "SELECT p.product_id, p.model, p.sku, p.upc, p.ean, p.jan, p.isbn, p.image, p.price, p.quantity, pd.name, pd.description, m.name AS brand, pt.product_type, (SELECT ps.price FROM " . DB_PREFIX . "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . $customer_group_id . "' AND (ps.date_start IS NULL OR ps.date_start <= NOW()) AND (ps.date_end IS NULL OR YEAR(ps.date_end) = 0 OR ps.date_end > NOW()) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS sale_price FROM " . DB_PREFIX . "product p INNER JOIN " . DB_PREFIX . "product_description pd ON (pd.product_id = p.product_id AND pd.language_id = '" . $language_id . "') LEFT JOIN " . DB_PREFIX . "manufacturer m ON (m.manufacturer_id = p.manufacturer_id) LEFT JOIN (SELECT p2c.product_id, SUBSTRING_INDEX(GROUP_CONCAT(category_path.path ORDER BY category_path.depth DESC, category_path.path ASC SEPARATOR '|||'), '|||', 1) AS product_type FROM " . DB_PREFIX . "product_to_category p2c INNER JOIN (SELECT cp.category_id, COUNT(*) AS depth, GROUP_CONCAT(cd.name ORDER BY cp.level ASC SEPARATOR ' > ') AS path FROM " . DB_PREFIX . "category_path cp INNER JOIN " . DB_PREFIX . "category_description cd ON (cd.category_id = cp.path_id AND cd.language_id = '" . $language_id . "') GROUP BY cp.category_id) category_path ON (category_path.category_id = p2c.category_id) GROUP BY p2c.product_id) pt ON (pt.product_id = p.product_id) WHERE p.status = '1' AND p.price > '0' AND p.image IS NOT NULL AND p.image <> '' AND p.image <> 'no_image.png' ORDER BY p.product_id ASC";
 
-        $this->load->model('catalog/category');
+        $products = $this->db->query($sql);
+        $feed_path = DIR_IMAGE . 'chipotekagw.csv';
+        $temporary_path = tempnam(DIR_IMAGE, 'chipotekagw_');
 
-        $temp_data = $this->model_catalog_product->getProducts(); // Fetch all the Products where Status is Enabled
+        if ($temporary_path === false) {
+            throw new Exception('Unable to create a temporary Google Merchant feed file.');
+        }
 
-      //  print_r($temp_data);
+        $output = fopen($temporary_path, 'wb');
 
+        if ($output === false) {
+            @unlink($temporary_path);
+            throw new Exception('Unable to open the Google Merchant feed file for writing.');
+        }
 
-        /* CSV Header Starts Here
+        $headers = array(
+            'id',
+            'title',
+            'description',
+            'link',
+            'image_link',
+            'price',
+            'sale_price',
+            'availability',
+            'condition',
+            'brand',
+            'gtin',
+            'mpn',
+            'product_type'
+        );
 
-        header("Content-Type: text/csv");
-        header("Content-Disposition: attachment; filename=ProductsCSV-".date('d-m-Y').".csv");
-        // Disable caching
-        header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1
-        header("Pragma: no-cache"); // HTTP 1.0
-        header("Expires: 0"); // Proxies*/
+        fputcsv($output, $headers, ',', '"', '\\');
 
-        /* CSV Header Ends Here */
+        $catalog_url = defined('HTTPS_CATALOG') && HTTPS_CATALOG ? HTTPS_CATALOG : HTTP_CATALOG;
+        $catalog_url = rtrim($catalog_url, '/') . '/';
+        $product_count = 0;
 
-        $headers = 'ID,ID2,Item title,Final URL,Image URL,Item subtitle,Item description,Item category,Price,Sale price,Contextual keywords,Item address,Tracking template,Custom parameter,Final mobile URL,Android app link,iOS app link,iOS app store ID';
+        foreach ($products->rows as $product) {
+            $title = $this->cleanGoogleMerchantText($product['name'], 150);
+            $description = $this->cleanGoogleMerchantText($product['description'], 5000);
 
-       // $output = fopen("php://output", "w"); //Opens and clears the contents of file; or creates a new file if it doesn't exist
-
-        $output = fopen ('../image/chipotekagw.csv', "w");
-
-        fputcsv($output, explode(',', $headers));
-
-        $data = array();
-
-        $this->load->model('tool/image');
-
-       // print_r($temp_data);
-
-        // We don't want to export all the information to be exported so maintain a separate array for the information to be exported
-        foreach($temp_data as $data2)
-        {
-            $special = false;
-
-            $product_specials = $this->model_catalog_product->getProductSpecials($data2['product_id']);
-
-            foreach ($product_specials  as $product_special) {
-                if (($product_special['date_start'] == '0000-00-00' || strtotime($product_special['date_start']) < time()) && ($product_special['date_end'] == '0000-00-00' || strtotime($product_special['date_end']) > time())) {
-                    $special = number_format($product_special['price'], '2', '.', '').' EUR';
-
-                    break;
-                }
+            if ($description === '') {
+                $description = $title;
             }
 
-            $category = $this->getCategoriesName($data2['product_id']);
+            $gtin = $this->getGoogleMerchantGtin(array(
+                $product['upc'],
+                $product['ean'],
+                $product['jan'],
+                $product['isbn']
+            ));
 
+            // The imported manufacturer part number is stored in `ean` in this catalogue.
+            // The database `mpn` field contains warranty text and must not be sent to Google.
+            $mpn = $this->getGoogleMerchantMpn($product['ean'], $gtin);
+            $image_path = implode('/', array_map('rawurlencode', explode('/', ltrim(str_replace('\\', '/', $product['image']), '/'))));
+            $price = (float)$product['price'];
+            $sale_price = (float)$product['sale_price'];
 
-            $data[] = array(
-                'product_id' =>$data2['product_id'],
-                'model' =>$data2['model'],
-                'name' =>$data2['name'],
-                'url' => 'https://www.chipoteka.hr/index.php?route=product/product&product_id=' . $data2['product_id'],
-                'image' => $this->model_tool_image->resize($data2['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_thumb_height')),
-                'subtitle' => '',
-                'description' => utf8_substr(trim(strip_tags(html_entity_decode($data2['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
-                'category' => $category,
-                'price' => number_format($data2['price'], '2', '.', '').' EUR',
-                'special' => $special,
-                'keywords'=>'',
-                'itemaddress'=>'',
-                'trackingtemplate'=>'',
-                'customparametar'=>'',
-                'finalmobileurl'=>'',
-                'androidapplink'=>'',
-                'iosapplink'=>'',
-                'iosappstoreid'=>''
+            fputcsv($output, array(
+                (string)$product['product_id'],
+                $title,
+                $description,
+                $catalog_url . 'index.php?route=product/product&product_id=' . (int)$product['product_id'],
+                $catalog_url . 'image/' . $image_path,
+                number_format($price, 2, '.', '') . ' EUR',
+                ($sale_price > 0 && $sale_price < $price) ? number_format($sale_price, 2, '.', '') . ' EUR' : '',
+                ((int)$product['quantity'] > 0) ? 'in_stock' : 'out_of_stock',
+                'new',
+                $this->cleanGoogleMerchantText($product['brand'], 70),
+                $gtin,
+                $mpn,
+                $this->cleanGoogleMerchantText($product['product_type'], 750)
+            ), ',', '"', '\\');
 
-            );
-
-        }
-        //echo'<pre>';
-       // print_r($data);
-        //echo'</pre>';
-        // Exporting the CSV
-
-
-
-
-        foreach($data as $row)
-        {
-          $this->_fputcsv($output, $row); // here you can change delimiter/enclosure
-
-           // fputcsv($output, $row , "\"", "," ); // here you can change delimiter/enclosure
-
-
+            $product_count++;
         }
 
+        fclose($output);
 
-        fclose($output); // Closing the File
+        @chmod($temporary_path, 0644);
 
+        if (!rename($temporary_path, $feed_path)) {
+            @unlink($temporary_path);
+            throw new Exception('Unable to replace the Google Merchant feed file.');
+        }
 
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode(array(
+            'success' => true,
+            'products' => $product_count,
+            'feed' => $catalog_url . 'image/chipotekagw.csv'
+        )));
+    }
 
+    private function cleanGoogleMerchantText($value, $max_length) {
+        $value = preg_replace('/<\s*br\s*\/?>/i', ' ', (string)$value);
+        $value = preg_replace('/<\/(p|div|li|ul|ol|h[1-6])\s*>/i', ' ', $value);
+        $value = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
+        $value = strip_tags($value);
+        $value = preg_replace('/\s+/u', ' ', $value);
+        $value = trim($value);
+
+        return utf8_substr($value, 0, (int)$max_length);
+    }
+
+    private function getGoogleMerchantGtin(array $candidates) {
+        foreach ($candidates as $candidate) {
+            $gtin = preg_replace('/[\s-]+/', '', trim((string)$candidate));
+            $length = strlen($gtin);
+
+            if (!ctype_digit($gtin) || !in_array($length, array(8, 12, 13, 14), true)) {
+                continue;
+            }
+
+            $sum = 0;
+            $position = 1;
+
+            for ($index = $length - 2; $index >= 0; $index--, $position++) {
+                $sum += (int)$gtin[$index] * (($position % 2 === 1) ? 3 : 1);
+            }
+
+            $check_digit = (10 - ($sum % 10)) % 10;
+
+            if ($check_digit === (int)$gtin[$length - 1]) {
+                return $gtin;
+            }
+        }
+
+        return '';
+    }
+
+    private function getGoogleMerchantMpn($value, $gtin) {
+        $mpn = $this->cleanGoogleMerchantText($value, 70);
+        $placeholder_values = array('y', 'x', 'nema', 'neaktivan', 'bundle', '-', '0');
+
+        if ($mpn === '' || in_array(utf8_strtolower($mpn), $placeholder_values, true)) {
+            return '';
+        }
+
+        $normalized_mpn = preg_replace('/[\s-]+/', '', $mpn);
+
+        return ($gtin !== '' && $normalized_mpn === $gtin) ? '' : $mpn;
     }
 
     public function exportCSVFacebook(){

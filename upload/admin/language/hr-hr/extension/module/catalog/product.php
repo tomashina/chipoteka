@@ -87,6 +87,7 @@ $_['text_selection_too_big'] = 'Možete odabrati samo% d stavke';
 
 // Gumbi
 $_['button_add'] = 'Dodaj';
+$_['button_export_csv_google'] = 'Osvježi Google feed';
 $_['button_add_attribute'] = 'Dodavanje atributa';
 $_['button_add_discount'] = 'Dodaj popust';
 $_['button_add_special'] = 'Dodaj specijalno';

@@ -68,7 +68,9 @@ class ControllerExtensionModuleCatalogProduct extends ControllerExtensionModuleP
 	public function __construct($registry) {
 		parent::__construct($registry);
 		global $execution_start_time;
-		$this->start_time = $execution_start_time;
+		$this->start_time = isset($execution_start_time) && is_numeric($execution_start_time) && (float)$execution_start_time > 0
+			? (float)$execution_start_time
+			: microtime(true);
 
 		if (!$this->config->get('module_product_quick_edit_installed') || !$this->config->get('module_product_quick_edit_status')) {
 			$url = $this->urlParams();
@@ -2202,6 +2204,18 @@ class ControllerExtensionModuleCatalogProduct extends ControllerExtensionModuleP
 
 		$items_per_page = $this->config->get('module_product_quick_edit_items_per_page');
 		$data['items_per_page'] = ($items_per_page) ? $items_per_page : $this->config->get('config_limit_admin');
+		$cache_size = (int)$this->config->get('module_product_quick_edit_cache_size');
+		$page_size = (int)$data['items_per_page'];
+
+		// The original default preloaded 1,000 products (and their thumbnails) for a
+		// 25-row page. Keep the fast client-side paging, but cap each request at 100 rows.
+		if ($page_size > 0) {
+			$cached_pages = max(1, (int)ceil(max($cache_size, $page_size) / $page_size));
+			$maximum_pages = max(1, (int)ceil(100 / $page_size));
+			$data['pipeline_pages'] = min($cached_pages, $maximum_pages);
+		} else {
+			$data['pipeline_pages'] = 1;
+		}
 
 		$data['module_product_quick_edit_server_side_caching'] = $this->config->get('module_product_quick_edit_server_side_caching');
 		$data['module_product_quick_edit_client_side_caching'] = $this->config->get('module_product_quick_edit_client_side_caching');
@@ -2241,6 +2255,7 @@ class ControllerExtensionModuleCatalogProduct extends ControllerExtensionModuleP
 		$data['add'] = $this->url->link('catalog/product/add', $url, true);
 		$data['copy'] = $this->url->link('extension/module/product_quick_edit/copy', $url, true);
 		$data['delete'] = $this->url->link('extension/module/product_quick_edit/delete', $url, true);
+		$data['export_csv'] = $this->url->link('catalog/product/exportCSV', 'user_token=' . $this->session->data['user_token'], true);
 		$data['source'] = html_entity_decode($this->url->link('extension/module/product_quick_edit/data', $url, true), ENT_QUOTES, 'UTF-8');
 		$data['load'] = html_entity_decode($this->url->link('extension/module/product_quick_edit/load', 'user_token=' . $this->session->data['user_token'], true), ENT_QUOTES, 'UTF-8');
 		$data['settings'] = $this->url->link('extension/module/product_quick_edit/settings', $url, true);
