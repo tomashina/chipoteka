@@ -179,6 +179,14 @@ ExpiresDefault A3024000
 Header append Cache-Control "proxy-revalidate"
 </FilesMatch>
 
+# Google Merchant feed must always expose the latest prices and stock levels.
+<FilesMatch "^chipotekagw\.csv$">
+ExpiresActive Off
+Header always set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
+Header always set Pragma "no-cache"
+Header always set Expires "Thu, 01 Jan 1970 00:00:00 GMT"
+</FilesMatch>
+
 # Force no caching for dynamic files
 <FilesMatch "\.(php|cgi|pl|htm)$">
 ExpiresActive Off
