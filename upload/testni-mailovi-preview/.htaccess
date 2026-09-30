@@ -1,4 +1,6 @@
 Options -Indexes
+DirectoryIndex index.html
+RewriteEngine Off
 
 AuthType Basic
 AuthName "Chipoteka testni mailovi"
