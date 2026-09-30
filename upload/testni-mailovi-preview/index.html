@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Chipoteka · pregled mailova kupcima</title>
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<header class="compact-header">
+  <div class="compact-brand">CHIPO<span>TEKA</span></div>
+  <div class="compact-title">Pregled mailova <span>statusni i vremenski</span></div>
+  <div class="compact-meta"><span>73 scenarija</span><span>testni podaci</span><span>bez slanja</span></div>
+</header>
+
+<details class="spec-issues">
+  <summary>Otvorena pitanja i kontradikcije za potvrdu prije programiranja</summary>
+  <ul>
+    <li><strong>V6:</strong> tekst navodi 168 sati nakon ulaska u status <em>10 — Isporučeno</em>, dok statusna tablica status 10 naziva <em>Otpremljeno</em>.</li>
+    <li><strong>V7/V8:</strong> status 09 opisan je kao <em>Rezervacija</em>, a u statusnoj tablici kao <em>Nalog spreman za isporuku</em>.</li>
+    <li><strong>Virman / preuzimanje:</strong> legenda propisuje otkazivanje nakon 48 sati, ali V9 predviđa podsjetnik tek nakon 96 sati.</li>
+    <li><strong>Računanje vremena:</strong> pragovi su zadani u satima, uz zaseban zahtjev da se preskoče vikendi i hrvatski neradni dani; potrebno je potvrditi točan način računanja.</li>
+    <li><strong>B2B početni virman:</strong> zadan je predmet i uvjet, ali nije naveden potpuni tekst tijela poruke.</li>
+    <li><strong>S04:</strong> izraz „prikup od strane dostavne službe” izgleda kao tipfeler i ostavljen je za jezičnu potvrdu.</li>
+    <li><strong>Postojeći live predložak:</strong> podnožje spaja adresu bez razmaka i još prikazuje ©2021; preview to namjerno ne mijenja.</li>
+  </ul>
+</details>
+
+<main class="workspace">
+  <aside class="sidebar">
+    <div class="sidebar-head"><h2>Scenariji</h2><span id="result-count"></span></div>
+    <div class="segmented" role="group" aria-label="Vrsta maila">
+      <button class="type-filter active" data-type="all">Svi</button>
+      <button class="type-filter" data-type="status">Statusni</button>
+      <button class="type-filter" data-type="time">Vremenski</button>
+    </div>
+    <label class="field"><span>Pretraži</span><input id="search" type="search" placeholder="status, predmet, kanal…"></label>
+    <label class="field"><span>Način plaćanja / isporuke</span><select id="channel-filter"><option value="all">Svi kanali</option></select></label>
+    <label class="field"><span>Status ili vremensko pravilo</span><select id="code-filter"><option value="all">Sva pravila</option></select></label>
+    <div id="scenario-list" class="scenario-list" aria-live="polite"></div>
+  </aside>
+
+  <section class="review-panel">
+    <div class="review-toolbar">
+      <div><span class="scenario-code" id="scenario-code"></span><h2 id="scenario-title"></h2></div>
+      <div class="toolbar-actions">
+        <div class="viewport-switch"><button class="viewport active" data-viewport="desktop" aria-label="Desktop prikaz">Desktop</button><button class="viewport" data-viewport="mobile" aria-label="Mobilni prikaz">Mobitel</button></div>
+        <a id="open-mail" class="open-mail" target="_blank" rel="noopener">Otvori HTML</a>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div><span>Okidač</span><strong id="trigger"></strong></div>
+      <div><span>Kanal</span><strong id="channel"></strong></div>
+      <div><span>Kupac</span><strong id="buyer"></strong></div>
+      <div><span>Predmet</span><strong id="subject"></strong></div>
+    </div>
+
+    <div id="timing-note" class="timing-note" hidden></div>
+    <div id="warning-list" class="warning-list" hidden></div>
+
+    <details class="qa-details">
+      <summary>Kontrolni podaci kupca i adrese</summary>
+      <div class="qa-grid">
+        <div><span>Ulica za račun</span><strong id="billing-street"></strong></div>
+        <div><span>Kućni broj</span><strong id="billing-number"></strong></div>
+        <div><span>Spojeni prikaz</span><strong id="billing-line"></strong></div>
+        <div><span>Dostava / poslovnica</span><strong id="shipping-line"></strong></div>
+        <div><span>Kontakt</span><strong id="contact"></strong></div>
+        <div><span>Profil</span><strong id="profile"></strong></div>
+      </div>
+    </details>
+
+    <div id="preview-frame-shell" class="preview-frame-shell desktop">
+      <iframe id="mail-frame" title="Pregled odabranog maila"></iframe>
+    </div>
+  </section>
+</main>
+
+<footer class="page-footer"><span>Chipoteka · testni pregled mailova</span><span>Generirano lokalno · bez slanja mailova i bez promjena produkcije</span></footer>
+
+<script src="assets/scenarios.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
