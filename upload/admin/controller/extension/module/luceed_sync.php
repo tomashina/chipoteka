@@ -76,6 +76,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
     public function index()
     {
         $this->load->language('extension/module/luceed_sync');
+        $this->load->model('extension/module/luceed_store');
 
         $this->document->setTitle($this->language->get('heading_title'));
 
@@ -89,7 +90,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $data['last_rev'] = Carbon::make($last_rev->last_revision_date)->diffForHumans();
         }
 
-        $data['store_audit'] = $this->buildStoreAuditData();
+        $data['store_table_installed'] = $this->model_extension_module_luceed_store->isInstalled();
+        $data['store_audit'] = $this->buildStoreCrudData();
         $data['pickup_stores_enabled'] = (bool) $this->config->get('luceed_sync_pickup_stores_enabled');
 
         $data['breadcrumbs'] = array();
@@ -130,6 +132,156 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $data['footer']      = $this->load->controller('common/footer');
 
         $this->response->setOutput($this->load->view('extension/module/luceed_sync_dash', $data));
+    }
+
+
+    /**
+     * Install the editable store table and seed it from the current env/JSON sources.
+     */
+    public function installStoreTable()
+    {
+        if ( ! $this->hasStoreModifyPermission()) {
+            return $this->output(['status' => 403, 'message' => 'Nemate dozvolu za instalaciju tablice poslovnica.']);
+        }
+
+        $this->load->model('extension/module/luceed_store');
+        $this->model_extension_module_luceed_store->install();
+
+        $warehouse_config = agconf('import.warehouse');
+        $working_hours = agconf('poslovnice_radno_vrijeme');
+        $partner_map = agconf('luceed.pickup_korisnik_partner_uid');
+        $inserted = $this->model_extension_module_luceed_store->seedLegacy(
+            is_array($warehouse_config) ? $warehouse_config : [],
+            is_array($working_hours) ? $working_hours : [],
+            is_array($partner_map) ? $partner_map : [],
+            $this->loadLegacyWarehouseRows(is_array($warehouse_config) ? ($warehouse_config['json'] ?? '') : '')
+        );
+
+        return $this->output([
+            'status' => 200,
+            'message' => 'Tablica poslovnica je instalirana. Uvezeno zapisa: ' . $inserted . '.'
+        ]);
+    }
+
+
+    public function getStore()
+    {
+        $this->load->model('extension/module/luceed_store');
+
+        if ( ! $this->model_extension_module_luceed_store->isInstalled()) {
+            return $this->output(['status' => 300, 'message' => 'Tablica poslovnica nije instalirana.']);
+        }
+
+        $store = $this->model_extension_module_luceed_store->getStore((int) ($this->request->get['store_id'] ?? 0));
+
+        if ( ! $store) {
+            return $this->output(['status' => 300, 'message' => 'Poslovnica nije pronađena.']);
+        }
+
+        return $this->output(['status' => 200, 'store' => $store]);
+    }
+
+
+    public function saveStore()
+    {
+        if ( ! $this->hasStoreModifyPermission()) {
+            return $this->output(['status' => 403, 'message' => 'Nemate dozvolu za izmjenu poslovnica.']);
+        }
+
+        $this->load->model('extension/module/luceed_store');
+
+        if ( ! $this->model_extension_module_luceed_store->isInstalled()) {
+            return $this->output(['status' => 300, 'message' => 'Tablica poslovnica nije instalirana.']);
+        }
+
+        $store_id = (int) ($this->request->post['store_id'] ?? 0);
+        $errors = $this->model_extension_module_luceed_store->validate($this->request->post, $store_id);
+
+        if ($errors) {
+            return $this->output(['status' => 300, 'message' => implode('<br>', $errors), 'errors' => $errors]);
+        }
+
+        if ($store_id) {
+            if ( ! $this->model_extension_module_luceed_store->getStore($store_id)) {
+                return $this->output(['status' => 300, 'message' => 'Poslovnica nije pronađena.']);
+            }
+
+            $this->model_extension_module_luceed_store->editStore($store_id, $this->request->post);
+            $message = 'Poslovnica je uspješno uređena.';
+        } else {
+            $store_id = $this->model_extension_module_luceed_store->addStore($this->request->post);
+            $message = 'Poslovnica je uspješno dodana.';
+        }
+
+        return $this->output(['status' => 200, 'store_id' => $store_id, 'message' => $message]);
+    }
+
+
+    private function buildStoreCrudData(): array
+    {
+        if ( ! $this->model_extension_module_luceed_store->isInstalled()) {
+            $warehouse_config = agconf('import.warehouse');
+            $legacy_rows = $this->loadLegacyWarehouseRows(is_array($warehouse_config) ? ($warehouse_config['json'] ?? '') : '');
+
+            return [
+                'installed' => false,
+                'rows' => [],
+                'warnings' => ['Tablica poslovnica nije instalirana. Do instalacije se koristi postojeći env/JSON izvor.'],
+                'stats' => ['total' => 0, 'active' => 0, 'pickup' => 0, 'legacy' => count($legacy_rows)],
+            ];
+        }
+
+        $rows = $this->model_extension_module_luceed_store->getStores();
+
+        return [
+            'installed' => true,
+            'rows' => $rows,
+            'warnings' => $this->model_extension_module_luceed_store->getWarnings($rows),
+            'stats' => [
+                'total' => count($rows),
+                'active' => count(array_filter($rows, static function ($row) { return (int) $row['status'] === 1; })),
+                'pickup' => count(array_filter($rows, static function ($row) { return (int) $row['status'] === 1 && (int) $row['is_pickup'] === 1; })),
+                'legacy' => 0,
+            ],
+        ];
+    }
+
+
+    private function loadLegacyWarehouseRows($primary_path = ''): array
+    {
+        $sources = [];
+
+        if (is_string($primary_path) && $primary_path !== '') {
+            $sources[] = $primary_path;
+        }
+
+        $sources[] = DIR_STORAGE . 'upload/assets/skladista.json';
+        $sources[] = DIR_STORAGE . 'upload/luceed_json/skladista_lista.json';
+
+        foreach (array_unique($sources) as $path) {
+            if ( ! is_file($path)) {
+                continue;
+            }
+
+            $decoded = json_decode(file_get_contents($path), true);
+            if ( ! is_array($decoded)) {
+                continue;
+            }
+
+            if (isset($decoded['result'][0]['skladista']) && is_array($decoded['result'][0]['skladista'])) {
+                return $decoded['result'][0]['skladista'];
+            }
+
+            return array_values($decoded);
+        }
+
+        return [];
+    }
+
+
+    private function hasStoreModifyPermission(): bool
+    {
+        return $this->hasModifyPermission();
     }
 
 

@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
  */
 class LOC_Warehouse
 {
+    private const STORE_TABLE = 'luceed_store';
 
 
     /**
@@ -38,6 +39,11 @@ class LOC_Warehouse
      * @var array
      */
     private $warehouses;
+
+    /**
+     * @var bool|null
+     */
+    private $store_table_installed;
 
 
     /**
@@ -71,7 +77,7 @@ class LOC_Warehouse
     public function getWarehouses(): Collection
     {
         return $this->getList()
-                    ->whereIn('skladiste', agconf('import.warehouse.included'));
+                    ->whereIn('skladiste', $this->getCodesByFlag('is_included', agconf('import.warehouse.included')));
     }
 
 
@@ -81,7 +87,7 @@ class LOC_Warehouse
     public function getDefaultWarehouses(): Collection
     {
         return $this->getList()
-                    ->whereIn('skladiste', agconf('import.warehouse.default'));
+                    ->whereIn('skladiste', $this->getCodesByFlag('is_default', agconf('import.warehouse.default')));
     }
 
 
@@ -91,7 +97,34 @@ class LOC_Warehouse
     public function getAvailabilityViewWarehouses(): Collection
     {
         return $this->getList()
-                    ->whereIn('skladiste', agconf('import.warehouse.availability_view'));
+                    ->whereIn('skladiste', $this->getCodesByFlag('is_availability', agconf('import.warehouse.availability_view')));
+    }
+
+
+    /**
+     * Resolve a warehouse group from the editable DB table, with env fallback
+     * while the migration has not been installed.
+     *
+     * @param string $flag
+     * @param mixed  $fallback
+     */
+    public function getCodesByFlag(string $flag, $fallback = []): array
+    {
+        $allowed_flags = ['is_included', 'is_default', 'is_availability', 'is_store', 'is_pickup'];
+
+        if ($this->storeTableExists() && in_array($flag, $allowed_flags, true)) {
+            $db = new Database(DB_DATABASE);
+            $query = $db->query(
+                "SELECT code FROM `" . DB_PREFIX . self::STORE_TABLE . "`"
+                . " WHERE status = '1' AND `" . $flag . "` = '1' ORDER BY sort_order ASC, code ASC"
+            );
+
+            return array_values(array_map(static function ($row) {
+                return (string) $row['code'];
+            }, $query->rows));
+        }
+
+        return is_array($fallback) ? array_values($fallback) : [];
     }
 
 
@@ -107,7 +140,10 @@ class LOC_Warehouse
         $units = $this->getUnitsQuery($houses);
         $houses_default = $this->getDefaultWarehouses();
         $units_default = $this->getUnitsQuery($houses_default);
-        $houses_stores = $this->getList()->whereIn('skladiste', agconf('import.warehouse.stores'));
+        $houses_stores = $this->getList()->whereIn(
+            'skladiste',
+            $this->getCodesByFlag('is_store', agconf('import.warehouse.stores'))
+        );
         $units_stores = $this->getUnitsQuery($houses_stores);
 
         $availables = collect($this->setAvailables(
@@ -175,7 +211,7 @@ class LOC_Warehouse
         foreach ($houses_stores as $house) {
             $has = $stores->where('skladiste_uid', $house['skladiste_uid'])->first();
 
-            if ($has) {
+            if ($has && $has->raspolozivo_kol >= 0) {
                 $qty_stores += $has->raspolozivo_kol;
             }
         }
@@ -288,6 +324,33 @@ class LOC_Warehouse
      */
     public function load()
     {
+        if ($this->storeTableExists()) {
+            $db = new Database(DB_DATABASE);
+            $query = $db->query(
+                "SELECT * FROM `" . DB_PREFIX . self::STORE_TABLE . "`"
+                . " WHERE status = '1' ORDER BY sort_order ASC, code ASC"
+            );
+            $stores = [];
+
+            foreach ($query->rows as $row) {
+                $stores[] = [
+                    'skladiste_uid' => $row['warehouse_uid'],
+                    'skladiste' => $row['code'],
+                    'naziv' => $row['name'],
+                    'pj_uid' => $row['pj_uid'],
+                    'pj' => $row['pj_code'],
+                    'pj_naziv' => $row['pj_name'],
+                    'adresa' => $row['address'],
+                    'postanski_broj' => $row['postal_code'],
+                    'mjesto' => $row['city'],
+                    'telefax' => $row['contact'],
+                    'e_mail' => $row['contact'],
+                ];
+            }
+
+            return collect($stores);
+        }
+
         $file = json_decode(file_get_contents(agconf('import.warehouse.json')),TRUE);
 
         if ($file) {
@@ -297,6 +360,25 @@ class LOC_Warehouse
         return [];
     }
 
+
+    private function storeTableExists(): bool
+    {
+        if ($this->store_table_installed !== null) {
+            return $this->store_table_installed;
+        }
+
+        try {
+            $db = new Database(DB_DATABASE);
+            $table = str_replace(['\\', '_', '%'], ['\\\\', '\\_', '\\%'], DB_PREFIX . self::STORE_TABLE);
+            $query = $db->query("SHOW TABLES LIKE '" . $db->escape($table) . "'");
+
+            $this->store_table_installed = (bool) $query->num_rows;
+        } catch (\Exception $e) {
+            $this->store_table_installed = false;
+        }
+
+        return $this->store_table_installed;
+    }
 
     /**
      * @param string $sku
@@ -350,7 +432,7 @@ class LOC_Warehouse
     {
         $json = json_decode($warehouses);
 
-        if (isset($json->result[0]->skladista) && is_array($json->result[0]->skladista)) {
+        if (isset($json->result[0]->skladista)) {
             return $json->result[0]->skladista;
         }
 
@@ -366,7 +448,7 @@ class LOC_Warehouse
     {
         $json = json_decode($items);
 
-        if (isset($json->result[0]->stanje) && is_array($json->result[0]->stanje)) {
+        if (isset($json->result[0]->stanje)) {
             return $json->result[0]->stanje;
         }
 
@@ -383,7 +465,7 @@ class LOC_Warehouse
     {
         $json = json_decode($stock);
 
-        if (isset($json->result[0]->artikli_dobavljaci) && is_array($json->result[0]->artikli_dobavljaci)) {
+        if (isset($json->result[0]->artikli_dobavljaci)) {
             return $json->result[0]->artikli_dobavljaci;
         }
 

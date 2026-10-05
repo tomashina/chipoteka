@@ -29,6 +29,7 @@
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Sync Manager</a></li>
             <li role="presentation" class="active"><a href="#products" aria-controls="products" role="tab" data-toggle="tab">Products</a></li>
+
             <li role="presentation"><a href="#eprel" aria-controls="eprel" role="tab" data-toggle="tab">EPREL</a></li>
             <li role="presentation"><a href="#poslovnice" aria-controls="poslovnice" role="tab" data-toggle="tab">Poslovnice</a></li>
         </ul>
@@ -78,6 +79,7 @@
                             </div>
                         </div>
 
+                        {% if not store_table_installed %}
                         <div class="panel panel-default">
                             <div class="panel-heading darker-bg">
                                 <h3 class="panel-title"><i class="fa fa-list"></i> Skladišta</h3>
@@ -91,6 +93,7 @@
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
 
                         <div class="panel panel-default">
                             <div class="panel-heading darker-bg">
@@ -274,111 +277,95 @@
                     <div class="col-sm-12">
                         <div class="panel panel-default">
                             <div class="panel-heading darker-bg">
-                                <h3 class="panel-title"><i class="fa fa-map-marker"></i> Audit Poslovnica (Pickup/Availability)</h3>
+                                {% if store_table_installed %}
+                                    <button type="button" id="add-store" class="btn btn-success btn-sm pull-right"><i class="fa fa-plus"></i> Dodaj poslovnicu</button>
+                                {% endif %}
+                                <h3 class="panel-title"><i class="fa fa-map-marker"></i> Audit Poslovnica</h3>
                             </div>
                             <div class="panel-body">
-                                <div class="well well-sm" style="margin-bottom: 15px;">
-                                    <div class="row">
-                                        <div class="col-sm-8">
-                                            <label style="font-weight: 600; margin-bottom: 0;">
-                                                <input type="checkbox" id="pickup-stores-enabled" {% if pickup_stores_enabled %}checked="checked"{% endif %} />
-                                                Prikaži popis poslovnica u checkoutu kada je odabran pickup način dostave (pickup.pickup_*)
-                                            </label>
-                                        </div>
-                                        <div class="col-sm-4 text-right">
-                                            <button type="button" id="save-pickup-stores-enabled" class="btn btn-primary btn-sm">Spremi postavku</button>
-                                        </div>
+                                {% if not store_table_installed %}
+                                    <div class="alert alert-info">
+                                        <strong>Tablica poslovnica nije instalirana.</strong>
+                                        Do instalacije frontend koristi postojeću env/JSON konfiguraciju, a legacy Luceed import ostaje dostupan u Sync Manager tabu.
                                     </div>
-                                </div>
-
-                                <p style="margin-bottom: 5px;">
-                                    Potrebne šifre: <strong>{{ store_audit.stats.required }}</strong>,
-                                    pronađeno u JSON: <strong>{{ store_audit.stats.in_json }}</strong>,
-                                    pickup poslovnica: <strong>{{ store_audit.stats.pickup }}</strong>
-                                </p>
-                                <p style="margin-bottom: 15px;">
-                                    Izvor skladišta: <code>{{ store_audit.json_path }}</code>
-                                </p>
-
-                                {% if store_audit.warnings %}
-                                    <div class="alert alert-warning">
-                                        <strong>Upozorenja:</strong>
-                                        <ul style="margin-top: 8px; margin-bottom: 0;">
-                                            {% for warning in store_audit.warnings %}
-                                                <li>{{ warning }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
+                                    <p>Pronađeno poslovnica u legacy JSON izvoru: <strong>{{ store_audit.stats.legacy }}</strong></p>
+                                    <button type="button" id="install-store-table" class="btn btn-primary"><i class="fa fa-database"></i> Instaliraj tablicu i uvezi postojeće poslovnice</button>
                                 {% else %}
-                                    <div class="alert alert-success">Nema konflikata između env mapiranja i JSON liste poslovnica.</div>
-                                {% endif %}
+                                    <p style="margin-bottom: 15px;">
+                                        Ukupno: <strong>{{ store_audit.stats.total }}</strong>,
+                                        aktivno: <strong>{{ store_audit.stats.active }}</strong>,
+                                        pickup: <strong>{{ store_audit.stats.pickup }}</strong>
+                                    </p>
 
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-striped table-condensed" style="font-size: 12px; line-height: 1.2;">
-                                        <thead>
-                                        <tr>
-                                            <th style="white-space: nowrap;">Šifra</th>
-                                            <th>Naziv</th>
-                                            <th style="white-space: nowrap;">UID</th>
-                                            <th style="white-space: nowrap;">PJ</th>
-                                            <th style="white-space: nowrap;">Inc</th>
-                                            <th style="white-space: nowrap;">Def</th>
-                                            <th style="white-space: nowrap;">View</th>
-                                            <th style="white-space: nowrap;">Stores</th>
-                                            <th style="white-space: nowrap;">Pickup</th>
-                                            <th style="white-space: nowrap;">ID korisnik__partner</th>
-                                            <th style="white-space: nowrap;">UID preview</th>
-                                            <th style="white-space: nowrap;">Radno vrijeme</th>
-                                            <th style="white-space: nowrap;">JSON</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for row in store_audit.rows %}
-                                            <tr>
-                                                <td><strong>{{ row.code }}</strong></td>
-                                                <td>{{ row.name }}<br><small>{{ row.address }}</small></td>
-                                                <td><small>{{ row.uid }}</small></td>
-                                                <td>{{ row.pj }}</td>
-                                                <td>{% if row.in_included %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
-                                                <td>{% if row.in_default %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
-                                                <td>{% if row.in_availability %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
-                                                <td>{% if row.in_stores %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
-                                                <td>{% if row.in_pickup %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
-                                                <td style="min-width: 140px;">
-                                                    <input
-                                                        type="text"
-                                                        class="form-control input-sm js-korisnik-partner-id"
-                                                        data-code="{{ row.code }}"
-                                                        value="{{ row.korisnik_partner_id }}"
-                                                        placeholder="npr. 20761"
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <code class="js-korisnik-partner-uid" data-code="{{ row.code }}">{{ row.korisnik_partner_uid_preview }}</code>
-                                                </td>
-                                                <td><small>{{ row.working_hours ? row.working_hours|raw : '-' }}</small></td>
-                                                <td>{% if row.in_json %}<span class="label label-success">OK</span>{% else %}<span class="label label-danger">Fali</span>{% endif %}</td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="text-right" style="margin-top: 10px;">
-                                    <button type="button" id="save-pickup-partner-ids" class="btn btn-success btn-sm">Spremi ID korisnik__partner izmjene</button>
-                                </div>
-
-                                {# Hidden per request: keep LOC_Order hardcoded section in source only.
-                                <div class="row">
-                                    <div class="col-sm-5">
-                                        <h4 style="margin-top: 10px;">Hardcoded skladišta iz LOC_Order</h4>
-                                        <ul style="padding-left: 18px;">
-                                            {% for item in store_audit.special %}
-                                                <li><strong>{{ item.code }}</strong> - {{ item.purpose }}</li>
-                                            {% endfor %}
-                                        </ul>
+                                    {# Legacy JSON source path intentionally remains server-side only. #}
+                                    <div class="panel-group" id="store-warning-accordion" style="margin-bottom: 15px;">
+                                        <div class="panel panel-{% if store_audit.warnings %}warning{% else %}success{% endif %}">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#store-warning-accordion" href="#store-warnings">
+                                                        <i class="fa fa-warning"></i>
+                                                        Upozorenja ({{ store_audit.warnings|length }})
+                                                        <i class="fa fa-chevron-down pull-right"></i>
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="store-warnings" class="panel-collapse collapse">
+                                                <div class="panel-body">
+                                                    {% if store_audit.warnings %}
+                                                        <ul style="margin-bottom: 0; padding-left: 20px;">
+                                                            {% for warning in store_audit.warnings %}<li>{{ warning }}</li>{% endfor %}
+                                                        </ul>
+                                                    {% else %}
+                                                        Nema upozorenja u konfiguraciji poslovnica.
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                #}
+
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped table-condensed" style="font-size: 12px; line-height: 1.2;">
+                                            <thead>
+                                            <tr>
+                                                <th>Šifra</th>
+                                                <th>Naziv / adresa</th>
+                                                <th>UID</th>
+                                                <th>PJ</th>
+                                                <th>Inc</th>
+                                                <th>Def</th>
+                                                <th>View</th>
+                                                <th>Stores</th>
+                                                <th>Pickup</th>
+                                                <th>Partner ID</th>
+                                                <th>Radno vrijeme</th>
+                                                <th>Status</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for row in store_audit.rows %}
+                                                <tr class="{% if not row.status %}text-muted{% endif %}">
+                                                    <td><strong>{{ row.code }}</strong></td>
+                                                    <td>{{ row.name }}<br><small>{{ row.address }}</small></td>
+                                                    <td><small>{{ row.warehouse_uid }}</small></td>
+                                                    <td>{{ row.pj_code }}<br><small>{{ row.pj_name }}</small></td>
+                                                    <td>{% if row.is_included %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
+                                                    <td>{% if row.is_default %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
+                                                    <td>{% if row.is_availability %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
+                                                    <td>{% if row.is_store %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
+                                                    <td>{% if row.is_pickup %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
+                                                    <td>{{ row.partner_id ?: '-' }}</td>
+                                                    <td><small>{{ row.working_hours ? row.working_hours|nl2br : '-' }}</small></td>
+                                                    <td>{% if row.status %}<span class="label label-success">Aktivna</span>{% else %}<span class="label label-default">Neaktivna</span>{% endif %}</td>
+                                                    <td><button type="button" class="btn btn-primary btn-xs js-edit-store" data-store-id="{{ row.store_id }}"><i class="fa fa-pencil"></i></button></td>
+                                                </tr>
+                                            {% else %}
+                                                <tr><td colspan="13" class="text-center">Nema poslovnica.</td></tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -554,84 +541,141 @@
 
     </div>
 
+    {% if store_table_installed %}
+    <div class="modal fade" id="store-modal" tabindex="-1" role="dialog" aria-labelledby="store-modal-title">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form id="store-form">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Zatvori"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="store-modal-title">Dodaj poslovnicu</h4>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="store_id" value="0">
+                        <div class="row">
+                            <div class="form-group col-sm-3"><label>Šifra *</label><input type="text" name="code" class="form-control" maxlength="16" required></div>
+                            <div class="form-group col-sm-5"><label>Luceed UID *</label><input type="text" name="warehouse_uid" class="form-control" maxlength="191" required></div>
+                            <div class="form-group col-sm-4"><label>Naziv *</label><input type="text" name="name" class="form-control" maxlength="255" required></div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-6"><label>Adresa</label><input type="text" name="address" class="form-control" maxlength="255"></div>
+                            <div class="form-group col-sm-2"><label>Poštanski broj</label><input type="text" name="postal_code" class="form-control" maxlength="32"></div>
+                            <div class="form-group col-sm-4"><label>Grad</label><input type="text" name="city" class="form-control" maxlength="128"></div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-4"><label>Kontakt</label><input type="text" name="contact" class="form-control" maxlength="255"></div>
+                            <div class="form-group col-sm-3"><label>PJ UID</label><input type="text" name="pj_uid" class="form-control" maxlength="191"></div>
+                            <div class="form-group col-sm-2"><label>PJ *</label><input type="text" name="pj_code" class="form-control" maxlength="32" required></div>
+                            <div class="form-group col-sm-3"><label>PJ naziv</label><input type="text" name="pj_name" class="form-control" maxlength="255"></div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-6"><label>Radno vrijeme</label><textarea name="working_hours" class="form-control" rows="2" placeholder="pon - pet: 09:00 - 19:00&#10;sub: 09:00 - 13:00"></textarea></div>
+                            <div class="form-group col-sm-3"><label>ID korisnik__partner</label><input type="text" name="partner_id" class="form-control" maxlength="64"></div>
+                            <div class="form-group col-sm-3"><label>Redoslijed</label><input type="number" name="sort_order" class="form-control" value="0"></div>
+                        </div>
+                        <div class="well well-sm" style="margin-bottom: 0;">
+                            <label class="checkbox-inline"><input type="checkbox" name="status" value="1"> Aktivna</label>
+                            <label class="checkbox-inline"><input type="checkbox" name="is_included" value="1"> Included</label>
+                            <label class="checkbox-inline"><input type="checkbox" name="is_default" value="1"> Default</label>
+                            <label class="checkbox-inline"><input type="checkbox" name="is_availability" value="1"> Availability</label>
+                            <label class="checkbox-inline"><input type="checkbox" name="is_store" value="1"> Stores</label>
+                            <label class="checkbox-inline"><input type="checkbox" name="is_pickup" value="1"> Pickup</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Odustani</button>
+                        <button type="submit" id="save-store" class="btn btn-success"><i class="fa fa-save"></i> Spremi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <script type="text/javascript">
         $(() => {
-            const korisnikPartnerUidSuffix = '{{ store_audit.korisnik_partner_uid_suffix }}';
+            if (window.location.hash === '#poslovnice') {
+                $('a[href="#poslovnice"]').tab('show');
+            }
 
-            const savePickupStoresSwitch = () => {
-                let enabled = $('#pickup-stores-enabled').is(':checked') ? 1 : 0;
-
+            $('#install-store-table').on('click', function() {
+                let button = $(this);
+                button.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Instalacija...');
                 $.ajax({
-                    url: 'index.php?route=extension/module/luceed_sync/savePickupStoresSwitch&user_token={{ user_token }}',
+                    url: 'index.php?route=extension/module/luceed_sync/installStoreTable&user_token={{ user_token }}',
                     type: 'POST',
                     dataType: 'json',
-                    data: { enabled: enabled },
                     success: function(json) {
                         checkResult(json);
-                    }
-                });
-            };
-
-            const formatKorisnikPartnerUid = (partnerId) => {
-                let id = String(partnerId || '').trim();
-
-                if (id === '' || ! /^\d+$/.test(id)) {
-                    return '-';
-                }
-
-                return id + '-' + korisnikPartnerUidSuffix;
-            };
-
-            const syncKorisnikPartnerPreview = (input) => {
-                let code = $(input).data('code');
-                let value = $(input).val();
-                $('.js-korisnik-partner-uid[data-code="' + code + '"]').text(formatKorisnikPartnerUid(value));
-            };
-
-            const savePickupPartnerIds = () => {
-                let mapping = {};
-                let invalid_codes = [];
-
-                $('.js-korisnik-partner-id').each(function() {
-                    let code = String($(this).data('code') || '').trim();
-                    let value = String($(this).val() || '').trim();
-
-                    if (value === '') {
-                        return;
-                    }
-
-                    if ( ! /^\d+$/.test(value)) {
-                        invalid_codes.push(code);
-                        return;
-                    }
-
-                    mapping[code] = value;
-                });
-
-                if (invalid_codes.length) {
-                    checkResult({
-                        status: 300,
-                        message: 'ID korisnik__partner mora biti numerički. Problem kod: ' + invalid_codes.join(', ')
-                    });
-                    return;
-                }
-
-                $.ajax({
-                    url: 'index.php?route=extension/module/luceed_sync/savePickupPartnerIds&user_token={{ user_token }}',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: { mapping: mapping },
-                    success: function(json) {
-                        checkResult(json);
-
                         if (json.status == 200) {
-                            window.setTimeout(() => {
-                                location.reload();
-                            }, 500);
+                            window.location.hash = 'poslovnice';
+                            window.setTimeout(function() { location.reload(); }, 500);
+                        } else {
+                            button.prop('disabled', false).html('<i class="fa fa-database"></i> Instaliraj tablicu i uvezi postojeće poslovnice');
                         }
                     }
                 });
+            });
+
+            const resetStoreForm = () => {
+                $('#store-form')[0].reset();
+                $('#store-form [name="store_id"]').val(0);
+                $('#store-form [name="status"]').prop('checked', true);
+                $('#store-modal-title').text('Dodaj poslovnicu');
             };
+
+            $('#add-store').on('click', function() {
+                resetStoreForm();
+                $('#store-modal').modal('show');
+            });
+
+            $('.js-edit-store').on('click', function() {
+                let storeId = $(this).data('store-id');
+                $.ajax({
+                    url: 'index.php?route=extension/module/luceed_sync/getStore&user_token={{ user_token }}&store_id=' + storeId,
+                    dataType: 'json',
+                    success: function(json) {
+                        if (json.status != 200) {
+                            checkResult(json);
+                            return;
+                        }
+
+                        resetStoreForm();
+                        $.each(json.store, function(key, value) {
+                            let field = $('#store-form [name="' + key + '"]');
+                            if (field.attr('type') === 'checkbox') {
+                                field.prop('checked', String(value) === '1');
+                            } else {
+                                field.val(value);
+                            }
+                        });
+                        $('#store-modal-title').text('Uredi poslovnicu ' + json.store.code);
+                        $('#store-modal').modal('show');
+                    }
+                });
+            });
+
+            $('#store-form').on('submit', function(e) {
+                e.preventDefault();
+                let button = $('#save-store');
+                button.prop('disabled', true);
+                $.ajax({
+                    url: 'index.php?route=extension/module/luceed_sync/saveStore&user_token={{ user_token }}',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: $(this).serialize(),
+                    success: function(json) {
+                        checkResult(json);
+                        if (json.status == 200) {
+                            $('#store-modal').modal('hide');
+                            window.location.hash = 'poslovnice';
+                            window.setTimeout(function() { location.reload(); }, 500);
+                        } else {
+                            button.prop('disabled', false);
+                        }
+                    }
+                });
+            });
 
             //
             if (localStorage.getItem('sync_updated')) {
@@ -695,12 +739,6 @@
                         alert('Morate odabrati element!');
                     }
             });
-
-            $('#save-pickup-stores-enabled').on('click', () => { savePickupStoresSwitch(); });
-            $('#pickup-stores-enabled').on('change', () => { savePickupStoresSwitch(); });
-            $('#save-pickup-partner-ids').on('click', () => { savePickupPartnerIds(); });
-            $('.js-korisnik-partner-id').on('input', function() { syncKorisnikPartnerPreview(this); });
-            $('.js-korisnik-partner-id').each(function() { syncKorisnikPartnerPreview(this); });
         });
 
 
@@ -900,7 +938,7 @@
             if (result.status == 200) {
                 AG_alert.success(result.message);
             }
-            if (result.status == 300 || result.status == 403) {
+            if (result.status != 200) {
                 AG_alert.warning(result.message);
             }
         }
