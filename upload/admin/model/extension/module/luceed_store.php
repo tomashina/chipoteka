@@ -33,7 +33,6 @@ class ModelExtensionModuleLuceedStore extends Model
                 `partner_id` varchar(64) NOT NULL DEFAULT '',
                 `sort_order` int(11) NOT NULL DEFAULT 0,
                 `status` tinyint(1) NOT NULL DEFAULT 1,
-                `is_included` tinyint(1) NOT NULL DEFAULT 0,
                 `is_default` tinyint(1) NOT NULL DEFAULT 0,
                 `is_availability` tinyint(1) NOT NULL DEFAULT 0,
                 `is_store` tinyint(1) NOT NULL DEFAULT 0,
@@ -56,7 +55,6 @@ class ModelExtensionModuleLuceedStore extends Model
         }
 
         $flags = [
-            'is_included'     => $this->normalizeCodes($warehouse_config['included'] ?? []),
             'is_default'      => $this->normalizeCodes($warehouse_config['default'] ?? []),
             'is_availability' => $this->normalizeCodes($warehouse_config['availability_view'] ?? []),
             'is_store'        => $this->normalizeCodes($warehouse_config['stores'] ?? []),
@@ -97,7 +95,6 @@ class ModelExtensionModuleLuceedStore extends Model
                 'partner_id'      => $partner_map[$code] ?? '',
                 'sort_order'      => ($position + 1) * 10,
                 'status'          => 1,
-                'is_included'     => in_array($code, $flags['is_included'], true) ? 1 : 0,
                 'is_default'      => in_array($code, $flags['is_default'], true) ? 1 : 0,
                 'is_availability' => in_array($code, $flags['is_availability'], true) ? 1 : 0,
                 'is_store'        => in_array($code, $flags['is_store'], true) ? 1 : 0,
@@ -254,9 +251,6 @@ class ModelExtensionModuleLuceedStore extends Model
             if ($store['partner_id'] !== '' && ! ctype_digit((string) $store['partner_id'])) {
                 $warnings[] = $label . ': ID korisnik__partner nije numerički.';
             }
-            if (((int) $store['is_default'] || (int) $store['is_availability'] || (int) $store['is_store'] || (int) $store['is_pickup']) && ! (int) $store['is_included']) {
-                $warnings[] = $label . ': koristi se u užoj grupi, ali nije označena kao Included.';
-            }
         }
 
         return array_values(array_unique($warnings));
@@ -283,7 +277,6 @@ class ModelExtensionModuleLuceedStore extends Model
             'partner_id'      => trim((string) ($data['partner_id'] ?? '')),
             'sort_order'      => (int) ($data['sort_order'] ?? 0),
             'status'          => ! empty($data['status']) ? 1 : 0,
-            'is_included'     => ! empty($data['is_included']) ? 1 : 0,
             'is_default'      => ! empty($data['is_default']) ? 1 : 0,
             'is_availability' => ! empty($data['is_availability']) ? 1 : 0,
             'is_store'        => ! empty($data['is_store']) ? 1 : 0,
@@ -328,6 +321,6 @@ class ModelExtensionModuleLuceedStore extends Model
 
     private function hasPurpose(array $store): bool
     {
-        return (bool) ((int) $store['is_included'] || (int) $store['is_default'] || (int) $store['is_availability'] || (int) $store['is_store'] || (int) $store['is_pickup']);
+        return (bool) ((int) $store['is_default'] || (int) $store['is_availability'] || (int) $store['is_store'] || (int) $store['is_pickup']);
     }
 }

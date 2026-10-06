@@ -1,5 +1,72 @@
 {{ header }}{{ column_left }}
 <div id="content">
+<style>
+    #store-modal .store-status-box {
+        align-items: center;
+        background: #f8fafc;
+        border: 1px solid #d9e2ec;
+        border-radius: 6px;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 18px;
+        padding: 12px 14px;
+    }
+    #store-modal .store-status-box.is-active {
+        background: #edf9f1;
+        border-color: #8fd19e;
+    }
+    #store-modal .store-status-title { color: #334e68; font-weight: 600; }
+    #store-modal .store-status-hint { color: #829ab1; display: block; font-size: 12px; font-weight: 400; margin-top: 2px; }
+    #store-modal .store-switch { display: inline-block; height: 26px; margin: 0; position: relative; width: 48px; }
+    #store-modal .store-switch input,
+    #store-modal .store-option input { opacity: 0; position: absolute; }
+    #store-modal .store-switch-slider {
+        background: #b8c2cc;
+        border-radius: 20px;
+        cursor: pointer;
+        inset: 0;
+        position: absolute;
+        transition: .2s ease;
+    }
+    #store-modal .store-switch-slider:before {
+        background: #fff;
+        border-radius: 50%;
+        bottom: 3px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+        content: '';
+        height: 20px;
+        left: 3px;
+        position: absolute;
+        transition: .2s ease;
+        width: 20px;
+    }
+    #store-modal .store-switch input:checked + .store-switch-slider { background: #27ae60; }
+    #store-modal .store-switch input:checked + .store-switch-slider:before { transform: translateX(22px); }
+    #store-modal .store-purpose-title { color: #52606d; font-size: 12px; font-weight: 700; letter-spacing: .05em; margin-bottom: 8px; text-transform: uppercase; }
+    #store-modal .store-purpose-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    #store-modal .store-option { cursor: pointer; margin: 0; position: relative; }
+    #store-modal .store-option-card {
+        background: #f5f7fa;
+        border: 1px solid #d9e2ec;
+        border-radius: 5px;
+        color: #52606d;
+        display: block;
+        font-weight: 600;
+        min-width: 130px;
+        padding: 10px 12px;
+        transition: .15s ease;
+    }
+    #store-modal .store-option-card i { color: #9fb3c8; margin-right: 6px; }
+    #store-modal .store-option input:checked + .store-option-card {
+        background: #e8f4fd;
+        border-color: #3498db;
+        color: #1f6f9f;
+        box-shadow: inset 0 0 0 1px #3498db;
+    }
+    #store-modal .store-option input:checked + .store-option-card i { color: #2980b9; }
+    #store-modal .store-option input:focus + .store-option-card,
+    #store-modal .store-switch input:focus + .store-switch-slider { box-shadow: 0 0 0 3px rgba(52, 152, 219, .2); }
+</style>
     <div class="page-header">
         <div class="container-fluid">
             <div class="pull-right">
@@ -331,7 +398,6 @@
                                                 <th>Naziv / adresa</th>
                                                 <th>UID</th>
                                                 <th>PJ</th>
-                                                <th>Inc</th>
                                                 <th>Def</th>
                                                 <th>View</th>
                                                 <th>Stores</th>
@@ -349,7 +415,6 @@
                                                     <td>{{ row.name }}<br><small>{{ row.address }}</small></td>
                                                     <td><small>{{ row.warehouse_uid }}</small></td>
                                                     <td>{{ row.pj_code }}<br><small>{{ row.pj_name }}</small></td>
-                                                    <td>{% if row.is_included %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
                                                     <td>{% if row.is_default %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
                                                     <td>{% if row.is_availability %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
                                                     <td>{% if row.is_store %}<span class="label label-success">D</span>{% else %}<span class="label label-default">N</span>{% endif %}</td>
@@ -360,7 +425,7 @@
                                                     <td><button type="button" class="btn btn-primary btn-xs js-edit-store" data-store-id="{{ row.store_id }}"><i class="fa fa-pencil"></i></button></td>
                                                 </tr>
                                             {% else %}
-                                                <tr><td colspan="13" class="text-center">Nema poslovnica.</td></tr>
+                                                <tr><td colspan="12" class="text-center">Nema poslovnica.</td></tr>
                                             {% endfor %}
                                             </tbody>
                                         </table>
@@ -573,13 +638,37 @@
                             <div class="form-group col-sm-3"><label>ID korisnik__partner</label><input type="text" name="partner_id" class="form-control" maxlength="64"></div>
                             <div class="form-group col-sm-3"><label>Redoslijed</label><input type="number" name="sort_order" class="form-control" value="0"></div>
                         </div>
-                        <div class="well well-sm" style="margin-bottom: 0;">
-                            <label class="checkbox-inline"><input type="checkbox" name="status" value="1"> Aktivna</label>
-                            <label class="checkbox-inline"><input type="checkbox" name="is_included" value="1"> Included</label>
-                            <label class="checkbox-inline"><input type="checkbox" name="is_default" value="1"> Default</label>
-                            <label class="checkbox-inline"><input type="checkbox" name="is_availability" value="1"> Availability</label>
-                            <label class="checkbox-inline"><input type="checkbox" name="is_store" value="1"> Stores</label>
-                            <label class="checkbox-inline"><input type="checkbox" name="is_pickup" value="1"> Pickup</label>
+                        <div class="store-status-box">
+                            <div class="store-status-title">
+                                Status poslovnice
+                                <span class="store-status-hint">Neaktivna poslovnica neće se koristiti na frontendu.</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <strong class="store-status-label text-muted">Neaktivna</strong>
+                                <label class="store-switch" title="Aktiviraj ili deaktiviraj poslovnicu">
+                                    <input type="checkbox" name="status" value="1">
+                                    <span class="store-switch-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="store-purpose-title">Namjena poslovnice</div>
+                        <div class="store-purpose-grid">
+                            <label class="store-option">
+                                <input type="checkbox" name="is_default" value="1">
+                                <span class="store-option-card"><i class="fa fa-shopping-cart"></i> Web zaliha</span>
+                            </label>
+                            <label class="store-option">
+                                <input type="checkbox" name="is_availability" value="1">
+                                <span class="store-option-card"><i class="fa fa-eye"></i> Dostupnost</span>
+                            </label>
+                            <label class="store-option">
+                                <input type="checkbox" name="is_store" value="1">
+                                <span class="store-option-card"><i class="fa fa-building"></i> Poslovnica</span>
+                            </label>
+                            <label class="store-option">
+                                <input type="checkbox" name="is_pickup" value="1">
+                                <span class="store-option-card"><i class="fa fa-map-marker"></i> Pickup</span>
+                            </label>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -621,8 +710,20 @@
                 $('#store-form')[0].reset();
                 $('#store-form [name="store_id"]').val(0);
                 $('#store-form [name="status"]').prop('checked', true);
+                updateStoreStatusStyle();
                 $('#store-modal-title').text('Dodaj poslovnicu');
             };
+
+            const updateStoreStatusStyle = () => {
+                const active = $('#store-form [name="status"]').is(':checked');
+                $('#store-form .store-status-box').toggleClass('is-active', active);
+                $('#store-form .store-status-label')
+                    .toggleClass('text-success', active)
+                    .toggleClass('text-muted', !active)
+                    .text(active ? 'Aktivna' : 'Neaktivna');
+            };
+
+            $('#store-form [name="status"]').on('change', updateStoreStatusStyle);
 
             $('#add-store').on('click', function() {
                 resetStoreForm();
@@ -649,6 +750,7 @@
                                 field.val(value);
                             }
                         });
+                        updateStoreStatusStyle();
                         $('#store-modal-title').text('Uredi poslovnicu ' + json.store.code);
                         $('#store-modal').modal('show');
                     }

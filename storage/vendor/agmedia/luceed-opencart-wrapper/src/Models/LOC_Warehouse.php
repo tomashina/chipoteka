@@ -76,8 +76,14 @@ class LOC_Warehouse
      */
     public function getWarehouses(): Collection
     {
+        // Included is a legacy JSON-refresh filter. In DB mode the default flag
+        // is the canonical replacement and the legacy refresh is disabled.
+        $codes = $this->storeTableExists()
+            ? $this->getCodesByFlag('is_default', [])
+            : agconf('import.warehouse.included');
+
         return $this->getList()
-                    ->whereIn('skladiste', $this->getCodesByFlag('is_included', agconf('import.warehouse.included')));
+                    ->whereIn('skladiste', is_array($codes) ? $codes : []);
     }
 
 
@@ -110,7 +116,7 @@ class LOC_Warehouse
      */
     public function getCodesByFlag(string $flag, $fallback = []): array
     {
-        $allowed_flags = ['is_included', 'is_default', 'is_availability', 'is_store', 'is_pickup'];
+        $allowed_flags = ['is_default', 'is_availability', 'is_store', 'is_pickup'];
 
         if ($this->storeTableExists() && in_array($flag, $allowed_flags, true)) {
             $db = new Database(DB_DATABASE);
