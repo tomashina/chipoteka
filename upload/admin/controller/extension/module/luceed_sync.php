@@ -1021,6 +1021,15 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function importWarehouses()
     {
+        $this->load->model('extension/module/luceed_store');
+
+        if ($this->model_extension_module_luceed_store->isInstalled()) {
+            return $this->output([
+                'status' => 300,
+                'message' => 'Luceed import skladišta je isključen jer je instalirana tablica poslovnica.'
+            ]);
+        }
+
         $_loc = new LOC_Warehouse(LuceedWarehouse::all());
 
         $imported = $_loc->import($_loc->getWarehouses());

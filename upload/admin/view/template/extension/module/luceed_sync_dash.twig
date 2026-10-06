@@ -358,6 +358,13 @@
                                     <p>Pronađeno poslovnica u legacy JSON izvoru: <strong>{{ store_audit.stats.legacy }}</strong></p>
                                     <button type="button" id="install-store-table" class="btn btn-primary"><i class="fa fa-database"></i> Instaliraj tablicu i uvezi postojeće poslovnice</button>
                                 {% else %}
+                                    <div class="well well-sm" style="margin-bottom: 15px;">
+                                        <label class="checkbox-inline" style="font-weight: 600;">
+                                            <input type="checkbox" id="pickup-stores-enabled" {% if pickup_stores_enabled %}checked="checked"{% endif %}>
+                                            Prikaži pickup poslovnice u checkoutu
+                                        </label>
+                                        <button type="button" id="save-pickup-stores-enabled" class="btn btn-primary btn-xs pull-right">Spremi postavku</button>
+                                    </div>
                                     <p style="margin-bottom: 15px;">
                                         Ukupno: <strong>{{ store_audit.stats.total }}</strong>,
                                         aktivno: <strong>{{ store_audit.stats.active }}</strong>,
@@ -778,6 +785,19 @@
                     }
                 });
             });
+
+            const savePickupStoresSwitch = () => {
+                $.ajax({
+                    url: 'index.php?route=extension/module/luceed_sync/savePickupStoresSwitch&user_token={{ user_token }}',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { enabled: $('#pickup-stores-enabled').is(':checked') ? 1 : 0 },
+                    success: checkResult
+                });
+            };
+
+            $('#save-pickup-stores-enabled').on('click', savePickupStoresSwitch);
+            $('#pickup-stores-enabled').on('change', savePickupStoresSwitch);
 
             //
             if (localStorage.getItem('sync_updated')) {
