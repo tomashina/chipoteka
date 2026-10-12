@@ -1640,12 +1640,10 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
             $data['mail_logo']          = HTTPS_CATALOG . 'image/chipoteka-hd.png';
             $data['mail_title']         = sprintf($email['subject'], $order['order_id']);
-            $data['mail_data']          = $email['data'];
-            $nhs_no                     = $order['order_id'] . date("ym");
-            $data['mail_poziv_na_broj'] = $nhs_no . $this->mod11INI($nhs_no);
-
-            $data['oib']    = isset($order['custom_field'][1]) ? $order['custom_field'][1] : null;
+            $data['mail_data'] = $email['data'];
+            $data['oib']       = isset($order['custom_field'][1]) ? $order['custom_field'][1] : null;
             $data['tvrtka'] = isset($order['custom_field'][2]) ? $order['custom_field'][2] : null;
+            $data['mail_poziv_na_broj'] = \Agmedia\LuceedOpencartWrapper\Helpers\PaymentReference::forOrder($data);
 
             $data['b2b'] = $order['mail'];
 

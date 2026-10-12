@@ -2,6 +2,7 @@
 use Agmedia\Helpers\Log;
 use Agmedia\Models\Order\Order;
 use Agmedia\Models\Product\Product;
+use Agmedia\LuceedOpencartWrapper\Helpers\PaymentReference;
 class ControllerMailOrder extends Controller {
 	public function index(&$route, &$args) {
 		if (isset($args[0])) {
@@ -116,7 +117,7 @@ class ControllerMailOrder extends Controller {
 
           else if ($order_info['payment_code'] == 'bank_transfer') {
 
-              $data['text_message'] = sprintf($language->get('text_bank'), $order_info['order_id'], $order_info['order_id']);
+              $data['text_message'] = sprintf($language->get('text_bank'), $order_info['order_id'], PaymentReference::forOrder($order_info));
 
               $data['scanimage'] = HTTP_SERVER.'image/tmp/'.$order_info['order_id'].'.png';
 
@@ -591,9 +592,7 @@ class ControllerMailOrder extends Controller {
 
             $data['oib'] = isset($order['custom_field'][1]) ? $order['custom_field'][1] : null;
             $data['tvrtka'] = isset($order['custom_field'][2]) ? $order['custom_field'][2] : null;
-
-            $nhs_no = $order['order_id'].date("ym");
-            $data['mail_poziv_na_broj'] = $nhs_no.$this->mod11INI($nhs_no);
+            $data['mail_poziv_na_broj'] = PaymentReference::forOrder($data);
 
             $data['b2b'] = $order['mail'];
 

@@ -41,7 +41,7 @@ $_['text_pouzece']           = '<p>Uredno smo zaprimili Vašu narudžbu  %s</p><
 
 $_['text_bank']           = '<p>Uredno smo zaprimili Vašu narudžbu broj %s i zahvaljujemo Vam.</p><p>Molimo vas da izvršite uplatu po sljedećim uputama za plaćanje.</p><p> Rok za uplatu je maksimalno 48h tijekom koga robu koju ste naručili držimo rezerviranu za vas.</p><p> Ukoliko u tom roku ne zaprimimo uplatu, nažalost moramo poništiti ovu narudžbu.</p>
 IBAN RAČUN: HR4424070001100582698<br>
-MODEL: 05 POZIV NA BROJ: %s</p>
+MODEL: HR01 POZIV NA BROJ: %s</p>
 
 <p>ILI JEDNOSTAVNO POSKENIRAJTE 2D BARKOD</p>';
 

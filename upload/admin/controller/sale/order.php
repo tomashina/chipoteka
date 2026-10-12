@@ -1867,12 +1867,10 @@ class ControllerSaleOrder extends Controller {
                 $order_id = 0;
             }
 
-            $nhs_no = $order_id . date("ym");
-            $poziv_nb = $nhs_no . $this->mod11INI($nhs_no);
-
             $this->load->model('sale/order');
             $oc_order = $this->model_sale_order->getOrder($order_id);
-            $oc_order['poziv_na_broj'] = $poziv_nb;
+            $nhs_no = $order_id . date("ym");
+            $oc_order['poziv_na_broj'] = \Agmedia\LuceedOpencartWrapper\Helpers\PaymentReference::forOrder($oc_order) ?: ($nhs_no . $this->mod11INI($nhs_no));
 
             $order    = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Order($oc_order);
             $customer = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Customer($order->getCustomerData());

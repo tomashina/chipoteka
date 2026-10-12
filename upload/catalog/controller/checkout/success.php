@@ -2,6 +2,7 @@
 
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Customer;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Order;
+use Agmedia\LuceedOpencartWrapper\Helpers\PaymentReference;
 
 class ControllerCheckoutSuccess extends Controller {
 	public function index() {
@@ -49,7 +50,7 @@ class ControllerCheckoutSuccess extends Controller {
                      *                              email: filip@agmedia.hr                         *
                      *******************************************************************************/
                     $nhs_no = $order_id . date("ym");
-                    $poziv_nb = $nhs_no . $this->mod11INI($nhs_no);
+                    $poziv_nb = PaymentReference::forOrder($order_info) ?: ($nhs_no . $this->mod11INI($nhs_no));
 
                     $this->load->model('checkout/order');
                     $oc_order = $order_info;
@@ -352,9 +353,7 @@ class ControllerCheckoutSuccess extends Controller {
 
               elseif ($data['paymethod'] == 'bank_transfer') {
 
-                  $nhs_no = $order_id.date("ym");
-
-                  $pozivnabroj = $nhs_no.$this->mod11INI($nhs_no);
+                  $pozivnabroj = PaymentReference::forOrder($order_info);
 
                   $data['text_message'] = sprintf($this->language->get('text_bank'), $order_id, $ukupno, $pozivnabroj);
 
@@ -385,7 +384,7 @@ class ControllerCheckoutSuccess extends Controller {
                                       'street' => 'Industrijska cesta 28',
                                       'place' => '10360 Sesvete ',
                                       'iban' => 'HR4424070001100582698',
-                                      'model' => '05',
+                                      'model' => PaymentReference::HUB3_MODEL,
                                       'reference' => $pozivnabroj,
                                   ),
                               'purpose' => 'CMDT',

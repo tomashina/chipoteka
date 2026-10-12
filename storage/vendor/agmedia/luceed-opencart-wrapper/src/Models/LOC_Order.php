@@ -8,6 +8,7 @@ use Agmedia\Kaonekad\Models\ShippingCollector;
 use Agmedia\Luceed\Luceed;
 use Agmedia\LuceedOpencartWrapper\Helpers\Availability;
 use Agmedia\LuceedOpencartWrapper\Helpers\OrderHelper;
+use Agmedia\LuceedOpencartWrapper\Helpers\PaymentReference;
 use Agmedia\Models\Coupon;
 use Agmedia\Models\Order\Order;
 use Agmedia\Models\Order\OrderProduct;
@@ -598,7 +599,7 @@ class LOC_Order
         $this->order = [
             'nalog_prodaje_b2b'         => $this->oc_order['order_id']. '-' . Carbon::now()->year,
             'narudzba'                  => $this->oc_order['order_id'] . '-' . Carbon::now()->year,
-            'vezani_poziv_na_broj'      => $this->oc_order['poziv_na_broj'],
+            'vezani_poziv_na_broj'      => PaymentReference::forOrder($this->oc_order) ?: ($this->oc_order['poziv_na_broj'] ?? ''),
             'datum'                     => Carbon::make($this->oc_order['date_added'])->format(agconf('luceed.date')),
             'skladiste'                 => '099',// 001 -> 099
             'sa__skladiste'             => '101',// 001 -> 101
@@ -712,7 +713,7 @@ class LOC_Order
             $this->order['pj_id'] = $nalog['pj'];
         }
 
-        $this->order['vezani_poziv_na_broj'] = $this->oc_order['poziv_na_broj'];
+        $this->order['vezani_poziv_na_broj'] = PaymentReference::forOrder($this->oc_order) ?: ($this->oc_order['poziv_na_broj'] ?? '');
 
         // Split pickup nalogs are operational transfers; payment stays only on the main order.
         if ($nalog['broj_naloga'] !== '') {
