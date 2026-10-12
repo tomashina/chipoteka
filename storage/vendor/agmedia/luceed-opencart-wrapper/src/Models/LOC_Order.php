@@ -1077,7 +1077,7 @@ class LOC_Order
         $date = Carbon::now();
 
         if ($this->oc_order['payment_code'] == 'wspay') {
-            $date = $date->addDay(14);
+            $date = $date->addDay(7);
         }
 
         if (in_array($this->oc_order['payment_code'], ['cod', 'cod_preuzimanje', 'bank_transfer'], true)) {
