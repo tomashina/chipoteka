@@ -1074,21 +1074,7 @@ class LOC_Order
      */
     private function getReservation()
     {
-        $date = Carbon::now();
-
-        if ($this->oc_order['payment_code'] == 'wspay') {
-            $date = $date->addDay(7);
-        }
-
-        if (in_array($this->oc_order['payment_code'], ['cod', 'cod_preuzimanje', 'bank_transfer'], true)) {
-            $date = $date->addDay(4);
-        }
-
-        if ($this->hasOIB() && $date->isToday()) {
-            $date = $date->addDay(7);
-        }
-
-        return $date->format(agconf('luceed.date'));
+        return Carbon::now()->addDays(7)->format(agconf('luceed.date'));
     }
 
 

@@ -21,7 +21,7 @@ class ControllerCheckoutShippingMethod extends Controller {
 			$results = $this->model_setting_extension->getExtensions('shipping');
 
 				foreach ($results as $result) {
-					// Pickup is built from import.warehouse.pickup; xshippingpro is intentionally excluded.
+					// Pickup is built from the store table when installed; xshippingpro is intentionally excluded.
 					if (in_array($result['code'], array('pickup', 'xshippingpro'), true)) {
 						continue;
 					}
@@ -65,7 +65,7 @@ class ControllerCheckoutShippingMethod extends Controller {
 					$pickup_selected = strpos($selected_code, 'pickup.pickup_') === 0;
 					$xshipping_selected = strpos($selected_code, 'xshippingpro.') === 0;
 
-					if (($pickup_selected && !$pickup_enabled) || $xshipping_selected) {
+					if (($pickup_selected && (!$pickup_enabled || !$this->isPickupShippingCodeAvailable($selected_code))) || $xshipping_selected) {
 						unset($this->session->data['shipping_method']);
 					}
 				}
@@ -140,12 +140,15 @@ class ControllerCheckoutShippingMethod extends Controller {
 			}
 		}
 
-		if (!isset($this->request->post['shipping_method'])) {
+		if (!isset($this->request->post['shipping_method']) || !is_string($this->request->post['shipping_method'])) {
 			$json['error']['warning'] = $this->language->get('error_shipping');
 		} else {
-			$shipping = explode('.', $this->request->post['shipping_method']);
+			$shipping_code = $this->request->post['shipping_method'];
+			$shipping = explode('.', $shipping_code);
 
 			if (!isset($shipping[0]) || !isset($shipping[1]) || !isset($this->session->data['shipping_methods'][$shipping[0]]['quote'][$shipping[1]])) {
+				$json['error']['warning'] = $this->language->get('error_shipping');
+			} elseif (strpos($shipping_code, 'pickup.pickup_') === 0 && !$this->isPickupShippingCodeAvailable($shipping_code)) {
 				$json['error']['warning'] = $this->language->get('error_shipping');
 			}
 		}
@@ -239,6 +242,10 @@ class ControllerCheckoutShippingMethod extends Controller {
 		}
 
 		private function getPickupStoresForCheckout(array $pickup_map) {
+			if ($this->storeTableExists()) {
+				return $this->getDatabasePickupStores();
+			}
+
 			$hours = agconf('poslovnice_radno_vrijeme');
 			$hours = is_array($hours) ? $hours : array();
 			$stores = $this->loadPickupStoresIndex();
@@ -269,6 +276,61 @@ class ControllerCheckoutShippingMethod extends Controller {
 			});
 
 			return array_values($response);
+		}
+
+		/**
+		 * The stores table is the source of truth after the admin migration.
+		 * Legacy env/JSON values are intentionally used only before it exists.
+		 */
+		private function getDatabasePickupStores() {
+			$query = $this->db->query(
+				"SELECT code, name, address, working_hours FROM `" . DB_PREFIX . "luceed_store`"
+				. " WHERE status = '1' AND is_pickup = '1' ORDER BY sort_order ASC, code ASC"
+			);
+			$response = array();
+
+			foreach ($query->rows as $row) {
+				$code = $this->normalizeStoreCode($row['code']);
+
+				$response[] = array(
+					'code'          => $code,
+					'name'          => $row['name'],
+					'address'       => $row['address'],
+					'working_hours' => $row['working_hours'],
+					'shipping_code' => 'pickup.pickup_' . $code
+				);
+			}
+
+			return $response;
+		}
+
+		private function isPickupShippingCodeAvailable($shipping_code) {
+			if (strpos($shipping_code, 'pickup.pickup_') !== 0) {
+				return true;
+			}
+
+			if (!$this->storeTableExists()) {
+				return true;
+			}
+
+			$code = $this->normalizeStoreCode(substr($shipping_code, strlen('pickup.pickup_')));
+
+			if ($code === '' || !ctype_digit($code)) {
+				return false;
+			}
+
+			$query = $this->db->query(
+				"SELECT store_id FROM `" . DB_PREFIX . "luceed_store`"
+				. " WHERE code = '" . $this->db->escape($code) . "' AND status = '1' AND is_pickup = '1' LIMIT 1"
+			);
+
+			return (bool) $query->num_rows;
+		}
+
+		private function storeTableExists() {
+			$query = $this->db->query("SHOW TABLES LIKE '" . $this->db->escape(DB_PREFIX . 'luceed_store') . "'");
+
+			return (bool) $query->num_rows;
 		}
 
 		private function isPickupStoreExcludedFromCheckout($store_code) {

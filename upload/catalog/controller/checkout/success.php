@@ -9,6 +9,7 @@ class ControllerCheckoutSuccess extends Controller {
 		$this->load->language('checkout/success');
 
         $data['is_pickup_reservation'] = false;
+        $data['payment_reference'] = '';
 
 
 		if (isset($this->session->data['order_id'])) {
@@ -51,6 +52,7 @@ class ControllerCheckoutSuccess extends Controller {
                      *******************************************************************************/
                     $nhs_no = $order_id . date("ym");
                     $poziv_nb = PaymentReference::forOrder($order_info) ?: ($nhs_no . $this->mod11INI($nhs_no));
+                    $data['payment_reference'] = $poziv_nb;
 
                     $this->load->model('checkout/order');
                     $oc_order = $order_info;
@@ -353,7 +355,7 @@ class ControllerCheckoutSuccess extends Controller {
 
               elseif ($data['paymethod'] == 'bank_transfer') {
 
-                  $pozivnabroj = PaymentReference::forOrder($order_info);
+                  $pozivnabroj = $data['payment_reference'] ?: PaymentReference::forOrder($order_info);
 
                   $data['text_message'] = sprintf($this->language->get('text_bank'), $order_id, $ukupno, $pozivnabroj);
 
