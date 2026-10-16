@@ -72,6 +72,15 @@ class LOC_Warehouse
 
 
     /**
+     * Whether store metadata is read from the editable store table.
+     */
+    public function usesStoreTable(): bool
+    {
+        return $this->storeTableExists();
+    }
+
+
+    /**
      * @return Collection
      */
     public function getWarehouses(): Collection
@@ -351,6 +360,7 @@ class LOC_Warehouse
                     'mjesto' => $row['city'],
                     'telefax' => $row['contact'],
                     'e_mail' => $row['contact'],
+                    'partner_id' => $row['partner_id'],
                 ];
             }
 

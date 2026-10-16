@@ -57,6 +57,11 @@ class Availability
     /**
      * @var array
      */
+    protected array $pickup_codes = [];
+
+    /**
+     * @var array
+     */
     public array $items_required = [];
 
     /**
@@ -113,8 +118,10 @@ class Availability
         $this->order            = $order;
         $this->pickup           = $pickup;
         $this->pickup_title     = $pickup_title;
+        $warehouse_source       = new LOC_Warehouse();
+        $this->warehouse_list   = $warehouse_source->getList();
+        $this->pickup_codes     = $warehouse_source->getCodesByFlag('is_pickup', agconf('import.warehouse.pickup'));
         $this->items_available  = $this->resolveAvailabilityForCart();
-        $this->warehouse_list   = (new LOC_Warehouse())->getList();
         $this->pickup_warehouse = $this->warehouse_list->where('skladiste', '=', $this->pickup)->first();
 
         //
@@ -385,7 +392,7 @@ class Availability
     private function resolveAvailabilityForCart(): array
     {
         $availables      = [];
-        $warehouse_query = OrderHelper::getAvailabilityPickupQuery(agconf('import.warehouse.pickup'));
+        $warehouse_query = OrderHelper::getAvailabilityPickupQuery($this->pickup_codes);
 
         // Collect availability for all items
         foreach ($this->products as $product) {

@@ -937,7 +937,10 @@ class LOC_Order
     private function resolveAvailabilityForCart()
     {
         $availables = [];
-        $warehouse_query = OrderHelper::getAvailabilityPickupQuery(agconf('import.warehouse.pickup'));
+        $warehouse_source = new LOC_Warehouse();
+        $warehouse_query = OrderHelper::getAvailabilityPickupQuery(
+            $warehouse_source->getCodesByFlag('is_pickup', agconf('import.warehouse.pickup'))
+        );
 
         // Collect availability for all items
         foreach ($this->regular_products as $product) {
@@ -967,9 +970,12 @@ class LOC_Order
     {
         $availables = [];
 
-        $products        = $this->getRegularProducts();
-        $warehouse_query = OrderHelper::getAvailabilityPickupQuery(agconf('import.warehouse.pickup'));
-        $warehouse_list  = (new LOC_Warehouse())->getList();
+        $products         = $this->getRegularProducts();
+        $warehouse_source = new LOC_Warehouse();
+        $warehouse_query  = OrderHelper::getAvailabilityPickupQuery(
+            $warehouse_source->getCodesByFlag('is_pickup', agconf('import.warehouse.pickup'))
+        );
+        $warehouse_list   = $warehouse_source->getList();
 
         $this->log_items('getItemsAvailability() -> $products...', $products);
         $this->log_items('count $products', count($products));
@@ -1113,8 +1119,8 @@ class LOC_Order
 
 
     /**
-     * For pickup orders "korisnik" is resolved from DB setting map:
-     * skladiste => korisnik__partner ID, then sent as "{ID}-1063".
+     * For pickup orders resolve korisnik__partner from the editable store row.
+     * The legacy setting map remains only for installations without the table.
      *
      * @return string
      */
@@ -1135,11 +1141,27 @@ class LOC_Order
         }
 
         if ($skladiste === '') {
-            $this->pickup_partner_mapping_missing_reason = 'mapping missing for skladiste unknown (setting: ' . self::KORISNIK_PARTNER_SETTING_KEY . ')';
+            $this->pickup_partner_mapping_missing_reason = 'ID korisnik__partner missing for unknown pickup store';
             return '';
         }
 
         $skladiste = str_pad($skladiste, 3, '0', STR_PAD_LEFT);
+        $warehouse_source = new LOC_Warehouse();
+
+        if ($warehouse_source->usesStoreTable()) {
+            $partner_id = trim((string) ($warehouse['partner_id'] ?? ''));
+
+            if ($partner_id !== '' && ctype_digit($partner_id)) {
+                $this->pickup_partner_mapping_missing_reason = '';
+
+                return $partner_id . '-' . self::KORISNIK_PARTNER_UID_SUFFIX;
+            }
+
+            $this->pickup_partner_mapping_missing_reason = 'ID korisnik__partner missing in luceed_store for skladiste ' . $skladiste;
+
+            return '';
+        }
+
         $mapping = $this->getPickupPartnerIdMap();
         $partner_id = isset($mapping[$skladiste]) ? trim((string) $mapping[$skladiste]) : '';
 
