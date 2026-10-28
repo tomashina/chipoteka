@@ -42,6 +42,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
     const LUCEED_STOCK_SYNC_LOCK = 'chipoteka_luceed_product_sync';
 
     private $error = array();
+    private $snapshot_skipped_products = 0;
 
 
     public function install()
@@ -2751,6 +2752,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
     {
         $_loc = new LOC_Product(LuceedProduct::all());
         $result = $_loc->populateLuceedData();
+        $this->snapshot_skipped_products = (int) ($result['skipped_products'] ?? 0);
         if ($reconcile) {
             $result['activation'] = $this->reconcileProductStatuses();
         }
@@ -2772,7 +2774,8 @@ class ControllerExtensionModuleLuceedSync extends Controller
             return null;
         } catch (\Throwable $e) {
             Log::store($e->getMessage(), 'luceed_product_sync_error');
-            return 'Luceed popis artikala nije obnovljen. Provjera aktivacije koristi samo prethodne podatke koji nisu stariji od 48 sati.';
+            $detail = $e instanceof \UnexpectedValueException ? ' Razlog: ' . $e->getMessage() : '';
+            return 'Luceed popis artikala nije obnovljen. Provjera aktivacije koristi samo prethodne podatke koji nisu stariji od 48 sati.' . $detail;
         }
     }
 
@@ -2814,9 +2817,11 @@ class ControllerExtensionModuleLuceedSync extends Controller
             'status' => $failed ? 503 : 200,
             'message' => ($updated ? $this->language->get('text_success_update_stock') : $this->language->get('text_warning_update_stock'))
                 . ' Aktivirano: ' . $activation['activated'] . ', deaktivirano: ' . $activation['deactivated'] . '.'
+                . ($this->snapshot_skipped_products > 0 ? ' Zbog nepotpunih podataka odgođeno je artikala: ' . $this->snapshot_skipped_products . '. Ostali su obrađeni.' : '')
                 . ($snapshot_warning ? ' ' . $snapshot_warning : '')
                 . (!empty($activation['skipped']) ? ' Aktivacija je preskočena jer nema svježeg provjerenog popisa artikala.' : ''),
-            'activation' => $activation
+            'activation' => $activation,
+            'snapshot_skipped_products' => $this->snapshot_skipped_products
         ]);
     }
 

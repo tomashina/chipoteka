@@ -19,6 +19,7 @@ namespace {
         public static $events = [];
         public static $needsRefresh = true;
         public static $snapshotFails = false;
+        public static $snapshotSkipped = 0;
         public static $stockFails = false;
         public static $stockValid = true;
         public static $reconcileFails = false;
@@ -32,6 +33,7 @@ namespace {
             self::$events = [];
             self::$needsRefresh = true;
             self::$snapshotFails = false;
+            self::$snapshotSkipped = 0;
             self::$stockFails = false;
             self::$stockValid = true;
             self::$reconcileFails = false;
@@ -130,7 +132,7 @@ namespace Agmedia\LuceedOpencartWrapper\Models {
             \LuceedControllerTestState::record('snapshot_commit');
             \LuceedControllerTestState::$needsRefresh = false;
             \LuceedControllerTestState::$snapshotUsable = true;
-            return ['status' => 200, 'total' => 100, 'inserting' => 0, 'updating' => 3];
+            return ['status' => 200, 'total' => 100, 'inserting' => 0, 'updating' => 3, 'skipped_products' => \LuceedControllerTestState::$snapshotSkipped];
         }
     }
 
@@ -321,6 +323,15 @@ namespace {
         controllerCheck(array_search('reconcile', LuceedControllerTestState::$events, true) > array_search('stock_commit', LuceedControllerTestState::$events, true), $route . ': publication must follow a successful stock commit');
         controllerCheck($response->body['status'] === 200 && !has503($response), $route . ': successful feeds return 200');
         controllerCheck($response->body['activation'] === ['activated' => 7, 'deactivated' => 2, 'skipped' => false], $route . ': response contains changes from post-stock reconciliation');
+
+        LuceedControllerTestState::reset();
+        LuceedControllerTestState::$snapshotSkipped = 1;
+        [$controller, $response] = controllerFixture();
+        $controller->$route();
+        controllerCheck($response->body['status'] === 200 && !has503($response), $route . ': one incomplete article does not fail a valid stock and snapshot update');
+        controllerCheck($response->body['snapshot_skipped_products'] === 1, $route . ': deferred article count is visible in the cron response');
+        controllerCheck(strpos($response->body['message'], 'Odgođeno') !== false || strpos($response->body['message'], 'odgođeno') !== false, $route . ': response explains deferred work without claiming all articles were handled');
+        controllerCheck(eventCount('stock_commit') === 1 && eventCount('reconcile') === 1, $route . ': valid remaining articles still reconcile after stock commits');
 
         LuceedControllerTestState::reset();
         LuceedControllerTestState::$needsRefresh = false;

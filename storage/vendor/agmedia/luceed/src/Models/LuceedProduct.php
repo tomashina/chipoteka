@@ -20,6 +20,11 @@ class LuceedProduct extends Model
      */
     protected $primaryKey = 'uid';
 
+    // Luceed identifiers contain the company suffix, e.g. 184395-1063.
+    // They are strings, not auto-incrementing integer keys.
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     /**
      * @var bool
      */

@@ -257,8 +257,8 @@ class LOC_Product
         $transaction_started = false;
 
         try {
-            // Validate every record before filtering or changing persistent data.
-            // A truncated but valid JSON response must not replace a full snapshot.
+            // Identity/flag failures invalidate the whole feed. Content failures
+            // are isolated per article before any persistent data is changed.
             $products = $this->validateSnapshotProducts($this->getProducts()->all());
             $existing = $db->query("SELECT DISTINCT luceed_uid FROM `" . DB_PREFIX . "product` WHERE luceed_uid IS NOT NULL AND luceed_uid <> ''");
             $existing_uids = [];
@@ -268,6 +268,7 @@ class LOC_Product
             }
 
             $records = [];
+            $skipped_products = [];
 
             foreach ($products as $product) {
                 // Keep explicit webshop=N for existing products so their status
@@ -276,15 +277,30 @@ class LOC_Product
                     continue;
                 }
 
-                $product_array = ProductHelper::collectLuceedData($product);
-                $records[] = [
-                    'uid' => $product->artikl_uid,
-                    'sifra' => $product->artikl,
-                    'data' => base64_encode(serialize($product_array)),
-                    'hash' => ProductHelper::hashLuceedData($product_array),
-                    'eligible' => ProductHelper::isLuceedProductEligible($product_array) ? 1 : 0,
-                    'min_quantity' => ProductHelper::getActivationMinimum($product_array),
-                ];
+                try {
+                    $this->validateSnapshotActivationData($product);
+                    $product_array = ProductHelper::collectLuceedData($product);
+                    $records[] = [
+                        'uid' => $product->artikl_uid,
+                        'sifra' => $product->artikl,
+                        'data' => base64_encode(serialize($product_array)),
+                        'hash' => ProductHelper::hashLuceedData($product_array),
+                        'eligible' => ProductHelper::isLuceedProductEligible($product_array) ? 1 : 0,
+                        'min_quantity' => ProductHelper::getActivationMinimum($product_array),
+                    ];
+                } catch (\UnexpectedValueException $exception) {
+                    // Omitting an untrusted article from the new snapshot leaves
+                    // its current status/stock untouched; never guess its data.
+                    $skipped_products[] = [
+                        'sku' => $product->artikl,
+                        'uid' => $product->artikl_uid,
+                        'reason' => $exception->getMessage(),
+                    ];
+                }
+            }
+
+            if ($skipped_products) {
+                Log::store(['count' => count($skipped_products), 'products' => $skipped_products], 'luceed-product-snapshot-skipped');
             }
 
             $count = count($records);
@@ -305,6 +321,7 @@ class LOC_Product
                     'previous' => $previous_count,
                     'managed' => count($existing_uids),
                     'active_managed' => $active_count,
+                    'skipped_products' => count($skipped_products),
                     'minimum_ratio' => 0.8,
                 ], 'luceed-product-snapshot-rejected');
 
@@ -355,6 +372,23 @@ class LOC_Product
                 INNER JOIN `" . $staging_table . "` pl ON p.luceed_uid = pl.uid
                 LEFT JOIN `" . $queue_table . "` q ON p.luceed_uid = q.uid
                 WHERE q.uid IS NOT NULL OR NOT (p.hash <=> pl.hash)");
+
+            // Preserve explicit pending work for known, skipped articles. Workers
+            // select pending UIDs joined to the cache, so these wait safely until
+            // a later complete feed restores their data, even with the same hash.
+            foreach (array_chunk(array_column($skipped_products, 'uid'), 500) as $chunk) {
+                $uids = [];
+
+                foreach ($chunk as $uid) {
+                    $uids[] = "'" . $db->escape($uid) . "'";
+                }
+
+                $db->query("INSERT INTO `" . $queue_staging_table . "` (uid)
+                    SELECT DISTINCT q.uid FROM `" . $queue_table . "` q
+                    INNER JOIN `" . DB_PREFIX . "product` p ON p.luceed_uid = q.uid
+                    WHERE q.uid IN (" . implode(',', $uids) . ")");
+            }
+
             $queued = $db->query("SELECT COUNT(*) AS total FROM `" . $queue_staging_table . "`");
             $inserting = $db->query("SELECT COUNT(*) AS total FROM `" . $staging_table . "` pl
                 LEFT JOIN `" . DB_PREFIX . "product` p ON p.luceed_uid = pl.uid WHERE p.product_id IS NULL");
@@ -373,6 +407,7 @@ class LOC_Product
                 'total' => $count,
                 'inserting' => (int)$inserting->row['total'],
                 'updating' => (int)$queued->row['total'],
+                'skipped_products' => count($skipped_products),
             ];
         } catch (\Throwable $exception) {
             if ($transaction_started) {
@@ -444,30 +479,48 @@ class LOC_Product
                 }
             }
 
-            if ( ! property_exists($product, 'opis') || ($product->opis !== null && ! is_string($product->opis)) ||
-                ! property_exists($product, 'dokumenti') || ($product->dokumenti !== null && ! is_array($product->dokumenti)) ||
-                ! property_exists($product, 'atributi') || ($product->atributi !== null && ! is_array($product->atributi)) ||
-                ! isset($product->mpc) || ! is_numeric($product->mpc) || ! is_finite((float)$product->mpc)) {
-                throw new \UnexpectedValueException('Luceed product response has incomplete activation data for ' . $product->artikl . '.');
+        }
+
+        return $products;
+    }
+
+
+    private function validateSnapshotActivationData(\stdClass $product): void
+    {
+        foreach (['opis', 'mpc', 'dokumenti', 'atributi'] as $field) {
+            if ( ! property_exists($product, $field)) {
+                throw new \UnexpectedValueException('Missing activation field ' . $field . '.');
+            }
+        }
+
+        if ($product->opis !== null && ! is_string($product->opis)) {
+            throw new \UnexpectedValueException('Invalid activation field opis.');
+        }
+
+        // Explicit null is a legitimate unavailable price and remains ineligible.
+        // A missing or malformed price must never become an assumed zero price.
+        if ($product->mpc !== null && (! is_numeric($product->mpc) || ! is_finite((float)$product->mpc))) {
+            throw new \UnexpectedValueException('Invalid activation field mpc.');
+        }
+
+        foreach (['dokumenti' => ['file_uid', 'filename', 'naziv', 'md5'],
+            'atributi' => ['atribut_uid', 'naziv', 'aktivan', 'vidljiv', 'vrijednost']] as $field => $required) {
+            if ($product->{$field} !== null && ! is_array($product->{$field})) {
+                throw new \UnexpectedValueException('Invalid activation field ' . $field . '.');
             }
 
-            foreach (['dokumenti' => ['file_uid', 'filename', 'naziv', 'md5'],
-                'atributi' => ['atribut_uid', 'naziv', 'aktivan', 'vidljiv', 'vrijednost']] as $field => $required) {
-                foreach (($product->{$field} ?? []) as $entry) {
-                    if ( ! $entry instanceof \stdClass) {
-                        throw new \UnexpectedValueException('Luceed product response has an invalid ' . $field . ' entry for ' . $product->artikl . '.');
-                    }
+            foreach (($product->{$field} ?? []) as $index => $entry) {
+                if ( ! $entry instanceof \stdClass) {
+                    throw new \UnexpectedValueException('Invalid activation entry ' . $field . '[' . $index . '].');
+                }
 
-                    foreach ($required as $key) {
-                        if ( ! property_exists($entry, $key) || ($entry->{$key} !== null && ! is_scalar($entry->{$key}))) {
-                            throw new \UnexpectedValueException('Luceed product response has incomplete ' . $field . ' data for ' . $product->artikl . '.');
-                        }
+                foreach ($required as $key) {
+                    if ( ! property_exists($entry, $key) || ($entry->{$key} !== null && ! is_scalar($entry->{$key}))) {
+                        throw new \UnexpectedValueException('Missing or invalid activation field ' . $field . '[' . $index . '].' . $key . '.');
                     }
                 }
             }
         }
-
-        return $products;
     }
 
 

@@ -155,6 +155,42 @@ function checkAdminStatusHooks(): void
     }
 }
 
+function checkDeferredQueueWorker(ProductStatusTestDatabase $db, string $schema): void
+{
+    $db->query('ALTER TABLE test_product_luceed ADD `data` LONGTEXT NULL, ADD `hash` VARCHAR(255) NULL');
+    $db->query('CREATE TABLE test_product_luceed_for_update (uid VARCHAR(64) NOT NULL) ENGINE=InnoDB');
+    $db->query("INSERT INTO test_product_luceed_for_update (uid) VALUES ('missing-cache-uid'),('uid-1')");
+    $cachedProduct = ['artikl_uid' => 'uid-1', 'artikl' => 'test-one', 'naziv' => 'Ready article'];
+    $db->query("UPDATE test_product_luceed SET `data`='" . $db->escape(base64_encode(serialize($cachedProduct))) . "',`hash`='unchanged-hash' WHERE uid='uid-1'");
+    $beforeQueue = $db->query('SELECT uid FROM test_product_luceed_for_update')->rows;
+    $beforeProducts = $db->query('SELECT product_id,status,quantity FROM test_product ORDER BY product_id')->rows;
+
+    $capsule = new \Illuminate\Database\Capsule\Manager();
+    $capsule->addConnection([
+        'driver' => 'mysql', 'host' => DB_HOSTNAME, 'port' => DB_PORT,
+        'database' => $schema, 'username' => DB_USERNAME, 'password' => DB_PASSWORD,
+        'charset' => 'utf8', 'collation' => 'utf8_general_ci', 'prefix' => 'test_',
+    ]);
+    $capsule->setAsGlobal();
+    $capsule->bootEloquent();
+
+    try {
+        $worker = new \Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle();
+        checkStatusTest($worker->hasForUpdate(), true, 'Real prefixed Eloquent join skips the deferred missing-cache queue head');
+        checkStatusTest((int)$worker->product_to_update->product_id, 1, 'Worker selects the next cached pending article');
+        checkStatusTest($worker->product->get('artikl_uid'), 'uid-1', 'Worker resolves the trusted cached article data');
+        checkStatusTest((new \Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle())->hasForUpdate('missing-cache-uid'), false, 'Explicit missing-cache UID remains deferred');
+        checkStatusTest($db->query('SELECT uid FROM test_product_luceed_for_update')->rows, $beforeQueue, 'Selecting available or deferred jobs leaves pending work unchanged');
+        checkStatusTest($db->query('SELECT product_id,status,quantity FROM test_product ORDER BY product_id')->rows, $beforeProducts, 'Queue selection does not change article status or stock');
+
+        $db->query("DELETE FROM test_product_luceed WHERE uid='uid-1'");
+        checkStatusTest((new \Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle())->hasForUpdate(), false, 'Worker safely returns no ready work when every pending article is deferred');
+        checkStatusTest($db->query('SELECT uid FROM test_product_luceed_for_update')->rows, $beforeQueue, 'All deferred jobs remain pending for a later complete snapshot');
+    } finally {
+        $capsule->getConnection()->disconnect();
+    }
+}
+
 $assertions = 0;
 function checkStatusTest($actual, $expected, string $message): void
 {
@@ -165,6 +201,18 @@ function checkStatusTest($actual, $expected, string $message): void
     }
 }
 
+function checkLuceedUidTypes(): void
+{
+    foreach ([\Agmedia\Luceed\Models\LuceedProduct::class, \Agmedia\Luceed\Models\LuceedProductForUpdate::class, \Agmedia\Luceed\Models\LuceedProductForRevision::class] as $class) {
+        $model = new $class();
+        $model->setRawAttributes(['uid' => '184395-1063']);
+        checkStatusTest($model->uid, '184395-1063', 'Luceed UID retains its suffix in ' . $class);
+        checkStatusTest($model->getKeyType(), 'string', 'Luceed UID uses a string key in ' . $class);
+        checkStatusTest($model->getIncrementing(), false, 'Luceed UID does not use auto-increment casting in ' . $class);
+    }
+}
+
+checkLuceedUidTypes();
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 $connection = new mysqli(DB_HOSTNAME, DB_USERNAME, DB_PASSWORD, '', DB_PORT);
 $schema = 'chipoteka_status_test_' . getmypid() . '_' . bin2hex(random_bytes(4));
@@ -292,6 +340,7 @@ try {
     checkStatusTest($service->reconcile()['skipped'], true, 'Snapshot older than two days safely skips all status reconciliation');
     checkStatusTest($db->query('SELECT product_id,status FROM test_product ORDER BY product_id')->rows, $beforeStaleReconcile, 'Stale reconciliation leaves statuses unchanged');
 
+    checkDeferredQueueWorker($db, $schema);
     checkAdminStatusHooks();
     echo 'PASS: ' . $assertions . " product status assertions (disposable local schema and in-memory admin adapters).\n";
 } finally {

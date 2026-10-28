@@ -87,7 +87,12 @@ class LOC_ProductSingle
     public function hasForUpdate($uid = null): bool
     {
         if ( ! $uid) {
-            $pending = LuceedProductForUpdate::query()->first();
+            // An incomplete article remains pending, but has no trusted cache
+            // row until a later valid feed. Continue with other pending articles.
+            $pending = LuceedProductForUpdate::query()
+                ->join('product_luceed AS luceed_snapshot', 'product_luceed_for_update.uid', '=', 'luceed_snapshot.uid')
+                ->select('product_luceed_for_update.uid')
+                ->first();
 
             if ( ! $pending) {
                 return false;

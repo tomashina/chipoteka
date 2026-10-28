@@ -27,7 +27,15 @@ Ista pravila koriste uvoz i ažuriranje artikala te `checkMinQty`.
 ## Zaštita od prekida
 
 Nepotpuni, neispravni i sumnjivo smanjeni odgovori ne zamjenjuju prihvaćeni
-popis. Sama odsutnost artikla iz odgovora nikada nije nalog za deaktiviranje
+popis. Izričita Luceed cijena `null` znači da artikl nema raspoloživu cijenu i
+ne zadovoljava uvjet aktivacije; ne zaustavlja ostale artikle. Pojedini artikl
+s nedostajućim ili neispravnim podacima za aktivaciju/minimum odgađa se do
+sljedećeg valjanog popisa, bez promjene njegova statusa ili izmišljanja minimuma.
+Njegov postojeći zadatak ostaje u redu čekanja, dok se ostali nastavljaju
+obrađivati. Broj odgođenih artikala vidi se u odgovoru crona kao
+`snapshot_skipped_products`, a razlozi u `luceed-product-snapshot-skipped.log`.
+Prevelik broj neispravnih artikala i dalje odbija cijeli popis kroz provjeru
+pokrivenosti. Sama odsutnost artikla iz odgovora nikada nije nalog za deaktiviranje
 ili brisanje. Za to se koriste izričite Luceed oznake i zadani minimum.
 
 Prihvaćeni popis i red čekanja spremaju se u jednoj transakciji. Nedovršeni
@@ -78,4 +86,5 @@ servisima. Testovi ne mijenjaju aplikacijske podatke niti šalju mailove.
 
 Relevantni logovi u `storage/logs/`: `luceed_product_sync_error.log`,
 `luceed-product-snapshot-error.log`, `luceed-product-snapshot-rejected.log`,
+`luceed-product-snapshot-skipped.log`,
 `luceed_stock_sync_error.log` i `luceed_product_status_error.log`.

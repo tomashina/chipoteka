@@ -128,6 +128,19 @@ namespace Agmedia\Helpers {
             }
             if (strpos($sql, 'INSERT INTO `oc_product_luceed_queue_sync`') === 0) {
                 $queued = array_column(self::$tables['oc_product_luceed_for_update'], 'uid');
+                if (preg_match('/WHERE q.uid IN \((.+)\)$/', $sql, $match)) {
+                    preg_match_all("/'((?:\\\\.|[^'])*)'/", $match[1], $matches);
+                    $skipped = array_map('stripslashes', $matches[1]);
+                    $known = array_column(self::$tables['oc_product'], 'luceed_uid');
+                    $pending = array_column($this->temporary['oc_product_luceed_queue_sync'], null, 'uid');
+                    foreach ($queued as $uid) {
+                        if (in_array($uid, $skipped, true) && in_array($uid, $known, true)) {
+                            $pending[$uid] = ['uid' => $uid];
+                        }
+                    }
+                    $this->temporary['oc_product_luceed_queue_sync'] = array_values($pending);
+                    return true;
+                }
                 $pending = [];
                 foreach ($this->temporary['oc_product_luceed_sync'] as $record) {
                     foreach (self::$tables['oc_product'] as $product) {
@@ -277,28 +290,85 @@ namespace {
     expectFailure([rawProduct(1), rawProduct(2), rawProduct(3)], '20% smaller');
     check(!preg_grep('/^(ALTER|DELETE|INSERT|START)/', Database::$queries), 'Small feed performed a persistent write.');
 
-    foreach (['duplicate_uid', 'duplicate_sku', 'missing_name', 'missing_flag', 'missing_documents', 'missing_attributes', 'partial_document', 'partial_attribute', 'bad_price'] as $case) {
+    foreach (['duplicate_uid', 'duplicate_sku', 'missing_name', 'missing_flag'] as $case) {
         seed();
         $products = [rawProduct(1), rawProduct(2), rawProduct(3), rawProduct(4), rawProduct(5)];
         if ($case === 'duplicate_uid') { $products[1]->artikl_uid = $products[0]->artikl_uid; }
         if ($case === 'duplicate_sku') { $products[1]->artikl = $products[0]->artikl; }
         if ($case === 'missing_name') { $products[0]->naziv = ' '; }
         if ($case === 'missing_flag') { unset($products[0]->webshop); }
+        expectFailure($products, 'Luceed product response');
+        check(!preg_grep('/^(ALTER|DELETE|INSERT|START)/', Database::$queries), 'Invalid feed performed a persistent write: ' . $case);
+    }
+
+    foreach (['missing_opis', 'missing_mpc', 'missing_documents', 'missing_attributes', 'partial_document', 'partial_attribute', 'bad_price', 'negative_minimum', 'malformed_minimum'] as $case) {
+        seed();
+        $products = [rawProduct(1), rawProduct(2), rawProduct(3), rawProduct(4), rawProduct(5)];
+        // Production-style SKU from the cron error must not block other rows.
+        $products[0]->artikl = '0730222201';
+        if ($case === 'missing_opis') { unset($products[0]->opis); }
+        if ($case === 'missing_mpc') { unset($products[0]->mpc); }
         if ($case === 'missing_documents') { unset($products[0]->dokumenti); }
         if ($case === 'missing_attributes') { unset($products[0]->atributi); }
         if ($case === 'partial_document') { unset($products[0]->dokumenti[0]->filename); }
         if ($case === 'partial_attribute') { unset($products[0]->atributi[0]->vrijednost); }
         if ($case === 'bad_price') { $products[0]->mpc = 'not a price'; }
-        expectFailure($products, 'Luceed product response');
-        check(!preg_grep('/^(ALTER|DELETE|INSERT|START)/', Database::$queries), 'Invalid feed performed a persistent write: ' . $case);
+        if ($case === 'negative_minimum') { $products[0]->atributi[0]->vrijednost = '-1'; }
+        if ($case === 'malformed_minimum') { $products[0]->atributi[0]->vrijednost = 'abc'; }
+        $old_products = Database::$tables['oc_product'];
+        $result = (new LOC_Product(feed($products)))->populateLuceedData();
+        check($result['total'] === 4 && $result['skipped_products'] === 1, 'One invalid article blocked the snapshot: ' . $case);
+        check(Database::$tables['oc_product'] === $old_products, 'Excluded article status/stock changed: ' . $case);
+        check(!in_array('u1', array_column(Database::$tables['oc_product_luceed'], 'uid'), true), 'Invalid article was included in the new snapshot: ' . $case);
+        check(in_array('u1', array_column(Database::$tables['oc_product_luceed_for_update'], 'uid'), true), 'Skipped article lost its explicit pending work: ' . $case);
+        $warnings = array_values(array_filter(Log::$entries, function ($entry) { return $entry[0] === 'luceed-product-snapshot-skipped'; }));
+        check(count($warnings) === 1 && $warnings[0][1]['products'][0]['sku'] === '0730222201' && $warnings[0][1]['products'][0]['reason'] !== '', 'Skipped article had no specific warning: ' . $case);
     }
 
-    foreach (['-1', 'abc'] as $invalid_minimum) {
-        seed();
-        $products = [rawProduct(1), rawProduct(2), rawProduct(3), rawProduct(4), rawProduct(5)];
-        $products[0]->atributi[0]->vrijednost = $invalid_minimum;
-        expectFailure($products, 'Invalid Min_kol_web');
-        check(!preg_grep('/^(ALTER|DELETE|INSERT|START)/', Database::$queries), 'Invalid minimum performed a persistent write.');
+    seed();
+    $products = [rawProduct(1), rawProduct(2), rawProduct(3), rawProduct(4), rawProduct(5)];
+    unset($products[0]->mpc, $products[1]->atributi);
+    expectFailure($products, '20% smaller');
+    check(!preg_grep('/^(ALTER|DELETE|INSERT|START)/', Database::$queries), 'Mass invalid article data replaced the accepted snapshot.');
+
+    seed();
+    $products = [rawProduct(1), rawProduct(2), rawProduct(3), rawProduct(4), rawProduct(5)];
+    unset($products[0]->opis);
+    (new LOC_Product(feed($products)))->populateLuceedData();
+    check(!in_array('u1', array_column(Database::$tables['oc_product_luceed'], 'uid'), true), 'Skipped article retained trusted snapshot data.');
+    check(in_array('u1', array_column(Database::$tables['oc_product_luceed_for_update'], 'uid'), true), 'Skipped same-hash pending article was lost.');
+    check(!in_array('missing', array_column(Database::$tables['oc_product_luceed_for_update'], 'uid'), true), 'An unrelated orphan queue entry was preserved.');
+    $restored = [rawProduct(1), rawProduct(2), rawProduct(3), rawProduct(4), rawProduct(5)];
+    check(productHash($restored[0]) === Database::$tables['oc_product'][0]['hash'], 'Retry test requires an unchanged product hash.');
+    (new LOC_Product(feed($restored)))->populateLuceedData();
+    check(in_array('u1', array_column(Database::$tables['oc_product_luceed'], 'uid'), true) &&
+        in_array('u1', array_column(Database::$tables['oc_product_luceed_for_update'], 'uid'), true), 'Complete later feed did not restore same-hash pending work.');
+
+    seed();
+    $products = [rawProduct(1), rawProduct(2), rawProduct(3), rawProduct(4), rawProduct(5), rawProduct(6, 'N')];
+    $products[0]->artikl = '0730222201';
+    $products[0]->mpc = null;
+    $products[1]->webshop = 'N';
+    $products[1]->mpc = null;
+    $products[5]->mpc = null;
+    unset($products[5]->opis, $products[5]->atributi, $products[5]->dokumenti);
+    $result = (new LOC_Product(feed($products)))->populateLuceedData();
+    check($result['total'] === 5 && $result['skipped_products'] === 0, 'Explicit nullable price was rejected or an irrelevant new non-web article was validated.');
+    $cache = Database::$tables['oc_product_luceed'];
+    check($cache[0]['eligible'] === 0 && $cache[1]['eligible'] === 0 && !in_array('u6', array_column($cache, 'uid'), true), 'Nullable price was eligible or a new non-web article was retained.');
+    $serialized = unserialize(base64_decode($cache[0]['data']));
+    check(array_key_exists('mpc', $serialized) && $serialized['mpc'] === null, 'Nullable price was replaced with an invented price.');
+
+    // Real bundled Luceed rows include legitimate null-priced non-web articles.
+    $fixture = json_decode(file_get_contents(dirname(__DIR__, 2) . '/storage/upload/luceed_json/artikli_atribut_uid.json'))->result[0]->artikli;
+    $identity_method = new \ReflectionMethod(LOC_Product::class, 'validateSnapshotProducts');
+    $identity_method->setAccessible(true);
+    $activation_method = new \ReflectionMethod(LOC_Product::class, 'validateSnapshotActivationData');
+    $activation_method->setAccessible(true);
+    $fixture_loc = new LOC_Product();
+    check(count($identity_method->invoke($fixture_loc, $fixture)) === 1933, 'Bundled Luceed fixture failed feed integrity validation.');
+    foreach ($fixture as $record) {
+        $activation_method->invoke($fixture_loc, $record);
     }
 
     seed();
