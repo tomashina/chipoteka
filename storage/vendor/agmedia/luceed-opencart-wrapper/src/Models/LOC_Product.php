@@ -325,7 +325,9 @@ class LOC_Product
                     'minimum_ratio' => 0.8,
                 ], 'luceed-product-snapshot-rejected');
 
-                throw new \UnexpectedValueException('Luceed product snapshot is empty or more than 20% smaller than the known catalog.');
+                throw new \UnexpectedValueException('Luceed product snapshot is empty or more than 20% smaller than the known catalog. ' .
+                    'Counts: received=' . count($products) . ', retained=' . $count . ', previous=' . $previous_count .
+                    ', active_managed=' . $active_count . ', skipped=' . count($skipped_products) . '.');
             }
 
             // Legacy installs use MyISAM. DDL must finish before START TRANSACTION.
@@ -487,7 +489,15 @@ class LOC_Product
 
     private function validateSnapshotActivationData(\stdClass $product): void
     {
-        foreach (['opis', 'mpc', 'dokumenti', 'atributi'] as $field) {
+        // Luceed omits empty child collections. This matches collectLuceedData's
+        // existing empty() handling; present malformed collections remain errors.
+        foreach (['dokumenti', 'atributi'] as $field) {
+            if ( ! property_exists($product, $field) || $product->{$field} === null) {
+                $product->{$field} = [];
+            }
+        }
+
+        foreach (['opis', 'mpc'] as $field) {
             if ( ! property_exists($product, $field)) {
                 throw new \UnexpectedValueException('Missing activation field ' . $field . '.');
             }

@@ -246,15 +246,18 @@ namespace {
     {
         $old = Database::$tables;
         $failed = false;
+        $message = '';
         try {
             (new LOC_Product(feed($products)))->populateLuceedData();
         } catch (\Throwable $exception) {
             $failed = true;
+            $message = $exception->getMessage();
             check(strpos($exception->getMessage(), $reason) !== false,
                 'Unexpected failure: ' . $exception->getMessage());
         }
         check($failed, 'Expected snapshot rejection.');
         check(Database::$tables === $old, 'Rejected/failed snapshot changed persistent data.');
+        return $message;
     }
 
     seed();
@@ -301,15 +304,15 @@ namespace {
         check(!preg_grep('/^(ALTER|DELETE|INSERT|START)/', Database::$queries), 'Invalid feed performed a persistent write: ' . $case);
     }
 
-    foreach (['missing_opis', 'missing_mpc', 'missing_documents', 'missing_attributes', 'partial_document', 'partial_attribute', 'bad_price', 'negative_minimum', 'malformed_minimum'] as $case) {
+    foreach (['missing_opis', 'missing_mpc', 'malformed_documents', 'malformed_attributes', 'partial_document', 'partial_attribute', 'bad_price', 'negative_minimum', 'malformed_minimum'] as $case) {
         seed();
         $products = [rawProduct(1), rawProduct(2), rawProduct(3), rawProduct(4), rawProduct(5)];
         // Production-style SKU from the cron error must not block other rows.
         $products[0]->artikl = '0730222201';
         if ($case === 'missing_opis') { unset($products[0]->opis); }
         if ($case === 'missing_mpc') { unset($products[0]->mpc); }
-        if ($case === 'missing_documents') { unset($products[0]->dokumenti); }
-        if ($case === 'missing_attributes') { unset($products[0]->atributi); }
+        if ($case === 'malformed_documents') { $products[0]->dokumenti = 'not a collection'; }
+        if ($case === 'malformed_attributes') { $products[0]->atributi = (object)['invalid' => true]; }
         if ($case === 'partial_document') { unset($products[0]->dokumenti[0]->filename); }
         if ($case === 'partial_attribute') { unset($products[0]->atributi[0]->vrijednost); }
         if ($case === 'bad_price') { $products[0]->mpc = 'not a price'; }
@@ -327,9 +330,39 @@ namespace {
 
     seed();
     $products = [rawProduct(1), rawProduct(2), rawProduct(3), rawProduct(4), rawProduct(5)];
-    unset($products[0]->mpc, $products[1]->atributi);
-    expectFailure($products, '20% smaller');
+    unset($products[0]->mpc, $products[1]->opis);
+    $rejected_message = expectFailure($products, '20% smaller');
+    check(strpos($rejected_message, 'received=5, retained=3, previous=5, active_managed=0, skipped=2') !== false,
+        'Coverage rejection did not expose safe, exact count diagnostics.');
     check(!preg_grep('/^(ALTER|DELETE|INSERT|START)/', Database::$queries), 'Mass invalid article data replaced the accepted snapshot.');
+
+    // Production Luceed responses omit empty child collections on thousands of
+    // articles. Their absence must not make a full feed appear >20% smaller.
+    seed();
+    $products = [rawProduct(1), rawProduct(2), rawProduct(3), rawProduct(4), rawProduct(5)];
+    $products[0]->artikl = '0730222201';
+    foreach ($products as $product) {
+        unset($product->atributi);
+        $product->stanje_kol = 1;
+    }
+    unset($products[3]->dokumenti);
+    $products[4]->dokumenti = null;
+    $products[1]->atributi = null;
+    $old_products = Database::$tables['oc_product'];
+    $result = (new LOC_Product(feed($products)))->populateLuceedData();
+    check($result['total'] === 5 && $result['skipped_products'] === 0, 'Omitted empty collections caused a mass skip or coverage rejection.');
+    $cache = Database::$tables['oc_product_luceed'];
+    check(array_column($cache, 'min_quantity') === [0, 0, 0, 0, 0], 'Absent attributes introduced a visibility minimum.');
+    check(array_column($cache, 'eligible') === [1, 1, 1, 0, 0], 'Missing/null documents did not remain ineligible.');
+    check(Database::$tables['oc_product'] === $old_products, 'Normalizing empty collections changed product status or stock.');
+    foreach ($cache as $record) {
+        $data = unserialize(base64_decode($record['data']));
+        check($data['atributi'] === [], 'Missing/null attributes were not stored as an empty collection.');
+        if (in_array($record['uid'], ['u4', 'u5'], true)) {
+            check($data['dokumenti'] === [], 'Missing/null documents were not stored as an empty collection.');
+        }
+    }
+    check(!array_filter(Log::$entries, function ($entry) { return $entry[0] === 'luceed-product-snapshot-skipped'; }), 'Legitimate empty collections produced skipped-article warnings.');
 
     seed();
     $products = [rawProduct(1), rawProduct(2), rawProduct(3), rawProduct(4), rawProduct(5)];

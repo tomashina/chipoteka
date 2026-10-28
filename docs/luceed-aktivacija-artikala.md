@@ -28,7 +28,11 @@ Ista pravila koriste uvoz i ažuriranje artikala te `checkMinQty`.
 
 Nepotpuni, neispravni i sumnjivo smanjeni odgovori ne zamjenjuju prihvaćeni
 popis. Izričita Luceed cijena `null` znači da artikl nema raspoloživu cijenu i
-ne zadovoljava uvjet aktivacije; ne zaustavlja ostale artikle. Pojedini artikl
+ne zadovoljava uvjet aktivacije; ne zaustavlja ostale artikle. Luceed može
+izostaviti prazne zbirke `atributi` i `dokumenti`; izostavljene i `null` zbirke
+tretiraju se kao prazni popisi. Bez atributa nema zadanog minimuma, a bez
+dokumenata artikl ne zadovoljava uvjet slike. Prisutni neispravni podaci ne
+pretvaraju se u prazne popise. Pojedini artikl
 s nedostajućim ili neispravnim podacima za aktivaciju/minimum odgađa se do
 sljedećeg valjanog popisa, bez promjene njegova statusa ili izmišljanja minimuma.
 Njegov postojeći zadatak ostaje u redu čekanja, dok se ostali nastavljaju
