@@ -660,10 +660,13 @@ class LOC_Order
 
         $wants_eracun = ! empty($this->oc_order['eracun']) && (int) $this->oc_order['eracun'] === 1;
 
+        $is_pickup_cash_eracun = $wants_eracun
+            && ($this->oc_order['payment_code'] ?? '') === 'cod_preuzimanje'
+            && $this->pickup !== '';
+
         if (
-            $this->hasOIB() &&
-            $wants_eracun &&
-            in_array($this->oc_order['payment_code'], ['wspay', 'cod'])
+            ($this->hasOIB() && $wants_eracun && in_array($this->oc_order['payment_code'], ['wspay', 'cod']))
+            || $is_pickup_cash_eracun
         ) {
             $this->order['kupac_zeli_eracun'] = 'D';
         }
