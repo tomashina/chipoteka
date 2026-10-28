@@ -24,7 +24,8 @@ class ControllerStartupLogin extends Controller {
             'extension/module/luceed_sync/updateB2BPrices',
             'extension/module/luceed_sync/importManufacturers',
             'extension/module/luceed_sync/importEprelModel',
-            'extension/module/luceed_sync/checkRevisionTable'
+            'extension/module/luceed_sync/checkRevisionTable',
+            'extension/module/luceed_sync/monitorAvailability'
 
 		);
 
@@ -59,7 +60,8 @@ class ControllerStartupLogin extends Controller {
                 'extension/module/luceed_sync/updateB2BPrices',
                 'extension/module/luceed_sync/importManufacturers',
                 'extension/module/luceed_sync/importEprelModel',
-                'extension/module/luceed_sync/checkRevisionTable'
+                'extension/module/luceed_sync/checkRevisionTable',
+                'extension/module/luceed_sync/monitorAvailability'
 			);
 
 			if (!in_array($route, $ignore) && (!isset($this->request->get['user_token']) || !isset($this->session->data['user_token']) || ($this->request->get['user_token'] != $this->session->data['user_token']))) {

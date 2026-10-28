@@ -177,30 +177,78 @@ class ControllerProductProduct extends Controller {
        // $loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse();
        // $loc->getAvailabilityForProduct($pinfo['sku']);
 
-		$product_info = $this->model_catalog_product->getProduct($product_id);
+			$product_info = $this->model_catalog_product->getProduct($product_id);
 
-		if ($product_info) {
+			if ($product_info) {
+                $data['energy_label_pdf'] = '';
+                $data['energy_label_thumb'] = '';
+                $data['energy_fiche_pdf'] = '';
+                $data['energy_label'] = null;
+                $data['energy_model'] = null;
+                $data['energy_category'] = null;
+                $data['jan'] = !empty($product_info['jan']) ? $product_info['jan'] : null;
+                $data['eprel_model'] = !empty($product_info['eprel_model']) ? $product_info['eprel_model'] : null;
 
             if (!empty($product_info['jan'])) {
 
                 $eprelData = json_decode($product_info['jan'], true);
 
-                if ($eprelData) {
+                if (is_array($eprelData)) {
                     $energy_label_thumb = isset($eprelData[0]) ? $eprelData[0] : '';
                     $energy_model       = isset($eprelData[1]) ? $eprelData[1] : '';
                     $energy_category    = isset($eprelData[2]) ? $eprelData[2] : '';
 
-                    // URL za energetsku naljepnicu (PDF)
-                    $data['energy_label_pdf'] =
-                        "https://eprel.ec.europa.eu/api/products/" . $energy_category . "/" . $energy_model . "/labels?format=PDF";
+                    $data['energy_label'] = $energy_label_thumb ?: null;
+                    $data['energy_model'] = $energy_model ?: null;
+                    $data['energy_category'] = $energy_category ?: null;
 
-                    // URL za thumbnail (ako ga želiš prikazivati)
-                    $data['energy_label_thumb'] =
-                        "https://ec.europa.eu/assets/move-ener/eprel/EPREL%20Public/Nested-labels%20thumbnails/" . $energy_label_thumb;
+                    if ($energy_category && $energy_model) {
+                        $data['energy_label_pdf'] = $this->getEprelLabelPdfUrl($energy_category, $energy_model);
+                        $data['energy_fiche_pdf'] = $this->getEprelFichePdfUrl($energy_category, $energy_model);
+                    }
 
-                    // URL za fiche (putem tvog proxy route-a)
-                    $data['energy_fiche_pdf'] =
-                        "https://eprel.ec.europa.eu/fiches/$energy_category/Fiche_{$energy_model}_HR.pdf";
+                    if ($energy_label_thumb) {
+                        $data['energy_label_thumb'] = $this->getEprelLabelThumbUrl($energy_label_thumb);
+                    }
+                }
+            }
+
+            if (!$data['energy_model'] && $data['eprel_model']) {
+                $data['energy_model'] = $data['eprel_model'];
+            }
+
+            if (!$data['energy_category'] && $data['energy_model']) {
+                $data['energy_category'] = $this->getEprelCategoryFromProductCategories($product_id);
+            }
+
+            if (!$data['energy_label_pdf'] && $data['energy_category'] && $data['energy_model']) {
+                $data['energy_label_pdf'] = $this->getEprelLabelPdfUrl($data['energy_category'], $data['energy_model']);
+            }
+
+            if (!$data['energy_fiche_pdf'] && $data['energy_category'] && $data['energy_model']) {
+                $data['energy_fiche_pdf'] = $this->getEprelFichePdfUrl($data['energy_category'], $data['energy_model']);
+            }
+
+            if (!$data['energy_label_thumb'] && $data['energy_category'] && $data['energy_model']) {
+                $eprel_product_data = $this->getEprelProductData($data['energy_category'], $data['energy_model']);
+
+                if (!empty($eprel_product_data['energyClassImageWithScale']) || !empty($eprel_product_data['energyClassImage'])) {
+                    $energy_label_image = !empty($eprel_product_data['energyClassImageWithScale'])
+                        ? $eprel_product_data['energyClassImageWithScale']
+                        : $eprel_product_data['energyClassImage'];
+
+                    $data['energy_label'] = $energy_label_image;
+                    $data['energy_label_thumb'] = $this->getEprelLabelThumbUrl($energy_label_image);
+
+                    if (!$data['jan']) {
+                        $data['jan'] = $this->buildEprelJanPayload(
+                            $energy_label_image,
+                            (string) $data['energy_model'],
+                            (string) $data['energy_category']
+                        );
+
+                        $this->model_catalog_product->cacheEprelJanIfMissing($product_id, $data['jan']);
+                    }
                 }
             }
 
@@ -291,8 +339,9 @@ class ControllerProductProduct extends Controller {
 
 
 			$this->document->setKeywords($product_info['meta_keyword']);
-			$this->document->addLink($this->url->link('product/product', 'product_id=' . $this->request->get['product_id']), 'canonical');
-            $this->document->addOGMeta('property="og:url"', $this->url->link('product/product', 'product_id=' . $this->request->get['product_id']) );
+            $canonical_url = $this->url->link('product/product', 'product_id=' . (int)$this->request->get['product_id'], true);
+			$this->document->addLink($canonical_url, 'canonical');
+            $this->document->addOGMeta('property="og:url"', $canonical_url );
 
 			$data['heading_title'] = $product_info['name'];
 
@@ -304,6 +353,8 @@ class ControllerProductProduct extends Controller {
 			$data['tab_review'] = sprintf($this->language->get('tab_review'), $product_info['reviews']);
 
             $data['shopping_cart'] = $this->url->link('checkout/cart');
+            $data['config_url'] = $this->config->get('config_url');
+            $data['is_hit_cijena'] = !empty($product_info['is_hit_cijena']);
 
             $data['pj'] = $this->model_catalog_product->getWebActions($product_id);
 
@@ -336,25 +387,14 @@ class ControllerProductProduct extends Controller {
 			$data['points'] = $product_info['points'];
             $data['upc'] = $product_info['upc'];
             $data['ean'] = $product_info['ean'];
-
-            if($product_info['jan']){
-
-                $data['jan'] = $product_info['jan'];
-
-                $jan = json_decode($product_info['jan'], true);
-
-                $data['energy_label'] = isset($jan[0]) ? $jan[0] : null;
-                $data['energy_model'] = isset($jan[1]) ? $jan[1] : null;
-                $data['energy_category'] = isset($jan[2]) ? $jan[2] : null;
-
-            }
+            $data['eprel_model'] = !empty($product_info['eprel_model']) ? $product_info['eprel_model'] : null;
 
 
 
             $data['pricevaliduntil'] = Date('Y-m-d', strtotime('+30 days'));
             $data['pakiranje'] = $product_info['pakiranje'] ?: 1;
 
-            $data['url'] = $this->url->link('product/product', 'product_id=' . (int)$this->request->get['product_id']);
+            $data['url'] = $canonical_url;
             $product_info['description'] = str_replace('<br><br>', '<br>', $product_info['description']);
 
 			$data['description'] = html_entity_decode($product_info['description'], ENT_QUOTES, 'UTF-8');
@@ -410,6 +450,7 @@ class ControllerProductProduct extends Controller {
 			$data['images'] = array();
 
 			$results = $this->model_catalog_product->getProductImages($this->request->get['product_id']);
+            $product_images = $results;
 
             if ($product_info['image']) {
                 $this->document->addOGMeta('property="og:image"', 'https://www.chipoteka.hr/image/'.$product_info['image'] );
@@ -654,6 +695,14 @@ class ControllerProductProduct extends Controller {
 			$data['share'] = $this->url->link('product/product', 'product_id=' . (int)$this->request->get['product_id']);
 
 			$data['attribute_groups'] = $this->model_catalog_product->getProductAttributes($this->request->get['product_id']);
+            $data['product_json_ld'] = $this->buildProductJsonLd(
+                $product_info,
+                $data['breadcrumbs'],
+                $product_images,
+                $data['attribute_groups'],
+                $canonical_url,
+                $data['description']
+            );
 
 			$data['products'] = array();
 
@@ -760,6 +809,7 @@ class ControllerProductProduct extends Controller {
 
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
+					'is_hit_cijena' => !empty($result['is_hit_cijena']),
 					'thumb'       => $image,
 					'name'        => $result['name'],
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
@@ -767,6 +817,8 @@ class ControllerProductProduct extends Controller {
                     'price_2'       => $price_2,
                     'vpc'       => $vpc,
 					'special'     => $special,
+                    'sale_badge'  => $result['sale_badge'],
+                    'sale_percent'=> $result['sale_percent'],
                     'priceeur'       => $priceeur,
                     'specialeur'     => $specialeur,
                     'priceeur_2'       => $priceeur_2,
@@ -812,6 +864,477 @@ class ControllerProductProduct extends Controller {
 
 		}
 	}
+
+    private function buildProductJsonLd(array $product_info, array $breadcrumbs, array $product_images, array $attribute_groups, string $canonical_url, string $description): string
+    {
+        $canonical_url = $this->normalizeSchemaUrl($canonical_url);
+        $currency = !empty($this->session->data['currency']) ? $this->session->data['currency'] : $this->config->get('config_currency');
+        $currency = $currency ?: 'EUR';
+
+        $offer_price = $this->getProductSchemaPrice($product_info);
+        $image_urls = $this->getProductSchemaImages($product_info, $product_images);
+        $category = $this->getProductSchemaCategory($breadcrumbs);
+        $description = $this->getProductSchemaDescription($product_info, $description, $category);
+
+        $product = [
+            '@type' => 'Product',
+            '@id' => $canonical_url . '#product',
+            'mainEntityOfPage' => ['@id' => $canonical_url],
+            'name' => $this->truncateSchemaText($this->cleanSchemaText($product_info['name']), 150),
+            'url' => $canonical_url,
+            'description' => $description,
+            'sku' => $this->cleanSchemaText($product_info['sku'] ?: $product_info['model']),
+            'model' => $this->cleanSchemaText($product_info['model']),
+            'itemCondition' => 'https://schema.org/NewCondition',
+            'offers' => [
+                '@type' => 'Offer',
+                '@id' => $canonical_url . '#offer',
+                'url' => $canonical_url,
+                'validFrom' => $this->getProductSchemaValidFrom($product_info),
+                'priceCurrency' => $currency,
+                'price' => number_format($offer_price, 2, '.', ''),
+                'priceValidUntil' => date('Y-m-d', strtotime('+30 days')),
+                'availability' => $this->getProductSchemaAvailability($product_info),
+                'itemCondition' => 'https://schema.org/NewCondition',
+                'shippingDetails' => $this->buildProductSchemaShippingDetails($offer_price, $currency),
+                'hasMerchantReturnPolicy' => $this->buildProductSchemaReturnPolicy(),
+                'seller' => [
+                    '@type' => 'Organization',
+                    'name' => $this->cleanSchemaText($this->config->get('config_name') ?: 'Chipoteka'),
+                    'url' => $this->getStoreBaseUrl()
+                ]
+            ]
+        ];
+
+        if ($image_urls) {
+            $product['image'] = $image_urls;
+        }
+
+        if (!empty($product_info['manufacturer'])) {
+            $product['brand'] = [
+                '@type' => 'Brand',
+                'name' => $this->cleanSchemaText($product_info['manufacturer'])
+            ];
+        }
+
+        if ($category) {
+            $product['category'] = $category;
+        }
+
+        $this->addProductSchemaIdentifiers($product, $product_info);
+
+        if ((int)$product_info['reviews'] > 0 && (float)$product_info['rating'] > 0) {
+            $product['aggregateRating'] = [
+                '@type' => 'AggregateRating',
+                'ratingValue' => number_format((float)$product_info['rating'], 1, '.', ''),
+                'reviewCount' => (int)$product_info['reviews'],
+                'bestRating' => 5,
+                'worstRating' => 1
+            ];
+        }
+
+        $additional_properties = $this->getProductSchemaAdditionalProperties($attribute_groups);
+        if ($additional_properties) {
+            $product['additionalProperty'] = $additional_properties;
+        }
+
+        $graph = [$product];
+        $breadcrumb_schema = $this->buildBreadcrumbJsonLd($breadcrumbs, $canonical_url);
+        if ($breadcrumb_schema) {
+            $graph[] = $breadcrumb_schema;
+        }
+
+        $json = json_encode([
+            '@context' => 'https://schema.org',
+            '@graph' => $graph
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
+        return $json ?: '';
+    }
+
+    private function getProductSchemaPrice(array $product_info): float
+    {
+        $price = (isset($product_info['special']) && $product_info['special'] !== '' && (float)$product_info['special'] >= 0)
+            ? (float)$product_info['special']
+            : (float)$product_info['price'];
+
+        return (float)$this->tax->calculate(
+            $price,
+            $product_info['tax_class_id'],
+            $this->config->get('config_tax')
+        );
+    }
+
+    private function getProductSchemaAvailability(array $product_info): string
+    {
+        $quantity = max((int)($product_info['quantity'] ?? 0), 0);
+        $quantity_ws = max((int)($product_info['quantityws'] ?? 0), 0);
+
+        if ($quantity > 0 || $quantity_ws > 0) {
+            return 'https://schema.org/InStock';
+        }
+
+        $stock_status = $this->normalizeSchemaText($product_info['stock_status'] ?? '');
+
+        if (strpos($stock_status, 'prednar') !== false || strpos($stock_status, 'u dolasku') !== false || strpos($stock_status, 'uskoro') !== false) {
+            return 'https://schema.org/PreOrder';
+        }
+
+        if (
+            strpos($stock_status, 'dobavlj') !== false ||
+            strpos($stock_status, 'naruc') !== false ||
+            strpos($stock_status, 'narud') !== false ||
+            strpos($stock_status, 'izdvojen') !== false
+        ) {
+            return 'https://schema.org/BackOrder';
+        }
+
+        return 'https://schema.org/OutOfStock';
+    }
+
+    private function getProductSchemaDescription(array $product_info, string $description, string $category): string
+    {
+        $description = $this->cleanSchemaText($description ?: ($product_info['meta_description'] ?? ''));
+
+        if ($description === '') {
+            $parts = array_filter([
+                $product_info['name'] ?? '',
+                $product_info['manufacturer'] ?? '',
+                $product_info['model'] ?? '',
+                $category
+            ]);
+
+            $description = $this->cleanSchemaText(implode(' ', $parts));
+        }
+
+        return $this->truncateSchemaText($description, 1200);
+    }
+
+    private function getProductSchemaValidFrom(array $product_info): string
+    {
+        foreach (['date_available', 'date_added', 'date_modified'] as $field) {
+            if (empty($product_info[$field]) || $product_info[$field] === '0000-00-00' || $product_info[$field] === '0000-00-00 00:00:00') {
+                continue;
+            }
+
+            $timestamp = strtotime((string)$product_info[$field]);
+
+            if ($timestamp !== false) {
+                return date('Y-m-d', $timestamp);
+            }
+        }
+
+        return date('Y-m-d');
+    }
+
+    private function buildProductSchemaShippingDetails(float $offer_price, string $currency): array
+    {
+        $shipping_price = $offer_price >= 66.36 ? 0.0 : 5.17;
+
+        return [
+            '@type' => 'OfferShippingDetails',
+            'shippingDestination' => [
+                '@type' => 'DefinedRegion',
+                'addressCountry' => 'HR'
+            ],
+            'shippingRate' => [
+                '@type' => 'MonetaryAmount',
+                'value' => number_format($shipping_price, 2, '.', ''),
+                'currency' => $currency
+            ],
+            'deliveryTime' => [
+                '@type' => 'ShippingDeliveryTime',
+                'handlingTime' => [
+                    '@type' => 'QuantitativeValue',
+                    'minValue' => 0,
+                    'maxValue' => 1,
+                    'unitCode' => 'DAY'
+                ],
+                'transitTime' => [
+                    '@type' => 'QuantitativeValue',
+                    'minValue' => 1,
+                    'maxValue' => 5,
+                    'unitCode' => 'DAY'
+                ]
+            ]
+        ];
+    }
+
+    private function buildProductSchemaReturnPolicy(): array
+    {
+        return [
+            '@type' => 'MerchantReturnPolicy',
+            'applicableCountry' => 'HR',
+            'returnPolicyCountry' => 'HR',
+            'returnPolicyCategory' => 'https://schema.org/MerchantReturnFiniteReturnWindow',
+            'merchantReturnDays' => 14,
+            'returnMethod' => 'https://schema.org/ReturnByMail',
+            'returnFees' => 'https://schema.org/ReturnFeesCustomerResponsibility',
+            'url' => $this->getStoreBaseUrl() . '/uvjeti-kupovine'
+        ];
+    }
+
+    private function getProductSchemaImages(array $product_info, array $product_images): array
+    {
+        $images = [];
+
+        if (!empty($product_info['image'])) {
+            $images[] = $this->getSchemaImageUrl($product_info['image']);
+        }
+
+        foreach ($product_images as $image) {
+            if (!empty($image['image'])) {
+                $images[] = $this->getSchemaImageUrl($image['image']);
+            }
+        }
+
+        return array_values(array_unique(array_filter($images)));
+    }
+
+    private function getSchemaImageUrl(string $image): string
+    {
+        $image = trim($image);
+
+        if ($image === '') {
+            return '';
+        }
+
+        if (preg_match('#^https?://#i', $image)) {
+            return str_replace(' ', '%20', $image);
+        }
+
+        $base = $this->getStoreBaseUrl();
+        $path = ltrim($image, '/');
+
+        if (strpos($path, 'image/') !== 0) {
+            $path = 'image/' . $path;
+        }
+
+        return str_replace(' ', '%20', $base . '/' . $path);
+    }
+
+    private function addProductSchemaIdentifiers(array &$product, array $product_info): void
+    {
+        $this->addProductSchemaGtin($product, $product_info['upc'] ?? '');
+
+        $ean = trim((string)($product_info['ean'] ?? ''));
+        if ($ean !== '') {
+            if (!$this->addProductSchemaGtin($product, $ean) && empty($product['mpn']) && $this->isSafeProductSchemaMpn($ean)) {
+                $product['mpn'] = $this->cleanSchemaText($ean);
+            }
+        }
+    }
+
+    private function addProductSchemaGtin(array &$product, string $identifier): bool
+    {
+        $gtin = preg_replace('/\D+/', '', $identifier);
+
+        if ($gtin === '' || !$this->isValidProductSchemaGtin($gtin)) {
+            return false;
+        }
+
+        $property = '';
+
+        switch (strlen($gtin)) {
+            case 8:
+                $property = 'gtin8';
+                break;
+            case 12:
+                $property = 'gtin12';
+                break;
+            case 13:
+                $property = 'gtin13';
+                break;
+            case 14:
+                $property = 'gtin14';
+                break;
+            default:
+                $property = 'gtin';
+                break;
+        }
+
+        if (!isset($product[$property])) {
+            $product[$property] = $gtin;
+            return true;
+        }
+
+        return false;
+    }
+
+    private function isValidProductSchemaGtin(string $gtin): bool
+    {
+        if (!in_array(strlen($gtin), [8, 12, 13, 14], true)) {
+            return false;
+        }
+
+        $check_digit = (int)substr($gtin, -1);
+        $payload = strrev(substr($gtin, 0, -1));
+        $sum = 0;
+
+        for ($index = 0, $length = strlen($payload); $index < $length; $index++) {
+            $sum += (int)$payload[$index] * ($index % 2 === 0 ? 3 : 1);
+        }
+
+        return (10 - ($sum % 10)) % 10 === $check_digit;
+    }
+
+    private function isSafeProductSchemaMpn(string $mpn): bool
+    {
+        $mpn = $this->cleanSchemaText($mpn);
+
+        if ($mpn === '' || strlen($mpn) > 70 || preg_match('/^\d+$/', $mpn)) {
+            return false;
+        }
+
+        return !preg_match('/\b(garanc|jamstvo|warranty|dobavlj|naruc|narud|isporuk|dostav)\b/iu', $mpn);
+    }
+
+    private function getProductSchemaCategory(array $breadcrumbs): string
+    {
+        if (count($breadcrumbs) < 2) {
+            return '';
+        }
+
+        $category = $breadcrumbs[count($breadcrumbs) - 2]['text'] ?? '';
+        return $this->cleanSchemaText($category);
+    }
+
+    private function getProductSchemaAdditionalProperties(array $attribute_groups): array
+    {
+        $properties = [];
+
+        foreach ($attribute_groups as $attribute_group) {
+            if (empty($attribute_group['attribute'])) {
+                continue;
+            }
+
+            foreach ($attribute_group['attribute'] as $attribute) {
+                $name = $this->cleanSchemaText($attribute['name'] ?? '');
+                $value = $this->cleanSchemaText($attribute['text'] ?? '');
+
+                if ($name === '' || $value === '' || strtoupper($value) === 'N' || $value === '0') {
+                    continue;
+                }
+
+                $properties[] = [
+                    '@type' => 'PropertyValue',
+                    'name' => $name,
+                    'value' => $this->truncateSchemaText($value, 240)
+                ];
+
+                if (count($properties) >= 60) {
+                    return $properties;
+                }
+            }
+        }
+
+        return $properties;
+    }
+
+    private function buildBreadcrumbJsonLd(array $breadcrumbs, string $canonical_url): array
+    {
+        $items = [];
+        $position = 1;
+        $last_index = count($breadcrumbs) - 1;
+
+        foreach ($breadcrumbs as $index => $breadcrumb) {
+            $name = $this->cleanSchemaText($breadcrumb['text'] ?? '');
+
+            if ($name === '') {
+                continue;
+            }
+
+            $items[] = [
+                '@type' => 'ListItem',
+                'position' => $position++,
+                'name' => $name,
+                'item' => ($index === $last_index)
+                    ? $canonical_url
+                    : $this->normalizeSchemaUrl($breadcrumb['href'] ?? '')
+            ];
+        }
+
+        if (!$items) {
+            return [];
+        }
+
+        return [
+            '@type' => 'BreadcrumbList',
+            '@id' => $canonical_url . '#breadcrumb',
+            'itemListElement' => $items
+        ];
+    }
+
+    private function getStoreBaseUrl(): string
+    {
+        return rtrim($this->config->get('config_ssl') ?: $this->config->get('config_url'), '/');
+    }
+
+    private function normalizeSchemaUrl(string $url): string
+    {
+        $url = html_entity_decode(trim($url), ENT_QUOTES, 'UTF-8');
+
+        if ($url === '') {
+            return $this->getStoreBaseUrl();
+        }
+
+        if (preg_match('#^https?://#i', $url)) {
+            return str_replace(' ', '%20', $url);
+        }
+
+        return str_replace(' ', '%20', $this->getStoreBaseUrl() . '/' . ltrim($url, '/'));
+    }
+
+    private function cleanSchemaText($text): string
+    {
+        $text = html_entity_decode(strip_tags((string)$text), ENT_QUOTES, 'UTF-8');
+        $clean = preg_replace('/\s+/u', ' ', $text);
+
+        if ($clean !== null) {
+            $text = $clean;
+        }
+
+        if (function_exists('iconv')) {
+            $converted = @iconv('UTF-8', 'UTF-8//IGNORE', $text);
+            if ($converted !== false) {
+                $text = $converted;
+            }
+        }
+
+        return trim($text);
+    }
+
+    private function normalizeSchemaText($text): string
+    {
+        $text = $this->cleanSchemaText($text);
+
+        if (function_exists('mb_strtolower')) {
+            return mb_strtolower($text, 'UTF-8');
+        }
+
+        return strtolower($text);
+    }
+
+    private function truncateSchemaText(string $text, int $limit): string
+    {
+        if ($limit <= 0 || $text === '') {
+            return '';
+        }
+
+        if (function_exists('mb_strlen') && function_exists('mb_substr')) {
+            if (mb_strlen($text, 'UTF-8') <= $limit) {
+                return $text;
+            }
+
+            return rtrim(mb_substr($text, 0, $limit - 1, 'UTF-8')) . '...';
+        }
+
+        if (strlen($text) <= $limit) {
+            return $text;
+        }
+
+        return rtrim(substr($text, 0, $limit - 1)) . '...';
+    }
 
 	public function review() {
 		$this->load->language('product/product');
@@ -960,11 +1483,166 @@ class ControllerProductProduct extends Controller {
         $this->load->model('catalog/product');
 
         $loc = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse();
-        $skladista = $loc->getAvailabilityForProduct($this->request->get['sifra']);
-
         $this->response->addHeader('Content-Type: application/json');
-        $this->response->setOutput($skladista->toJson());
+        $sku = isset($this->request->get['sifra']) ? (string) $this->request->get['sifra'] : '';
+
+        if (!$sku) {
+            $this->response->setOutput(
+                $loc->getAvailabilityFallbackResponse(
+                    'Dostupnost po poslovnicama privremeno nije dostupna.',
+                    'Pokusajte ponovno uskoro.'
+                )->toJson()
+            );
+
+            return;
+        }
+
+        try {
+            $this->response->setOutput($loc->getAvailabilityForProduct($sku)->toJson());
+        } catch (\Throwable $e) {
+            \Agmedia\Helpers\Log::store($e->getMessage(), 'luceed_product_availability_error');
+            \Agmedia\Helpers\Log::store($sku, 'luceed_product_availability_error');
+
+            $this->response->setOutput($this->getAvailabilityFallbackFromDatabase($loc, $sku));
+        }
 	}
+
+    private function getAvailabilityFallbackFromDatabase(
+        \Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse $loc,
+        string $sku
+    ): string {
+        $product = $this->getProductAvailabilityStateBySku($sku);
+
+        if (!$product) {
+            return $loc->getAvailabilityFallbackResponse(
+                'Dostupnost po poslovnicama privremeno nije dostupna.',
+                'Pokusajte ponovno uskoro.'
+            )->toJson();
+        }
+
+        $quantity = max((int) $product['quantity'], 0);
+        $has_stock = $quantity > 0;
+        $stock_status = trim((string) ($product['stock_status'] ?? ''));
+
+        return json_encode([
+            [
+                'title' => 'Btn',
+                'btn' => $has_stock ? 'success' : 'secondary',
+                'button' => $has_stock ? '' : 'Nedostupno',
+                'address' => $has_stock ? 'DOSTUPNO ODMAH' : ($stock_status ?: 'PROIZVOD NEDOSTUPAN'),
+                'qty' => 'Prikazano je zadnje spremljeno stanje iz baze.'
+            ]
+        ]);
+    }
+
+    private function getProductAvailabilityStateBySku(string $sku): array
+    {
+        $query = $this->db->query(
+            "SELECT p.quantity, ss.name AS stock_status
+            FROM " . DB_PREFIX . "product p
+            LEFT JOIN " . DB_PREFIX . "stock_status ss ON (
+                ss.stock_status_id = p.stock_status_id
+                AND ss.language_id = '" . (int) $this->config->get('config_language_id') . "'
+            )
+            WHERE p.sku = '" . $this->db->escape($sku) . "'
+                OR p.model = '" . $this->db->escape($sku) . "'
+            LIMIT 1"
+        );
+
+        if ($query->num_rows) {
+            return $query->row;
+        }
+
+        return [];
+    }
+
+    private function getEprelCategoryFromProductCategories(int $product_id): string
+    {
+        $eprel_category_map = [
+            'electronicdisplays' => [320, 396],
+            'smartphonestablets20231669' => [378, 380, 389],
+            'lightsources' => [538],
+        ];
+
+        foreach ($this->model_catalog_product->getCategories($product_id) as $product_category) {
+            $category_id = (int) $product_category['category_id'];
+
+            foreach ($eprel_category_map as $eprel_category => $category_ids) {
+                if (in_array($category_id, $category_ids, true)) {
+                    return $eprel_category;
+                }
+            }
+        }
+
+        return '';
+    }
+
+    private function getEprelProductData(string $category, string $model): array
+    {
+        if (!$category || !$model || !function_exists('curl_init')) {
+            return [];
+        }
+
+        $ch = curl_init("https://eprel.ec.europa.eu/api/products/{$category}/{$model}");
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 4);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'x-api-key: ' . $this->getEprelApiKey(),
+            'Accept: application/json',
+        ]);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'AGmedia-EPREL-Client/1.0');
+
+        $response = curl_exec($ch);
+
+        if ($response === false) {
+            curl_close($ch);
+
+            return [];
+        }
+
+        $http_code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($http_code !== 200) {
+            return [];
+        }
+
+        $data = json_decode($response, true);
+
+        return is_array($data) ? $data : [];
+    }
+
+    private function buildEprelJanPayload(string $image, string $model, string $category): string
+    {
+        return json_encode((object) [
+            '0' => $image,
+            '1' => $model,
+            '2' => $category,
+        ], JSON_UNESCAPED_SLASHES);
+    }
+
+    private function getEprelLabelPdfUrl(string $category, string $model): string
+    {
+        return "https://eprel.ec.europa.eu/api/products/" . $category . "/" . $model . "/labels?format=PDF";
+    }
+
+    private function getEprelFichePdfUrl(string $category, string $model): string
+    {
+        return "https://eprel.ec.europa.eu/fiches/" . $category . "/Fiche_{$model}_HR.pdf";
+    }
+
+    private function getEprelLabelThumbUrl(string $thumb): string
+    {
+        return "https://ec.europa.eu/assets/move-ener/eprel/EPREL%20Public/Nested-labels%20thumbnails/" . $thumb;
+    }
+
+    private function getEprelApiKey(): string
+    {
+        return 'EJIHIAziLs86nUV0rs7V08u5XTg1m8LF16uXJ9J4';
+    }
 
     public function getCategoryIdFromProductId($product_id) {
         $query = $this->db->query("SELECT pc.category_id FROM oc_product_to_category pc LEFT JOIN oc_category c ON (pc.category_id = c.category_id ) WHERE pc.product_id = '" . (int)$product_id . "' AND c.parent_id != 315 ORDER by pc.category_id DESC");

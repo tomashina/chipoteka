@@ -101,14 +101,65 @@ class LOC_Action
      */
     public function collectWebPrices()
     {
-        $action = $this->getActions()
-                        ->where('status', '!=', '1')
-                        ->where('naziv', '=', 'web_cijene')->first();
+        $web_actions = $this->getActions()
+                            ->where('status', '!=', '1')
+                            ->where('naziv', '=', 'web_cijene');
+
+        $action = $web_actions->first(function ($candidate) {
+            return is_object($candidate) &&
+                   property_exists($candidate, 'stavke') &&
+                   ! is_null($candidate->stavke);
+        });
+
+        // Luceed legitimately omits web_cijene when no web promotion is active.
+        // Regular prices collected before this method must still be synchronized.
+        if ($web_actions->isEmpty()) {
+            return $this;
+        }
+
+        // Depending on the Luceed serializer, an action without items can omit
+        // stavke completely or serialize it as null.
+        if ( ! $action) {
+            Log::store(
+                'Luceed returned web_cijene without stavke; synchronizing regular prices only.',
+                'luceed_price_sync_warning'
+            );
+
+            return $this;
+        }
+
+        $items = $action->stavke;
+
+        // Luceed can serialize a single item, or a numerically keyed item list,
+        // as an object instead of a JSON array.
+        if (is_object($items)) {
+            $is_single_item = property_exists($items, 'artikl') ||
+                              property_exists($items, 'grupa_artikla') ||
+                              property_exists($items, 'robna_marka') ||
+                              property_exists($items, 'mpc') ||
+                              property_exists($items, 'mpc_rabat');
+
+            $items = $is_single_item ? [$items] : array_values(get_object_vars($items));
+        }
+
+        if ( ! is_array($items)) {
+            throw new \UnexpectedValueException(
+                'Luceed web price action contains invalid stavke type: ' . gettype($items) . '.'
+            );
+        }
+
+        foreach ($items as $item) {
+            if ( ! is_object($item)) {
+                throw new \UnexpectedValueException(
+                    'Luceed web price action contains an invalid item type: ' . gettype($item) . '.'
+                );
+            }
+        }
 
         $categories = collect();
         $manufacturers = collect();
 
-        foreach ($action->stavke as $item) {
+        foreach ($items as $item) {
             if ($item->grupa_artikla && ! is_null($item->mpc_rabat)) {
 
                 if ($categories->has($item->grupa_artikla)) {
@@ -154,7 +205,7 @@ class LOC_Action
             }
         }
 
-        foreach ($action->stavke as $item) {
+        foreach ($items as $item) {
             if ($item->mpc) {
                 $this->prices_to_update->put($item->artikl, $item->mpc);
             }
@@ -435,7 +486,17 @@ class LOC_Action
      */
     private function setActions($actions): array
     {
+        if ( ! is_string($actions) || trim($actions) === '') {
+            throw new \UnexpectedValueException('Luceed action service returned an empty response.');
+        }
+
         $prods = json_decode($actions);
+
+        if (json_last_error() !== JSON_ERROR_NONE ||
+            ! isset($prods->result[0]->akcije) ||
+            ! is_array($prods->result[0]->akcije)) {
+            throw new \UnexpectedValueException('Luceed action service returned an invalid response.');
+        }
 
         return $prods->result[0]->akcije;
     }
@@ -448,7 +509,17 @@ class LOC_Action
      */
     private function setActionPricesLast30($actions): array
     {
+        if ( ! is_string($actions) || trim($actions) === '') {
+            throw new \UnexpectedValueException('Luceed action prices service returned an empty response.');
+        }
+
         $prods = json_decode($actions);
+
+        if (json_last_error() !== JSON_ERROR_NONE ||
+            ! isset($prods->result[0]->artikli_popusti) ||
+            ! is_array($prods->result[0]->artikli_popusti)) {
+            throw new \UnexpectedValueException('Luceed action prices service returned an invalid response.');
+        }
 
         return $prods->result[0]->artikli_popusti;
     }

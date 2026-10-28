@@ -31,6 +31,8 @@ $_['text_success_payments']          = 'Uspjeh..! Nova lista načina plaćanja j
 $_['text_warning_payments']          = 'Upozorenje..! Greška kod osvježavanja liste načina plaćanja!';
 $_['text_success_orders']            = 'Uspjeh..! Statusi narudžbi su obnovljeni!';
 $_['text_warning_orders']            = 'Upozorenje..! Nema novih statusa za obnoviti..!';
+$_['text_success_orders_legacy']     = 'Uspjeh..! Statusi narudžbi starijih od 60 dana su obnovljeni bez slanja mailova kupcima i uz preskakanje statusa 10. Ažurirano: %s!';
+$_['text_warning_orders_legacy']     = 'Upozorenje..! Nema statusa narudžbi starijih od 60 dana za obnoviti nakon preskakanja statusa 10..!';
 $_['text_products_import_panel']     = 'Proizvodi';
 $_['text_categories_import_panel']   = 'Kategorije';
 $_['text_manufacturer_import_panel'] = 'Proizvođači';
@@ -66,4 +68,3 @@ $_['help_manufacturer_import'] = 'Import se radi samo novih proizvođača.<br>Pr
 
 // Error
 $_['error_permission'] = 'Upozorenje..! Nemate ovlasti za promjenu Luceed Sync. Menađer modula.';
-

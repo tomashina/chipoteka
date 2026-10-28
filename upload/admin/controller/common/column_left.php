@@ -118,6 +118,14 @@ class ControllerCommonColumnLeft extends Controller {
 				);
 			}
 
+			if ($this->user->hasPermission('access', 'catalog/faq')) {
+				$catalog[] = array(
+					'name'	   => $this->language->get('text_faq'),
+					'href'     => $this->url->link('catalog/faq', 'user_token=' . $this->session->data['user_token'], true),
+					'children' => array()
+				);
+			}
+
 			if ($catalog) {
 				$data['menus'][] = array(
 					'id'       => 'menu-catalog',
@@ -176,6 +184,14 @@ class ControllerCommonColumnLeft extends Controller {
                 $marketplace[] = array(
                     'name'	   => 'Luceed Sync. Manager',
                     'href'     => $this->url->link('extension/module/luceed_sync', 'user_token=' . $this->session->data['user_token'], true),
+                    'children' => array()
+                );
+            }
+
+            if ($this->user->hasPermission('access', 'extension/module/partner_feed')) {
+                $marketplace[] = array(
+                    'name'     => 'Luceed partneri i XML feedovi',
+                    'href'     => $this->url->link('extension/module/partner_feed', 'user_token=' . $this->session->data['user_token'], true),
                     'children' => array()
                 );
             }
@@ -288,6 +304,14 @@ class ControllerCommonColumnLeft extends Controller {
 					'children' => array()
 				);
 			}
+
+            if ($this->user->hasPermission('access', 'sale/contract_withdrawal')) {
+                $sale[] = array(
+                    'name'	   => 'Raskidi ugovora',
+                    'href'     => $this->url->link('sale/contract_withdrawal', 'user_token=' . $this->session->data['user_token'], true),
+                    'children' => array()
+                );
+            }
 
 			// Voucher
 			$voucher = array();

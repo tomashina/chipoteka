@@ -111,6 +111,23 @@
 
     }
 
+    .hit-cijena-badge--card {
+        position: absolute;
+        top: 1rem;
+        right: 0.875rem;
+        z-index: 98;
+        width: 7.25rem;
+        max-width: 44%;
+        filter: drop-shadow(0 0.35rem 0.55rem rgba($black, 0.22));
+
+        @include media-breakpoint-down(sm) {
+            top: 0.75rem;
+            right: 0.75rem;
+            width: 6.75rem;
+            max-width: 48%;
+        }
+    }
+
     // Button Basket
     .btn-basket {
         z-index: 99;
@@ -381,6 +398,30 @@
 
 
 
+}
+
+.hit-cijena-badge {
+    display: block;
+    height: auto;
+    pointer-events: none;
+    user-select: none;
+}
+
+.hit-cijena-badge.hit-cijena-badge--card {
+    position: absolute;
+    top: 1rem;
+    right: 0.875rem;
+    z-index: 98;
+    width: 7.25rem;
+    max-width: 44%;
+    filter: drop-shadow(0 0.35rem 0.55rem rgba($black, 0.22));
+
+    @include media-breakpoint-down(sm) {
+        top: 0.75rem;
+        right: 0.75rem;
+        width: 6.75rem;
+        max-width: 48%;
+    }
 }
 
 

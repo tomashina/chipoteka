@@ -1,4 +1,7 @@
 {{ header }}
+{% if website_json_ld %}
+    <script type="application/ld+json">{{ website_json_ld|raw }}</script>
+{% endif %}
 <main class="offcanvas-enabled">
     <section class="container-fluid pt-4">
         <div class="pt-2">

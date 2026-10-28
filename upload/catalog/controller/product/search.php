@@ -9,6 +9,10 @@ class ControllerProductSearch extends Controller {
 
 		$this->load->model('tool/image');
 
+		$this->load->model('catalog/structured_data');
+
+		$data['website_json_ld'] = $this->model_catalog_structured_data->buildWebsiteSearchAction();
+
 		if (isset($this->request->get['search'])) {
 			$search = $this->request->get['search'];
 		} else {
@@ -146,6 +150,7 @@ class ControllerProductSearch extends Controller {
 		$data['text_compare'] = sprintf($this->language->get('text_compare'), (isset($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
 
 		$data['compare'] = $this->url->link('product/compare');
+		$data['config_url'] = $this->config->get('config_url');
 
 		// 3 Level Category Search
 		$data['categories'] = array();
@@ -302,6 +307,7 @@ class ControllerProductSearch extends Controller {
 
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
+					'is_hit_cijena' => !empty($result['is_hit_cijena']),
 					'thumb'       => $image,
 					'name'        => $result['name'],
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
@@ -315,6 +321,8 @@ class ControllerProductSearch extends Controller {
                     'specialeur'     => $specialeur,
                     'priceeur_2'       => $priceeur_2,
                     'lasteur_30'      => $lasteur_30,
+                    'sale_badge'      => $result['sale_badge'],
+                    'sale_percent'    => $result['sale_percent'],
                    /*'freeshipping' => $freeshipping,*/
                     'saljemodo'   => $saljemodo,
 					'tax'         => $tax,
@@ -380,6 +388,18 @@ class ControllerProductSearch extends Controller {
 				'text'  => $this->language->get('text_price_desc'),
 				'value' => 'p.price-DESC',
 				'href'  => $this->url->link('product/search', 'sort=p.price&order=DESC' . $url)
+			);
+
+			$data['sorts'][] = array(
+				'text'  => $this->language->get('text_sale_percent_asc'),
+				'value' => 'sale_percent-ASC',
+				'href'  => $this->url->link('product/search', 'sort=sale_percent&order=ASC' . $url)
+			);
+
+			$data['sorts'][] = array(
+				'text'  => $this->language->get('text_sale_percent_desc'),
+				'value' => 'sale_percent-DESC',
+				'href'  => $this->url->link('product/search', 'sort=sale_percent&order=DESC' . $url)
 			);
 
 			if ($this->config->get('config_review_status')) {

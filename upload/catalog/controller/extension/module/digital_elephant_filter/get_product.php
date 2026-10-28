@@ -2,6 +2,7 @@
 class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controller
 {
     private $log = null;
+    private $hitCijenaProductCache = array();
 
     /**
      * @var ControllerExtensionModuleDigitalElephantFilterHelperUrl
@@ -35,6 +36,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 
         $data = $this->getText();
         $data += $this->getFixCoreNotice();
+        $data['config_url'] = $this->config->get('config_url');
 
         $data_filter = $this->getFilterDataByUrl($data_url);
 
@@ -113,10 +115,14 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
             'filter_sub_category' => true,
             'filter_category_id' => $data_url['category_id'],
             'filter_filter'      => $data_url['opencart_filter'],
+            'filter_action_only' => !empty($data_url['action_filter']) || !empty($data_url['action_category_id']),
+            'filter_action_category_id' => !empty($data_url['action_category_id']) ? (int)$data_url['action_category_id'] : 0,
+            'filter_action_parent_id' => 308,
             'sub_categories'     => $data_url['sub_categories'],
             'manufacturers'      => $data_url['manufacturers'],
             'options'            => $data_url['option'],
             'attributes'         => $data_url['attribute'],
+            'warehouses'         => $data_url['warehouse'],
             'price'              => $data_url['price'],
             'sort'               => $data_url['sort'],
             'order'              => $data_url['order'],
@@ -240,80 +246,9 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 				$image2 = false;
 			}
 			
-			if ( (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
-                if ($result['price_last_30'] != '0.0000' && $result['price_last_30'] < $result['price_2']) {
-
-                    if ($this->config->get('salebadge_status') == '2') {
-
-                        $data['sale_percent'] = number_format(((($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.');
-
-                        //provjera postotka ako je veće od 3
-
-                        if($data['sale_percent'] > 3){
-                            $data['razlika_broj'] = ($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax'))) - ($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')));
-
-                            //provjera razlike  veće od 100 kn prikaži cifru inače postotak
-                            if($data['razlika_broj'] > 100){
-                                $sale_badge = $this->currency->format($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')) -  $this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-                            }
-                            else{
-                                $sale_badge = '-' .number_format(((($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.'). '%';
-                            }
-
-                        }
-                        else{
-
-                            $sale_badge = '-' . number_format(((($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
-
-                        }
-
-
-
-
-
-                    } else {
-                        $data['sale_badge'] = $this->language->get('basel_text_sale');
-                    }
-
-                }
-
-                else{
-
-
-                    if ($this->config->get('salebadge_status') == '2') {
-
-
-                        $data['sale_percent'] = number_format(((($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.');
-
-                        //provjera postotka ako je veće od 3
-
-                        if($data['sale_percent'] > 3){
-                            $data['razlika_broj'] = ($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax'))) - ($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')));
-
-                            //provjera razlike  veće od 100 kn prikaži cifru inače postotak
-                            if($data['razlika_broj'] > 100){
-                                $sale_badge = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')) -  $this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-                            }
-                            else{
-                                $sale_badge = '-' .number_format(((($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.'). '%';
-                            }
-
-                        }
-                        else{
-
-                            $sale_badge = '-' . number_format(((($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
-
-                        }
-
-
-                    } else {
-                        $data['sale_badge'] = $this->language->get('basel_text_sale');
-                    }
-
-                }
-			} else {
-				$sale_badge = false;
-			}
+			$sale_data = $this->model_catalog_product->getSaleBadgeData($result);
+			$sale_badge = $sale_data['sale_badge'];
+			$sale_percent = $sale_data['sale_percent'];
 		
 			if (strtotime($result['date_available']) > strtotime('-' . $this->config->get('newlabel_status') . ' day')) {
 				$is_new = true;
@@ -363,6 +298,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
 
             $products[] = array(
                 'product_id'  => $result['product_id'],
+                'is_hit_cijena' => $this->isHitCijenaProduct($result['product_id']),
                 'thumb'       => $image,
 				'thumb2' 	 => $this->model_tool_image->resize($image2, $image_width, $image_height),
 				'sale_end_date' => $date_end['date_end'] ?? '',
@@ -377,7 +313,7 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
                 'specialeur'     => $specialeur,
                 'priceeur_2'       => $priceeur_2,
                 'lasteur_30'      => $lasteur_30,
-                'sale_percent' => $data['sale_percent'],
+                'sale_percent' => $sale_percent,
                 'pj' => $pj,
                 'vpc'       => $vpc,
                 'saljemodo'     => $saljemodo,
@@ -393,6 +329,18 @@ class ControllerExtensionModuleDigitalElephantFilterGetProduct extends Controlle
         }
 
         return $products;
+    }
+
+    private function isHitCijenaProduct($product_id) {
+        $product_id = (int)$product_id;
+
+        if (!array_key_exists($product_id, $this->hitCijenaProductCache)) {
+            $query = $this->db->query("SELECT product_id FROM " . DB_PREFIX . "product_to_category WHERE product_id = '" . $product_id . "' AND category_id = '303' LIMIT 1");
+
+            $this->hitCijenaProductCache[$product_id] = $query->num_rows > 0;
+        }
+
+        return $this->hitCijenaProductCache[$product_id];
     }
 
 

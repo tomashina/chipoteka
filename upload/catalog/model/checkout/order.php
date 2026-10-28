@@ -175,6 +175,7 @@ class ModelCheckoutOrder extends Model {
 				'order_id'                => $order_query->row['order_id'],
                 'invoice_no'              => $order_query->row['invoice_no'],
                 'oib'                     => isset($order_query->row['oib']) ? $order_query->row['oib'] : '',
+                'eracun'                  => (int)$order_query->row['eracun'],
 				'invoice_prefix'          => $order_query->row['invoice_prefix'],
 				'store_id'                => $order_query->row['store_id'],
 				'store_name'              => $order_query->row['store_name'],

@@ -71,11 +71,14 @@ function DigitalElephantFilterUrl() {
         var price           = this.getGetParam(link, 'price');
         var category        = this.getGetParam(link, 'category');
         var manufacturers   = this.getGetParam(link, 'manufacturers');
+        var warehouse       = this.getGetParam(link, 'warehouse');
         var option          = this.getGetParam(link, 'option');
         var attribute       = this.getGetParam(link, 'attribute');
+        var actionFilter    = this.getGetParam(link, 'action_filter');
+        var actionCategory  = this.getGetParam(link, 'action_category_id');
         var ajaxDEF         = this.getGetParam(link, 'ajax_digitalElephantFilter');
 
-        return price + category + manufacturers + option + attribute + ajaxDEF;
+        return price + category + manufacturers + warehouse + option + attribute + actionFilter + actionCategory + ajaxDEF;
     };
 
     this.setGetParam = function(link, name, value) {
@@ -88,12 +91,39 @@ function DigitalElephantFilterUrl() {
     };
 
     this.isFilterParamsInUrl = function() {
-        var $_GET = window.location.href;
-        return (this.getGetParam($_GET, 'ajax_digitalElephantFilter') != '');
+        var link = window.location.href;
+        var filterParams =
+            this.getGetParam(link, 'price') +
+            this.getGetParam(link, 'category') +
+            this.getGetParam(link, 'manufacturers') +
+            this.getGetParam(link, 'warehouse') +
+            this.getGetParam(link, 'option') +
+            this.getGetParam(link, 'attribute');
+
+        filterParams = this.removeEmptyParams(filterParams);
+        filterParams = (filterParams || '').replace(/^[?&]+|[?&]+$/g, '');
+
+        return filterParams !== '';
     };
 
     this.changeUrlAddress = function ($_GET_string) {
-        window.history.pushState('', '', this.config.action.category + $_GET_string);
+        var baseUrl = this.config.action.category || window.location.pathname;
+        var qs = ($_GET_string || '').toString().replace(/^[?&]+/, '');
+
+        if (!qs) {
+            window.history.pushState('', '', baseUrl);
+            return;
+        }
+
+        if (baseUrl.indexOf('?') !== -1) {
+            if (!/[?&]$/.test(baseUrl)) {
+                baseUrl += '&';
+            }
+        } else {
+            baseUrl += '?';
+        }
+
+        window.history.pushState('', '', baseUrl + qs);
     };
 }
 //Class digitalElephantFilter URL END

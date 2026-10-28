@@ -1,0 +1,91 @@
+{{ header }}
+{% if faq_json_ld %}
+  <script type="application/ld+json">{{ faq_json_ld|raw }}</script>
+{% endif %}
+<div id="information-faq" class="container">
+  <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+      <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+  </ul>
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+      {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+      {% set class = 'col-sm-9' %}
+    {% else %}
+      {% set class = 'col-sm-12' %}
+    {% endif %}
+    <div id="content" class="{{ class }}">{{ content_top }}
+      <h1>{{ heading_title }}</h1>
+      <p>{{ text_intro }}</p>
+      {% if categories %}
+        <div class="row">
+          <aside class="col-sm-3">
+            <h2 class="h4">{{ text_categories }}</h2>
+            <div class="list-group">
+              {% for category in categories %}
+                <a class="list-group-item" href="{{ faq_anchor_url }}#faq-category-{{ category.faq_category_id }}" data-faq-category-target="faq-category-{{ category.faq_category_id }}">{{ category.name|escape }}</a>
+              {% endfor %}
+            </div>
+          </aside>
+          <div class="col-sm-9">
+            {% for category in categories %}
+              <section id="faq-category-{{ category.faq_category_id }}">
+                <h2>{{ category.name|escape }}</h2>
+                <div class="panel-group" id="faq-accordion-{{ category.faq_category_id }}">
+                  {% for item in category.items %}
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">
+                          <a class="collapsed" data-toggle="collapse" data-parent="#faq-accordion-{{ category.faq_category_id }}" href="#faq-answer-{{ item.faq_item_id }}">{{ item.question|escape }}</a>
+                        </h3>
+                      </div>
+                      <div id="faq-answer-{{ item.faq_item_id }}" class="panel-collapse collapse">
+                        <div class="panel-body faq-answer">{{ item.answer_html|raw }}</div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </section>
+            {% endfor %}
+          </div>
+        </div>
+      {% else %}
+        <div class="alert alert-info">{{ text_empty }}</div>
+      {% endif %}
+      {{ content_bottom }}
+    </div>
+    {{ column_right }}
+  </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var links = document.querySelectorAll('#information-faq [data-faq-category-target]');
+
+  links.forEach(function(link) {
+    link.addEventListener('click', function(event) {
+      var target = document.getElementById(link.getAttribute('data-faq-category-target'));
+
+      if (!target) {
+        return;
+      }
+
+      event.preventDefault();
+      links.forEach(function(item) {
+        item.classList.remove('active');
+      });
+      link.classList.add('active');
+
+      if (window.jQuery) {
+        window.jQuery('html, body').stop().animate({
+          scrollTop: window.jQuery(target).offset().top - 24
+        }, 450);
+      } else {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+});
+</script>
+{{ footer }}

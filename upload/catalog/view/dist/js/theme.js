@@ -347,8 +347,56 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     }; // Carousel initialisation
 
 
-    var carousels = document.querySelectorAll('.tns-carousel .tns-carousel-inner');
-    forEach(carousels, function (index, value) {
+    var stabilizeCarousel = function stabilizeCarousel(carouselElement, carouselInstance) {
+      var refreshQueued = false;
+
+      var refreshCarousel = function refreshCarousel() {
+        if (!carouselInstance || typeof carouselInstance.refresh !== 'function') return;
+
+        try {
+          carouselInstance.refresh();
+        } catch (error) {// Ignore stale refresh attempts if the slider is being rebuilt / destroyed.
+        }
+      };
+
+      var queueRefresh = function queueRefresh() {
+        if (refreshQueued) return;
+        refreshQueued = true;
+        window.requestAnimationFrame(function () {
+          window.requestAnimationFrame(function () {
+            refreshQueued = false;
+            refreshCarousel();
+          });
+        });
+      };
+
+      queueRefresh();
+      window.addEventListener('load', queueRefresh, {
+        once: true
+      });
+      window.addEventListener('pageshow', queueRefresh, {
+        once: true
+      });
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(queueRefresh).catch(function () {});
+      }
+
+      var carouselImages = carouselElement.querySelectorAll('img');
+      forEach(carouselImages, function (index, image) {
+        if (image.complete) return;
+        image.addEventListener('load', queueRefresh, {
+          once: true
+        });
+        image.addEventListener('error', queueRefresh, {
+          once: true
+        });
+      });
+    };
+
+
+    var initCarousel = function initCarousel(value) {
+      if (!value || value._tnsCarousel || value.classList.contains('tns-slider')) return;
       var defaults = {
         container: value,
         controlsText: ['<i class="fal fa-chevron-left"></i>', '<i class="fal fa-chevron-right"></i>'],
@@ -358,11 +406,47 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         autoplayHoverPause: true,
         autoplayButtonOutput: false
       };
-      var userOptions;
-      if (value.dataset.carouselOptions != undefined) userOptions = JSON.parse(value.dataset.carouselOptions);
-      var options = Object.assign({}, defaults, userOptions);
-      var carousel = tns(options);
+      var userOptions = {};
+
+      if (value.dataset.carouselOptions != undefined) {
+        try {
+          userOptions = JSON.parse(value.dataset.carouselOptions);
+        } catch (error) {
+          console.error('Carousel options parse failed', value, error);
+          return;
+        }
+      }
+
+      try {
+        var options = Object.assign({}, defaults, userOptions);
+        var carousel = tns(options);
+        value._tnsCarousel = carousel;
+        stabilizeCarousel(value, carousel);
+      } catch (error) {
+        console.error('Carousel init failed', value, error);
+      }
+    };
+
+    var initCarousels = function initCarousels() {
+      var carousels = document.querySelectorAll('.tns-carousel .tns-carousel-inner');
+      forEach(carousels, function (index, value) {
+        initCarousel(value);
+      });
+    };
+
+    initCarousels();
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCarousels, {
+        once: true
+      });
+    }
+
+    window.addEventListener('load', initCarousels, {
+      once: true
     });
+    window.addEventListener('pageshow', initCarousels);
+    window.requestAnimationFrame(initCarousels);
   }();
   /**
    * Lightbox component for presenting various types of media

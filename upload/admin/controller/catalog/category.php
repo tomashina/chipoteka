@@ -303,6 +303,13 @@ class ControllerCatalogCategory extends Controller {
 			$data['error_meta_title'] = array();
 		}
 
+		$data['entry_category_faq'] = $this->language->get('entry_category_faq');
+		$data['entry_faq_question'] = $this->language->get('entry_faq_question');
+		$data['entry_faq_answer'] = $this->language->get('entry_faq_answer');
+		$data['entry_faq_sort_order'] = $this->language->get('entry_faq_sort_order');
+		$data['button_add_faq'] = $this->language->get('button_add_faq');
+		$data['help_category_faq'] = $this->language->get('help_category_faq');
+
 		if (isset($this->error['keyword'])) {
 			$data['error_keyword'] = $this->error['keyword'];
 		} else {
@@ -365,6 +372,14 @@ class ControllerCatalogCategory extends Controller {
 			$data['category_description'] = $this->model_catalog_category->getCategoryDescriptions($this->request->get['category_id']);
 		} else {
 			$data['category_description'] = array();
+		}
+
+		if (isset($this->request->post['category_faq'])) {
+			$data['category_faq'] = $this->request->post['category_faq'];
+		} elseif (isset($this->request->get['category_id'])) {
+			$data['category_faq'] = $this->model_catalog_category->getCategoryFaqs($this->request->get['category_id']);
+		} else {
+			$data['category_faq'] = array();
 		}
 
 		if (isset($this->request->post['path'])) {

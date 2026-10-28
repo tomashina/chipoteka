@@ -1,0 +1,67 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-partner-feed" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">{% for breadcrumb in breadcrumbs %}<li>{% if breadcrumb.href %}<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>{% else %}{{ breadcrumb.text }}{% endif %}</li>{% endfor %}</ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if errors.warning %}<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ errors.warning }}<button type="button" class="close" data-dismiss="alert">&times;</button></div>{% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_form }}</h3></div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-partner-feed" class="form-horizontal">
+          <div class="form-group required{% if errors.name %} has-error{% endif %}">
+            <label class="col-sm-2 control-label" for="input-name">{{ entry_name }}</label>
+            <div class="col-sm-10"><input type="text" name="name" value="{{ name }}" id="input-name" class="form-control">{% if errors.name %}<div class="text-danger">{{ errors.name }}</div>{% endif %}</div>
+          </div>
+          <div class="form-group{% if errors.code %} has-error{% endif %}">
+            <label class="col-sm-2 control-label" for="input-code"><span data-toggle="tooltip" title="{{ help_code }}">{{ entry_code }}</span></label>
+            <div class="col-sm-10"><input type="text" name="code" value="{{ code }}" id="input-code" class="form-control" placeholder="bazzar">{% if errors.code %}<div class="text-danger">{{ errors.code }}</div>{% endif %}</div>
+          </div>
+          <div class="form-group required{% if errors.luceed_partner_id %} has-error{% endif %}">
+            <label class="col-sm-2 control-label" for="input-luceed-id"><span data-toggle="tooltip" title="{{ help_luceed_partner_id }}">{{ entry_luceed_partner_id }}</span></label>
+            <div class="col-sm-10"><input type="text" name="luceed_partner_id" value="{{ luceed_partner_id }}" id="input-luceed-id" class="form-control" autocomplete="off">{% if errors.luceed_partner_id %}<div class="text-danger">{{ errors.luceed_partner_id }}</div>{% endif %}</div>
+          </div>
+          <div class="form-group required{% if errors.customer_group_id %} has-error{% endif %}">
+            <label class="col-sm-2 control-label" for="input-customer-group"><span data-toggle="tooltip" title="{{ help_customer_group }}">{{ entry_customer_group }}</span></label>
+            <div class="col-sm-10">
+              <select name="customer_group_id" id="input-customer-group" class="form-control">
+                <option value="0">{{ text_create_group }}</option>
+                {% for group in customer_groups %}<option value="{{ group.customer_group_id }}"{% if group.customer_group_id == customer_group_id %} selected{% endif %}>{{ group.name }} (ID {{ group.customer_group_id }})</option>{% endfor %}
+              </select>
+              {% if errors.customer_group_id %}<div class="text-danger">{{ errors.customer_group_id }}</div>{% endif %}
+            </div>
+          </div>
+          <div class="form-group" id="new-group-row">
+            <label class="col-sm-2 control-label" for="input-new-group">{{ entry_new_customer_group }}</label>
+            <div class="col-sm-10"><input type="text" name="new_customer_group_name" value="{{ new_customer_group_name }}" id="input-new-group" class="form-control" placeholder="{{ name }}"></div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+            <div class="col-sm-10"><select name="status" id="input-status" class="form-control"><option value="1"{% if status %} selected{% endif %}>{{ text_enabled }}</option><option value="0"{% if not status %} selected{% endif %}>{{ text_disabled }}</option></select></div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-feed-status"><span data-toggle="tooltip" title="{{ help_feed_status }}">{{ entry_feed_status }}</span></label>
+            <div class="col-sm-10"><select name="feed_status" id="input-feed-status" class="form-control"><option value="1"{% if feed_status %} selected{% endif %}>{{ text_enabled }}</option><option value="0"{% if not feed_status %} selected{% endif %}>{{ text_disabled }}</option></select></div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-sort-order">{{ entry_sort_order }}</label>
+            <div class="col-sm-10"><input type="number" name="sort_order" value="{{ sort_order }}" id="input-sort-order" class="form-control"></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+function toggleNewGroup() { $('#new-group-row').toggle($('#input-customer-group').val() === '0'); }
+$('#input-customer-group').on('change', toggleNewGroup);
+toggleNewGroup();
+</script>
+{{ footer }}

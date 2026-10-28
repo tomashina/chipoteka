@@ -59,6 +59,24 @@ class LOC_Price
      */
     public function getGroups(): array
     {
+		$table = $this->db->query("SHOW TABLES LIKE '" . $this->db->escape(DB_PREFIX . "partner_feed") . "'");
+
+		if ($table->num_rows) {
+			$query = $this->db->query("SELECT customer_group_id, name, luceed_partner_id FROM `" . DB_PREFIX . "partner_feed` WHERE status = 1 ORDER BY sort_order ASC, partner_feed_id ASC");
+			$groups = [];
+
+			foreach ($query->rows as $row) {
+				$groups[] = [
+					'id' => (string)$row['customer_group_id'],
+					'title' => $row['name'],
+					'url' => $row['luceed_partner_id']
+				];
+			}
+
+			return $groups;
+		}
+
+		// Deployment fallback until the admin module/SQL migration is installed.
         return [
             [
                 'id' => '3',
@@ -119,7 +137,7 @@ class LOC_Price
             // If only Grupa artikala
             if ($item->grupa_artikla_uid && is_null($item->robna_marka_uid) && ! is_null($item->rabat)) {
                 if ($categories->has($item->grupa_artikla_uid)) {
-                    if ($item->grupa_artikla_uid > $categories[$item->grupa_artikla_uid]) {
+                    if ($item->rabat > $categories[$item->grupa_artikla_uid]) {
                         $categories->put($item->grupa_artikla_uid, $item->rabat);
                     }
                 } else {
@@ -130,7 +148,7 @@ class LOC_Price
             // If only Rpbna Marka artikala
             if ($item->robna_marka_uid && is_null($item->grupa_artikla_uid) && ! is_null($item->rabat)) {
                 if ($manufacturers->has($item->robna_marka_uid)) {
-                    if ($item->robna_marka_uid > $manufacturers[$item->robna_marka_uid]) {
+                    if ($item->rabat > $manufacturers[$item->robna_marka_uid]) {
                         $manufacturers->put($item->robna_marka_uid, $item->rabat);
                     }
                 } else {
@@ -160,7 +178,7 @@ class LOC_Price
         }
 
         foreach ($categories as $sifra => $discount) {
-            $category = Category::where('lc_uid', $sifra)->first();
+            $category = $this->findCategoryByLuceedUid($sifra);
 
             if ($category) {
                 $ids      = ProductCategory::where('category_id', $category->category_id)->pluck('product_id');
@@ -173,7 +191,7 @@ class LOC_Price
         }
 
         foreach ($manufacturers as $sifra => $discount) {
-            $manufacturer = Manufacturer::where('lc_uid', $sifra)->with('products')->first();
+            $manufacturer = $this->findManufacturerByLuceedUid($sifra, true);
 
             if ($manufacturer) {
                 foreach ($manufacturer->products as $product) {
@@ -184,10 +202,10 @@ class LOC_Price
 
         foreach ($cat_man as $sifra => $item) {
 
-            $category = Category::where('lc_uid', $item['category'])->first();
+            $category = $this->findCategoryByLuceedUid($item['category']);
 
             if ($category) {
-                $manufacturer = Manufacturer::where('lc_uid', $item['manufacturer'])->first();
+                $manufacturer = $this->findManufacturerByLuceedUid($item['manufacturer']);
 
                 if ($manufacturer) {
                     $ids      = ProductCategory::where('category_id', $category->category_id)->pluck('product_id');
@@ -219,6 +237,38 @@ class LOC_Price
         }*/
 
         return $this;
+    }
+
+
+    /**
+     * @param string $uid
+     *
+     * @return Category|null
+     */
+    private function findCategoryByLuceedUid(string $uid)
+    {
+        return Category::where('lc_uid', $uid)
+                       ->orWhere('luceed_uid', $uid)
+                       ->first();
+    }
+
+
+    /**
+     * @param string $uid
+     * @param bool   $with_products
+     *
+     * @return Manufacturer|null
+     */
+    private function findManufacturerByLuceedUid(string $uid, bool $with_products = false)
+    {
+        $query = Manufacturer::where('lc_uid', $uid)
+                             ->orWhere('luceed_uid', $uid);
+
+        if ($with_products) {
+            $query->with('products');
+        }
+
+        return $query->first();
     }
 
 

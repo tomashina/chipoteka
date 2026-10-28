@@ -13,6 +13,8 @@ class ModelCatalogInformation extends Model {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "information_description SET information_id = '" . (int)$information_id . "', language_id = '" . (int)$language_id . "', title = '" . $this->db->escape($value['title']) . "', description = '" . $this->db->escape($value['description']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
 		}
 
+		$this->saveInformationFaqs($information_id, $data['information_faq'] ?? array());
+
 		if (isset($data['information_store'])) {
 			foreach ($data['information_store'] as $store_id) {
 				$this->db->query("INSERT INTO " . DB_PREFIX . "information_to_store SET information_id = '" . (int)$information_id . "', store_id = '" . (int)$store_id . "'");
@@ -37,6 +39,7 @@ class ModelCatalogInformation extends Model {
 		}
 
 		$this->cache->delete('information');
+		$this->queueIndexNow('information', $information_id, 'updated');
 
 		return $information_id;
 	}
@@ -53,6 +56,8 @@ class ModelCatalogInformation extends Model {
 		foreach ($data['information_description'] as $language_id => $value) {
 			$this->db->query("INSERT INTO " . DB_PREFIX . "information_description SET information_id = '" . (int)$information_id . "', language_id = '" . (int)$language_id . "', title = '" . $this->db->escape($value['title']) . "', description = '" . $this->db->escape($value['description']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
 		}
+
+		$this->saveInformationFaqs($information_id, $data['information_faq'] ?? array());
 
 		$this->db->query("DELETE FROM " . DB_PREFIX . "information_to_store WHERE information_id = '" . (int)$information_id . "'");
 
@@ -83,14 +88,21 @@ class ModelCatalogInformation extends Model {
 		}
 
 		$this->cache->delete('information');
+		$this->queueIndexNow('information', $information_id, 'updated');
 	}
 
 	public function deleteInformation($information_id) {
+		$this->queueIndexNow('information', $information_id, 'deleted');
+
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "information` WHERE information_id = '" . (int)$information_id . "'");
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "information_description` WHERE information_id = '" . (int)$information_id . "'");
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "information_to_store` WHERE information_id = '" . (int)$information_id . "'");
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "information_to_layout` WHERE information_id = '" . (int)$information_id . "'");
 		$this->db->query("DELETE FROM `" . DB_PREFIX . "seo_url` WHERE query = 'information_id=" . (int)$information_id . "'");
+
+		if ($this->hasInformationFaqTable()) {
+			$this->db->query("DELETE FROM `" . DB_PREFIX . "information_faq` WHERE information_id = '" . (int)$information_id . "'");
+		}
 
 		$this->cache->delete('information');
 	}
@@ -178,6 +190,64 @@ class ModelCatalogInformation extends Model {
 		return $information_description_data;
 	}
 
+	public function getInformationFaqs($information_id) {
+		$this->ensureInformationFaqTable();
+
+		$information_faq_data = array();
+		$query = $this->db->query("SELECT * FROM " . DB_PREFIX . "information_faq WHERE information_id = '" . (int)$information_id . "' ORDER BY language_id ASC, sort_order ASC, information_faq_id ASC");
+
+		foreach ($query->rows as $result) {
+			$information_faq_data[(int)$result['language_id']][] = array(
+				'question' => $result['question'],
+				'answer' => $result['answer'],
+				'sort_order' => (int)$result['sort_order']
+			);
+		}
+
+		return $information_faq_data;
+	}
+
+	private function saveInformationFaqs($information_id, array $information_faqs): void {
+		$this->ensureInformationFaqTable();
+		$this->db->query("DELETE FROM " . DB_PREFIX . "information_faq WHERE information_id = '" . (int)$information_id . "'");
+
+		foreach ($information_faqs as $language_id => $faqs) {
+			if (!is_array($faqs)) {
+				continue;
+			}
+
+			foreach ($faqs as $faq) {
+				$question = trim((string)($faq['question'] ?? ''));
+				$answer = trim((string)($faq['answer'] ?? ''));
+
+				if ($question === '' || $answer === '') {
+					continue;
+				}
+
+				$this->db->query("INSERT INTO " . DB_PREFIX . "information_faq SET information_id = '" . (int)$information_id . "', language_id = '" . (int)$language_id . "', question = '" . $this->db->escape($question) . "', answer = '" . $this->db->escape($answer) . "', sort_order = '" . (int)($faq['sort_order'] ?? 0) . "'");
+			}
+		}
+	}
+
+	private function ensureInformationFaqTable(): void {
+		$this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "information_faq` (
+			`information_faq_id` int(11) NOT NULL AUTO_INCREMENT,
+			`information_id` int(11) NOT NULL,
+			`language_id` int(11) NOT NULL,
+			`question` text NOT NULL,
+			`answer` text NOT NULL,
+			`sort_order` int(11) NOT NULL DEFAULT 0,
+			PRIMARY KEY (`information_faq_id`),
+			KEY `information_language` (`information_id`, `language_id`, `sort_order`)
+		) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci");
+	}
+
+	private function hasInformationFaqTable(): bool {
+		$query = $this->db->query("SHOW TABLES LIKE '" . $this->db->escape(DB_PREFIX . "information_faq") . "'");
+
+		return (bool)$query->num_rows;
+	}
+
 	public function getInformationStores($information_id) {
 		$information_store_data = array();
 
@@ -224,5 +294,14 @@ class ModelCatalogInformation extends Model {
 		$query = $this->db->query("SELECT COUNT(*) AS total FROM " . DB_PREFIX . "information_to_layout WHERE layout_id = '" . (int)$layout_id . "'");
 
 		return $query->row['total'];
+	}
+
+	private function queueIndexNow($entity_type, $entity_id, $action = 'updated'): void {
+		try {
+			$this->load->library('indexnow');
+			$this->indexnow->queueEntity($entity_type, $entity_id, $action);
+		} catch (Exception $e) {
+			$this->log->write('IndexNow queue error: ' . $e->getMessage());
+		}
 	}
 }

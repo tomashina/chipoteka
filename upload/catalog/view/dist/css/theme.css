@@ -1,4 +1,15 @@
 @charset "UTF-8";
+/*
+ * Cartzilla | Bootstrap E-Commerce Template
+ * Copyright 2021 Createx Studio
+ * Theme styles
+ */
+/*!
+ * Bootstrap v5.0.0-beta1 (https://getbootstrap.com/)
+ * Copyright 2011-2020 The Bootstrap Authors
+ * Copyright 2011-2020 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
 @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800&display=swap");
 :root {
   --bs-blue: #0d6efd;
@@ -29056,6 +29067,25 @@ body > main.offcanvas-enabled {
   }
 }
 
+.product-card .hit-cijena-badge--card {
+  position: absolute;
+  top: 1rem;
+  right: 0.875rem;
+  z-index: 98;
+  width: 7.25rem;
+  max-width: 44%;
+  filter: drop-shadow(0 0.35rem 0.55rem rgba(0, 0, 0, 0.22));
+}
+
+@media (max-width: 499.98px) {
+  .product-card .hit-cijena-badge--card {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 6.75rem;
+    max-width: 48%;
+  }
+}
+
 .product-card .btn-basket {
   z-index: 99;
   position: absolute;
@@ -29219,6 +29249,34 @@ body > main.offcanvas-enabled {
     visibility: visible;
     opacity: 1;
     transition: all 0.27s cubic-bezier(0.83, 0, 0.17, 1);
+  }
+}
+
+.hit-cijena-badge {
+  display: block;
+  height: auto;
+  pointer-events: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.hit-cijena-badge.hit-cijena-badge--card {
+  position: absolute;
+  top: 1rem;
+  right: 0.875rem;
+  z-index: 98;
+  width: 7.25rem;
+  max-width: 44%;
+  filter: drop-shadow(0 0.35rem 0.55rem rgba(0, 0, 0, 0.22));
+}
+
+@media (max-width: 499.98px) {
+  .hit-cijena-badge.hit-cijena-badge--card {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 6.75rem;
+    max-width: 48%;
   }
 }
 
@@ -29389,6 +29447,31 @@ body > main.offcanvas-enabled {
   .product-container .nav-tabs .nav-item .nav-link {
     padding-left: 0.9rem;
     padding-right: 0.9rem;
+  }
+}
+
+.product-container .product-gallery-preview-item .hit-cijena-badge--detail {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 12;
+  width: 16rem;
+  max-width: 44%;
+  filter: drop-shadow(0 0.45rem 0.65rem rgba(0, 0, 0, 0.24));
+}
+
+@media (max-width: 499.98px) {
+  .product-container .product-gallery-preview-item .hit-cijena-badge--detail {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 12rem;
+    max-width: 52%;
+  }
+}
+
+@media screen and (max-width: 370px) {
+  .product-container .product-gallery-preview-item .hit-cijena-badge--detail {
+    width: 10rem;
   }
 }
 

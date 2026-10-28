@@ -1,14 +1,36 @@
 <?php
 class ModelCatalogProduct extends Model {
+	private $product_category_cache = array();
+
 	public function updateViewed($product_id) {
 		$this->db->query("UPDATE " . DB_PREFIX . "product SET viewed = (viewed + 1) WHERE product_id = '" . (int)$product_id . "'");
+	}
+
+	public function cacheEprelJanIfMissing($product_id, $jan) {
+		$this->db->query("UPDATE " . DB_PREFIX . "product SET jan = '" . $this->db->escape($jan) . "' WHERE product_id = '" . (int)$product_id . "' AND (jan IS NULL OR jan = '')");
+	}
+
+	public function isProductInCategory($product_id, $category_id) {
+		$cache_key = (int)$product_id . ':' . (int)$category_id;
+
+		if (!array_key_exists($cache_key, $this->product_category_cache)) {
+			$query = $this->db->query("SELECT product_id FROM " . DB_PREFIX . "product_to_category WHERE product_id = '" . (int)$product_id . "' AND category_id = '" . (int)$category_id . "' LIMIT 1");
+
+			$this->product_category_cache[$cache_key] = $query->num_rows > 0;
+		}
+
+		return $this->product_category_cache[$cache_key];
+	}
+
+	public function isHitCijenaProduct($product_id) {
+		return $this->isProductInCategory($product_id, 303);
 	}
 
 	public function getProduct($product_id) {
 		$query = $this->db->query("SELECT DISTINCT *, pd.name AS name, p.image, m.name AS manufacturer, (SELECT price FROM " . DB_PREFIX . "product_discount pd2 WHERE pd2.product_id = p.product_id AND pd2.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND pd2.quantity = '1' AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW()) AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW())) ORDER BY pd2.priority ASC, pd2.price ASC LIMIT 1) AS discount, (SELECT price FROM " . DB_PREFIX . "product_special ps WHERE ps.product_id = p.product_id AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW())) ORDER BY ps.priority ASC, ps.price ASC LIMIT 1) AS special, (SELECT points FROM " . DB_PREFIX . "product_reward pr WHERE pr.product_id = p.product_id AND pr.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "') AS reward, (SELECT ss.name FROM " . DB_PREFIX . "stock_status ss WHERE ss.stock_status_id = p.stock_status_id AND ss.language_id = '" . (int)$this->config->get('config_language_id') . "') AS stock_status, (SELECT wcd.unit FROM " . DB_PREFIX . "weight_class_description wcd WHERE p.weight_class_id = wcd.weight_class_id AND wcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS weight_class, (SELECT lcd.unit FROM " . DB_PREFIX . "length_class_description lcd WHERE p.length_class_id = lcd.length_class_id AND lcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS length_class, (SELECT AVG(rating) AS total FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = p.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating, (SELECT COUNT(*) AS total FROM " . DB_PREFIX . "review r2 WHERE r2.product_id = p.product_id AND r2.status = '1' GROUP BY r2.product_id) AS reviews, p.sort_order FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) LEFT JOIN " . DB_PREFIX . "manufacturer m ON (p.manufacturer_id = m.manufacturer_id) WHERE p.product_id = '" . (int)$product_id . "' AND pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.price > '0' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'");
 
 		if ($query->num_rows) {
-
+			$sale_data = $this->getSaleBadgeData($query->row);
 
             $price = ($query->row['discount'] ? $query->row['discount'] : $query->row['price']);
 
@@ -19,6 +41,7 @@ class ModelCatalogProduct extends Model {
 
 			return array(
 				'product_id'       => $query->row['product_id'],
+				'is_hit_cijena'    => $this->isHitCijenaProduct($query->row['product_id']),
 				'name'             => $query->row['name'],
 				'description'      => $query->row['description'],
                 'short_description'      => $query->row['short_description'],
@@ -28,6 +51,7 @@ class ModelCatalogProduct extends Model {
 				'meta_keyword'     => $query->row['meta_keyword'],
 				'tag'              => $query->row['tag'],
 				'model'            => $query->row['model'],
+				'eprel_model'      => $query->row['eprel_model'],
 				'sku'              => $query->row['sku'],
 				'upc'              => $query->row['upc'],
 				'ean'              => $query->row['ean'],
@@ -47,6 +71,8 @@ class ModelCatalogProduct extends Model {
                 'price_last_30'    => $query->row['price_last_30'],
                 'pakiranje'        => $query->row['pakiranje'],
 				'special'          => $query->row['special'],
+				'sale_badge'       => $sale_data['sale_badge'],
+				'sale_percent'     => $sale_data['sale_percent'],
 				'reward'           => $query->row['reward'],
 				'points'           => $query->row['points'],
 				'tax_class_id'     => $query->row['tax_class_id'],
@@ -70,6 +96,129 @@ class ModelCatalogProduct extends Model {
 		} else {
 			return false;
 		}
+	}
+
+	public function getSaleBadgeData($product_info) {
+		$sale_data = array(
+			'sale_badge' => false,
+			'sale_percent' => ''
+		);
+
+		if (empty($product_info['special']) || !(float)$product_info['special'] || !$this->config->get('salebadge_status')) {
+			return $sale_data;
+		}
+
+		if ($this->config->get('salebadge_status') != '2') {
+			$sale_data['sale_badge'] = $this->language->get('basel_text_sale');
+
+			return $sale_data;
+		}
+
+		$reference_price = 0.0;
+
+		if (!empty($product_info['price_last_30']) && (float)$product_info['price_last_30'] > 0 && (float)$product_info['price_last_30'] < (float)$product_info['price_2']) {
+			$reference_price = (float)$product_info['price_last_30'];
+		} elseif (!empty($product_info['price_2']) && (float)$product_info['price_2'] > 0) {
+			$reference_price = (float)$product_info['price_2'];
+		} elseif (!empty($product_info['price']) && (float)$product_info['price'] > 0) {
+			$reference_price = (float)$product_info['price'];
+		}
+
+		if ($reference_price <= 0) {
+			return $sale_data;
+		}
+
+		$reference_price = (float)$this->tax->calculate($reference_price, $product_info['tax_class_id'], $this->config->get('config_tax'));
+		$special_price = (float)$this->tax->calculate((float)$product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax'));
+
+		if ($reference_price <= 0 || $special_price <= 0 || $special_price >= $reference_price) {
+			return $sale_data;
+		}
+
+		$discount_amount = $reference_price - $special_price;
+		$discount_percent = $discount_amount / ($reference_price / 100);
+
+		$sale_data['sale_percent'] = number_format($discount_percent, 0, ',', '.');
+
+		if ($discount_percent > 3 && $discount_amount > 100) {
+			$sale_data['sale_badge'] = $this->currency->format($discount_amount, $this->session->data['currency']);
+		} else {
+			$sale_data['sale_badge'] = '-' . number_format($discount_percent, 0, ',', '.') . '%';
+		}
+
+		return $sale_data;
+	}
+
+	private function hasActionFilter($data = array()) {
+		return !empty($data['filter_action_only']) || !empty($data['filter_action_category_id']);
+	}
+
+	private function getActionFilterPathId($data = array()) {
+		if (!empty($data['filter_action_category_id'])) {
+			return (int)$data['filter_action_category_id'];
+		}
+
+		if (!empty($data['filter_action_parent_id'])) {
+			return (int)$data['filter_action_parent_id'];
+		}
+
+		return 308;
+	}
+
+	private function getActionFilterSql($data = array(), $product_field = 'p.product_id') {
+		if (!$this->hasActionFilter($data)) {
+			return '';
+		}
+
+		$action_path_id = $this->getActionFilterPathId($data);
+
+		if (!$action_path_id) {
+			return '';
+		}
+
+		return " AND EXISTS (
+			SELECT 1
+			FROM " . DB_PREFIX . "category_path acp
+			LEFT JOIN " . DB_PREFIX . "product_to_category ap2c
+				ON (ap2c.category_id = acp.category_id)
+			WHERE acp.path_id = '" . $action_path_id . "'
+				AND ap2c.product_id = " . $product_field . "
+		)";
+	}
+
+	private function getSaleSortReferencePriceSql($price_field = 'p.price') {
+		return "(CASE
+			WHEN p.price_last_30 > 0 AND p.price_2 > 0 AND p.price_last_30 < p.price_2 THEN p.price_last_30
+			WHEN p.price_2 > 0 THEN p.price_2
+			WHEN " . $price_field . " > 0 THEN " . $price_field . "
+			ELSE 0
+		END)";
+	}
+
+	private function getSaleSortPrioritySql($special_field = 'special', $price_field = 'p.price') {
+		$reference_price_sql = $this->getSaleSortReferencePriceSql($price_field);
+
+		return "(CASE
+			WHEN " . $special_field . " IS NOT NULL
+				AND " . $special_field . " > 0
+				AND " . $reference_price_sql . " > 0
+				AND " . $special_field . " < " . $reference_price_sql . "
+			THEN 1
+			ELSE 0
+		END)";
+	}
+
+	private function getSaleSortPercentSql($special_field = 'special', $price_field = 'p.price') {
+		$reference_price_sql = $this->getSaleSortReferencePriceSql($price_field);
+
+		return "(CASE
+			WHEN " . $special_field . " IS NOT NULL
+				AND " . $special_field . " > 0
+				AND " . $reference_price_sql . " > 0
+				AND " . $special_field . " < " . $reference_price_sql . "
+			THEN ((" . $reference_price_sql . " - " . $special_field . ") / " . $reference_price_sql . ") * 100
+			ELSE 0
+		END)";
 	}
 
 	public function getProducts($data = array()) {
@@ -169,6 +318,8 @@ class ModelCatalogProduct extends Model {
 			$sql .= " AND p.manufacturer_id = '" . (int)$data['filter_manufacturer_id'] . "'";
 		}
 
+		$sql .= $this->getActionFilterSql($data);
+
 		$sql .= " GROUP BY p.product_id";
 
 		$sort_data = array(
@@ -176,16 +327,19 @@ class ModelCatalogProduct extends Model {
 			'p.model',
 			'p.quantity',
 			'p.price',
+			'sale_percent',
 			'rating',
 			'p.sort_order',
 			'p.date_added'
 		);
 
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
-			if ($data['sort'] == 'pd.name' || $data['sort'] == 'p.model') {
+            if ($data['sort'] == 'pd.name' || $data['sort'] == 'p.model') {
 				$sql .= " ORDER BY LCASE(" . $data['sort'] . ")";
 			} elseif ($data['sort'] == 'p.price') {
                 $sql .= " ORDER BY (CASE WHEN special IS NOT NULL THEN special WHEN discount IS NOT NULL THEN discount ELSE p.price END)";
+            } elseif ($data['sort'] == 'sale_percent') {
+				$sql .= " ORDER BY " . $this->getSaleSortPrioritySql('special') . " DESC, " . $this->getSaleSortPercentSql('special');
             } elseif ($data['sort'] == 'p.sort_order') {
                 $sql .= ' ORDER BY (CASE WHEN pd.name LIKE "' . $data['filter_name'] . '%" THEN 1 ELSE 2 END)';
             } else {
@@ -225,12 +379,13 @@ class ModelCatalogProduct extends Model {
 	}
 
 	public function getProductSpecials($data = array()) {
-		$sql = "SELECT DISTINCT ps.product_id, (SELECT AVG(rating) FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = ps.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating FROM " . DB_PREFIX . "product_special ps LEFT JOIN " . DB_PREFIX . "product p ON (ps.product_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW())) GROUP BY ps.product_id";
+		$sql = "SELECT DISTINCT ps.product_id, MIN(ps.price) AS special_price, (SELECT AVG(rating) FROM " . DB_PREFIX . "review r1 WHERE r1.product_id = ps.product_id AND r1.status = '1' GROUP BY r1.product_id) AS rating FROM " . DB_PREFIX . "product_special ps LEFT JOIN " . DB_PREFIX . "product p ON (ps.product_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' AND ps.customer_group_id = '" . (int)$this->config->get('config_customer_group_id') . "' AND ((ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW())) GROUP BY ps.product_id";
 
 		$sort_data = array(
 			'pd.name',
 			'p.model',
 			'ps.price',
+			'sale_percent',
 			'rating',
 			'p.sort_order'
 		);
@@ -238,6 +393,10 @@ class ModelCatalogProduct extends Model {
 		if (isset($data['sort']) && in_array($data['sort'], $sort_data)) {
 			if ($data['sort'] == 'pd.name' || $data['sort'] == 'p.model') {
 				$sql .= " ORDER BY LCASE(" . $data['sort'] . ")";
+			} elseif ($data['sort'] == 'ps.price') {
+				$sql .= " ORDER BY special_price";
+			} elseif ($data['sort'] == 'sale_percent') {
+				$sql .= " ORDER BY " . $this->getSaleSortPrioritySql('special_price') . " DESC, " . $this->getSaleSortPercentSql('special_price');
 			} else {
 				$sql .= " ORDER BY " . $data['sort'];
 			}
@@ -329,12 +488,12 @@ class ModelCatalogProduct extends Model {
 	public function getProductAttributes($product_id) {
 		$product_attribute_group_data = array();
 
-		$product_attribute_group_query = $this->db->query("SELECT ag.attribute_group_id, agd.name FROM " . DB_PREFIX . "product_attribute pa LEFT JOIN " . DB_PREFIX . "attribute a ON (pa.attribute_id = a.attribute_id) LEFT JOIN " . DB_PREFIX . "attribute_group ag ON (a.attribute_group_id = ag.attribute_group_id) LEFT JOIN " . DB_PREFIX . "attribute_group_description agd ON (ag.attribute_group_id = agd.attribute_group_id) WHERE pa.product_id = '" . (int)$product_id . "' AND agd.language_id = '" . (int)$this->config->get('config_language_id') . "' GROUP BY ag.attribute_group_id ORDER BY ag.sort_order, agd.name");
+		$product_attribute_group_query = $this->db->query("SELECT ag.attribute_group_id, agd.name, MIN(pa.sort_order) AS product_sort_order FROM " . DB_PREFIX . "product_attribute pa LEFT JOIN " . DB_PREFIX . "attribute a ON (pa.attribute_id = a.attribute_id) LEFT JOIN " . DB_PREFIX . "attribute_group ag ON (a.attribute_group_id = ag.attribute_group_id) LEFT JOIN " . DB_PREFIX . "attribute_group_description agd ON (ag.attribute_group_id = agd.attribute_group_id) WHERE pa.product_id = '" . (int)$product_id . "' AND agd.language_id = '" . (int)$this->config->get('config_language_id') . "' GROUP BY ag.attribute_group_id ORDER BY product_sort_order, ag.sort_order, agd.name");
 
 		foreach ($product_attribute_group_query->rows as $product_attribute_group) {
 			$product_attribute_data = array();
 
-			$product_attribute_query = $this->db->query("SELECT a.attribute_id, ad.name, pa.text FROM " . DB_PREFIX . "product_attribute pa LEFT JOIN " . DB_PREFIX . "attribute a ON (pa.attribute_id = a.attribute_id) LEFT JOIN " . DB_PREFIX . "attribute_description ad ON (a.attribute_id = ad.attribute_id) WHERE pa.product_id = '" . (int)$product_id . "' AND a.attribute_group_id = '" . (int)$product_attribute_group['attribute_group_id'] . "' AND ad.language_id = '" . (int)$this->config->get('config_language_id') . "' AND pa.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY a.sort_order, ad.name");
+			$product_attribute_query = $this->db->query("SELECT a.attribute_id, ad.name, pa.text, pa.sort_order FROM " . DB_PREFIX . "product_attribute pa LEFT JOIN " . DB_PREFIX . "attribute a ON (pa.attribute_id = a.attribute_id) LEFT JOIN " . DB_PREFIX . "attribute_description ad ON (a.attribute_id = ad.attribute_id) WHERE pa.product_id = '" . (int)$product_id . "' AND a.attribute_group_id = '" . (int)$product_attribute_group['attribute_group_id'] . "' AND ad.language_id = '" . (int)$this->config->get('config_language_id') . "' AND pa.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY pa.sort_order, a.sort_order, ad.name");
 
 			foreach ($product_attribute_query->rows as $product_attribute) {
 				$product_attribute_data[] = array(
@@ -408,20 +567,32 @@ class ModelCatalogProduct extends Model {
 	public function getProductRelated($product_id) {
 		$product_data = array();
 
-        $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_related pr LEFT JOIN " . DB_PREFIX . "product p ON (pr.related_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pr.product_id = '" . (int)$product_id . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'");
+        $query = $this->db->query("SELECT pr.related_id FROM " . DB_PREFIX . "product_related pr LEFT JOIN " . DB_PREFIX . "product p ON (pr.related_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pr.product_id = '" . (int)$product_id . "' AND p.status = '1' AND p.price > '0' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "'");
 
         if ($query->num_rows) {
             foreach ($query->rows as $result) {
-                $product_data[$result['related_id']] = $this->getProduct($result['related_id']);
+                $product_info = $this->getProduct($result['related_id']);
+
+                if ($product_info) {
+                    $product_data[$result['related_id']] = $product_info;
+                }
             }
 
         } else {
-            $getCat = $this->db->query("SELECT product_id, min(category_id) as category_id FROM " . DB_PREFIX . "product_to_category WHERE product_id = '" . (int)$product_id . "' AND category_id not in (SELECT distinct parent_id as category_id FROM oc_category)");
-            $query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_to_category WHERE category_id = '" . (int)$getCat->row['category_id'] . "' AND product_id != '" . (int)$product_id . "'  LIMIT 0,5");
+            $excluded_category_ids = array(303);
+            $excluded_category_sql = implode(',', array_map('intval', $excluded_category_ids));
+            $getCat = $this->db->query("SELECT MIN(category_id) as category_id FROM " . DB_PREFIX . "product_to_category WHERE product_id = '" . (int)$product_id . "' AND category_id NOT IN (" . $excluded_category_sql . ") AND category_id NOT IN (SELECT DISTINCT parent_id as category_id FROM " . DB_PREFIX . "category)");
 
-            foreach ($query->rows as $result) {
-                //$product_data[$result['related_id']] = $this->getProduct($result['related_id']);
-                $product_data[$result['product_id']] = $this->getProduct($result['product_id']);
+            if ($getCat->num_rows && (int)$getCat->row['category_id']) {
+                $query = $this->db->query("SELECT p.product_id FROM " . DB_PREFIX . "product_to_category p2c LEFT JOIN " . DB_PREFIX . "product p ON (p2c.product_id = p.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE p2c.category_id = '" . (int)$getCat->row['category_id'] . "' AND p2c.product_id != '" . (int)$product_id . "' AND p.status = '1' AND p.price > '0' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$this->config->get('config_store_id') . "' GROUP BY p.product_id ORDER BY p.sort_order ASC, p.date_added DESC LIMIT 0,5");
+
+                foreach ($query->rows as $result) {
+                    $product_info = $this->getProduct($result['product_id']);
+
+                    if ($product_info) {
+                        $product_data[$result['product_id']] = $product_info;
+                    }
+                }
             }
         }
 
@@ -540,6 +711,8 @@ class ModelCatalogProduct extends Model {
 		if (!empty($data['filter_manufacturer_id'])) {
 			$sql .= " AND p.manufacturer_id = '" . (int)$data['filter_manufacturer_id'] . "'";
 		}
+
+		$sql .= $this->getActionFilterSql($data);
 
 		$query = $this->db->query($sql);
 

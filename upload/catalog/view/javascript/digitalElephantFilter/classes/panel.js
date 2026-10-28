@@ -15,7 +15,7 @@ function DigitalElephantFilterPanel() {
     this.render = function($_GET_string) {
         var $this = this;
 
-        $.ajax({
+        return $.ajax({
             url: $this.config.action.ajaxRenderPanel + $_GET_string + '&path=' + this.config.categoryPath,
             dataType: 'HTML',
             success: function(html) {

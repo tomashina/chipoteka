@@ -11,17 +11,22 @@ class ControllerInformationContact extends Controller {
             $data['izborkarte'] = '';
         }
 
-            if($data['izborkarte']=='servis'){
+            $page_key = $this->getContactPageKey($data['izborkarte']);
+            $canonical_url = $this->getContactCanonicalUrl($page_key);
+
+            if($page_key=='servis'){
                 $this->document->setTitle('Servis - chipoteka.hr');
             }
 
-            elseif ($data['izborkarte']=='veleprodaja'){
+            elseif ($page_key=='veleprodaja'){
                 $this->document->setTitle('Veleprodaja - chipoteka.hr');
             }
             else{
 
                 $this->document->setTitle('Naše poslovnice - chipoteka.hr');
                 }
+
+            $this->document->addLink($canonical_url, 'canonical');
 
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
@@ -53,7 +58,7 @@ class ControllerInformationContact extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('information/contact')
+			'href' => $canonical_url
 		);
 
 		if (isset($this->error['name'])) {
@@ -126,6 +131,18 @@ class ControllerInformationContact extends Controller {
 			}
 		}
 
+		$data['contact_faq_heading'] = $this->language->get('text_faq_heading');
+		$data['contact_faq_items'] = $this->getContactFaqItems($page_key);
+
+		$this->load->model('catalog/structured_data');
+		$data['contact_json_ld'] = $this->model_catalog_structured_data->buildContactPage(
+			$data['locations'],
+			$data['breadcrumbs'],
+			$canonical_url,
+			$page_key,
+			$data['contact_faq_items']
+		);
+
 		if (isset($this->request->post['name'])) {
 			$data['name'] = $this->request->post['name'];
 		} else {
@@ -159,6 +176,51 @@ class ControllerInformationContact extends Controller {
 		$data['header'] = $this->load->controller('common/header');
 
 		$this->response->setOutput($this->load->view('information/contact', $data));
+	}
+
+	private function getContactPageKey(string $name): string {
+		if ($name === 'servis') {
+			return 'servis';
+		}
+
+		if ($name === 'veleprodaja') {
+			return 'veleprodaja';
+		}
+
+		return 'poslovnice';
+	}
+
+	private function getContactCanonicalUrl(string $page_key): string {
+		if ($page_key === 'servis') {
+			return rtrim($this->config->get('config_ssl') ?: $this->config->get('config_url'), '/') . '/servis';
+		}
+
+		if ($page_key === 'veleprodaja') {
+			return rtrim($this->config->get('config_ssl') ?: $this->config->get('config_url'), '/') . '/veleprodaja';
+		}
+
+		return rtrim($this->config->get('config_ssl') ?: $this->config->get('config_url'), '/') . '/poslovnice';
+	}
+
+	private function getContactFaqItems(string $page_key): array {
+		if ($page_key !== 'servis') {
+			return array();
+		}
+
+		return array(
+			array(
+				'question' => $this->language->get('faq_service_status_question'),
+				'answer' => $this->language->get('faq_service_status_answer')
+			),
+			array(
+				'question' => $this->language->get('faq_service_price_question'),
+				'answer' => $this->language->get('faq_service_price_answer')
+			),
+			array(
+				'question' => $this->language->get('faq_service_external_question'),
+				'answer' => $this->language->get('faq_service_external_answer')
+			)
+		);
 	}
 
 	protected function validate() {

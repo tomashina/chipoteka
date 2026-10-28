@@ -44,13 +44,18 @@ class LOC_Customer
      */
     private $should_update;
 
+    /**
+     * @var bool
+     */
+    private $lookup_response_reliable = true;
+
 
     /**
      * LOC_Customer constructor.
      *
      * @param array|null $customer
      */
-    public function __construct(array $customer = null)
+    public function __construct(?array $customer = null)
     {
         if ($customer) {
             $this->customer = $this->create($customer);
@@ -161,17 +166,32 @@ class LOC_Customer
     public function exist(): bool
     {
         $this->service = new Luceed();
-        // Set the response from Luceed service.
-        $exist = $this->setResponseData(
-            $this->service->getCustomerByEmail($this->customer['e_mail'])
-        );
+        $this->lookup_response_reliable = true;
+        $customer_exist = ! empty($this->customer['uid']);
+
+        $exist = [];
+
+        if ($this->hasOIB()) {
+            $exist = $this->getCustomersByOib();
+
+            if ($exist === null) {
+                return $customer_exist;
+            }
+
+            $exist = $this->mergeLookupCustomers($exist, $this->getCustomersByEmail(false));
+        } else {
+            // Set the response from Luceed service.
+            $exist = $this->getCustomersByEmail();
+
+            if ($exist === null) {
+                return $customer_exist;
+            }
+        }
 
         Log::store('$this->customer', 'test_customers');
         Log::store($this->customer, 'test_customers');
         Log::store($this->order_customer, 'test_customers');
         Log::store($exist, 'test_customers');
-
-        $customer_exist = false;
 
         if ( ! empty($exist)) {
             foreach ($exist as $l_customer) {
@@ -183,9 +203,7 @@ class LOC_Customer
                             'luceed_uid' => $l_customer->partner_uid
                         ]);
 
-                        $this->customer['uid'] = $l_customer->partner_uid;
-                        $this->customer['partner_uid'] = $l_customer->partner_uid;
-                        $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
+                        $this->setMatchedCustomerUid($l_customer);
                     }
 
                     Log::store('1', 'test_customers');
@@ -195,36 +213,37 @@ class LOC_Customer
             /**
              * @hasOIB
              */
-            if ($this->hasOIB() && ! $this->isB2B()) {
+            if ($this->hasOIB()) {
                 $has = false;
 
-                foreach ($exist as $l_customer) {
-                    if ($l_customer->enabled == 'D' && $l_customer->oib == $this->order_customer['oib']) {
-                        $this->customer['uid'] = $l_customer->partner_uid;
-                        $this->customer['partner_uid'] = $l_customer->partner_uid;
-                        $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
-                        $this->customer['naziv'] = $l_customer->naziv;
-                        $this->customer['tip_komitenta'] = 'P';
+                $l_customer = $this->resolveLegalEntityCustomerMatch($exist);
 
-                        $has = true;
-                        $customer_exist = true;
+                if ($l_customer) {
+                    $this->setMatchedCustomerUid($l_customer);
+                    $this->customer['naziv'] = $l_customer->naziv;
+                    $this->customer['tip_komitenta'] = 'P';
+                    $this->syncLocalLuceedUid((string) $l_customer->partner_uid);
 
-                        Log::store('2', 'test_customers');
-                        Log::store($this->customer, 'test_customers');
-                    }
+                    $has = true;
+                    $customer_exist = true;
+
+                    Log::store('2', 'test_customers');
+                    Log::store($this->customer, 'test_customers');
                 }
 
-                if ( ! $has && empty($this->customer['uid'])) {
+                if ( ! $has && ! $this->isB2B() && empty($this->customer['uid'])) {
                     $this->setCustomerOibData();
 
-                    $response = json_decode(
-                        $this->service->createCustomer(['partner' => [$this->customer]])
-                    );
+                    if ($this->lookup_response_reliable) {
+                        $response = json_decode(
+                            $this->service->createCustomer(['partner' => [$this->customer]])
+                        );
 
-                    // složi podatke za order
-                    if (isset($response->result[0])) {
-                        $this->customer['uid'] = $response->result[0];
-                        $this->customer['partner_uid'] = $response->result[0];
+                        // složi podatke za order
+                        if (isset($response->result[0])) {
+                            $this->customer['uid'] = $response->result[0];
+                            $this->customer['partner_uid'] = $response->result[0];
+                        }
                     }
 
                     Log::store('3', 'test_customers');
@@ -237,7 +256,7 @@ class LOC_Customer
             if ($this->diffAddress()) {
                 foreach ($exist as $l_customer) {
                     if ($l_customer->enabled == 'D') {
-                        if ($this->order_customer['shipping_address'] == $l_customer->adresa) {
+                        if ($this->matchesShippingAddress($l_customer)) {
                             $luc_customer = collect($l_customer);
                             $luc_customer->put('grupacija_parent', $this->customer['uid']);
 
@@ -324,17 +343,17 @@ class LOC_Customer
                 $main = Customer::where('grupa_partnera', $alter->grupa_partnera)->where('master', 1)->first();
 
                 if ($main) {
-                    $main_exist = $this->setResponseData(
-                        $this->service->getCustomerByOib($this->customer['oib'])
-                    );
+                    $main_exist = $this->getCustomersByOib();
+
+                    if ($main_exist === null) {
+                        return $customer_exist;
+                    }
 
                     if ( ! empty($main_exist)) {
                         foreach ($main_exist as $l_customer) {
                             if ($l_customer->enabled == 'D' ) {
                                 if ( ! $l_customer->grupacija) {
-                                    $this->customer['uid'] = $l_customer->partner_uid;
-                                    $this->customer['partner_uid'] = $l_customer->partner_uid;
-                                    $this->customer['mjesto_uid'] = $l_customer->mjesto_uid;
+                                    $this->setMatchedCustomerUid($l_customer);
                                 }
                             }
                         }
@@ -346,6 +365,8 @@ class LOC_Customer
                 Log::store($this->alter_customer, 'test_customers');
             }
         }
+
+        $customer_exist = $customer_exist || ! empty($this->customer['uid']);
 
         if ($customer_exist) {
             $this->service->updateCustomer(['partner' => [$this->customer]]);
@@ -368,6 +389,19 @@ class LOC_Customer
         }
 
         if (empty($this->customer['uid'])) {
+            $this->exist();
+
+            if (! empty($this->customer['uid'])) {
+                return $this;
+            }
+
+            if (! $this->lookup_response_reliable) {
+                Log::store('SKIP createCustomer: lookup response unavailable.', 'luceed_customer_sync_skip');
+                Log::store($this->customer['e_mail'] ?? '', 'luceed_customer_sync_skip');
+
+                return $this;
+            }
+
             $response = json_decode(
                 $this->service->createCustomer(['partner' => [$this->customer]])
             );
@@ -404,7 +438,7 @@ class LOC_Customer
      */
     private function hasOIB(): bool
     {
-        return ($this->order_customer['oib'] != '') ? true : false;
+        return $this->normalizeOib((string) ($this->order_customer['oib'] ?? '')) !== '';
     }
 
 
@@ -413,7 +447,7 @@ class LOC_Customer
      */
     private function setCustomerOibData(): void
     {
-        $this->customer['oib'] = $this->order_customer['oib'];
+        $this->customer['oib'] = $this->normalizeOib((string) $this->order_customer['oib']);
         $this->customer['naziv'] = $this->order_customer['company'];
         $this->customer['ime'] = '';
         $this->customer['prezime'] = '';
@@ -427,7 +461,7 @@ class LOC_Customer
      *
      * @return array
      */
-    private function create(array $customer = null): array
+    private function create(?array $customer = null): array
     {
         return $this->populateCustomerForLuceed(collect($customer));
     }
@@ -469,10 +503,12 @@ class LOC_Customer
             ];
         }
 
+        $resolved_uid = $this->setUid($collection['customer_id'], true);
+
         $data = [
             'id'                  => $collection['customer_id'],
-            'uid'                 => $this->setUid($collection['customer_id'], true),
-            'partner_uid'         => $this->setUid($collection['customer_id'], true),
+            'uid'                 => $resolved_uid,
+            'partner_uid'         => $resolved_uid,
             'parent__partner_uid' => $collection['grupacija_parent'],
             'naziv'               => $collection['fname'] . ' ' . $collection['lname'],
             'ime'                 => $collection['fname'],
@@ -485,7 +521,7 @@ class LOC_Customer
             'postanski_broj'      => $collection['zip'],
             'mjesto_uid'          => $this->setCityUid($collection['zip'], $collection['city']),
             'has_oib'             => $collection['has_oib'],
-            'oib'                 => $collection['oib'],
+            'oib'                 => $this->normalizeOib((string) $collection['oib']),
         ];
 
         return $data;
@@ -508,12 +544,18 @@ class LOC_Customer
             if ($customer && ! empty($customer->luceed_uid)) {
                 $this->customer['uid'] = $customer->luceed_uid;
                 $this->customer['partner_uid'] = $customer->luceed_uid;
+
+                return $customer->luceed_uid;
             } else {
                 $this->customer['uid'] = null;
+
+                return null;
             }
         } else {
             $this->customer['uid'] = $uid ?: null;
             $this->customer['partner_uid'] = $uid ?: null;
+
+            return $uid ?: null;
         }
     }
 
@@ -546,7 +588,18 @@ class LOC_Customer
             return '';
         }
 
-        return $places->resolveUID($zip, $city)->mjesto_uid;
+        return $place->mjesto_uid;
+    }
+
+
+    private function setMatchedCustomerUid($customer): void
+    {
+        $this->customer['uid'] = $customer->partner_uid;
+        $this->customer['partner_uid'] = $customer->partner_uid;
+
+        if (empty($this->customer['mjesto_uid'])) {
+            $this->customer['mjesto_uid'] = $customer->mjesto_uid ?? '';
+        }
     }
 
 
@@ -555,11 +608,157 @@ class LOC_Customer
      */
     private function diffAddress(): bool
     {
-        if ($this->order_customer['address'] == $this->order_customer['shipping_address']) {
+        if (
+            $this->normalizeLookupValue((string) $this->order_customer['address']) === $this->normalizeLookupValue((string) $this->order_customer['shipping_address'])
+            && $this->normalizeLookupValue((string) $this->order_customer['zip']) === $this->normalizeLookupValue((string) $this->order_customer['shipping_zip'])
+            && $this->normalizeLookupValue((string) $this->order_customer['city']) === $this->normalizeLookupValue((string) $this->order_customer['shipping_city'])
+        ) {
             return false;
         }
 
         return true;
+    }
+
+
+    private function matchesShippingAddress($customer): bool
+    {
+        return $this->normalizeLookupValue((string) $this->order_customer['shipping_address']) === $this->normalizeLookupValue((string) ($customer->adresa ?? ''))
+            && $this->normalizeLookupValue((string) $this->order_customer['shipping_zip']) === $this->normalizeLookupValue((string) ($customer->postanski_broj ?? ''))
+            && $this->matchesLuceedCustomerCity((string) $this->order_customer['shipping_city'], $customer);
+    }
+
+
+    private function matchesBillingAddress($customer): bool
+    {
+        return $this->normalizeLookupValue((string) $this->order_customer['address']) === $this->normalizeLookupValue((string) ($customer->adresa ?? ''))
+            && $this->normalizeLookupValue((string) $this->order_customer['zip']) === $this->normalizeLookupValue((string) ($customer->postanski_broj ?? ''))
+            && $this->matchesLuceedCustomerCity((string) $this->order_customer['city'], $customer);
+    }
+
+
+    private function getLuceedCustomerCity($customer): string
+    {
+        return (string) ($customer->naziv_mjesta ?? $customer->mjesto ?? '');
+    }
+
+
+    private function matchesLuceedCustomerCity(string $city, $customer): bool
+    {
+        $luceed_city = $this->normalizeLookupValue($this->getLuceedCustomerCity($customer));
+
+        return $luceed_city === '' || $this->normalizeLookupValue($city) === $luceed_city;
+    }
+
+
+    private function matchesCompanyName($customer): bool
+    {
+        $company = $this->normalizeLookupValue((string) ($this->order_customer['company'] ?? ''));
+
+        if ($company === '') {
+            return true;
+        }
+
+        return $company === $this->normalizeLookupValue((string) ($customer->naziv ?? ''));
+    }
+
+
+    private function normalizeLookupValue(string $value): string
+    {
+        return mb_strtolower(trim(preg_replace('/\s+/', ' ', $value)));
+    }
+
+
+    private function normalizeOib(string $value): string
+    {
+        return preg_replace('/\D+/', '', $value);
+    }
+
+
+    private function mergeLookupCustomers(array $primary, array $secondary = []): array
+    {
+        $merged = [];
+        $seen = [];
+
+        foreach (array_merge($primary, $secondary) as $customer) {
+            $key = (string) ($customer->partner_uid ?? '');
+
+            if ($key !== '' && isset($seen[$key])) {
+                continue;
+            }
+
+            if ($key !== '') {
+                $seen[$key] = true;
+            }
+
+            $merged[] = $customer;
+        }
+
+        return $merged;
+    }
+
+
+    private function syncLocalLuceedUid(string $uid): void
+    {
+        if ( ! empty($this->customer['id'])) {
+            Customer::where('customer_id', $this->customer['id'])->update([
+                'luceed_uid' => $uid
+            ]);
+        }
+    }
+
+
+    private function resolveLegalEntityCustomerMatch(array $customers)
+    {
+        $exact_matches = [];
+        $address_matches = [];
+        $oib_matches = [];
+        $oib = $this->normalizeOib((string) ($this->order_customer['oib'] ?? ''));
+
+        foreach ($customers as $customer) {
+            if (($customer->enabled ?? '') != 'D') {
+                continue;
+            }
+
+            if ($this->normalizeOib((string) ($customer->oib ?? '')) !== $oib) {
+                continue;
+            }
+
+            $oib_matches[] = $customer;
+
+            if ($this->matchesBillingAddress($customer)) {
+                $address_matches[] = $customer;
+
+                if ($this->matchesCompanyName($customer)) {
+                    $exact_matches[] = $customer;
+                }
+            }
+        }
+
+        if ( ! empty($exact_matches)) {
+            return $this->preferPrimaryCustomer($exact_matches);
+        }
+
+        if ( ! empty($address_matches)) {
+            return $this->preferPrimaryCustomer($address_matches);
+        }
+
+        if (count($oib_matches) === 1) {
+            return $oib_matches[0];
+        }
+
+        return null;
+    }
+
+
+    private function preferPrimaryCustomer(array $customers)
+    {
+        foreach ($customers as $customer) {
+            if (empty($customer->grupacija)) {
+                return $customer;
+            }
+        }
+
+        return $customers[0] ?? null;
     }
 
 
@@ -579,7 +778,66 @@ class LOC_Customer
             return $data->result[0]->partner;
         }
 
+        Log::store('setResponseData($response)', 'test_customers');
+        Log::store($data, 'test_customers');
+
         return [];
+    }
+
+
+    private function getCustomersByEmail(bool $required = true): ?array
+    {
+        return $this->resolveCustomersResponse(
+            $this->service->getCustomerByEmail((string) ($this->customer['e_mail'] ?? '')),
+            'email',
+            $required
+        );
+    }
+
+
+    private function getCustomersByOib(bool $required = true): ?array
+    {
+        return $this->resolveCustomersResponse(
+            $this->service->getCustomerByOib($this->normalizeOib((string) ($this->customer['oib'] ?? ''))),
+            'oib',
+            $required
+        );
+    }
+
+
+    private function resolveCustomersResponse($response, string $type, bool $required = true): ?array
+    {
+        if ($response === false || $response === null || $response === '') {
+            if ($required) {
+                $this->lookup_response_reliable = false;
+                Log::store('Invalid Luceed customer lookup response.', 'luceed_customer_sync_skip');
+                Log::store($type, 'luceed_customer_sync_skip');
+                Log::store($this->customer['e_mail'] ?? '', 'luceed_customer_sync_skip');
+                Log::store($this->customer['oib'] ?? '', 'luceed_customer_sync_skip');
+
+                return null;
+            }
+
+            return [];
+        }
+
+        json_decode($response);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            if ($required) {
+                $this->lookup_response_reliable = false;
+                Log::store('Non-JSON Luceed customer lookup response.', 'luceed_customer_sync_skip');
+                Log::store($type, 'luceed_customer_sync_skip');
+                Log::store($this->customer['e_mail'] ?? '', 'luceed_customer_sync_skip');
+                Log::store($this->customer['oib'] ?? '', 'luceed_customer_sync_skip');
+
+                return null;
+            }
+
+            return [];
+        }
+
+        return $this->setResponseData($response);
     }
 
 

@@ -299,10 +299,11 @@ class ModelExtensionModuleProductQuickEdit extends Model {
 	public function getProducts($data = array()) {
 		$columns = isset($data['columns']) ? $data['columns'] : array();
 		$actions = isset($data['actions']) ? $data['actions'] : array();
+		$requires_filtered_count = !empty($data['search']) || !empty($data['filter']);
 
-		$sql = "SELECT SQL_CALC_FOUND_ROWS pd.*, p.*";
+		$sql = "SELECT " . ($requires_filtered_count ? "SQL_CALC_FOUND_ROWS " : "") . "MAX(pd.name) AS name, MAX(pd.tag) AS tag, p.*";
 
-		$sql .= ", (SELECT price FROM " . DB_PREFIX . "product_special WHERE product_id = p.product_id AND (date_start = '0000-00-00' OR date_start < NOW() AND (date_end = '0000-00-00' OR date_end > NOW())) ORDER BY priority, price LIMIT 1) AS special_price";
+		$sql .= ", (SELECT price FROM " . DB_PREFIX . "product_special WHERE product_id = p.product_id AND (date_start IS NULL OR date_start <= NOW()) AND (date_end IS NULL OR YEAR(date_end) = 0 OR date_end > NOW()) ORDER BY priority, price LIMIT 1) AS special_price";
 
 		if (in_array("subtract", $columns)) {
 			$sql .= ", IF(p.subtract, '" . $this->db->escape($this->language->get('text_yes')) . "','" .$this->db->escape($this->language->get('text_no')) . "') AS subtract_text";
@@ -415,22 +416,18 @@ class ModelExtensionModuleProductQuickEdit extends Model {
 
 		if (in_array("category", $columns)) {
 			$sql .= " LEFT JOIN " . DB_PREFIX . "product_to_category p2c ON (p.product_id = p2c.product_id) LEFT JOIN (SELECT cp.category_id AS category_id, GROUP_CONCAT(cd1.name ORDER BY cp.level SEPARATOR ' &gt; ') AS name FROM " . DB_PREFIX . "category_path cp LEFT JOIN " . DB_PREFIX . "category c ON (cp.path_id = c.category_id) LEFT JOIN " . DB_PREFIX . "category_description cd1 ON (c.category_id = cd1.category_id) LEFT JOIN " . DB_PREFIX . "category_description cd2 ON (cp.category_id = cd2.category_id) WHERE cd1.language_id = '" . (int)$this->config->get('config_language_id') . "' AND cd2.language_id = '" . (int)$this->config->get('config_language_id') . "' GROUP BY cp.category_id ORDER BY name) AS cat ON (p2c.category_id = cat.category_id)";
-			$sql .= " LEFT JOIN " . DB_PREFIX . "product_to_category p2c2 ON (p.product_id = p2c2.product_id)";
 		}
 
 		if (in_array("filter", $columns)) {
 			$sql .= " LEFT JOIN " . DB_PREFIX . "product_filter p2f ON (p.product_id = p2f.product_id) LEFT JOIN " . DB_PREFIX . "filter f ON (f.filter_id = p2f.filter_id) LEFT JOIN " . DB_PREFIX . "filter_description fd ON (fd.filter_id = p2f.filter_id AND fd.language_id = '" . (int)$this->config->get('config_language_id') . "') LEFT JOIN " . DB_PREFIX . "filter_group_description fgd ON (f.filter_group_id = fgd.filter_group_id AND fgd.language_id = '" . (int)$this->config->get('config_language_id') . "')";
-			$sql .= " LEFT JOIN " . DB_PREFIX . "product_filter p2f2 ON (p.product_id = p2f2.product_id)";
 		}
 
 		if (in_array("download", $columns)) {
 			$sql .= " LEFT JOIN " . DB_PREFIX . "product_to_download p2d ON (p.product_id = p2d.product_id) LEFT JOIN " . DB_PREFIX . "download_description dd ON (dd.download_id = p2d.download_id AND dd.language_id = '" . (int)$this->config->get('config_language_id') . "')";
-			$sql .= " LEFT JOIN " . DB_PREFIX . "product_to_download p2d2 ON (p.product_id = p2d2.product_id)";
 		}
 
 		if (in_array("store", $columns)) {
 			$sql .= " LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) LEFT JOIN " . DB_PREFIX . "store s ON (s.store_id = p2s.store_id)";
-			$sql .= " LEFT JOIN " . DB_PREFIX . "product_to_store p2s2 ON (p.product_id = p2s2.product_id)";
 		} else if (in_array("view_in_store", $columns)) {
 			$sql .= " LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id)";
 		}
@@ -547,11 +544,11 @@ class ModelExtensionModuleProductQuickEdit extends Model {
 		foreach ($float_interval_filters as $key => $value) {
 			if ($key == "price" && !empty($data['filter']['special_price']) && in_array($data['filter']['special_price'], array("active", "expired", "future", "na"))) {
 				if ($data['filter']['special_price'] == "active") {
-					$filters['AND'][] = "((ps.date_start = '0000-00-00' OR ps.date_start < NOW()) AND (ps.date_end = '0000-00-00' OR ps.date_end > NOW()))";
+					$filters['AND'][] = "((ps.date_start IS NULL OR ps.date_start <= NOW()) AND (ps.date_end IS NULL OR YEAR(ps.date_end) = 0 OR ps.date_end > NOW()))";
 				} elseif ($data['filter']['special_price'] == "expired") {
-					$filters['AND'][] = "(ps.date_end != '0000-00-00' AND ps.date_end < NOW())";
+					$filters['AND'][] = "(ps.date_end IS NOT NULL AND YEAR(ps.date_end) <> 0 AND ps.date_end < NOW())";
 				} elseif ($data['filter']['special_price'] == "future") {
-					$filters['AND'][] = "(ps.date_start > NOW() AND ps.date_start != '0000-00-00')";
+					$filters['AND'][] = "(ps.date_start > NOW())";
 				} elseif ($data['filter']['special_price'] == "na") {
 					$filters['AND'][] = "(ps.price IS NULL)";
 				}
@@ -609,47 +606,42 @@ class ModelExtensionModuleProductQuickEdit extends Model {
 
 		if (isset($data['filter']['store'])) {
 			if ($data['filter']['store'] == '*') {
-				$filters['AND'][] = "p2s2.store_id IS NULL";
+				$filters['AND'][] = "NOT EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_to_store p2s_filter WHERE p2s_filter.product_id = p.product_id)";
 			} else {
-				$filters['AND'][] = "p2s2.store_id = '" . (int)$data['filter']['store'] . "'";
+				$filters['AND'][] = "EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_to_store p2s_filter WHERE p2s_filter.product_id = p.product_id AND p2s_filter.store_id = '" . (int)$data['filter']['store'] . "')";
 			}
 		}
 
 		if (isset($data['filter']['download'])) {
 			if ($data['filter']['download'] == '*') {
-				$filters['AND'][] = "p2d2.download_id IS NULL";
+				$filters['AND'][] = "NOT EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_to_download p2d_filter WHERE p2d_filter.product_id = p.product_id)";
 			} else {
-				$filters['AND'][] = "p2d2.download_id = '" . (int)$data['filter']['download'] . "'";
+				$filters['AND'][] = "EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_to_download p2d_filter WHERE p2d_filter.product_id = p.product_id AND p2d_filter.download_id = '" . (int)$data['filter']['download'] . "')";
 			}
 		}
 
 		if (isset($data['filter']['filter'])) {
 			if ($data['filter']['filter'] == '*') {
-				$filters['AND'][] = "p2f2.filter_id IS NULL";
+				$filters['AND'][] = "NOT EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_filter p2f_filter WHERE p2f_filter.product_id = p.product_id)";
 			} else {
-				$filters['AND'][] = "p2f2.filter_id = '" . (int)$data['filter']['filter'] . "'";
+				$filters['AND'][] = "EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_filter p2f_filter WHERE p2f_filter.product_id = p.product_id AND p2f_filter.filter_id = '" . (int)$data['filter']['filter'] . "')";
 			}
 		}
 
 		if (!empty($data['filter']['category'])) {
-			if ($this->config->get('module_product_quick_edit_filter_sub_category')) {
-				$implode_data = array();
-
-				if ($data['filter']['category'] == '*') {
-					$implode_data[] = "p2c2.category_id IS NULL";
-				} else {
-					$implode_data[] = "p2c2.category_id = '" . (int)$data['filter']['category'] . "'";
-				}
-
-				$implode_data[] = "p2c2.category_id IN (SELECT DISTINCT category_id FROM " . DB_PREFIX . "category_path WHERE path_id = '" . (int)$data['filter']['category'] . "')";
-
-				$filters['AND'][] = "(" . implode(' OR ', $implode_data) . ")";
+			if ($data['filter']['category'] == '*') {
+				$filters['AND'][] = "NOT EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_to_category p2c_filter WHERE p2c_filter.product_id = p.product_id)";
 			} else {
-				if ($data['filter']['category'] == '*') {
-					$filters['AND'][] = "p2c2.category_id IS NULL";
+				$category_id = (int)$data['filter']['category'];
+				$category_filter = "p2c_filter.category_id = '" . $category_id . "'";
+
+				if ($this->config->get('module_product_quick_edit_filter_sub_category')) {
+					$category_filter = "(" . $category_filter . " OR p2c_filter.category_id IN (SELECT DISTINCT category_id FROM " . DB_PREFIX . "category_path WHERE path_id = '" . $category_id . "'))";
 				} else {
-					$filters['AND'][] = "p2c2.category_id = '" . (int)$data['filter']['category'] . "'";
+					$category_filter = "(" . $category_filter . ")";
 				}
+
+				$filters['AND'][] = "EXISTS (SELECT 1 FROM " . DB_PREFIX . "product_to_category p2c_filter WHERE p2c_filter.product_id = p.product_id AND " . $category_filter . ")";
 			}
 		}
 
@@ -705,12 +697,12 @@ class ModelExtensionModuleProductQuickEdit extends Model {
 				'isbn'              => 'p.isbn',
 				'mpn'               => 'p.mpn',
 				'location'          => 'p.location',
-				'name'              => 'pd.name',
+				'name'              => 'name',
 				'model'             => 'p.model',
 				'download'          => "GROUP_CONCAT(DISTINCT dd.name SEPARATOR ' ')",
 				'filter'            => "GROUP_CONCAT(DISTINCT fd.name SEPARATOR ' ')",
 				'category'          => "GROUP_CONCAT(DISTINCT cat.name SEPARATOR ' ')",
-				'tag'               => 'pd.tag',
+				'tag'               => 'tag',
 				'store'             => "GROUP_CONCAT(DISTINCT IF(p2s.store_id = 0, '" . $this->db->escape($this->config->get('config_name')) . "', s.name) SEPARATOR ' ')",
 				'viewed'            => 'p.viewed',
 			);
@@ -748,14 +740,16 @@ class ModelExtensionModuleProductQuickEdit extends Model {
 
 		$sort = array();
 		foreach ($data['sort'] as $idx => $value) {
-			$sort[] = $this->db->escape($value['column']) . ' ' . $this->db->escape($value['order']);
+			$sort_column = ($value['column'] == 'pd.name') ? 'name' : $value['column'];
+			$sort[] = $this->db->escape($sort_column) . ' ' . $this->db->escape($value['order']);
 		}
 
 		if ($sort) {
 			$sql .= " ORDER BY " . implode(", ", $sort);
 		} else {
-			// $sql .= " ORDER BY pd.name ASC";
-			$sql .= " ORDER BY " . $this->config->get('module_product_quick_edit_default_sort') . " " . $this->config->get('module_product_quick_edit_default_order');
+			$default_sort = $this->config->get('module_product_quick_edit_default_sort');
+			$default_sort = ($default_sort == 'pd.name') ? 'name' : $default_sort;
+			$sql .= " ORDER BY " . $default_sort . " " . $this->config->get('module_product_quick_edit_default_order');
 		}
 
 		if ($data['start'] != '' || $data['limit'] != '') {
@@ -782,8 +776,12 @@ class ModelExtensionModuleProductQuickEdit extends Model {
 		if ($product_data === false || is_null($product_data)) {
 			$query = $this->db->query($sql);
 
-			$count = $this->db->query("SELECT FOUND_ROWS() AS count");
-			$this->productCount = ($count->num_rows) ? (int)$count->row['count'] : 0;
+			if ($requires_filtered_count) {
+				$count = $this->db->query("SELECT FOUND_ROWS() AS count");
+				$this->productCount = ($count->num_rows) ? (int)$count->row['count'] : 0;
+			} else {
+				$this->productCount = $this->getTotalProducts();
+			}
 
 			$products = array();
 
@@ -900,12 +898,18 @@ class ModelExtensionModuleProductQuickEdit extends Model {
 				$this->log->write("PQE: cache miss p{$product_id}:{$column} [QE]");
 			}
 		} else if (in_array($column, array('quantity', 'sort_order', 'status', 'minimum', 'subtract', 'shipping', 'points', 'viewed'))) {
+			if ($column === 'status' && strpos(trim($value), '#') !== 0 && empty($data['_luceed_sync'])) {
+				(new \Agmedia\LuceedOpencartWrapper\Models\LOC_ProductStatus($this->db))->setManualStatus([(int)$product_id], (int)$value);
+			}
 			$matches = null;
 			if (strpos(trim($value), "#") === 0 && preg_match('/^#\s*(?P<operator>[+-\/\*])\s*(?P<operand>-?\d+\.?\d*)(?P<percent>%)?$/', trim($value), $matches) === 1) {
 				list($operator, $operand) = $this->parseExpression($matches);
 				$result = $this->db->query("UPDATE " . DB_PREFIX . "product SET $column = $column $operator '" . (float)$operand . "', date_modified = NOW() WHERE product_id = '" . (int)$product_id . "'");
 				$query = $this->db->query("SELECT $column FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$product_id . "'");
 				$value = $query->row[$column];
+				if ($column === 'status' && empty($data['_luceed_sync'])) {
+					(new \Agmedia\LuceedOpencartWrapper\Models\LOC_ProductStatus($this->db))->setManualStatus([(int)$product_id], (int)$value);
+				}
 			} else {
 				$result = $this->db->query("UPDATE " . DB_PREFIX . "product SET " . $column . " = '" . (int)$value . "', date_modified = NOW() WHERE product_id = '" . (int)$product_id . "'");
 			}

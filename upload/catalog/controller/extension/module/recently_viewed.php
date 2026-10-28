@@ -134,6 +134,8 @@ class ControllerExtensionModuleRecentlyViewed extends Controller {
                     'price_2'       => $price_2,
                     'vpc'       => $vpc,
 					'special'     => $special,
+					'sale_badge'  => $result['sale_badge'],
+					'sale_percent'=> $result['sale_percent'],
 					'tax'         => $tax,
 					'rating'      => $rating,
 					'href'        => $this->url->link('product/product', 'product_id=' . $result['product_id'])

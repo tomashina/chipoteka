@@ -6,6 +6,11 @@ $registry = new Registry();
 $config = new Config();
 $config->load('default');
 $config->load($application_config);
+
+if (defined('LUCEED_MONITOR_SILENT') && LUCEED_MONITOR_SILENT) {
+	$config->set('error_display', false);
+}
+
 $registry->set('config', $config);
 
 // Log

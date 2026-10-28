@@ -200,6 +200,20 @@
 
                                 <div class="form-group">
                                     <div class="col-sm-4 text-center">
+                                        <a href="javascript:void(0)" id="update-product-attributes" data-toggle="tooltip" title="Update svih Luceed atributa" class="btn btn-info btn-block">Update Atributa</a>
+                                    </div>
+                                    <p class="col-sm-8" style="margin-top: 9px;">Osvježi sve Luceed atribute na svim postojećim artiklima u serijama. Ako želiš najsvježije podatke iz Luceed-a, prvo osvježi Luceed cache.</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4 text-center">
+                                        <a href="javascript:void(0)" id="update-attribute-sort-orders" data-toggle="tooltip" title="Update redoslijeda atributa" class="btn btn-info btn-block">Update Redoslijeda</a>
+                                    </div>
+                                    <p class="col-sm-8" style="margin-top: 9px;">Najprije osvježi Luceed cache iz Luceeda, pa zatim lokalno u batch serijama upisuje `redoslijed` i globalno u `oc_attribute.sort_order` i per-artikl u `oc_product_attribute.sort_order`.</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="import-related" data-toggle="tooltip" title="Import Povezanih Proizvoda" class="btn btn-info btn-block">Import Povezanih Proizvoda</a>
                                     </div>
                                     <p class="col-sm-8" style="margin-top: 9px;">Import Povezanih Proizvoda. Iz luceed-a i iz iste kategorije. 5 po artiklu.
@@ -280,13 +294,19 @@
                                     <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="update-order-statuses" data-toggle="tooltip" title="Update Statusa Narudžbi" class="btn btn-info btn-block">Update Statusa Narudžbi</a>
                                     </div>
-                                    <p class="col-sm-8">Update statusa se vrši za sve narudžbe u web sustavu...</p>
+                                    <p class="col-sm-8">Sinkronizira statuse narudžbi za zadnjih 60 dana u serijama po 200 i šalje standardne mailove kupcima gdje su predviđeni.</p>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-4 text-center">
+                                        <a href="javascript:void(0)" id="update-order-statuses-legacy" data-toggle="tooltip" title="Update Starijih Statusa Narudžbi" class="btn btn-info btn-block">Update Starijih Statusa</a>
+                                    </div>
+                                    <p class="col-sm-8">Sinkronizira narudžbe starije od 60 dana od novijih prema starijima, u serijama po 200, preskače lokalni status 10 i upisuje promjene bez slanja mailova kupcima.</p>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-sm-4 text-center">
                                         <a href="javascript:void(0)" id="duration-order-statuses" data-toggle="tooltip" title="Provjera Trajanja Statusa" class="btn btn-info btn-block">Provjera Trajanja Statusa</a>
                                     </div>
-                                    <p class="col-sm-8">Vrši se provjera trajanja pojedinih statusa narudžbi i šalje se mail ako je potrabno.</p>
+                                    <p class="col-sm-8">Vrši se provjera trajanja pojedinih statusa narudžbi u serijama po 200 i šalje se mail ako je potrebno.</p>
                                 </div>
                             </div>
                         </div>
@@ -449,12 +469,12 @@
                     <div class="col-sm-12">
                         <div class="panel panel-default">
                             <div class="panel-heading darker-bg">
-                                <h3 class="panel-title"><i class="fa fa-list"></i> Update Proizvoda</h3>
+                                <h3 class="panel-title"><i class="fa fa-list"></i> Luceed Cache</h3>
                             </div>
                             <div class="panel-body">
                                 <div class="row">
                                     <div class="col-sm-2 text-center pt-3">
-                                        <a href="javascript:void(0)" id="import-luceed-products" data-toggle="tooltip" title="Pokreni Update Proizvoda" class="btn btn-info btn-block">Update Proizvoda</a>
+                                        <a href="javascript:void(0)" id="import-luceed-products" data-toggle="tooltip" title="Osvježi Luceed cache proizvoda" class="btn btn-info btn-block">Osvježi Luceed Cache</a>
                                     </div>
                                     <div class="col-sm-10">
                                         <div class="row">
@@ -821,6 +841,16 @@
             $('#import-new-payments')       .on('click', e => { callApi(e, 'importPayments'); });
             $('#import-new-products')       .on('click', e => { callApi(e, 'importProducts'); });
             $('#update-products')           .on('click', e => { callApi(e, 'updateProducts'); });
+            $('#update-product-attributes') .on('click', e => {
+                if (confirm('Ovo će osvježiti sve Luceed atribute na svim postojećim artiklima. Želiš li nastaviti?')) {
+                    runAttributeSync(e);
+                }
+            });
+            $('#update-attribute-sort-orders').on('click', e => {
+                if (confirm('Ovo će ažurirati redoslijed atributa iz Luceed cachea. Želiš li nastaviti?')) {
+                    runAttributeSortOrderSync(e);
+                }
+            });
             $('#import-related')            .on('click', e => { callApi(e, 'importRelatedProducts'); });
             $('#update-products-pakiranje') .on('click', e => { callApi(e, 'updateAdditionalProductData'); });
             $('#import-detail-product')     .on('click', e => { callApi(e, 'importProduct'); });
@@ -834,8 +864,13 @@
             $('#update-vpc-prices')         .on('click', e => { callApi(e, 'updateVpcPrices'); });
             $('#update-quantities')         .on('click', e => { callApi(e, 'updateQuantities'); });
 
-            $('#update-order-statuses')     .on('click', e => { callApi(e, 'updateOrderStatuses'); });
-            $('#duration-order-statuses')   .on('click', e => { callApi(e, 'checkOrderStatusDuration'); });
+            $('#update-order-statuses')     .on('click', e => { runOrderStatusSync(e, false); });
+            $('#update-order-statuses-legacy').on('click', e => {
+                if (confirm('Sinkronizirati statuse za narudžbe starije od 60 dana od novijih prema starijima, preskočiti status 10 i ne slati mailove kupcima?')) {
+                    runOrderStatusSync(e, true);
+                }
+            });
+            $('#duration-order-statuses')   .on('click', e => { runDurationStatusCheck(e); });
 
             $('#import-initial-manufacturer').on('click', e => { callApi(e, 'importInitialManufacturers'); });
             $('#import-initial-customers')   .on('click', e => { callApi(e, 'importInitialCustomers'); });
@@ -929,8 +964,8 @@
                             localStorage.removeItem('sync_error');
                             localStorage.removeItem('sync_deleted');
                             localStorage.removeItem('sync_total');
-
-                            updateProducts();
+                            releseTarget(text, $('#' + target.id));
+                            AG_alert.success('Luceed cache je osvježen. Lokalna tablica je spremna za update atributa i redoslijeda.');
                         }
                     }
                 });
@@ -941,6 +976,328 @@
                     success: function(json) {
                         checkResult(json);
                         releseTarget(text, $('#' + target.id));
+                    }
+                });
+            }
+        }
+
+        function refreshLuceedProductsCache(onSuccess, onError) {
+            $.ajax({
+                url: 'index.php?route=extension/module/luceed_sync/importLuceedProducts&user_token={{ user_token }}',
+                dataType: 'json',
+                success: function(json) {
+                    if (json.status == 200) {
+                        document.getElementById('luceed-all-imported').style.display = 'block';
+                        document.getElementById('luceed-updating').innerHTML = json.updating;
+                        document.getElementById('luceed-inserting').innerHTML = json.inserting;
+                        document.getElementById('luceed-total-for').innerHTML = json.updating + json.inserting;
+                        document.getElementById('luceed-total').innerHTML = json.total;
+
+                        if (typeof onSuccess === 'function') {
+                            onSuccess(json);
+                        }
+
+                        return;
+                    }
+
+                    if (typeof onError === 'function') {
+                        onError(json);
+                    }
+                },
+                error: function(xhr) {
+                    if (typeof onError === 'function') {
+                        onError(xhr);
+                    }
+                }
+            });
+        }
+
+        function runOrderStatusSync(e, legacy) {
+            let target = e.currentTarget;
+            let button = $('#' + target.id);
+            let originalText = target.text;
+            let processed = 0;
+            let updated = 0;
+            let modeText = legacy ? 'Stariji statusi' : 'Statusi narudžbi';
+
+            lockTarget('u', button);
+
+            if (legacy) {
+                processLegacyBatch('', 0);
+            } else {
+                processBatch(0);
+            }
+
+            function processBatch(cursor) {
+                $.ajax({
+                    url: 'index.php?route=extension/module/luceed_sync/updateOrderStatuses' + (legacy ? '&legacy=1&skip_luceed_statuses=10' : '') + '&cursor=' + cursor + '&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        if (json.status != 200) {
+                            checkResult(json);
+                            releseTarget(originalText, button);
+                            return;
+                        }
+
+                        processed += json.processed ? parseInt(json.processed, 10) : 0;
+                        updated += json.updated ? parseInt(json.updated, 10) : 0;
+
+                        if (json.empty) {
+                            releseTarget(originalText, button);
+                            AG_alert.warning(legacy ? 'Nema narudžbi starijih od 60 dana za sinkronizaciju nakon preskakanja statusa 10.' : 'Nema narudžbi iz zadnjih 60 dana za sinkronizaciju.');
+                            return;
+                        }
+
+                        button.text(modeText + ' ' + updated + '/' + processed);
+
+                        if (json.done) {
+                            releseTarget(originalText, button);
+                            AG_alert.success(legacy
+                                ? 'Sinkronizacija starijih statusa od novijih prema starijima je završena u serijama po 200, bez slanja mailova kupcima i uz preskakanje statusa 10. Ažurirano: ' + updated + '.'
+                                : 'Sinkronizacija statusa narudžbi za zadnjih 60 dana je završena u serijama po 200. Ažurirano: ' + updated + '.'
+                            );
+                            return;
+                        }
+
+                        processBatch(json.next_cursor);
+                    },
+                    error: function(xhr) {
+                        releseTarget(originalText, button);
+                        let message = 'Došlo je do greške tijekom sinkronizacije statusa narudžbi. Molimo pokušajte ponovo.';
+
+                        if (xhr && xhr.responseText) {
+                            try {
+                                let parsed = JSON.parse(xhr.responseText);
+
+                                if (parsed.message) {
+                                    message = parsed.message;
+                                }
+                            } catch (e) {
+                            }
+                        }
+
+                        AG_alert.warning(message);
+                    }
+                });
+            }
+
+            function processLegacyBatch(legacyEnd, legacyCursor) {
+                let url = 'index.php?route=extension/module/luceed_sync/updateOrderStatuses&legacy=1&skip_luceed_statuses=10&legacy_cursor=' + legacyCursor + '&user_token={{ user_token }}';
+
+                if (legacyEnd) {
+                    url += '&legacy_end=' + encodeURIComponent(legacyEnd);
+                }
+
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    success: function(json) {
+                        if (json.status != 200) {
+                            checkResult(json);
+                            releseTarget(originalText, button);
+                            return;
+                        }
+
+                        processed += json.processed ? parseInt(json.processed, 10) : 0;
+                        updated += json.updated ? parseInt(json.updated, 10) : 0;
+
+                        if (json.empty) {
+                            releseTarget(originalText, button);
+                            AG_alert.warning('Nema narudžbi starijih od 60 dana za sinkronizaciju nakon preskakanja statusa 10.');
+                            return;
+                        }
+
+                        button.text(modeText + ' ' + updated + '/' + processed);
+
+                        if (json.done) {
+                            releseTarget(originalText, button);
+                            AG_alert.success('Sinkronizacija starijih statusa od novijih prema starijima je završena u serijama po 200, bez slanja mailova kupcima i uz preskakanje statusa 10. Ažurirano: ' + updated + '.');
+                            return;
+                        }
+
+                        processLegacyBatch(json.next_legacy_end, json.next_legacy_cursor);
+                    },
+                    error: function(xhr) {
+                        releseTarget(originalText, button);
+                        let message = 'Došlo je do greške tijekom sinkronizacije statusa narudžbi. Molimo pokušajte ponovo.';
+
+                        if (xhr && xhr.responseText) {
+                            try {
+                                let parsed = JSON.parse(xhr.responseText);
+
+                                if (parsed.message) {
+                                    message = parsed.message;
+                                }
+                            } catch (e) {
+                            }
+                        }
+
+                        AG_alert.warning(message);
+                    }
+                });
+            }
+        }
+
+        function runAttributeSync(e) {
+            let target = e.currentTarget;
+            let button = $('#' + target.id);
+            let originalText = target.text;
+            let processed = 0;
+            let updatedProducts = 0;
+            let updatedAttributes = 0;
+
+            lockTarget('u', button);
+            processBatch(0);
+
+            function processBatch(cursor) {
+                $.ajax({
+                    url: 'index.php?route=extension/module/luceed_sync/updateProductAttributes&cursor=' + cursor + '&limit=100&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        if (json.status != 200) {
+                            checkResult(json);
+                            releseTarget(originalText, button);
+                            return;
+                        }
+
+                        processed += json.processed ? parseInt(json.processed, 10) : 0;
+                        updatedProducts += json.products ? parseInt(json.products, 10) : 0;
+                        updatedAttributes += json.attributes ? parseInt(json.attributes, 10) : 0;
+
+                        button.text('Atributi ' + processed + '/' + (json.total ? parseInt(json.total, 10) : processed));
+
+                        if (json.done) {
+                            releseTarget(originalText, button);
+                            AG_alert.success('Atributi su ažurirani na ' + updatedProducts + ' artikala. Ukupno sinkronizirano atributa: ' + updatedAttributes + '.');
+                            return;
+                        }
+
+                        processBatch(json.next_cursor);
+                    },
+                    error: function() {
+                        releseTarget(originalText, button);
+                        AG_alert.warning('Došlo je do greške tijekom batch updatea atributa.');
+                    }
+                });
+            }
+        }
+
+        function runAttributeSortOrderSync(e) {
+            let target = e.currentTarget;
+            let button = $('#' + target.id);
+            let originalText = target.text;
+            let processed = 0;
+            let definitions = 0;
+            let products = 0;
+            let attributes = 0;
+
+            lockTarget('u', button);
+            button.text('Luceed cache...');
+
+            refreshLuceedProductsCache(function() {
+                processBatch(0);
+            }, function(response) {
+                releseTarget(originalText, button);
+
+                if (response && response.status) {
+                    checkResult(response);
+                    return;
+                }
+
+                AG_alert.warning('Došlo je do greške tijekom osvježavanja Luceed cachea.');
+            });
+
+            function processBatch(cursor) {
+                $.ajax({
+                    url: 'index.php?route=extension/module/luceed_sync/updateAttributeSortOrders&cursor=' + cursor + '&limit=100&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        if (json.status != 200) {
+                            checkResult(json);
+                            releseTarget(originalText, button);
+                            return;
+                        }
+
+                        processed += json.processed ? parseInt(json.processed, 10) : 0;
+                        definitions += json.definitions ? parseInt(json.definitions, 10) : 0;
+                        products += json.products ? parseInt(json.products, 10) : 0;
+                        attributes += json.attributes ? parseInt(json.attributes, 10) : 0;
+
+                        button.text('Redoslijed ' + processed + '/' + (json.total ? parseInt(json.total, 10) : processed));
+
+                        if (json.done) {
+                            releseTarget(originalText, button);
+                            AG_alert.success('Redoslijed atributa je ažuriran globalno i po artiklu. Definicija: ' + definitions + ', artikala: ' + products + ', atributa: ' + attributes + '.');
+                            return;
+                        }
+
+                        processBatch(json.next_cursor);
+                    },
+                    error: function() {
+                        releseTarget(originalText, button);
+                        AG_alert.warning('Došlo je do greške tijekom batch updatea redoslijeda atributa.');
+                    }
+                });
+            }
+        }
+
+        function runDurationStatusCheck(e) {
+            let target = e.currentTarget;
+            let button = $('#' + target.id);
+            let originalText = target.text;
+            let processed = 0;
+            let sent = 0;
+
+            lockTarget('c', button);
+
+            processBatch(0);
+
+            function processBatch(cursor) {
+                $.ajax({
+                    url: 'index.php?route=extension/module/luceed_sync/checkOrderStatusDuration&cursor=' + cursor + '&user_token={{ user_token }}',
+                    dataType: 'json',
+                    success: function(json) {
+                        if (json.status != 200) {
+                            checkResult(json);
+                            releseTarget(originalText, button);
+                            return;
+                        }
+
+                        processed += json.processed ? parseInt(json.processed, 10) : 0;
+                        sent += json.updated ? parseInt(json.updated, 10) : 0;
+
+                        if (json.empty) {
+                            releseTarget(originalText, button);
+                            AG_alert.warning('Nema narudžbi za provjeru trajanja statusa.');
+                            return;
+                        }
+
+                        button.text('Provjera ' + sent + '/' + processed);
+
+                        if (json.done) {
+                            releseTarget(originalText, button);
+                            AG_alert.success('Provjera trajanja statusa je završena u serijama po 200. Poslano mailova: ' + sent + '.');
+                            return;
+                        }
+
+                        processBatch(json.next_cursor);
+                    },
+                    error: function(xhr) {
+                        releseTarget(originalText, button);
+                        let message = 'Došlo je do greške tijekom provjere trajanja statusa. Molimo pokušajte ponovo.';
+
+                        if (xhr && xhr.responseText) {
+                            try {
+                                let parsed = JSON.parse(xhr.responseText);
+
+                                if (parsed.message) {
+                                    message = parsed.message;
+                                }
+                            } catch (e) {
+                            }
+                        }
+
+                        AG_alert.warning(message);
                     }
                 });
             }

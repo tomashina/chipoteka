@@ -1,15 +1,36 @@
 <?php
 class ModelToolImage extends Model {
+    private function normalizeCachePath($path) {
+        $segments = explode('/', str_replace('\\', '/', $path));
+
+        $segments = array_map(function ($segment) {
+            $segment = str_replace(array(' ', '+'), '-', $segment);
+            $segment = preg_replace('/-+/', '-', $segment);
+
+            return trim($segment, '-');
+        }, $segments);
+
+        return implode('/', $segments);
+    }
+
+    private function buildImageUrl($path) {
+        $segments = explode('/', str_replace('\\', '/', $path));
+        $segments = array_map('rawurlencode', $segments);
+
+        return 'https://images.chipoteka.hr/image/' . implode('/', $segments);
+    }
+
     public function resize($filename, $width, $height) {
         if (!is_file(DIR_IMAGE . $filename) || substr(str_replace('\\', '/', realpath(DIR_IMAGE . $filename)), 0, strlen(DIR_IMAGE)) != str_replace('\\', '/', DIR_IMAGE)) {
             return;
         }
 
         $extension = pathinfo($filename, PATHINFO_EXTENSION);
+        $cache_stem = $this->normalizeCachePath(utf8_substr($filename, 0, utf8_strrpos($filename, '.')));
 
         $image_old = $filename;
-        $image_new = 'cache/' . utf8_substr($filename, 0, utf8_strrpos($filename, '.')) . '-' . (int)$width . 'x' . (int)$height . '.' . $extension;
-        $image_new_webp = 'cachewebp/' . utf8_substr($filename, 0, utf8_strrpos($filename, '.')) . '-' . (int)$width . 'x' . (int)$height . '.webp';
+        $image_new = 'cache/' . $cache_stem . '-' . (int)$width . 'x' . (int)$height . '.' . $extension;
+        $image_new_webp = 'cachewebp/' . $cache_stem . '-' . (int)$width . 'x' . (int)$height . '.webp';
 
         if (!is_file(DIR_IMAGE . $image_new) || (filemtime(DIR_IMAGE . $image_old) > filemtime(DIR_IMAGE . $image_new))) {
             list($width_orig, $height_orig, $image_type) = getimagesize(DIR_IMAGE . $image_old);
@@ -41,7 +62,10 @@ class ModelToolImage extends Model {
 
         $gd = gd_info();
         if ($gd['WebP Support']) {
-            if (!is_file(DIR_IMAGE . $image_new_webp) || (filectime(DIR_IMAGE . $image_new) > filectime(DIR_IMAGE . $image_new_webp))) {
+            $webp_file = DIR_IMAGE . $image_new_webp;
+            $webp_is_valid = is_file($webp_file) && @getimagesize($webp_file);
+
+            if (!$webp_is_valid || (filemtime(DIR_IMAGE . $image_old) > filemtime($webp_file))) {
                 $path = '';
 
                 $directories = explode('/', dirname($image_new_webp));
@@ -56,18 +80,23 @@ class ModelToolImage extends Model {
 
                 $image_webp = new Image(DIR_IMAGE . $image_old);
                 $image_webp->resize($width, $height);
-                $image_webp->save_webp(DIR_IMAGE . $image_new_webp);
+
+                if (!$image_webp->save_webp($webp_file)) {
+                    @unlink($webp_file);
+                }
+
+                clearstatcache(true, $webp_file);
+
+                if (!is_file($webp_file) || !@getimagesize($webp_file)) {
+                    @unlink($webp_file);
+                }
             }
         }
 
-        $image_new = str_replace(' ', '%20', $image_new);  // fix bug when attach image on email (gmail.com). it is automatic changing space " " to +
-
-        if ($this->request->server['HTTPS']) {
-            //return $this->config->get('config_ssl') . 'image/' . $image_new;
-            return 'https://images.chipoteka.hr/image/' . $image_new_webp . '" width="' . $width . '" height="' . $height;
-        } else {
-            //return $this->config->get('config_url') . 'image/' . $image_new;
-            return 'https://images.chipoteka.hr/image/' . $image_new_webp . '" width="' . $width . '" height="' . $height;
+        if ($gd['WebP Support'] && is_file(DIR_IMAGE . $image_new_webp)) {
+            return $this->buildImageUrl($image_new_webp);
         }
+
+        return $this->buildImageUrl($image_old);
     }
 }

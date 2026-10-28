@@ -10,6 +10,9 @@
             <button class="btn btn-primary btn-basket "  type="button" aria-label="Dodaj u košaricu" onclick="cart.add('{{ product.product_id }}', '{{ product.pakiranje }}');"><i class="fas fs-xl fa-shopping-basket"></i><span class="sr-only" {{ button_cart }}</span></button>
             {% endif %}
             <div class="card-img-top d-block overflow-hidden" ><img {{ lazy }} src="{{ product.thumb }}" alt="{{ product.name }}  {{ product.categoryname }}" title="{{ product.name }} {{ product.categoryname }}"></div>
+            {% if product.is_hit_cijena %}
+                <img class="hit-cijena-badge hit-cijena-badge--card" src="{{ config_url }}image/hit-cijena.svg" alt="Hit cijena" loading="lazy">
+            {% endif %}
 
         </div>
       <a class="stretched-link"  href="{{ product.href }}">
@@ -32,7 +35,7 @@
                 {% if product.price and product.special  %}
                     <div class="product-badge-cpta product-badge-cpta__discount">
                         <span> {{ product.pj }} AKCIJA</span>
-                        {% if product.sale_percent > 3 %}
+                        {% if product.sale_badge %}
                             <span> Uštedi <strong>{{ product.sale_badge }} </strong></span>
                         {% else %}
                             <span></span>

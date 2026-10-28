@@ -74,6 +74,8 @@ class ControllerProductManufacturer extends Controller {
 
 		$this->load->model('tool/image');
 
+		$this->load->model('catalog/structured_data');
+
 		if (isset($this->request->get['manufacturer_id'])) {
 			$manufacturer_id = (int)$this->request->get['manufacturer_id'];
 		} else {
@@ -161,6 +163,7 @@ class ControllerProductManufacturer extends Controller {
 			$data['compare'] = $this->url->link('product/compare');
 
 			$data['products'] = array();
+			$structured_products = array();
 
 			$filter_data = array(
 				'filter_manufacturer_id' => $manufacturer_id,
@@ -171,6 +174,7 @@ class ControllerProductManufacturer extends Controller {
 			);
 
 			$product_total = $this->model_catalog_product->getTotalProducts($filter_data);
+			$data['config_url'] = $this->config->get('config_url');
 
 			$results = $this->model_catalog_product->getProducts($filter_data);
 
@@ -272,8 +276,11 @@ class ControllerProductManufacturer extends Controller {
 
                 $saljemodo = date('d.m.Y', mktime(0, 0, 0, date('m'), date('d') + $rokisporuke, date('Y')));
 
+				$structured_products[] = $result;
+
 				$data['products'][] = array(
 					'product_id'  => $result['product_id'],
+					'is_hit_cijena' => !empty($result['is_hit_cijena']),
 					'thumb'       => $image,
 					'name'        => $result['name'],
 					'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
@@ -287,6 +294,8 @@ class ControllerProductManufacturer extends Controller {
                     'specialeur'     => $specialeur,
                     'priceeur_2'       => $priceeur_2,
                     'lasteur_30'      => $lasteur_30,
+                    'sale_badge'      => $result['sale_badge'],
+                    'sale_percent'    => $result['sale_percent'],
                    /* 'freeshipping' => $freeshipping,*/
                     'saljemodo'   => $saljemodo,
                     'categoryname' =>  ' - '.$manufacturer_info['name'],
@@ -333,6 +342,18 @@ class ControllerProductManufacturer extends Controller {
 				'text'  => $this->language->get('text_price_desc'),
 				'value' => 'p.price-DESC',
 				'href'  => $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . '&sort=p.price&order=DESC' . $url)
+			);
+
+			$data['sorts'][] = array(
+				'text'  => $this->language->get('text_sale_percent_asc'),
+				'value' => 'sale_percent-ASC',
+				'href'  => $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . '&sort=sale_percent&order=ASC' . $url)
+			);
+
+			$data['sorts'][] = array(
+				'text'  => $this->language->get('text_sale_percent_desc'),
+				'value' => 'sale_percent-DESC',
+				'href'  => $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . '&sort=sale_percent&order=DESC' . $url)
 			);
 
 			if ($this->config->get('config_review_status')) {
@@ -398,8 +419,13 @@ class ControllerProductManufacturer extends Controller {
 			if (isset($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
+			if ($page == 1) {
+				$canonical_url = $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $manufacturer_id, true);
+			} else {
+				$canonical_url = $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $manufacturer_id . '&page=' . $page, true);
+			}
 
-            $this->document->addOGMeta('property="og:url"', $this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . ( ($page != 1) ? '&page='. $page : '' ), true) );
+            $this->document->addOGMeta('property="og:url"', $canonical_url);
 
 			$pagination = new Pagination();
 			$pagination->total = $product_total;
@@ -414,11 +440,7 @@ class ControllerProductManufacturer extends Controller {
             $data['results'] = $product_total;
 
 			// http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html
-			if ($page == 1) {
-				$this->document->addLink($this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id']), 'canonical');
-			} else {
-				$this->document->addLink($this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . '&page=' . $page), 'canonical');
-			}
+			$this->document->addLink($canonical_url, 'canonical');
 			
 			if ($page > 1) {
 				$this->document->addLink($this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . (($page - 2) ? '&page=' . ($page - 1) : '')), 'prev');
@@ -427,6 +449,15 @@ class ControllerProductManufacturer extends Controller {
 			if ($limit && ceil($product_total / $limit) > $page) {
 				$this->document->addLink($this->url->link('product/manufacturer/info', 'manufacturer_id=' . $this->request->get['manufacturer_id'] . '&page=' . ($page + 1)), 'next');
 			}
+
+			$data['manufacturer_json_ld'] = $this->model_catalog_structured_data->buildBrandCollection(
+				$manufacturer_info,
+				$data['breadcrumbs'],
+				$structured_products,
+				$canonical_url,
+				(int)$product_total,
+				(int)(($page - 1) * $limit)
+			);
 
 			$data['sort'] = $sort;
 			$data['order'] = $order;

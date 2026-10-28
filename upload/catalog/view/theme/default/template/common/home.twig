@@ -1,4 +1,7 @@
 {{ header }}
+{% if website_json_ld %}
+  <script type="application/ld+json">{{ website_json_ld|raw }}</script>
+{% endif %}
 <div id="common-home" class="container">
   <div class="row">{{ column_left }}
     {% if column_left and column_right %}

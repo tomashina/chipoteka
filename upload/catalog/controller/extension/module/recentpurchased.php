@@ -92,6 +92,8 @@ class ControllerExtensionModuleRecentPurchased extends Controller {
 				'description'       => utf8_substr(trim(strip_tags(html_entity_decode($description, ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
 				'rating'            => $rating,
 				'special'           => $special,
+				'sale_badge'        => $pro_info['sale_badge'],
+				'sale_percent'      => $pro_info['sale_percent'],
                     'vpc'       => $vpc,
 				'price'             => $price,
                     'price_2'       => $price_2,

@@ -3,6 +3,29 @@ class ControllerExtensionModuleDigitalElephantFilterHelperUrl extends Controller
 {
     private $storageUrlData = null;
 
+    private function normalizeNestedFilterValues($value)
+    {
+        if (!is_array($value)) {
+            $value = trim((string)$value);
+
+            return ($value === '') ? null : $value;
+        }
+
+        $normalized = array();
+
+        foreach ($value as $key => $item) {
+            $clean_item = $this->normalizeNestedFilterValues($item);
+
+            if ($clean_item === null || $clean_item === array()) {
+                continue;
+            }
+
+            $normalized[$key] = $clean_item;
+        }
+
+        return $normalized;
+    }
+
     public function prototype()
     {
         return $this;
@@ -80,6 +103,15 @@ class ControllerExtensionModuleDigitalElephantFilterHelperUrl extends Controller
                 $data_url['attribute'] = $this->request->get['attribute'];
             }
 
+            $data_url['warehouse'] = [];
+            if (isset($this->request->get['warehouse'])) {
+                $data_url['warehouse'] = $this->normalizeNestedFilterValues($this->request->get['warehouse']);
+
+                if (!is_array($data_url['warehouse'])) {
+                    $data_url['warehouse'] = [];
+                }
+            }
+
             if (isset($this->request->get['sort'])) {
                 $sort = $this->request->get['sort'];
             } else {
@@ -115,6 +147,9 @@ class ControllerExtensionModuleDigitalElephantFilterHelperUrl extends Controller
             } else {
                 $opencart_filter = '';
             }
+
+            $data_url['action_filter'] = (!empty($this->request->get['action_filter']) || !empty($this->request->get['action_category_id'])) ? 1 : 0;
+            $data_url['action_category_id'] = !empty($this->request->get['action_category_id']) ? (int)$this->request->get['action_category_id'] : 0;
 
             $path = 0;
             if (isset($this->request->get['path'])) {

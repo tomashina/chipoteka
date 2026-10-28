@@ -26,6 +26,11 @@ Class ControllerExtensionModuleDigitalElephantFilterPanel extends Controller
     private $panelManufacturer = null;
 
     /**
+     * @var ControllerExtensionModuleDigitalElephantFilterPanelWarehouse
+     */
+    private $panelWarehouse = null;
+
+    /**
      * @var ControllerExtensionModuleDigitalElephantFilterPanelOption
      */
     private $panelOption = null;
@@ -49,6 +54,7 @@ Class ControllerExtensionModuleDigitalElephantFilterPanel extends Controller
         $this->getProduct = $this->load->controller('extension/module/digital_elephant_filter/get_product/prototype');
         $this->panelCategory = $this->load->controller('extension/module/digital_elephant_filter/panel_category/prototype');
         $this->panelManufacturer = $this->load->controller('extension/module/digital_elephant_filter/panel_manufacturer/prototype');
+        $this->panelWarehouse = $this->load->controller('extension/module/digital_elephant_filter/panel_warehouse/prototype');
         $this->panelOption = $this->load->controller('extension/module/digital_elephant_filter/panel_option/prototype');
         $this->panelAttribute = $this->load->controller('extension/module/digital_elephant_filter/panel_attribute/prototype');
     }
@@ -65,6 +71,8 @@ Class ControllerExtensionModuleDigitalElephantFilterPanel extends Controller
         $data['filter_data'] = $this->getFilterData($setting, $this->urlData['category_id']);
         $data['is_filter_show'] = $this->isFilterShow();
         $data['check_data_on_active'] = $this->urlData;
+        $data['action_filter_enabled'] = !empty($this->urlData['action_filter']) || !empty($this->urlData['action_category_id']);
+        $data['action_selected_category_id'] = !empty($this->urlData['action_category_id']) ? (int)$this->urlData['action_category_id'] : 0;
 
         $data['JS_config'] = $this->getJSConfig($setting);
 
@@ -144,6 +152,7 @@ Class ControllerExtensionModuleDigitalElephantFilterPanel extends Controller
                 $this->isPackageShow['price']
                 || $this->isPackageShow['category']
                 || $this->isPackageShow['manufacturer']
+                || $this->isPackageShow['warehouse']
                 || $this->isPackageShow['option']
                 || $this->isPackageShow['attribute']
             )
@@ -160,6 +169,7 @@ Class ControllerExtensionModuleDigitalElephantFilterPanel extends Controller
         $packages = [
             'category',
             'manufacturer',
+            'warehouse',
             'option',
             'attribute'
         ];
@@ -183,7 +193,15 @@ Class ControllerExtensionModuleDigitalElephantFilterPanel extends Controller
     protected function getFilterPrice($setting)
     {
         if (!$this->storageFilterPrice) {
-            $price = $this->model_extension_module_digitalElephantFilter->getMinMaxPrice($this->urlData['category_id']);
+            $price_filter_data = array();
+
+            if (!empty($this->urlData['action_filter']) || !empty($this->urlData['action_category_id'])) {
+                $price_filter_data['filter_action_only'] = 1;
+                $price_filter_data['filter_action_category_id'] = !empty($this->urlData['action_category_id']) ? (int)$this->urlData['action_category_id'] : 0;
+                $price_filter_data['filter_action_parent_id'] = 308;
+            }
+
+            $price = $this->model_extension_module_digitalElephantFilter->getMinMaxPrice($this->urlData['category_id'], $price_filter_data);
 
             $show = true;
             if (isset($setting['DEF_settings']['filter_price']['hide'])

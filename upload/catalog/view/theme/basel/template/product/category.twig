@@ -1,4 +1,7 @@
 {{ header }}
+{% if category_json_ld %}
+    <script type="application/ld+json">{{ category_json_ld|raw }}</script>
+{% endif %}
 <main class="offcanvas-enabled">
 
 
@@ -17,13 +20,6 @@
                         {% endfor %}
                     </ol>
                 </nav>
-                <div class="text-center d-block d-sm-none">
-                <button type="button" class="btn btn-outline-secondary btn-sm mt-2 ms-2 ">
-                 Artikala <span class="badge bg-primary ms-1">{{ results }}</span>
-                </button>
-
-
-                </div>
             </div>
 
 
@@ -38,29 +34,64 @@
         <!-- Toolbar-->
             <!-- Products grid-->
         <div id="product-view">
-            <div class="product-filter  rounded-3 p-4 mt-n5 mb-4">
-                <div class="d-flex justify-content-between align-items-center ">
-                    <div class="dropdown me-2 ">
+            <div class="product-filter rounded-3 p-3 p-sm-4 mt-n5 mb-4">
+                <div class="product-filter__toolbar">
+                    <div class="dropdown product-filter__actions">
 
                         {% if categories|length == 0 %}
-                            <a class="btn btn-outline-secondary dropdown-toggle" href="#shop-filters" data-bs-toggle="collapse">
-                                <i class="fas fa-filter me-2"></i> <span></span>Filter
-                            </a>
+                            <button type="button"
+                                    class="btn btn-outline-secondary dropdown-toggle product-filter__toggle"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#shop-filters"
+                                    aria-controls="shop-filters"
+                                    aria-expanded="false">
+                                <i class="fas fa-filter me-2"></i> <span>Filter</span>
+                            </button>
+                        {% endif %}
+
+                        {% if action_filter_options %}
+                            <div class="product-filter__action-promos">
+                                <div class="form-check mb-0 product-filter__action-toggle{% if action_filter_enabled %} is-active{% endif %}">
+                                    <input class="form-check-input"
+                                           type="checkbox"
+                                           value="1"
+                                           id="action-filter-toggle"
+                                           {% if action_filter_enabled %}checked="checked"{% endif %}>
+                                    <label class="form-check-label" for="action-filter-toggle">
+                                        {{ text_action_only }}
+                                    </label>
+                                </div>
+
+                                <div class="product-filter__action-select{% if not action_filter_enabled %} d-none{% endif %}"
+                                    id="action-filter-select-wrap">
+                                    <select id="action-filter-select"
+                                            class="form-select"
+                                            aria-label="{{ text_action_all }}">
+                                        <option value="">{{ text_action_all }}</option>
+                                        {% for action_option in action_filter_options %}
+                                            <option value="{{ action_option.category_id }}"
+                                                    {% if action_option.category_id == action_selected_category_id %}selected="selected"{% endif %}>
+                                                {{ action_option.name }}{% if action_option.total is defined %} ({{ action_option.total }}){% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
                         {% endif %}
 
                         <button type="button"
-                                class="btn btn-outline-primary ms-2 d-none "
+                                class="btn btn-outline-primary d-none product-filter__apply"
                                 id="filter-apply-top">
                             <i class="fas fa-filter "></i>
                         </button>
 
                         <button type="button"
-                                class="btn btn-outline-primary ms-2 d-none "
+                                class="btn btn-outline-primary d-none product-filter__clear"
                                 id="filter-clear-top">
                             <i class="fas fa-trash "></i>
                         </button>
 
-                        <button type="button" class="btn btn-outline-secondary ms-2 d-none d-sm-inline-block">
+                        <button type="button" class="btn btn-outline-secondary product-filter__results">
                           Artikala  <span class="badge bg-primary ms-1" id="filter-results-badge">{{ results }}</span>
                         </button>
 
@@ -69,7 +100,7 @@
                     <div class="d-none d-lg-flex pagination-navigation px-3">
                         {{ pagination }}
                     </div>
-                    <div class="d-flex">
+                    <div class="product-filter__sort">
                         <label class="fs-sm opacity-75 text-nowrap me-2 sr-only" for="sorting">{{ text_sort }}</label>
                         <select id="input-sort" class="form-select " onchange="location = this.value;">
                             {% for sorts in sorts %}
@@ -136,6 +167,28 @@
                 </div>
             {% endif %}
 
+            {% if category_faqs %}
+                <section class="category-faq mt-5">
+                    <h2 class="h4 mb-3">{{ category_faq_heading }}</h2>
+                    <div class="accordion" id="category-faq">
+                        {% for faq in category_faqs %}
+                            <div class="accordion-item">
+                                <h3 class="accordion-header" id="category-faq-heading-{{ loop.index }}">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#category-faq-collapse-{{ loop.index }}" aria-expanded="false" aria-controls="category-faq-collapse-{{ loop.index }}">
+                                        {{ faq.question }}
+                                    </button>
+                                </h3>
+                                <div id="category-faq-collapse-{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="category-faq-heading-{{ loop.index }}" data-bs-parent="#category-faq">
+                                    <div class="accordion-body">
+                                        {{ faq.answer }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
 
         </div>
     </div>
@@ -158,7 +211,160 @@
             </div>
         </div>
     </div>
-<style>.alert-secondary p{margin-bottom:0px}</style>
+<style>
+    .alert-secondary p {
+        margin-bottom: 0;
+    }
+
+    .product-filter__toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem 1rem;
+    }
+
+    .product-filter__actions {
+        display: flex;
+        flex: 1 1 auto;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.75rem;
+        min-width: 0;
+    }
+
+    .product-filter__actions .btn {
+        margin: 0 !important;
+    }
+
+    .product-filter__actions .product-filter__apply,
+    .product-filter__actions .product-filter__clear,
+    .product-filter__actions .product-filter__results {
+        flex: 0 0 auto;
+    }
+
+    .product-filter__results {
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+
+    .product-filter__sort {
+        display: flex;
+        align-items: center;
+        flex: 0 1 16rem;
+        width: 100%;
+        max-width: 16rem;
+        min-width: 0;
+    }
+
+    .product-filter__sort .form-select {
+        min-width: 0;
+    }
+
+    .product-filter__action-promos {
+        display: flex;
+        flex: 0 1 auto;
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 0.75rem;
+        min-width: 0;
+    }
+
+    .product-filter__action-promos .form-check {
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .product-filter__action-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-height: 3rem;
+        padding: 0.625rem 0.875rem;
+        border: 1px solid #e3e6ef;
+        border-radius: 0.5rem;
+        background: #fff;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    .product-filter__action-toggle.is-active {
+        border-color: #ff5252;
+        background: #fff8f8;
+        box-shadow: 0 0 0 1px rgba(255, 82, 82, 0.08);
+    }
+
+    .product-filter__action-toggle .form-check-input {
+        margin: 0;
+        float: none;
+    }
+
+    .product-filter__action-toggle .form-check-label {
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .product-filter__action-select {
+        flex: 0 1 14rem;
+        width: 14rem;
+        min-width: 11rem;
+        max-width: 100%;
+    }
+
+    @media (max-width: 767.98px) {
+        .product-filter {
+            padding: 1rem !important;
+        }
+
+        .product-filter__actions {
+            width: 100%;
+        }
+
+        .product-filter__toggle {
+            flex: 1 1 100%;
+        }
+
+        .product-filter__results {
+            flex: 1 1 auto;
+            justify-content: space-between;
+            min-width: 0;
+            margin-left: 0 !important;
+        }
+
+        .product-filter__sort {
+            flex-basis: 100%;
+            max-width: none;
+        }
+
+        .product-filter__sort .form-select {
+            width: 100%;
+        }
+
+        .product-filter__action-promos {
+            flex: 1 1 100%;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .product-filter__action-select {
+            flex-basis: 100%;
+            min-width: 0;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .product-filter__actions {
+            gap: 0.5rem;
+        }
+    }
+    @media screen and (max-width: 600px) {
+    #CookiebotWidget:not(.CookiebotWidget-inactive) {
+        bottom: 60px !important;
+        left: 10px;
+    }
+    }
+</style>
     <script type="text/javascript">
         // Basel
         $(document).ready(function() {
@@ -168,6 +374,182 @@
                 $('html').addClass('no-scroll side-filter-open');
                 $('.body-cover').addClass('active');
             });
+
+            var $actionToggle = $('#action-filter-toggle');
+            var $actionSelect = $('#action-filter-select');
+            var $actionSelectWrap = $('#action-filter-select-wrap');
+
+            function toggleActionSelect() {
+                if (!$actionToggle.length) {
+                    return;
+                }
+
+                $actionToggle.closest('.product-filter__action-toggle').toggleClass('is-active', $actionToggle.is(':checked'));
+                $actionSelectWrap.toggleClass('d-none', !$actionToggle.is(':checked'));
+            }
+
+            function clearActionFilterState() {
+                if (!$actionToggle.length) {
+                    return;
+                }
+
+                window.DEFIgnoreActionFilterInUrl = true;
+                $actionToggle.prop('checked', false);
+                $actionSelect.val('');
+                toggleActionSelect();
+
+                $('#digitalElephantFilter_form').find('input[name="action_filter"], input[name="action_category_id"]').remove();
+
+                if (typeof window.DEFToggleTopFilterButtons === 'function') {
+                    window.DEFToggleTopFilterButtons();
+                } else {
+                    $('#filter-apply-top, #filter-clear-top').css('display', 'none');
+                }
+            }
+
+            window.DEFClearActionFilterState = clearActionFilterState;
+
+            function syncActionInputsToDefForm() {
+                var $form = $('#digitalElephantFilter_form');
+
+                if (!$form.length || typeof window.DEFConfig === 'undefined') {
+                    return false;
+                }
+
+                $form.find('input[name="action_filter"], input[name="action_category_id"]').remove();
+
+                if ($actionToggle.is(':checked')) {
+                    $('<input>', {
+                        type: 'hidden',
+                        name: 'action_filter',
+                        value: '1'
+                    }).appendTo($form);
+
+                    if (($actionSelect.val() || '') !== '') {
+                        $('<input>', {
+                            type: 'hidden',
+                            name: 'action_category_id',
+                            value: $actionSelect.val()
+                        }).appendTo($form);
+                    }
+                }
+
+                return true;
+            }
+
+            function shouldResetPriceForActionChange() {
+                var $form = $('#digitalElephantFilter_form');
+                var $priceMin = $form.find('input[name="price[min]"]');
+                var $priceMax = $form.find('input[name="price[max]"]');
+
+                if (
+                    !$form.length ||
+                    !$priceMin.length ||
+                    !$priceMax.length ||
+                    typeof window.DEFConfig === 'undefined' ||
+                    !window.DEFConfig.peakPrice
+                ) {
+                    return false;
+                }
+
+                return String($.trim($priceMin.val() || '')) === String(window.DEFConfig.peakPrice.min)
+                    && String($.trim($priceMax.val() || '')) === String(window.DEFConfig.peakPrice.max);
+            }
+
+            function resetPriceForActionChange() {
+                var $form = $('#digitalElephantFilter_form');
+
+                if (!shouldResetPriceForActionChange()) {
+                    return false;
+                }
+
+                $form.find('input[name="price[min]"], input[name="price[max]"]').val('');
+
+                return true;
+            }
+
+            function applyActionFilterFallback() {
+                var currentUrl = new URL(window.location.href);
+                var resetPrice = shouldResetPriceForActionChange();
+
+                currentUrl.searchParams.delete('ajax_digitalElephantFilter');
+                currentUrl.searchParams.delete('page');
+                currentUrl.searchParams.delete('action_filter');
+                currentUrl.searchParams.delete('action_category_id');
+
+                if (resetPrice) {
+                    currentUrl.searchParams.delete('price[min]');
+                    currentUrl.searchParams.delete('price[max]');
+                }
+
+                if ($actionToggle.is(':checked')) {
+                    currentUrl.searchParams.set('action_filter', '1');
+
+                    if (($actionSelect.val() || '') !== '') {
+                        currentUrl.searchParams.set('action_category_id', $actionSelect.val());
+                    }
+                }
+
+                window.location.assign(currentUrl.pathname + (currentUrl.searchParams.toString() ? '?' + currentUrl.searchParams.toString() : '') + currentUrl.hash);
+            }
+
+            function applyActionFilter() {
+                if (syncActionInputsToDefForm()) {
+                    resetPriceForActionChange();
+                    window.DEFIgnoreActionFilterInUrl = !$actionToggle.is(':checked');
+                    window.DEFActionAutoApplyInProgress = true;
+                    $('#filter-apply-top').css('display', 'none');
+
+                    if ($actionToggle.is(':checked')) {
+                        $('#filter-clear-top').css('display', 'block');
+                    } else if (typeof window.DEFToggleTopFilterButtons === 'function') {
+                        window.DEFToggleTopFilterButtons();
+                    } else {
+                        $('#filter-clear-top').css('display', 'none');
+                    }
+
+                    var DEFController = new DigitalElephantFilterController();
+                    var request = DEFController.changeFilterData();
+
+                    if (request && typeof request.always === 'function') {
+                        request.always(function() {
+                            window.DEFActionAutoApplyInProgress = false;
+                            if ($actionToggle.is(':checked')) {
+                                window.DEFIgnoreActionFilterInUrl = false;
+                            }
+                        });
+                    } else {
+                        window.DEFActionAutoApplyInProgress = false;
+                        if ($actionToggle.is(':checked')) {
+                            window.DEFIgnoreActionFilterInUrl = false;
+                        }
+                    }
+                } else {
+                    applyActionFilterFallback();
+                }
+            }
+
+            if ($actionToggle.length) {
+                toggleActionSelect();
+
+                $(document).on('click', '#filter-clear-top, #digitalElephantFilter_button_clear', function() {
+                    clearActionFilterState();
+                });
+
+                $actionToggle.on('change', function() {
+                    toggleActionSelect();
+                    applyActionFilter();
+                });
+
+                $actionSelect.on('change', function() {
+                    if (($actionSelect.val() || '') !== '') {
+                        $actionToggle.prop('checked', true);
+                    }
+
+                    toggleActionSelect();
+                    applyActionFilter();
+                });
+            }
         });
     </script>
 {{ footer }}

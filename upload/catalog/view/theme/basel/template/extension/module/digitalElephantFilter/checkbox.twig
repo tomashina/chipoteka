@@ -1,9 +1,42 @@
-{# filtriraj: makni N #}
+{# filtriraj i normaliziraj vrijednosti #}
 {% set visible_inputs = [] %}
+
 {% for v in inputs_data %}
-    {% if v['input_value'] != 'N' %}
-        {% set visible_inputs = visible_inputs|merge([v]) %}
+
+    {% set raw_value = (v['input_value'] is defined ? v['input_value'] : '')|trim %}
+    {% set is_visible = true %}
+
+    {# 1) prazno/null #}
+    {% if raw_value == '' %}
+        {% set is_visible = false %}
     {% endif %}
+
+    {# 2) makni "Ne" (isključivo) #}
+    {% if is_visible and raw_value == 'Ne' %}
+        {% set is_visible = false %}
+    {% endif %}
+
+    {# 3) makni nule: 0 / 0,0 / 0,00 / 0.0 / 0.00 #}
+    {% set v_norm = raw_value|replace({',': '.'}) %}
+    {% if is_visible and (v_norm == '0' or v_norm == '0.0' or v_norm == '0.00' or v_norm == '0.000' or v_norm == '0.0000') %}
+        {% set is_visible = false %}
+    {% endif %}
+
+    {# 4) makni N (tvoje staro pravilo) #}
+    {% if is_visible and raw_value == 'N' %}
+        {% set is_visible = false %}
+    {% endif %}
+
+    {% set display_value = (v['display_value'] is defined ? v['display_value'] : raw_value)|trim %}
+
+    {% if is_visible %}
+        {% set v2 = v|merge({
+            'input_value': raw_value,
+            'display_value': display_value
+        }) %}
+        {% set visible_inputs = visible_inputs|merge([v2]) %}
+    {% endif %}
+
 {% endfor %}
 
 {% if visible_inputs|length > 0 %}
@@ -11,23 +44,46 @@
         <ul class="widget-list widget-filter-list list-unstyled pt-1" style="max-height: 11rem;" data-simplebar data-simplebar-auto-hide="false">
             {% for input_data in visible_inputs %}
 
-                {# D -> DA #}
-                {% set display_label = input_data['input_label'] %}
-                {% if input_data['input_value'] == 'D' %}
-                    {% set display_label = 'DA' %}
+                {# --- LABEL LOGIKA --- #}
+                {% set display_label = input_data['display_value'] %}
+
+                {# manufacturer panel treba prikazivati naziv (input_label), ne ID #}
+                {% if section['id'] == 'manufacturer' and input_data['input_label'] is defined %}
+                    {% set display_label = input_data['input_label'] %}
                 {% endif %}
 
+                {# Boolean atributi: prikazuj samo jedan "Da" checkbox #}
+                {% if section['is_boolean']|default(false) and input_data['input_value'] == 'D' %}
+                    {% set display_label = 'Da' %}
+                {% elseif input_data['input_value'] == 'D' %}
+
+                    {# provjeri je li sekcija Energetska oznaka (sigurno, bez obzira na razmake i case) #}
+                    {% set section_name = section['name']|default('')|trim|lower %}
+
+                    {% if section_name starts with 'energetska oznaka' %}
+                        {% set display_label = 'D' %}
+                    {% else %}
+                        {% set display_label = 'Da' %}
+                    {% endif %}
+
+                {% endif %}
+
+
                 {% set attr_checked = '' %}
-                {% if check_data_on_active[input_data['input_name']][section['id']]
-                    and input_data['input_value'] in check_data_on_active[input_data['input_name']][section['id']] %}
+                {% set active_values = check_data_on_active[input_data['input_name']][section['id']]|default([]) %}
+
+                {% if section['is_boolean']|default(false) and input_data['input_value'] == 'D' %}
+                    {% set positive_values = ['D', 'Da', 'DA', 'T', 'True', 'TRUE', 'Y', 'Yes', 'YES', '1'] %}
+                    {% for active_value in active_values %}
+                        {% if active_value in positive_values %}
+                            {% set attr_checked = 'checked="checked"' %}
+                        {% endif %}
+                    {% endfor %}
+                {% elseif active_values and input_data['input_value'] in active_values %}
                     {% set attr_checked = 'checked="checked"' %}
                 {% endif %}
 
-                {% if input_data['is_enable'] %}
-                    {% set attr_disabled = '' %}
-                {% else %}
-                    {% set attr_disabled = 'disabled="disabled"' %}
-                {% endif %}
+                {% set attr_disabled = input_data['is_enable'] ? '' : 'disabled="disabled"' %}
 
                 <li class="widget-filter-item d-flex justify-content-between align-items-center mb-1">
                     <div class="form-check">

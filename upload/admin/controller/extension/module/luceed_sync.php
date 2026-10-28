@@ -6,10 +6,12 @@ use Agmedia\Luceed\Facade\LuceedManufacturer;
 use Agmedia\Luceed\Facade\LuceedOrder;
 use Agmedia\Luceed\Facade\LuceedPayments;
 use Agmedia\Luceed\Facade\LuceedProduct;
+use Agmedia\Luceed\Models\LuceedProduct as LuceedProductRecord;
 use Agmedia\Luceed\Facade\LuceedWarehouse;
 use Agmedia\Luceed\Models\LuceedProductForRevision;
 use Agmedia\Luceed\Models\LuceedProductForRevisionData;
 use Agmedia\Luceed\Models\LuceedProductForUpdate;
+use Agmedia\LuceedOpencartWrapper\Helpers\ProductHelper;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Action;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Category;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Customer;
@@ -19,11 +21,13 @@ use Agmedia\LuceedOpencartWrapper\Models\LOC_Payment;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Price;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Product;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle;
+use Agmedia\LuceedOpencartWrapper\Models\LOC_ProductStatus;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Related;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Stock;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse;
 use Agmedia\Models\Category\Category;
 use Agmedia\Models\Order\Order;
+use Agmedia\Models\Order\OrderStatus;
 use Agmedia\Models\Product\Product;
 use Agmedia\Models\Product\ProductCategory;
 use Carbon\Carbon;
@@ -45,7 +49,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
         '013' => '329822',
     ];
 
+    const DURATION_MAIL_ACTIVATED_AT = '2026-07-17 13:35:10';
+    const ORDER_STATUS_REQUEST_TIMEOUT_SECONDS = 60;
+    const LUCEED_PRODUCT_SYNC_LOCK = 'chipoteka_luceed_product_sync';
+    // Product and stock jobs both mutate product quantities, so they must never overlap.
+    const LUCEED_STOCK_SYNC_LOCK = 'chipoteka_luceed_product_sync';
+
     private $error = array();
+    private $snapshot_skipped_products = 0;
 
 
     public function install()
@@ -1056,6 +1067,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function importProducts()
     {
+        return $this->runProductSync(function () {
+            return $this->importProductBatch();
+        });
+    }
+
+
+    private function importProductBatch()
+    {
         $_loc  = new LOC_Product(LuceedProduct::all());
         $count = 0;
 
@@ -1083,49 +1102,66 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateProducts()
     {
-        $this->importLuceedProducts();
-
-        $count      = 0;
-        $_loc_ps    = new LOC_ProductSingle();
-        $for_update = LuceedProductForUpdate::all();
-
-        if ($for_update->count()) {
-            foreach ($for_update as $item) {
-                if ($_loc_ps->hasForUpdate()) {
-                    if ( ! isset($_loc_ps->product['naziv'])) {
-                        return $this->output($_loc_ps->finishUpdateError());
-                    }
-
-                    $product = $this->resolveOldProductData($_loc_ps->product_to_update);
-                    // first check known errors
-                    $product_for_update                    = $_loc_ps->makeForUpdate($product);
-                    $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
-                    $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
-
-                    Log::info($product_for_update['sku'], 'log2025');
-
-                    if ($product_for_update['sku'] == '6129256300') {
-                        return $this->output($_loc_ps->finishUpdate());
-                    }
-
-                    $this->model_catalog_product->editProduct(
-                        $_loc_ps->product_to_update['product_id'],
-                        $product_for_update
-                    );
-
-                    $_loc_ps->finishUpdate();
-
-                    LuceedProductForUpdate::where('uid', $_loc_ps->product_to_update['luceed_uid'])->delete();
-
-                    $count++;
-                }
-            }
+        if ( ! $this->acquireLuceedProductSyncLock()) {
+            return $this->output([
+                'status'  => 202,
+                'message' => 'Luceed product sync is already running.'
+            ]);
         }
 
-        //$this->updateQuantities();
-        $this->finishUpdateProduct();
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
 
-        return $this->response($count, 'products');
+        try {
+            $this->refreshLuceedProductsCache();
+
+            $count      = 0;
+            $_loc_ps    = new LOC_ProductSingle();
+            $for_update = LuceedProductForUpdate::all();
+
+            if ($for_update->count()) {
+                foreach ($for_update as $item) {
+                    if ($_loc_ps->hasForUpdate($item->uid)) {
+                        if ( ! isset($_loc_ps->product['naziv'])) {
+                            return $this->output($_loc_ps->finishUpdateError());
+                        }
+
+                        $product = $this->resolveOldProductData($_loc_ps->product_to_update);
+                        // first check known errors
+                        $product_for_update                    = $_loc_ps->makeForUpdate($product);
+                        $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
+                        $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
+
+                        $this->model_catalog_product->editProduct(
+                            $_loc_ps->product_to_update['product_id'],
+                            $product_for_update
+                        );
+
+                        $_loc_ps->finishUpdate();
+                        LuceedProductForUpdate::where('uid', $item->uid)->delete();
+
+                        $count++;
+                    }
+                }
+            }
+
+            //$this->updateQuantities();
+            $this->finishUpdateProduct();
+            $this->reconcileProductStatuses();
+
+            return $this->response($count, 'products');
+        } catch (\Throwable $exception) {
+            Log::store($exception->getMessage(), 'luceed_product_sync_error');
+            $this->response->addHeader('HTTP/1.1 503 Service Unavailable');
+
+            return $this->output([
+                'status'  => 503,
+                'message' => 'Luceed product sync failed. Check luceed_product_sync_error log.'
+            ]);
+        } finally {
+            $this->releaseLuceedProductSyncLock();
+        }
     }
 
 
@@ -1135,9 +1171,30 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function importLuceedProducts()
     {
-        $_loc = new LOC_Product(LuceedProduct::all());
+        if ( ! $this->acquireLuceedProductSyncLock()) {
+            return $this->output([
+                'status'  => 202,
+                'message' => 'Luceed product sync is already running.'
+            ]);
+        }
 
-        return $this->output($_loc->populateLuceedData());
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
+
+        try {
+            return $this->output($this->refreshLuceedProductsCache());
+        } catch (\Throwable $exception) {
+            Log::store($exception->getMessage(), 'luceed_product_sync_error');
+            $this->response->addHeader('HTTP/1.1 503 Service Unavailable');
+
+            return $this->output([
+                'status'  => 503,
+                'message' => 'Luceed product cache refresh failed. Check luceed_product_sync_error log.'
+            ]);
+        } finally {
+            $this->releaseLuceedProductSyncLock();
+        }
     }
 
 
@@ -1145,6 +1202,25 @@ class ControllerExtensionModuleLuceedSync extends Controller
      * @return mixed
      */
     public function updateProduct()
+    {
+        return $this->runProductSync(function () {
+            // Interactive queue processing must follow the same snapshot
+            // freshness rules as the automatic stock and product jobs.
+            if (!isset($this->request->get['products'])) {
+                $this->refreshProductSnapshotForStock();
+                $readiness = $this->reconcileProductStatuses();
+
+                if (!empty($readiness['skipped'])) {
+                    $this->addServiceUnavailableHeader();
+                    return $this->output(['status' => 503, 'message' => 'Ažuriranje čeka svjež provjeren Luceed popis artikala.']);
+                }
+            }
+            return $this->updateProductBatch();
+        });
+    }
+
+
+    private function updateProductBatch()
     {
         $_loc_ps = new LOC_ProductSingle();
         $this->load->model('catalog/product');
@@ -1199,18 +1275,15 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
             $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
 
-            if ($product_for_update['sku'] == '6129256300') {
-                return $this->output($_loc_ps->finishUpdate());
-            }
-
             $this->model_catalog_product->editProduct(
                 $_loc_ps->product_to_update['product_id'],
                 $product_for_update
             );
 
+            $result = $_loc_ps->finishUpdate();
             LuceedProductForUpdate::where('uid', $_loc_ps->product_to_update['luceed_uid'])->delete();
 
-            return $this->output($_loc_ps->finishUpdate());
+            return $this->output($result);
 
         } else {
             // Ako ima proizvoda za INSERT
@@ -1237,6 +1310,178 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         return $this->output($_loc_ps->finish());
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function updateProductAttributes()
+    {
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
+
+        $cursor = isset($this->request->get['cursor']) ? max((int) $this->request->get['cursor'], 0) : 0;
+        $limit  = isset($this->request->get['limit']) ? max((int) $this->request->get['limit'], 1) : 100;
+        $total  = LuceedProductRecord::query()->count();
+
+        if ( ! $total) {
+            return $this->output([
+                'status' => 300,
+                'message' => 'Luceed cache proizvoda je prazan. Prvo osvježi proizvode iz Luceed-a pa pokreni update atributa.'
+            ]);
+        }
+
+        $batch = LuceedProductRecord::query()
+            ->select('uid', 'data')
+            ->orderBy('uid')
+            ->skip($cursor)
+            ->take($limit)
+            ->get();
+
+        if ($batch->isEmpty()) {
+            return $this->output([
+                'status' => 200,
+                'processed' => 0,
+                'definitions' => 0,
+                'products' => 0,
+                'attributes' => 0,
+                'next_cursor' => $cursor,
+                'total' => $total,
+                'done' => true,
+            ]);
+        }
+
+        $definitions    = 0;
+        $updatedProducts = 0;
+        $updatedAttrs    = 0;
+
+        foreach ($batch as $luceedProduct) {
+            $localProduct = Product::query()
+                ->where('luceed_uid', $luceedProduct->uid)
+                ->first(['product_id']);
+
+            if ( ! $localProduct) {
+                continue;
+            }
+
+            $data = @unserialize(base64_decode($luceedProduct->data));
+
+            if ( ! is_array($data)) {
+                continue;
+            }
+
+            $updatedAttrs += ProductHelper::syncProductAttributes(
+                (int) $localProduct->product_id,
+                collect($data),
+                true
+            );
+
+            $updatedProducts++;
+        }
+
+        $nextCursor = $cursor + $batch->count();
+
+        return $this->output([
+            'status' => 200,
+            'processed' => $batch->count(),
+            'products' => $updatedProducts,
+            'attributes' => $updatedAttrs,
+            'next_cursor' => $nextCursor,
+            'total' => $total,
+            'done' => $nextCursor >= $total,
+        ]);
+    }
+
+
+    /**
+     * @return mixed
+     */
+    public function updateAttributeSortOrders()
+    {
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
+
+        $cursor = isset($this->request->get['cursor']) ? max((int) $this->request->get['cursor'], 0) : 0;
+        $limit  = isset($this->request->get['limit']) ? max((int) $this->request->get['limit'], 1) : 100;
+        $total  = LuceedProductRecord::query()->count();
+
+        if ( ! $total) {
+            return $this->output([
+                'status' => 300,
+                'message' => 'Luceed cache proizvoda je prazan. Prvo osvježi Luceed cache pa pokreni update redoslijeda atributa.'
+            ]);
+        }
+
+        $batch = LuceedProductRecord::query()
+            ->select('uid', 'data')
+            ->orderBy('uid')
+            ->skip($cursor)
+            ->take($limit)
+            ->get();
+
+        if ($batch->isEmpty()) {
+            return $this->output([
+                'status' => 200,
+                'processed' => 0,
+                'definitions' => 0,
+                'products' => 0,
+                'attributes' => 0,
+                'next_cursor' => $cursor,
+                'total' => $total,
+                'done' => true,
+            ]);
+        }
+
+        $definitions    = 0;
+        $updatedProducts = 0;
+        $updatedAttrs    = 0;
+
+        foreach ($batch as $luceedProduct) {
+            $localProduct = Product::query()
+                ->where('luceed_uid', $luceedProduct->uid)
+                ->first(['product_id']);
+
+            if ( ! $localProduct) {
+                continue;
+            }
+
+            $data = @unserialize(base64_decode($luceedProduct->data));
+
+            if ( ! is_array($data)) {
+                continue;
+            }
+
+            $data = collect($data);
+
+            $definitions += ProductHelper::syncAttributeDefinitions(
+                $data,
+                true
+            );
+
+            $updatedAttrs += ProductHelper::syncProductAttributeSortOrders(
+                (int) $localProduct->product_id,
+                $data,
+                true
+            );
+
+            $updatedProducts++;
+        }
+
+        $nextCursor = $cursor + $batch->count();
+
+        return $this->output([
+            'status' => 200,
+            'processed' => $batch->count(),
+            'definitions' => $definitions,
+            'products' => $updatedProducts,
+            'attributes' => $updatedAttrs,
+            'next_cursor' => $nextCursor,
+            'total' => $total,
+            'done' => $nextCursor >= $total,
+        ]);
     }
 
 
@@ -1355,23 +1600,17 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function checkMinQty()
     {
-        $activated   = 0;
-        $deactivated = 0;
-        $products    = Product::all();
+        return $this->runProductSync(function () {
+            $this->refreshProductSnapshotForStock();
+            $result = $this->reconcileProductStatuses();
 
-        foreach ($products as $product) {
-            if ($product->quantity < $product->active_min && $product->status) {
-                $product->update(['status' => 0]);
-                $deactivated++;
+            if (!empty($result['skipped'])) {
+                $this->addServiceUnavailableHeader();
+                return $this->output(['status' => 503, 'message' => 'Nema svježeg Luceed popisa za provjeru aktivacije.', 'activation' => $result]);
             }
 
-            if ($product->quantity >= $product->active_min && ! $product->status) {
-                $product->update(['status' => 1]);
-                $activated++;
-            }
-        }
-
-        return $this->response([$activated, $deactivated], 'active');
+            return $this->response([$result['activated'], $result['deactivated']], 'active');
+        });
     }
 
 
@@ -1432,13 +1671,29 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updatePrices()
     {
-        $_loc = new LOC_Action(LuceedProduct::getActions());
+        try {
+            $_loc = new LOC_Action(LuceedProduct::getActions());
 
-        $updated = $_loc->collectProductsRegularPrices()
-                        ->collectWebPrices()
-                        ->update();
+            $updated = $_loc->collectProductsRegularPrices()
+                            ->collectWebPrices()
+                            ->update();
 
-        return $this->response($updated, 'update');
+            return $this->response($updated, 'update');
+        } catch (\Throwable $exception) {
+            Log::store($exception->getMessage(), 'luceed_price_sync_error');
+            Log::store($exception->getTraceAsString(), 'luceed_price_sync_error');
+
+            $protocol = isset($this->request->server['SERVER_PROTOCOL'])
+                ? $this->request->server['SERVER_PROTOCOL']
+                : 'HTTP/1.1';
+
+            $this->response->addHeader($protocol . ' 503 Service Unavailable');
+
+            return $this->output([
+                'status'  => 503,
+                'message' => 'Luceed price sync failed. Check luceed_price_sync_error log.'
+            ]);
+        }
     }
 
 
@@ -1448,19 +1703,26 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateB2BPrices()
     {
-        $updated = 0;
-        $lp      = new LOC_Price();
-
-        $lp->deleteProductDiscountDB();
-
-        foreach ($lp->getGroups() as $group) {
-            $_loc = new LOC_Price(
-                LuceedProduct::getB2BPrices($group['url']),
-                $group['id']
-            );
-
-            $updated += $_loc->collectB2B()->update('b2b');
+        try {
+            (new LOC_Manufacturer(LuceedManufacturer::all()))->updateByUids();
+        } catch (\Throwable $e) {
+            Log::store('updateB2BPrices(manufacturer_uid_sync) ::: ' . $e->getMessage());
         }
+
+		$this->load->model('extension/module/partner_feed');
+		$this->model_extension_module_partner_feed->install(false);
+
+		try {
+			$result = $this->model_extension_module_partner_feed->syncMappings();
+			$updated = $result['total'];
+
+			if (!empty($result['errors'])) {
+				Log::store('updateB2BPrices(partial) ::: ' . implode(' | ', $result['errors']));
+			}
+		} catch (\Throwable $e) {
+			Log::store('updateB2BPrices(partner_sync) ::: ' . $e->getMessage());
+			$updated = 0;
+		}
 
         return $this->response($updated, 'update');
     }
@@ -1471,12 +1733,28 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateVpcPrices()
     {
-        $_loc = new LOC_Product(LuceedProduct::all());
-        $lp   = new LOC_Price();
+        try {
+            $_loc = new LOC_Product(LuceedProduct::all());
+            $lp   = new LOC_Price();
 
-        $updated = $lp->collectAndStore($_loc->getProducts(), 'vpc');
+            $updated = $lp->collectAndStore($_loc->getProducts(), 'vpc');
 
-        return $this->response($updated, 'update');
+            return $this->response($updated, 'update');
+        } catch (\Throwable $exception) {
+            Log::store($exception->getMessage(), 'luceed_vpc_price_sync_error');
+            Log::store($exception->getTraceAsString(), 'luceed_vpc_price_sync_error');
+
+            $protocol = isset($this->request->server['SERVER_PROTOCOL'])
+                ? $this->request->server['SERVER_PROTOCOL']
+                : 'HTTP/1.1';
+
+            $this->response->addHeader($protocol . ' 503 Service Unavailable');
+
+            return $this->output([
+                'status'  => 503,
+                'message' => 'Luceed VPC price sync failed. Check luceed_vpc_price_sync_error log.'
+            ]);
+        }
     }
 
 
@@ -1486,19 +1764,57 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateQuantities()
     {
-        $_loc = new LOC_Stock();
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
+        if ($response = $this->abortStockSyncWhenLuceedUnavailable('updateQuantities')) {
+            return $this->output($response);
+        }
 
-        $_loc->setSkladista(
-            LuceedProduct::getWarehouseStock(agconf('import.warehouse.default'))
-        )->sort();
+        if ( ! $this->acquireLuceedStockSyncLock()) {
+            return $this->output([
+                'status'  => 409,
+                'message' => 'Sinkronizacija zaliha je već u tijeku.'
+            ]);
+        }
 
-        $_loc->setDobavljaci(
-            LuceedProduct::getSuplierStock()
-        )->sort();
+        try {
+            $snapshot_warning = $this->refreshProductSnapshotForStock();
+            $_loc = new LOC_Stock();
 
-        $updated = $_loc->createQuery()->update();
+            $_loc->setSkladista(
+                LuceedProduct::getWarehouseStock(agconf('import.warehouse.default'))
+            )->sort();
 
-        return $this->response($updated, 'update_stock');
+            $_loc->setDobavljaci(
+                LuceedProduct::getSuplierStock()
+            )->sort();
+
+            if ( ! $_loc->isValid()) {
+                Log::store('Stock sync skipped because a feed was invalid or unexpectedly small.', 'luceed_stock_sync_invalid_feed');
+                $this->addServiceUnavailableHeader();
+
+                return $this->output([
+                    'status'  => 503,
+                    'message' => 'Luceed feed zaliha je neispravan ili nepotpun. Postojeće količine nisu promijenjene.'
+                ]);
+            }
+
+            $updated = $_loc->createQuery()->update();
+
+            return $this->stockSyncResponse($updated, $snapshot_warning);
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_stock_sync_error');
+            Log::store($e->getTraceAsString(), 'luceed_stock_sync_error');
+            $this->addServiceUnavailableHeader();
+
+            return $this->output([
+                'status'  => 503,
+                'message' => 'Sinkronizacija zaliha nije uspjela. Promjene su poništene.'
+            ]);
+        } finally {
+            $this->releaseLuceedStockSyncLock();
+        }
     }
 
 
@@ -1508,16 +1824,53 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateQuantitiesWithoutSupliers()
     {
-        $_loc = new LOC_Stock();
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
+        if ($response = $this->abortStockSyncWhenLuceedUnavailable('updateQuantitiesWithoutSupliers')) {
+            return $this->output($response);
+        }
 
-        $_loc->setSkladista(
-            LuceedProduct::getWarehouseStock(agconf('import.warehouse.default'))
-        )->sort();
+        if ( ! $this->acquireLuceedStockSyncLock()) {
+            return $this->output([
+                'status'  => 409,
+                'message' => 'Sinkronizacija zaliha je već u tijeku.'
+            ]);
+        }
 
+        try {
+            $snapshot_warning = $this->refreshProductSnapshotForStock();
+            $_loc = new LOC_Stock();
 
-        $updated = $_loc->createQuery()->updateWithoutSupliers();
+            $_loc->setSkladista(
+                LuceedProduct::getWarehouseStock(agconf('import.warehouse.default'))
+            )->sort();
 
-        return $this->response($updated, 'update_stock');
+            if ( ! $_loc->isValid()) {
+                Log::store('Warehouse stock sync skipped because the feed was invalid or unexpectedly small.', 'luceed_stock_sync_invalid_feed');
+                $this->addServiceUnavailableHeader();
+
+                return $this->output([
+                    'status'  => 503,
+                    'message' => 'Luceed warehouse feed je neispravan ili nepotpun. Postojeće količine nisu promijenjene.'
+                ]);
+            }
+
+            $updated = $_loc->createQuery()->updateWithoutSupliers();
+
+            return $this->stockSyncResponse($updated, $snapshot_warning);
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_stock_sync_error');
+            Log::store($e->getTraceAsString(), 'luceed_stock_sync_error');
+            $this->addServiceUnavailableHeader();
+
+            return $this->output([
+                'status'  => 503,
+                'message' => 'Sinkronizacija warehouse zaliha nije uspjela.'
+            ]);
+        } finally {
+            $this->releaseLuceedStockSyncLock();
+        }
     }
 
 
@@ -1526,24 +1879,728 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateOrderStatuses()
     {
-        $loc = new LOC_Order();
+        try {
+            $legacy                 = isset($this->request->get['legacy']) && (int) $this->request->get['legacy'] === 1;
+            $cutoff                 = Carbon::now()->subDays(60);
+            $excludedLuceedStatuses = $legacy ? $this->getExcludedLuceedStatuses() : [];
 
-        $loc->setOrders(
-            LuceedOrder::get(
-                $loc->collectStatuses(),
-                Carbon::now()->subWeek(2)->format('d.m.Y') //agconf('import.orders.from_date')
-            )
-        );
+            if ($legacy) {
+                return $this->output($this->syncLegacyOrderStatusBatch($cutoff, $excludedLuceedStatuses));
+            }
 
-        $updated = $loc->sort()->updateStatuses();
+            if ($this->shouldRunFullOrderStatusCronSync($legacy)) {
+                return $this->output($this->syncAllOrderStatusBatches($cutoff, $excludedLuceedStatuses));
+            }
 
-        foreach ($loc->collection as $order) {
-            $this->sendMail($order);
+            return $this->output($this->syncOrderStatusBatch($cutoff, $legacy, $excludedLuceedStatuses));
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_order_status_sync_error');
+            Log::store($e->getTraceAsString(), 'luceed_order_status_sync_error');
+
+            $protocol = isset($this->request->server['SERVER_PROTOCOL'])
+                ? $this->request->server['SERVER_PROTOCOL']
+                : 'HTTP/1.1';
+
+            $this->response->addHeader($protocol . ' 503 Service Unavailable');
+
+            return $this->output([
+                'status'  => 300,
+                'message' => 'Greška kod sinkronizacije statusa narudžbi: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+
+    /**
+     * @param Carbon $cutoff
+     * @param bool   $legacy
+     * @param array  $excludedLuceedStatuses
+     *
+     * @return array
+     */
+    private function syncOrderStatusBatch(Carbon $cutoff, bool $legacy = false, array $excludedLuceedStatuses = [], ?int $cursor = null): array
+    {
+        $this->prepareLongRunningOrderStatusSync();
+
+        if ($cursor === null) {
+            $cursor = isset($this->request->get['cursor']) ? (int) $this->request->get['cursor'] : 0;
         }
 
-        $updated += $this->updateB2BOrderStatuses();
+        $batchSize = $this->getOrderStatusBatchSize();
+        $batch     = $this->getOrderStatusBatch($cutoff, $legacy, $cursor, $batchSize, $excludedLuceedStatuses);
 
-        return $this->response($updated, 'orders');
+        if ($batch->isEmpty()) {
+            return [
+                'status'     => 200,
+                'processed'  => 0,
+                'updated'    => 0,
+                'done'       => true,
+                'empty'      => ($cursor === 0),
+                'next_cursor'=> 0
+            ];
+        }
+
+        $loc               = new LOC_Order();
+        $statuses          = $this->getSyncOrderStatusesCollection($excludedLuceedStatuses);
+        $statusesById      = $statuses->keyBy('order_status_id');
+        $statusesByLuceed  = $statuses->keyBy('luceed_status_id');
+        $statusList        = $loc->collectStatuses($statuses->all());
+        $startDate         = Carbon::make($batch->min('date_added'))->format('d.m.Y');
+        $updates           = [];
+
+        foreach ([false, true] as $b2b) {
+            $updates = $this->collectOrderStatusUpdates(
+                $updates,
+                $batch,
+                $statusesById,
+                $statusesByLuceed,
+                $statusList,
+                $startDate,
+                $b2b,
+                ! $legacy
+            );
+        }
+
+        $updated = $this->applyOrderStatusUpdates(array_values($updates), ! $legacy);
+
+        if ( ! $legacy) {
+            foreach ($updates as $update) {
+                $this->sendMail($update);
+            }
+        }
+
+        return [
+            'status'      => 200,
+            'processed'   => $batch->count(),
+            'updated'     => $updated,
+            'done'        => ($batch->count() < $batchSize),
+            'empty'       => false,
+            'next_cursor' => ($batch->count() < $batchSize) ? 0 : (int) $batch->last()->order_id
+        ];
+    }
+
+
+    /**
+     * @param bool $legacy
+     *
+     * @return bool
+     */
+    private function shouldRunFullOrderStatusCronSync(bool $legacy): bool
+    {
+        if ($legacy) {
+            return false;
+        }
+
+        if (isset($this->request->get['cron']) && (int) $this->request->get['cron'] === 1) {
+            return true;
+        }
+
+        if (isset($this->request->get['user_token']) && $this->request->get['user_token']) {
+            return false;
+        }
+
+        return ! isset($this->request->get['cursor']) || (int) $this->request->get['cursor'] <= 0;
+    }
+
+
+    /**
+     * @param Carbon $cutoff
+     * @param array  $excludedLuceedStatuses
+     *
+     * @return array
+     */
+    private function syncAllOrderStatusBatches(Carbon $cutoff, array $excludedLuceedStatuses = []): array
+    {
+        $this->prepareLongRunningOrderStatusSync();
+
+        $processed = 0;
+        $updated   = 0;
+        $cursor    = 0;
+        $empty     = true;
+        $batchSize = $this->getOrderStatusBatchSize();
+        $batch     = $this->getOrderStatusBatch($cutoff, false, $cursor, $batchSize, $excludedLuceedStatuses);
+
+        if ($batch->isEmpty()) {
+            return [
+                'status'      => 200,
+                'processed'   => 0,
+                'updated'     => 0,
+                'done'        => true,
+                'empty'       => true,
+                'next_cursor' => 0
+            ];
+        }
+
+        $loc              = new LOC_Order();
+        $statuses         = $this->getSyncOrderStatusesCollection($excludedLuceedStatuses);
+        $statusesById     = $statuses->keyBy('order_status_id');
+        $statusesByLuceed = $statuses->keyBy('luceed_status_id');
+        $statusList       = $loc->collectStatuses($statuses->all());
+        $startDate        = $cutoff->format('d.m.Y');
+        $luceedOrderSets  = [];
+
+        foreach ([false, true] as $b2b) {
+            $luceedOrderSets[] = $this->getLuceedOrdersByUid($statusList, $startDate, $b2b);
+        }
+
+        do {
+            $updates = [];
+
+            foreach ($luceedOrderSets as $luceedOrdersByUid) {
+                $updates = $this->collectOrderStatusUpdatesFromLuceedOrders(
+                    $updates,
+                    $batch,
+                    $statusesById,
+                    $statusesByLuceed,
+                    $luceedOrdersByUid,
+                    true
+                );
+            }
+
+            $batchUpdated = $this->applyOrderStatusUpdates(array_values($updates), true);
+
+            foreach ($updates as $update) {
+                $this->sendMail($update);
+            }
+
+            $processed += $batch->count();
+            $updated   += $batchUpdated;
+            $empty      = false;
+
+            if ($batch->count() < $batchSize) {
+                return [
+                    'status'      => 200,
+                    'processed'   => $processed,
+                    'updated'     => $updated,
+                    'done'        => true,
+                    'empty'       => $empty,
+                    'next_cursor' => 0
+                ];
+            }
+
+            $nextCursor = (int) $batch->last()->order_id;
+
+            if ($nextCursor <= 0 || $nextCursor === $cursor) {
+                return [
+                    'status'      => 300,
+                    'processed'   => $processed,
+                    'updated'     => $updated,
+                    'done'        => false,
+                    'empty'       => $empty,
+                    'next_cursor' => $nextCursor,
+                    'message'     => 'Cron sinkronizacija statusa narudžbi je prekinuta zbog neispravnog kursora.'
+                ];
+            }
+
+            $cursor = $nextCursor;
+            $batch  = $this->getOrderStatusBatch($cutoff, false, $cursor, $batchSize, $excludedLuceedStatuses);
+        } while (true);
+    }
+
+
+    /**
+     * @param Carbon $cutoff
+     * @param array  $excludedLuceedStatuses
+     *
+     * @return array
+     */
+    private function syncLegacyOrderStatusBatch(Carbon $cutoff, array $excludedLuceedStatuses = []): array
+    {
+        $this->prepareLongRunningOrderStatusSync();
+
+        $oldestDate = $this->getLegacyOldestOrderDate($cutoff, $excludedLuceedStatuses);
+
+        if ( ! $oldestDate) {
+            return [
+                'status'            => 200,
+                'processed'         => 0,
+                'updated'           => 0,
+                'done'              => true,
+                'empty'             => true,
+                'next_legacy_start' => ''
+            ];
+        }
+
+        $windowEnd = isset($this->request->get['legacy_end']) && $this->request->get['legacy_end']
+            ? Carbon::parse($this->request->get['legacy_end'])
+            : $cutoff->copy();
+
+        if ($windowEnd->greaterThan($cutoff)) {
+            $windowEnd = $cutoff->copy();
+        }
+
+        $legacyCursor = isset($this->request->get['legacy_cursor']) ? (int) $this->request->get['legacy_cursor'] : 0;
+        $windowDays  = 365;
+        $batchSize  = $this->getOrderStatusBatchSize();
+        $batch      = collect();
+        $windowStart = null;
+
+        while ($windowEnd->greaterThan($oldestDate) && $batch->isEmpty()) {
+            $windowStart = $windowEnd->copy()->subDays($windowDays);
+
+            if ($windowStart->lessThan($oldestDate)) {
+                $windowStart = $oldestDate->copy();
+            }
+
+            $batch = $this->getLegacyOrderStatusWindow($windowStart, $windowEnd, $excludedLuceedStatuses, $legacyCursor, $batchSize);
+
+            if ($batch->isEmpty()) {
+                $windowEnd = $windowStart->copy();
+                $legacyCursor = 0;
+            }
+        }
+
+        if ($batch->isEmpty() || ! $windowStart) {
+            return [
+                'status'          => 200,
+                'processed'       => 0,
+                'updated'         => 0,
+                'done'            => true,
+                'empty'           => true,
+                'next_legacy_start' => '',
+                'next_legacy_end'   => ''
+            ];
+        }
+
+        $loc              = new LOC_Order();
+        $statuses         = $this->getSyncOrderStatusesCollection($excludedLuceedStatuses);
+        $statusesById     = $statuses->keyBy('order_status_id');
+        $statusesByLuceed = $statuses->keyBy('luceed_status_id');
+        $statusList       = $loc->collectStatuses($statuses->all());
+        $updates          = [];
+
+        foreach ([false, true] as $b2b) {
+            $updates = $this->collectOrderStatusUpdates(
+                $updates,
+                $batch,
+                $statusesById,
+                $statusesByLuceed,
+                $statusList,
+                $windowStart->format('d.m.Y'),
+                $b2b,
+                false
+            );
+        }
+
+        $updated = $this->applyOrderStatusUpdates(array_values($updates), false);
+        $windowFinished = $batch->count() < $batchSize;
+        $done           = $windowFinished && $windowStart->lessThanOrEqualTo($oldestDate);
+        $nextLegacyEnd  = $done ? '' : ($windowFinished ? $windowStart->toDateTimeString() : $windowEnd->toDateTimeString());
+        $nextLegacyCursor = $done ? 0 : ($windowFinished ? 0 : (int) $batch->last()->order_id);
+
+        return [
+            'status'             => 200,
+            'processed'          => $batch->count(),
+            'updated'            => $updated,
+            'done'               => $done,
+            'empty'              => false,
+            'next_legacy_start'  => $nextLegacyEnd,
+            'next_legacy_end'    => $nextLegacyEnd,
+            'next_legacy_cursor' => $nextLegacyCursor
+        ];
+    }
+
+
+    /**
+     * @return void
+     */
+    private function prepareLongRunningOrderStatusSync(): void
+    {
+        ignore_user_abort(true);
+
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
+
+        @ini_set('max_execution_time', '0');
+    }
+
+
+    /**
+     * @return array
+     */
+    private function getExcludedLuceedStatuses(): array
+    {
+        if ( ! isset($this->request->get['skip_luceed_statuses'])) {
+            return [];
+        }
+
+        return array_values(array_filter(array_unique(array_map('trim', explode(',', (string) $this->request->get['skip_luceed_statuses'])))));
+    }
+
+
+    /**
+     * @return int
+     */
+    private function getOrderStatusBatchSize(): int
+    {
+        return 200;
+    }
+
+
+    /**
+     * @param array $luceedStatuses
+     *
+     * @return array
+     */
+    private function getOrderStatusIdsByLuceedStatuses(array $luceedStatuses): array
+    {
+        if (empty($luceedStatuses)) {
+            return [];
+        }
+
+        return OrderStatus::query()
+                          ->whereIn('luceed_status_id', $luceedStatuses)
+                          ->pluck('order_status_id')
+                          ->all();
+    }
+
+
+    /**
+     * @param array $excludedLuceedStatuses
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function getSyncOrderStatusesCollection(array $excludedLuceedStatuses = [])
+    {
+        $query = OrderStatus::query()->where('luceed_status_id', '!=', '');
+
+        if ($excludedLuceedStatuses) {
+            $query->whereNotIn('luceed_status_id', $excludedLuceedStatuses);
+        }
+
+        return $query->get();
+    }
+
+
+    /**
+     * @param Carbon $cutoff
+     * @param bool   $legacy
+     * @param int    $cursor
+     * @param int    $limit
+     * @param array  $excludedLuceedStatuses
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function getOrderStatusBatch(Carbon $cutoff, bool $legacy, int $cursor, int $limit, array $excludedLuceedStatuses = [])
+    {
+        $query = Order::query()
+                      ->select('order_id', 'luceed_uid', 'email', 'payment_code', 'order_status_id', 'date_added')
+                      ->where('order_status_id', '!=', 0)
+                      ->whereNotNull('luceed_uid')
+                      ->where('luceed_uid', '!=', '');
+
+        if ($legacy) {
+            $query->where('date_added', '<', $cutoff->toDateTimeString());
+
+            if ($excludedLuceedStatuses) {
+                $excludedOrderStatusIds = $this->getOrderStatusIdsByLuceedStatuses($excludedLuceedStatuses);
+
+                if ($excludedOrderStatusIds) {
+                    $query->whereNotIn('order_status_id', $excludedOrderStatusIds);
+                }
+            }
+        } else {
+            $query->where('date_added', '>=', $cutoff->toDateTimeString());
+        }
+
+        if ($cursor > 0) {
+            $query->where('order_id', '<', $cursor);
+        }
+
+        return $query->orderByDesc('order_id')
+                     ->limit($limit)
+                     ->get();
+    }
+
+
+    /**
+     * @param Carbon $cutoff
+     * @param array  $excludedLuceedStatuses
+     *
+     * @return Carbon|null
+     */
+    private function getLegacyOldestOrderDate(Carbon $cutoff, array $excludedLuceedStatuses = [])
+    {
+        $query = Order::query()
+                      ->where('order_status_id', '!=', 0)
+                      ->whereNotNull('luceed_uid')
+                      ->where('luceed_uid', '!=', '')
+                      ->where('date_added', '<', $cutoff->toDateTimeString());
+
+        if ($excludedLuceedStatuses) {
+            $excludedOrderStatusIds = $this->getOrderStatusIdsByLuceedStatuses($excludedLuceedStatuses);
+
+            if ($excludedOrderStatusIds) {
+                $query->whereNotIn('order_status_id', $excludedOrderStatusIds);
+            }
+        }
+
+        $oldestDate = $query->min('date_added');
+
+        return $oldestDate ? Carbon::make($oldestDate) : null;
+    }
+
+
+    /**
+     * @param Carbon $windowStart
+     * @param Carbon $windowEnd
+     * @param array  $excludedLuceedStatuses
+     * @param int    $cursor
+     * @param int    $limit
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function getLegacyOrderStatusWindow(Carbon $windowStart, Carbon $windowEnd, array $excludedLuceedStatuses = [], int $cursor = 0, int $limit = 200)
+    {
+        $query = Order::query()
+                      ->select('order_id', 'luceed_uid', 'email', 'payment_code', 'order_status_id', 'date_added')
+                      ->where('order_status_id', '!=', 0)
+                      ->whereNotNull('luceed_uid')
+                      ->where('luceed_uid', '!=', '')
+                      ->where('date_added', '>=', $windowStart->toDateTimeString())
+                      ->where('date_added', '<', $windowEnd->toDateTimeString())
+                      ->orderByDesc('order_id');
+
+        if ($excludedLuceedStatuses) {
+            $excludedOrderStatusIds = $this->getOrderStatusIdsByLuceedStatuses($excludedLuceedStatuses);
+
+            if ($excludedOrderStatusIds) {
+                $query->whereNotIn('order_status_id', $excludedOrderStatusIds);
+            }
+        }
+
+        if ($cursor > 0) {
+            $query->where('order_id', '<', $cursor);
+        }
+
+        return $query->limit($limit)->get();
+    }
+
+
+    /**
+     * @param array                         $updates
+     * @param \Illuminate\Support\Collection $batch
+     * @param \Illuminate\Support\Collection $statusesById
+     * @param \Illuminate\Support\Collection $statusesByLuceed
+     * @param string                        $statusList
+     * @param string                        $startDate
+     * @param bool                          $b2b
+     * @param bool                          $withMail
+     *
+     * @return array
+     */
+    private function collectOrderStatusUpdates(
+        array $updates,
+        $batch,
+        $statusesById,
+        $statusesByLuceed,
+        string $statusList,
+        string $startDate,
+        bool $b2b = false,
+        bool $withMail = true
+    ): array
+    {
+        return $this->collectOrderStatusUpdatesFromLuceedOrders(
+            $updates,
+            $batch,
+            $statusesById,
+            $statusesByLuceed,
+            $this->getLuceedOrdersByUid($statusList, $startDate, $b2b),
+            $withMail
+        );
+    }
+
+
+    /**
+     * @param string $statusList
+     * @param string $startDate
+     * @param bool   $b2b
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function getLuceedOrdersByUid(string $statusList, string $startDate, bool $b2b)
+    {
+        $response = LuceedOrder::get(
+            $statusList,
+            $startDate,
+            $b2b,
+            self::ORDER_STATUS_REQUEST_TIMEOUT_SECONDS
+        );
+
+        if ( ! is_string($response) || trim($response) === '') {
+            throw new \RuntimeException(
+                'Luceed nije vratio podatke o statusima ' . ($b2b ? 'B2B' : 'B2C') . ' narudžbi.'
+            );
+        }
+
+        $luceedOrders = $this->extractLuceedOrders($response);
+
+        return $luceedOrders->keyBy('nalog_prodaje_uid');
+    }
+
+
+    /**
+     * @param array                          $updates
+     * @param \Illuminate\Support\Collection $batch
+     * @param \Illuminate\Support\Collection $statusesById
+     * @param \Illuminate\Support\Collection $statusesByLuceed
+     * @param \Illuminate\Support\Collection $luceedOrdersByUid
+     * @param bool                           $withMail
+     *
+     * @return array
+     */
+    private function collectOrderStatusUpdatesFromLuceedOrders(
+        array $updates,
+        $batch,
+        $statusesById,
+        $statusesByLuceed,
+        $luceedOrdersByUid,
+        bool $withMail = true
+    ): array
+    {
+        if ($luceedOrdersByUid->isEmpty()) {
+            return $updates;
+        }
+
+        foreach ($batch as $order) {
+            $luceedOrder = $luceedOrdersByUid->get($order->luceed_uid);
+
+            if ( ! $luceedOrder || ! isset($luceedOrder->status)) {
+                continue;
+            }
+
+            $oldStatus = $statusesById->get($order->order_status_id);
+            $newStatus = $statusesByLuceed->get((string) $luceedOrder->status);
+
+            if ( ! $oldStatus || ! $newStatus) {
+                continue;
+            }
+
+            if ((string) $luceedOrder->status === (string) $oldStatus->luceed_status_id) {
+                continue;
+            }
+
+            $update = [
+                'order_id'     => (int) $order->order_id,
+                'oc_status_to' => (int) $newStatus->order_status_id,
+                'email'        => $order->email
+            ];
+
+            if ($withMail) {
+                $update['payment']     = $order->payment_code;
+                $update['status_from'] = (string) $oldStatus->luceed_status_id;
+                $update['status_to']   = (string) $luceedOrder->status;
+                $mailKey               = $this->resolveOrderStatusMail($update);
+
+                if ($mailKey) {
+                    $update['mail'] = $mailKey;
+                }
+            }
+
+            $updates[$order->order_id] = $update;
+        }
+
+        return $updates;
+    }
+
+
+    /**
+     * @param mixed $response
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function extractLuceedOrders($response)
+    {
+        $json = json_decode($response);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \RuntimeException('Luceed je vratio neispravan JSON za statuse narudžbi.');
+        }
+
+        if ( ! isset($json->result[0]) || ! property_exists($json->result[0], 'nalozi_prodaje')) {
+            throw new \RuntimeException('Luceed odgovor za statuse narudžbi nema očekivanu strukturu.');
+        }
+
+        return collect($json->result[0]->nalozi_prodaje)->filter(function($order) {
+            return isset($order->nalog_prodaje_uid);
+        });
+    }
+
+
+    /**
+     * @param array $update
+     *
+     * @return mixed|null
+     */
+    private function resolveOrderStatusMail(array $update)
+    {
+        $items = agconf('mail.' . $update['payment']);
+
+        if ( ! is_array($items)) {
+            return null;
+        }
+
+        foreach ($items as $key => $item) {
+            if ( ! $key || ! isset($item['from'], $item['to'])) {
+                continue;
+            }
+
+            if ($update['status_from'] == $item['from'] && $update['status_to'] == $item['to']) {
+                return $key;
+            }
+        }
+
+        return null;
+    }
+
+
+    /**
+     * @param array $updates
+     * @param bool  $notify
+     *
+     * @return int
+     */
+    private function applyOrderStatusUpdates(array $updates, bool $notify): int
+    {
+        if (empty($updates)) {
+            return 0;
+        }
+
+        $updated = 0;
+        $now     = Carbon::now()->toDateTimeString();
+
+        foreach (array_chunk($updates, $this->getOrderStatusBatchSize()) as $chunk) {
+            $cases         = [];
+            $historyValues = [];
+            $orderIds      = [];
+
+            foreach ($chunk as $item) {
+                $orderId  = (int) $item['order_id'];
+                $statusId = (int) $item['oc_status_to'];
+
+                $orderIds[]      = $orderId;
+                $cases[]         = 'WHEN ' . $orderId . ' THEN ' . $statusId;
+                $historyValues[] = '(' . $orderId . ', ' . $statusId . ', ' . (int) $notify . ", '', '" . $this->db->escape($now) . "')";
+            }
+
+            $this->db->query(
+                "UPDATE `" . DB_PREFIX . "order`
+                 SET order_status_id = CASE order_id " . implode(' ', $cases) . " END,
+                     order_status_changed = '" . $this->db->escape($now) . "',
+                     date_modified = '" . $this->db->escape($now) . "'
+                 WHERE order_id IN (" . implode(',', $orderIds) . ')'
+            );
+
+            $this->db->query(
+                "INSERT INTO `" . DB_PREFIX . "order_history` (order_id, order_status_id, notify, comment, date_added)
+                 VALUES " . implode(',', $historyValues)
+            );
+
+            $updated += count($chunk);
+        }
+
+        return $updated;
     }
 
 
@@ -1577,15 +2634,565 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function checkOrderStatusDuration()
     {
-        $loc = new LOC_Order();
+        try {
+            require_once DIR_SYSTEM . 'library/order_duration_rules.php';
 
-        $updated = $loc->checkStatusDuration();
+            $this->ensureDurationNotificationTables();
+            $activatedAt = $this->getDurationStatusActivationTime();
 
-        foreach ($loc->collection as $order) {
-            $this->sendMail($order);
+            if ($this->shouldRunFullDurationStatusCronSync()) {
+                return $this->output($this->checkAllDurationStatusBatches($activatedAt));
+            }
+
+            $cursor = isset($this->request->get['cursor']) ? (int) $this->request->get['cursor'] : 0;
+
+            return $this->output($this->checkDurationStatusBatch($activatedAt, $cursor));
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_order_duration_sync_error');
+            Log::store($e->getTraceAsString(), 'luceed_order_duration_sync_error');
+
+            return $this->output([
+                'status'  => 300,
+                'message' => 'Greška kod provjere trajanja statusa: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+
+    /**
+     * The first cron run after deployment becomes the activation point. Orders
+     * created before this value are never considered for duration mail.
+     *
+     * @return Carbon
+     */
+    private function getDurationStatusActivationTime(): Carbon
+    {
+        $activatedAt = self::DURATION_MAIL_ACTIVATED_AT;
+
+        $this->db->query(
+            "INSERT IGNORE INTO `" . DB_PREFIX . "order_duration_notification_state`
+                (state_key, state_value, date_modified)
+             VALUES (
+                'activated_at',
+                '" . $this->db->escape($activatedAt) . "',
+                '" . $this->db->escape($activatedAt) . "'
+             )"
+        );
+
+        $query = $this->db->query(
+            "SELECT state_value
+             FROM `" . DB_PREFIX . "order_duration_notification_state`
+             WHERE state_key = 'activated_at'
+             LIMIT 1"
+        );
+
+        if ( ! $query->num_rows || ! $query->row['state_value']) {
+            throw new \RuntimeException('Nije moguće odrediti datum aktivacije vremenskih mailova.');
         }
 
-        return $this->response($updated, 'orders');
+        $storedActivation = Carbon::make($query->row['state_value']);
+        $minimumActivation = Carbon::make(self::DURATION_MAIL_ACTIVATED_AT);
+
+        return $storedActivation->greaterThan($minimumActivation) ? $storedActivation : $minimumActivation;
+    }
+
+
+    /**
+     * @param Carbon $activatedAt
+     * @param int $cursor
+     *
+     * @return array
+     */
+    private function checkDurationStatusBatch(Carbon $activatedAt, int $cursor = 0): array
+    {
+        $this->prepareLongRunningOrderStatusSync();
+
+        $batchSize = $this->getOrderStatusBatchSize();
+        $batch     = $this->getDurationStatusBatch($activatedAt, $cursor, $batchSize);
+
+        if ($batch->isEmpty()) {
+            return [
+                'status'      => 200,
+                'processed'   => 0,
+                'eligible'    => 0,
+                'updated'     => 0,
+                'failed'      => 0,
+                'skipped'     => 0,
+                'done'        => true,
+                'empty'       => ($cursor === 0),
+                'next_cursor' => 0
+            ];
+        }
+
+        $notifications = $this->collectDurationStatusNotifications($batch);
+        $sent          = 0;
+        $failed        = 0;
+        $skipped       = 0;
+
+        foreach ($notifications as $notification) {
+            $result = $this->sendDurationStatusNotification($notification);
+
+            if ($result === 'sent') {
+                $sent++;
+            } elseif ($result === 'failed') {
+                $failed++;
+            } else {
+                $skipped++;
+            }
+        }
+
+        return [
+            'status'      => 200,
+            'processed'   => $batch->count(),
+            'eligible'    => count($notifications),
+            'updated'     => $sent,
+            'failed'      => $failed,
+            'skipped'     => $skipped,
+            'done'        => ($batch->count() < $batchSize),
+            'empty'       => false,
+            'next_cursor' => ($batch->count() < $batchSize) ? 0 : (int) $batch->last()->order_id
+        ];
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function shouldRunFullDurationStatusCronSync(): bool
+    {
+        if (isset($this->request->get['cron']) && (int) $this->request->get['cron'] === 1) {
+            return true;
+        }
+
+        if (isset($this->request->get['user_token']) && $this->request->get['user_token']) {
+            return false;
+        }
+
+        return ! isset($this->request->get['cursor']) || (int) $this->request->get['cursor'] <= 0;
+    }
+
+
+    /**
+     * @param Carbon $activatedAt
+     *
+     * @return array
+     */
+    private function checkAllDurationStatusBatches(Carbon $activatedAt): array
+    {
+        $processed = 0;
+        $eligible  = 0;
+        $sent      = 0;
+        $failed    = 0;
+        $skipped   = 0;
+        $cursor    = 0;
+        $empty     = true;
+
+        do {
+            $result = $this->checkDurationStatusBatch($activatedAt, $cursor);
+
+            if ((int) $result['status'] !== 200) {
+                return $result;
+            }
+
+            $processed += isset($result['processed']) ? (int) $result['processed'] : 0;
+            $eligible  += isset($result['eligible']) ? (int) $result['eligible'] : 0;
+            $sent      += isset($result['updated']) ? (int) $result['updated'] : 0;
+            $failed    += isset($result['failed']) ? (int) $result['failed'] : 0;
+            $skipped   += isset($result['skipped']) ? (int) $result['skipped'] : 0;
+            $empty      = $empty && ! empty($result['empty']);
+
+            if ( ! empty($result['done'])) {
+                return [
+                    'status'      => 200,
+                    'processed'   => $processed,
+                    'eligible'    => $eligible,
+                    'updated'     => $sent,
+                    'failed'      => $failed,
+                    'skipped'     => $skipped,
+                    'done'        => true,
+                    'empty'       => $empty,
+                    'next_cursor' => 0
+                ];
+            }
+
+            $nextCursor = isset($result['next_cursor']) ? (int) $result['next_cursor'] : 0;
+
+            if ($nextCursor <= 0 || $nextCursor === $cursor) {
+                return [
+                    'status'      => 300,
+                    'processed'   => $processed,
+                    'eligible'    => $eligible,
+                    'updated'     => $sent,
+                    'failed'      => $failed,
+                    'skipped'     => $skipped,
+                    'done'        => false,
+                    'empty'       => $empty,
+                    'next_cursor' => $nextCursor,
+                    'message'     => 'Cron provjera vremenskih mailova je prekinuta zbog neispravnog kursora.'
+                ];
+            }
+
+            $cursor = $nextCursor;
+        } while (true);
+    }
+
+
+    /**
+     * @param Carbon $activatedAt
+     * @param int $cursor
+     * @param int $limit
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    private function getDurationStatusBatch(Carbon $activatedAt, int $cursor, int $limit)
+    {
+        $bounds = $this->getDurationThresholdBounds();
+
+        if ($bounds['min'] <= 0 || $bounds['max'] <= 0) {
+            return collect();
+        }
+
+        $now        = Carbon::now();
+        $oldestTime = $now->copy()->subHours($bounds['max'] + OrderDurationRules::DELIVERY_WINDOW_HOURS);
+        $newestTime = $now->copy()->subHours($bounds['min']);
+
+        $query = Order::query()
+                      ->select('order_id', 'email', 'payment_code', 'order_status_id', 'order_status_changed', 'date_added')
+                      ->where('order_status_id', '!=', 0)
+                      ->whereNotNull('order_status_changed')
+                      ->where('date_added', '>=', $activatedAt->toDateTimeString())
+                      ->where('order_status_changed', '>=', $oldestTime->toDateTimeString())
+                      ->where('order_status_changed', '<=', $newestTime->toDateTimeString())
+                      ->where('email', '!=', '');
+
+        if ($cursor > 0) {
+            $query->where('order_id', '<', $cursor);
+        }
+
+        return $query->orderByDesc('order_id')
+                     ->limit($limit)
+                     ->get();
+    }
+
+
+    /**
+     * @param \Illuminate\Support\Collection $batch
+     *
+     * @return array
+     */
+    private function collectDurationStatusNotifications($batch): array
+    {
+        $notifications = [];
+        $statuses      = OrderStatus::query()->where('luceed_status_id', '!=', '')->get()->keyBy('order_status_id');
+        $configuration = $this->getDurationMailConfiguration();
+        $now           = Carbon::now();
+
+        foreach ($batch as $order) {
+            $status = $statuses->get($order->order_status_id);
+
+            if ( ! $status || ! $order->order_status_changed || ! isset($configuration[$order->payment_code])) {
+                continue;
+            }
+
+            $statusCode = (string) $status->luceed_status_id;
+
+            if ( ! isset($configuration[$order->payment_code][$statusCode])) {
+                continue;
+            }
+
+            $changedAt = Carbon::make($order->order_status_changed);
+
+            foreach ($configuration[$order->payment_code][$statusCode] as $thresholdHours => $mailKey) {
+                $thresholdHours = (int) $thresholdHours;
+
+                if ( ! $mailKey || ! OrderDurationRules::isDue($changedAt, $now, $thresholdHours)) {
+                    continue;
+                }
+
+                $notifications[] = [
+                    'order_id'             => (int) $order->order_id,
+                    'order_status_id'      => (int) $order->order_status_id,
+                    'order_status_changed' => $changedAt->toDateTimeString(),
+                    'payment_code'         => (string) $order->payment_code,
+                    'threshold_hours'      => $thresholdHours,
+                    'email'                => $order->email,
+                    'mail'                 => $mailKey
+                ];
+            }
+        }
+
+        return $notifications;
+    }
+
+
+    /**
+     * @return array
+     */
+    private function getDurationMailConfiguration(): array
+    {
+        $mailConfiguration = agconf('mail');
+        $durationRules     = [];
+
+        if ( ! is_array($mailConfiguration)) {
+            return $durationRules;
+        }
+
+        foreach ($mailConfiguration as $paymentCode => $items) {
+            if ( ! is_array($items) || ! isset($items[0]) || ! is_array($items[0])) {
+                continue;
+            }
+
+            $durationRules[$paymentCode] = $items[0];
+        }
+
+        return $durationRules;
+    }
+
+
+    /**
+     * @return array
+     */
+    private function getDurationThresholdBounds(): array
+    {
+        $minimum = null;
+        $maximum = null;
+
+        foreach ($this->getDurationMailConfiguration() as $statuses) {
+            foreach ($statuses as $thresholds) {
+                if ( ! is_array($thresholds)) {
+                    continue;
+                }
+
+                foreach ($thresholds as $hours => $mailKey) {
+                    $hours = (int) $hours;
+
+                    if ($hours <= 0 || ! $mailKey) {
+                        continue;
+                    }
+
+                    $minimum = $minimum === null ? $hours : min($minimum, $hours);
+                    $maximum = $maximum === null ? $hours : max($maximum, $hours);
+                }
+            }
+        }
+
+        return [
+            'min' => $minimum ?: 0,
+            'max' => $maximum ?: 0
+        ];
+    }
+
+
+    /**
+     * @param array $notification
+     *
+     * @return string
+     */
+    private function sendDurationStatusNotification(array $notification): string
+    {
+        $notificationId = $this->reserveDurationStatusNotification($notification);
+
+        if ( ! $notificationId) {
+            return 'skipped';
+        }
+
+        $now       = Carbon::now()->toDateTimeString();
+        $staleTime = Carbon::now()->subMinutes(30)->toDateTimeString();
+
+        $this->db->query(
+            "UPDATE `" . DB_PREFIX . "order_duration_notification`
+             SET status = 'processing',
+                 attempts = attempts + 1,
+                 mail_id = '" . $this->db->escape((string) $notification['mail']) . "',
+                 last_error = NULL,
+                 date_modified = '" . $this->db->escape($now) . "'
+             WHERE order_duration_notification_id = " . (int) $notificationId . "
+               AND (
+                   status IN ('pending', 'failed')
+                   OR (status = 'processing' AND date_modified < '" . $this->db->escape($staleTime) . "')
+               )"
+        );
+
+        if ($this->db->countAffected() !== 1) {
+            return 'skipped';
+        }
+
+        if ( ! $this->isDurationNotificationStillCurrent($notification)) {
+            $this->markDurationNotificationSkipped($notificationId, 'Status narudžbe promijenjen je prije slanja.');
+
+            return 'skipped';
+        }
+
+        try {
+            $this->sendMail($notification);
+        } catch (\Throwable $e) {
+            $this->markDurationNotificationFailed($notificationId, $e->getMessage());
+            Log::store(
+                'Order ' . (int) $notification['order_id'] . ', mail ' . (string) $notification['mail'] . ': ' . $e->getMessage(),
+                'luceed_order_duration_mail_error'
+            );
+
+            return 'failed';
+        }
+
+        $this->db->query(
+            "UPDATE `" . DB_PREFIX . "order_duration_notification`
+             SET status = 'sent',
+                 last_error = NULL,
+                 date_sent = '" . $this->db->escape($now) . "',
+                 date_modified = '" . $this->db->escape($now) . "'
+             WHERE order_duration_notification_id = " . (int) $notificationId
+        );
+
+        return 'sent';
+    }
+
+
+    /**
+     * @param array $notification
+     *
+     * @return int
+     */
+    private function reserveDurationStatusNotification(array $notification): int
+    {
+        $now                  = Carbon::now()->toDateTimeString();
+        $orderStatusChanged   = $this->db->escape($notification['order_status_changed']);
+        $paymentCode          = $this->db->escape($notification['payment_code']);
+        $mailId               = $this->db->escape((string) $notification['mail']);
+
+        $this->db->query(
+            "INSERT IGNORE INTO `" . DB_PREFIX . "order_duration_notification`
+                (order_id, order_status_id, order_status_changed, payment_code, threshold_hours, mail_id, status, attempts, last_error, date_added, date_modified, date_sent)
+             VALUES (
+                " . (int) $notification['order_id'] . ",
+                " . (int) $notification['order_status_id'] . ",
+                '" . $orderStatusChanged . "',
+                '" . $paymentCode . "',
+                " . (int) $notification['threshold_hours'] . ",
+                '" . $mailId . "',
+                'pending',
+                0,
+                NULL,
+                '" . $this->db->escape($now) . "',
+                '" . $this->db->escape($now) . "',
+                NULL
+             )"
+        );
+
+        $query = $this->db->query(
+            "SELECT order_duration_notification_id
+             FROM `" . DB_PREFIX . "order_duration_notification`
+             WHERE order_id = " . (int) $notification['order_id'] . "
+               AND order_status_id = " . (int) $notification['order_status_id'] . "
+               AND order_status_changed = '" . $orderStatusChanged . "'
+               AND threshold_hours = " . (int) $notification['threshold_hours'] . "
+             LIMIT 1"
+        );
+
+        return $query->num_rows ? (int) $query->row['order_duration_notification_id'] : 0;
+    }
+
+
+    /**
+     * @param array $notification
+     *
+     * @return bool
+     */
+    private function isDurationNotificationStillCurrent(array $notification): bool
+    {
+        $query = $this->db->query(
+            "SELECT order_status_id, order_status_changed
+             FROM `" . DB_PREFIX . "order`
+             WHERE order_id = " . (int) $notification['order_id'] . "
+             LIMIT 1"
+        );
+
+        if ( ! $query->num_rows || ! $query->row['order_status_changed']) {
+            return false;
+        }
+
+        $currentChangedAt = Carbon::make($query->row['order_status_changed'])->toDateTimeString();
+
+        return (int) $query->row['order_status_id'] === (int) $notification['order_status_id']
+            && $currentChangedAt === $notification['order_status_changed'];
+    }
+
+
+    /**
+     * @param int    $notificationId
+     * @param string $message
+     *
+     * @return void
+     */
+    private function markDurationNotificationFailed(int $notificationId, string $message): void
+    {
+        $now = Carbon::now()->toDateTimeString();
+
+        $this->db->query(
+            "UPDATE `" . DB_PREFIX . "order_duration_notification`
+             SET status = 'failed',
+                 last_error = '" . $this->db->escape(substr($message, 0, 2000)) . "',
+                 date_modified = '" . $this->db->escape($now) . "'
+             WHERE order_duration_notification_id = " . $notificationId
+        );
+    }
+
+
+    /**
+     * @param int    $notificationId
+     * @param string $message
+     *
+     * @return void
+     */
+    private function markDurationNotificationSkipped(int $notificationId, string $message): void
+    {
+        $now = Carbon::now()->toDateTimeString();
+
+        $this->db->query(
+            "UPDATE `" . DB_PREFIX . "order_duration_notification`
+             SET status = 'skipped',
+                 last_error = '" . $this->db->escape(substr($message, 0, 2000)) . "',
+                 date_modified = '" . $this->db->escape($now) . "'
+             WHERE order_duration_notification_id = " . $notificationId
+        );
+    }
+
+
+    /**
+     * @return void
+     */
+    private function ensureDurationNotificationTables(): void
+    {
+        $this->db->query(
+            "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "order_duration_notification` (
+                `order_duration_notification_id` INT(11) NOT NULL AUTO_INCREMENT,
+                `order_id` INT(11) NOT NULL,
+                `order_status_id` INT(11) NOT NULL,
+                `order_status_changed` DATETIME NOT NULL,
+                `payment_code` VARCHAR(128) NOT NULL,
+                `threshold_hours` SMALLINT(5) UNSIGNED NOT NULL,
+                `mail_id` VARCHAR(32) NOT NULL,
+                `status` VARCHAR(16) NOT NULL DEFAULT 'pending',
+                `attempts` SMALLINT(5) UNSIGNED NOT NULL DEFAULT 0,
+                `last_error` TEXT NULL,
+                `date_added` DATETIME NOT NULL,
+                `date_modified` DATETIME NOT NULL,
+                `date_sent` DATETIME NULL,
+                PRIMARY KEY (`order_duration_notification_id`),
+                UNIQUE KEY `uk_order_duration_notification` (`order_id`, `order_status_id`, `order_status_changed`, `threshold_hours`),
+                KEY `idx_duration_notification_status` (`status`, `date_modified`),
+                KEY `idx_duration_notification_order` (`order_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8"
+        );
+
+        $this->db->query(
+            "CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "order_duration_notification_state` (
+                `state_key` VARCHAR(64) NOT NULL,
+                `state_value` VARCHAR(255) NOT NULL,
+                `date_modified` DATETIME NOT NULL,
+                PRIMARY KEY (`state_key`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8"
+        );
     }
     
     
@@ -1610,6 +3217,37 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
 
     /**
+     * Dedicated Luceed availability check for external cron services.
+     *
+     * @return mixed
+     */
+    public function monitorAvailability()
+    {
+        if ( ! $this->validateMonitorAvailabilityToken()) {
+            return $this->output([
+                'status'  => 403,
+                'message' => 'Invalid cron token.'
+            ]);
+        }
+
+        $service = new \Agmedia\Luceed\Connection\LuceedService();
+        $result  = $service->probeAvailability();
+
+        return $this->output([
+            'status'        => 200,
+            'message'       => 'Luceed availability probe executed.',
+            'service_status'=> $result['status'],
+            'notification'  => $result['notification'] ?? null,
+            'checked_at'    => $result['checked_at'] ?? null,
+            'down_since'    => $result['down_since'] ?? null,
+            'http_code'     => $result['http_code'] ?? null,
+            'error'         => $result['error'] ?? '',
+            'url'           => $result['url'] ?? ''
+        ]);
+    }
+
+
+    /**
      * @return bool
      */
     protected function validateRole()
@@ -1619,6 +3257,71 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         return ! $this->error;
+    }
+
+
+    /**
+     * Hard-stop stock syncs while Luceed is unavailable so existing quantities stay untouched.
+     *
+     * @param string $context
+     *
+     * @return array|null
+     */
+    private function abortStockSyncWhenLuceedUnavailable(string $context): ?array
+    {
+        $probe = (new \Agmedia\Luceed\Connection\LuceedService())->probeAvailability();
+
+        if (($probe['status'] ?? 'down') === 'up') {
+            return null;
+        }
+
+        Log::store([
+            'context'    => $context,
+            'checked_at' => $probe['checked_at'] ?? null,
+            'down_since' => $probe['down_since'] ?? null,
+            'http_code'  => $probe['http_code'] ?? null,
+            'error'      => $probe['error'] ?? null,
+        ], 'luceed_stock_sync_skipped');
+
+        return [
+            'status'  => 300,
+            'message' => 'Luceed nije dostupan. Sinkronizacija zaliha je preskočena kako postojeće količine ne bi bile promijenjene.',
+            'details' => [
+                'checked_at' => $probe['checked_at'] ?? null,
+                'down_since' => $probe['down_since'] ?? null,
+                'http_code'  => $probe['http_code'] ?? null,
+                'error'      => $probe['error'] ?? null,
+            ],
+        ];
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function validateMonitorAvailabilityToken(): bool
+    {
+        $token = isset($this->request->get['cron_token']) ? (string) $this->request->get['cron_token'] : '';
+
+        if ( ! $token) {
+            return false;
+        }
+
+        return hash_equals($this->resolveMonitorAvailabilityToken(), $token);
+    }
+
+
+    /**
+     * @return string
+     */
+    private function resolveMonitorAvailabilityToken(): string
+    {
+        return hash('sha256', implode('|', [
+            (string) agconf('service.base_url'),
+            (string) agconf('service.username'),
+            (string) agconf('service.password'),
+            'luceed-health-monitor'
+        ]));
     }
 
 
@@ -1756,6 +3459,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $mail->smtp_port     = $this->config->get('config_mail_smtp_port');
         $mail->smtp_timeout  = $this->config->get('config_mail_smtp_timeout');
         $mail->setTo('z-el.tomic@chipoteka.hr');
+        $mail->addBCC('z-el.duric@chipoteka.hr');
         $mail->setFrom($this->config->get('config_email'));
         $mail->setSender(html_entity_decode($this->config->get('config_name'), ENT_QUOTES, 'UTF-8'));
         $mail->setSubject('Proizvodi za reviziju... ' . Carbon::now()->format('d.m.Y'));
@@ -1782,6 +3486,164 @@ class ControllerExtensionModuleLuceedSync extends Controller
         $data['product_reward']   = $this->model_catalog_product->getProductRewards($product['product_id']);
 
         return $data;
+    }
+
+
+    /**
+     * @return array
+     */
+    private function refreshLuceedProductsCache(bool $reconcile = true): array
+    {
+        $_loc = new LOC_Product(LuceedProduct::all());
+        $result = $_loc->populateLuceedData();
+        $this->snapshot_skipped_products = (int) ($result['skipped_products'] ?? 0);
+        if ($reconcile) {
+            $result['activation'] = $this->reconcileProductStatuses();
+        }
+
+        return $result;
+    }
+
+
+    /**
+     * Refresh publication rules automatically after deployment and daily. A
+     * product-feed failure must not prevent an independent valid stock update.
+     */
+    private function refreshProductSnapshotForStock(): ?string
+    {
+        try {
+            if ((new LOC_ProductStatus())->needsSnapshotRefresh()) {
+                $this->refreshLuceedProductsCache(false);
+            }
+            return null;
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_product_sync_error');
+            $detail = $e instanceof \UnexpectedValueException ? ' Razlog: ' . $e->getMessage() : '';
+            return 'Luceed popis artikala nije obnovljen. Provjera aktivacije koristi samo prethodne podatke koji nisu stariji od 48 sati.' . $detail;
+        }
+    }
+
+
+    private function reconcileProductStatuses(): array
+    {
+        $result = (new LOC_ProductStatus())->reconcile();
+        $this->cache->delete('product');
+        $this->cache->delete('pqe.products');
+
+        return $result;
+    }
+
+
+    private function stockSyncResponse(int $updated, ?string $snapshot_warning)
+    {
+        $this->cache->delete('product');
+        $this->cache->delete('pqe.products');
+
+        try {
+            $activation = $this->reconcileProductStatuses();
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_product_status_error');
+            $this->addServiceUnavailableHeader();
+            return $this->output([
+                'status' => 503,
+                'message' => 'Zalihe su ažurirane, ali provjera aktivacije nije uspjela. Provjera će se ponoviti sljedećim cronom.'
+            ]);
+        }
+
+        $this->load->language('extension/module/luceed_sync');
+        $failed = !$updated || $snapshot_warning !== null || !empty($activation['skipped']);
+
+        if ($failed) {
+            $this->addServiceUnavailableHeader();
+        }
+
+        return $this->output([
+            'status' => $failed ? 503 : 200,
+            'message' => ($updated ? $this->language->get('text_success_update_stock') : $this->language->get('text_warning_update_stock'))
+                . ' Aktivirano: ' . $activation['activated'] . ', deaktivirano: ' . $activation['deactivated'] . '.'
+                . ($this->snapshot_skipped_products > 0 ? ' Zbog nepotpunih podataka odgođeno je artikala: ' . $this->snapshot_skipped_products . '. Ostali su obrađeni.' : '')
+                . ($snapshot_warning ? ' ' . $snapshot_warning : '')
+                . (!empty($activation['skipped']) ? ' Aktivacija je preskočena jer nema svježeg provjerenog popisa artikala.' : ''),
+            'activation' => $activation,
+            'snapshot_skipped_products' => $this->snapshot_skipped_products
+        ]);
+    }
+
+
+    private function runProductSync(callable $callback)
+    {
+        if (!$this->acquireLuceedProductSyncLock()) {
+            return $this->output(['status' => 409, 'message' => 'Sinkronizacija artikala ili zaliha je već u tijeku.']);
+        }
+
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
+
+        try {
+            return $callback();
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_product_sync_error');
+            $this->addServiceUnavailableHeader();
+            return $this->output(['status' => 503, 'message' => 'Sinkronizacija artikala nije uspjela. Preostali artikli ostaju za sljedeći pokušaj.']);
+        } finally {
+            $this->releaseLuceedProductSyncLock();
+        }
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function acquireLuceedProductSyncLock(): bool
+    {
+        $result = $this->db->query("SELECT GET_LOCK('" . self::LUCEED_PRODUCT_SYNC_LOCK . "', 0) AS acquired");
+
+        return isset($result->row['acquired']) && (int) $result->row['acquired'] === 1;
+    }
+
+
+    /**
+     * @return void
+     */
+    private function releaseLuceedProductSyncLock(): void
+    {
+        try {
+            $this->db->query("SELECT RELEASE_LOCK('" . self::LUCEED_PRODUCT_SYNC_LOCK . "')");
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_product_sync_lock_release_error');
+        }
+    }
+
+
+    /**
+     * Prevent overlapping automatic and manually triggered stock updates.
+     */
+    private function acquireLuceedStockSyncLock(): bool
+    {
+        $result = $this->db->query("SELECT GET_LOCK('" . self::LUCEED_STOCK_SYNC_LOCK . "', 0) AS acquired");
+
+        return isset($result->row['acquired']) && (int)$result->row['acquired'] === 1;
+    }
+
+
+    private function releaseLuceedStockSyncLock(): void
+    {
+        try {
+            $this->db->query("SELECT RELEASE_LOCK('" . self::LUCEED_STOCK_SYNC_LOCK . "')");
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_stock_sync_lock_release_error');
+        }
+    }
+
+
+    private function addServiceUnavailableHeader(): void
+    {
+        $protocol = isset($this->request->server['SERVER_PROTOCOL'])
+            ? $this->request->server['SERVER_PROTOCOL']
+            : 'HTTP/1.1';
+
+        $this->response->addHeader($protocol . ' 503 Service Unavailable');
     }
 
 

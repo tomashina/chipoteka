@@ -9,6 +9,8 @@ class ControllerProductCategory extends Controller {
 
 		$this->load->model('tool/image');
 
+		$this->load->model('catalog/structured_data');
+
         if ($this->customer->isLogged()) {
             $data['groupId'] = $this->customer->getGroupId();
 
@@ -17,6 +19,7 @@ class ControllerProductCategory extends Controller {
         }
 
         $data['shopping_cart'] = $this->url->link('checkout/cart');
+        $data['config_url'] = $this->config->get('config_url');
 
 		if (isset($this->request->get['filter'])) {
 			$filter = $this->request->get['filter'];
@@ -48,6 +51,24 @@ class ControllerProductCategory extends Controller {
 			$limit = $this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit');
 		}
 
+		if (isset($this->request->get['action_category_id'])) {
+			$action_category_id = (int)$this->request->get['action_category_id'];
+		} else {
+			$action_category_id = 0;
+		}
+
+		$action_filter_enabled = !empty($this->request->get['action_filter']) || $action_category_id > 0;
+		$action_parent_id = 308;
+		$action_url = '';
+
+		if ($action_filter_enabled) {
+			$action_url .= '&action_filter=1';
+		}
+
+		if ($action_category_id) {
+			$action_url .= '&action_category_id=' . $action_category_id;
+		}
+
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
@@ -69,6 +90,8 @@ class ControllerProductCategory extends Controller {
 			if (isset($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
+
+			$url .= $action_url;
 
 			$path = '';
 
@@ -120,6 +143,8 @@ class ControllerProductCategory extends Controller {
 			}
 
 			$data['description'] = html_entity_decode($category_info['description'], ENT_QUOTES, 'UTF-8');
+			$data['category_faq_heading'] = $this->language->get('text_category_faq_heading');
+			$data['category_faqs'] = $this->model_catalog_category->getCategoryFaqs($category_id);
 			$data['compare'] = $this->url->link('product/compare');
 
 			$url = '';
@@ -140,14 +165,22 @@ class ControllerProductCategory extends Controller {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
 
+			$url .= $action_url;
+
 			$data['categories'] = array();
+			$data['action_filter_enabled'] = $action_filter_enabled;
+			$data['action_selected_category_id'] = $action_category_id;
+			$data['action_filter_options'] = $this->model_catalog_category->getPromotionFilterOptions($category_id, $action_parent_id);
 
 			$results = $this->model_catalog_category->getCategories($category_id);
 
 			foreach ($results as $result) {
 				$filter_data = array(
 					'filter_category_id'  => $result['category_id'],
-					'filter_sub_category' => true
+					'filter_sub_category' => true,
+					'filter_action_only' => $action_filter_enabled,
+					'filter_action_category_id' => $action_category_id,
+					'filter_action_parent_id' => $action_parent_id
 				);
 
 				$data['categories'][] = array(
@@ -157,11 +190,15 @@ class ControllerProductCategory extends Controller {
 			}
 
 			$data['products'] = array();
+			$structured_products = array();
 
 			$filter_data = array(
 				'filter_category_id' => $category_id,
                 'filter_sub_category' => true,
                 'filter_filter'      => $filter,
+				'filter_action_only' => $action_filter_enabled,
+				'filter_action_category_id' => $action_category_id,
+				'filter_action_parent_id' => $action_parent_id,
 				'sort'               => $sort,
 				'order'              => $order,
 				'start'              => ($page - 1) * $limit,
@@ -261,84 +298,9 @@ class ControllerProductCategory extends Controller {
                     }*/
 				}
 
-                if ( (float)$result['special'] && ($this->config->get('salebadge_status')) ) {
-
-
-                    if ($result['price_last_30'] != '0.0000' && $result['price_last_30'] < $result['price_2']) {
-
-                        if ($this->config->get('salebadge_status') == '2') {
-
-                            $data['sale_percent'] = number_format(((($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.');
-
-                            //provjera postotka ako je veće od 3
-
-                            if($data['sale_percent'] > 3){
-                                $data['razlika_broj'] = ($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax'))) - ($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')));
-
-                                //provjera razlike  veće od 100 kn prikaži cifru inače postotak
-                                if($data['razlika_broj'] > 100){
-                                    $sale_badge = $this->currency->format($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')) -  $this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-                                }
-                                else{
-                                    $data['sale_badge'] = '-' .number_format(((($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.'). '%';
-                                }
-
-                            }
-                            else{
-
-                                $sale_badge = '-' . number_format(((($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_last_30'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
-
-                            }
-
-
-
-
-
-                        } else {
-                            $sale_badge = $this->language->get('basel_text_sale');
-                        }
-
-                    }
-
-                    else{
-
-
-                        if ($this->config->get('salebadge_status') == '2') {
-
-
-                            $data['sale_percent'] = number_format(((($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.');
-
-                            //provjera postotka ako je veće od 3
-
-                            if($data['sale_percent'] > 3){
-                                $data['razlika_broj'] = ($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax'))) - ($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')));
-
-                                //provjera razlike  veće od 100 kn prikaži cifru inače postotak
-                                if($data['razlika_broj'] > 100){
-                                    $data['sale_badge'] = $this->currency->format($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')) -  $this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
-                                }
-                                else{
-                                    $sale_badge = '-' .number_format(((($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.'). '%';
-                                }
-
-                            }
-                            else{
-
-                                $sale_badge = '-' . number_format(((($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))-($this->tax->calculate($result['special'], $result['tax_class_id'], $this->config->get('config_tax'))))/(($this->tax->calculate($result['price_2'], $result['tax_class_id'], $this->config->get('config_tax')))/100)), 0, ',', '.') . '%';
-
-                            }
-
-
-                        } else {
-                            $sale_badge = $this->language->get('basel_text_sale');
-                        }
-
-                    }
-
-                } else {
-                    $sale_badge = false;
-                    $data['sale_percent']='';
-                }
+                $sale_data = $this->model_catalog_product->getSaleBadgeData($result);
+                $sale_badge = $sale_data['sale_badge'];
+                $sale_percent = $sale_data['sale_percent'];
 	
 				if ($this->config->get('config_tax')) {
 					$tax = $this->currency->format($tax_price, $this->session->data['currency']);
@@ -367,8 +329,11 @@ class ControllerProductCategory extends Controller {
                     $pj ='';
                 }
 
+				$structured_products[] = $result;
+
 				$data['products'][] = array(
                     'product_id'   => $result['product_id'],
+                    'is_hit_cijena' => !empty($result['is_hit_cijena']),
                     'thumb'        => $image,
                     'name'         => $result['name'],
                     'price'        => $price,
@@ -379,7 +344,7 @@ class ControllerProductCategory extends Controller {
                     'price_2'      => $price_2,
                     'last_30'      => $last_30,
                     'sale_badge' => $sale_badge,
-                    'sale_percent' => $data['sale_percent'],
+                    'sale_percent' => $sale_percent,
                     'quantity'  => $result['quantity'],
                     'pakiranje' => $result['pakiranje'] ?: 1,
                     'vpc'          => $vpc,
@@ -403,6 +368,8 @@ class ControllerProductCategory extends Controller {
 			if (isset($this->request->get['limit'])) {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
+
+			$url .= $action_url;
 
 			$data['sorts'] = array();
 
@@ -434,6 +401,18 @@ class ControllerProductCategory extends Controller {
 				'text'  => $this->language->get('text_price_desc'),
 				'value' => 'p.price-DESC',
 				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=p.price&order=DESC' . $url)
+			);
+
+			$data['sorts'][] = array(
+				'text'  => $this->language->get('text_sale_percent_asc'),
+				'value' => 'sale_percent-ASC',
+				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=sale_percent&order=ASC' . $url)
+			);
+
+			$data['sorts'][] = array(
+				'text'  => $this->language->get('text_sale_percent_desc'),
+				'value' => 'sale_percent-DESC',
+				'href'  => $this->url->link('product/category', 'path=' . $this->request->get['path'] . '&sort=sale_percent&order=DESC' . $url)
 			);
 
 			if ($this->config->get('config_review_status')) {
@@ -476,6 +455,8 @@ class ControllerProductCategory extends Controller {
 				$url .= '&order=' . $this->request->get['order'];
 			}
 
+			$url .= $action_url;
+
 			$data['limits'] = array();
 
 			$limits = array_unique(array($this->config->get('theme_' . $this->config->get('config_theme') . '_product_limit'), 25, 50, 75, 100));
@@ -508,8 +489,15 @@ class ControllerProductCategory extends Controller {
 				$url .= '&limit=' . $this->request->get['limit'];
 			}
 
+			$url .= $action_url;
 
-            $this->document->addOGMeta('property="og:url"', $this->url->link('product/category', 'path=' . $category_info['category_id'] . ( ($page != 1) ? '&page='. $page : '' ), true) );
+			if ($page == 1) {
+				$canonical_url = $this->url->link('product/category', 'path=' . $category_info['category_id'], true);
+			} else {
+				$canonical_url = $this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page=' . $page, true);
+			}
+
+            $this->document->addOGMeta('property="og:url"', $canonical_url);
 
 			$pagination = new Pagination();
 			$pagination->total = $product_total;
@@ -543,11 +531,7 @@ class ControllerProductCategory extends Controller {
             $data['results'] = $product_total;
 
 			// http://googlewebmastercentral.blogspot.com/2011/09/pagination-with-relnext-and-relprev.html
-			if ($page == 1) {
-			    $this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id']), 'canonical');
-			} else {
-				$this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page='. $page), 'canonical');
-			}
+			$this->document->addLink($canonical_url, 'canonical');
 			
 			if ($page > 1) {
 			    $this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . (($page - 2) ? '&page='. ($page - 1) : '')), 'prev');
@@ -556,6 +540,16 @@ class ControllerProductCategory extends Controller {
 			if ($limit && ceil($product_total / $limit) > $page) {
 			    $this->document->addLink($this->url->link('product/category', 'path=' . $category_info['category_id'] . '&page='. ($page + 1)), 'next');
 			}
+
+			$data['category_json_ld'] = $this->model_catalog_structured_data->buildCategoryCollection(
+				$category_info,
+				$data['breadcrumbs'],
+				$structured_products,
+				$canonical_url,
+				(int)$product_total,
+				(int)(($page - 1) * $limit),
+				$data['category_faqs']
+			);
 
 			$data['sort'] = $sort;
 			$data['order'] = $order;

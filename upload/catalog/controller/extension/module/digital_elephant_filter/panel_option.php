@@ -25,11 +25,25 @@ Class ControllerExtensionModuleDigitalElephantFilterPanelOption extends Controll
     {
         //categories setting
         $section_groups = $this->cache->get('DEF_panel_opt_' . $category_id);
-        if ($this->helperUrl->isAjaxRequest() || !$section_groups || !isset($setting['DEF_settings']['cache']['isset'])) {
+        $urlBase = $this->helperUrl->getUrlData();
+        $hasActionFilter = !empty($urlBase['action_filter']) || !empty($urlBase['action_category_id']);
+
+        if ($this->helperUrl->isAjaxRequest() || $hasActionFilter || !$section_groups || !isset($setting['DEF_settings']['cache']['isset'])) {
             $args = array(
                 'category_id' => $category_id,
                 'filter_sub_category' => true
             );
+
+            if (!empty($urlBase['warehouse'])) {
+                $args['warehouses'] = $urlBase['warehouse'];
+            }
+
+            if ($hasActionFilter) {
+                $args['action_filter_only'] = 1;
+                $args['action_category_id'] = !empty($urlBase['action_category_id']) ? (int)$urlBase['action_category_id'] : 0;
+                $args['action_parent_id'] = 308;
+            }
+
             $options = $this->model_extension_module_digitalElephantFilter->getOptions($setting['DEF_settings'], $args);
 			
 			$options_type_by_setting = '';

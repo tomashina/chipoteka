@@ -66,6 +66,7 @@ class ControllerProductSpecial extends Controller {
 		$data['text_compare'] = sprintf($this->language->get('text_compare'), (isset($this->session->data['compare']) ? count($this->session->data['compare']) : 0));
 
 		$data['compare'] = $this->url->link('product/compare');
+		$data['config_url'] = $this->config->get('config_url');
 
 		$data['products'] = array();
 
@@ -128,6 +129,7 @@ class ControllerProductSpecial extends Controller {
 
 			$data['products'][] = array(
 				'product_id'  => $result['product_id'],
+				'is_hit_cijena' => !empty($result['is_hit_cijena']),
 				'thumb'       => $image,
 				'name'        => $result['name'],
 				'description' => utf8_substr(trim(strip_tags(html_entity_decode($result['description'], ENT_QUOTES, 'UTF-8'))), 0, $this->config->get('theme_' . $this->config->get('config_theme') . '_product_description_length')) . '..',
@@ -135,6 +137,8 @@ class ControllerProductSpecial extends Controller {
                 'price_2'     => $price_2,
                 'last_30'     => $last_30,
 				'special'     => $special,
+                'sale_badge'  => $result['sale_badge'],
+                'sale_percent'=> $result['sale_percent'],
                 'quantity'  => $result['quantity'],
                 'pakiranje' => $result['pakiranje'] ?: 1,
 				'tax'         => $tax,
@@ -180,6 +184,18 @@ class ControllerProductSpecial extends Controller {
 			'text'  => $this->language->get('text_price_desc'),
 			'value' => 'ps.price-DESC',
 			'href'  => $this->url->link('product/special', 'sort=ps.price&order=DESC' . $url)
+		);
+
+		$data['sorts'][] = array(
+			'text'  => $this->language->get('text_sale_percent_asc'),
+			'value' => 'sale_percent-ASC',
+			'href'  => $this->url->link('product/special', 'sort=sale_percent&order=ASC' . $url)
+		);
+
+		$data['sorts'][] = array(
+			'text'  => $this->language->get('text_sale_percent_desc'),
+			'value' => 'sale_percent-DESC',
+			'href'  => $this->url->link('product/special', 'sort=sale_percent&order=DESC' . $url)
 		);
 
 		if ($this->config->get('config_review_status')) {

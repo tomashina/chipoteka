@@ -21,6 +21,10 @@ $_['entry_description']      = 'Opis';
 $_['entry_meta_title'] 	     = 'Meta Tag (oznaka) - naziv';
 $_['entry_meta_keyword'] 	 = 'Meta Tag (oznaka) - ključne riječi';
 $_['entry_meta_description'] = 'Meta Tag (oznaka) - opis';
+$_['entry_category_faq']     = 'FAQ za kategoriju';
+$_['entry_faq_question']     = 'Pitanje';
+$_['entry_faq_answer']       = 'Odgovor';
+$_['entry_faq_sort_order']   = 'Redoslijed';
 $_['entry_keyword']          = 'SEO URL';
 $_['entry_parent']           = 'Nadređena (osnovna)';
 $_['entry_filter']           = 'Filteri';
@@ -37,6 +41,10 @@ $_['help_filter']            = '(Autopopuna)';
 $_['help_keyword']           = 'Nemojte koristiti razmak. Umjesto razmaka koristite - i budite sigurni da je SEO URL globalno jedinstven za cijelu trgovinu/trgovine.';
 $_['help_top']               = 'Prikaži u gornjem izborniku na vrhu. Radi samo za glavne (osnovne) nadređene kategorije.';
 $_['help_column']            = 'Broj stupaca korištenih pri dnu za 3 kategorije. Radi samo za glavne (osnovne) nadređene kategorije.';
+$_['help_category_faq']      = 'FAQ se prikazuje na dnu kategorije, ispod artikala, i koristi se za FAQPage JSON-LD.';
+
+// Button
+$_['button_add_faq']         = 'Dodaj FAQ';
 
 // Error
 $_['error_warning']          = 'Upozorenje: Molim detaljno provjerite gdje ste napravili grešku kod unosa u formu!';

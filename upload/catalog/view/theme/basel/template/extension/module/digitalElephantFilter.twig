@@ -75,7 +75,7 @@
 
 
                             {% if is_show_group_attributes and section_group['group_name'] %}
-                                <div class="filter_element_title">{{ section_group['group_name'] }}</div>
+                                <div class="filter_element_title" style="display: none">{{ section_group['group_name'] }}</div>
                             {% endif %}
 
                             {% for section in section_group['sections'] %}
@@ -84,12 +84,36 @@
                                 {% set visible_values = [] %}
                                 {% if section['values'] %}
                                     {% for v in section['values'] %}
-                                        {# isto pravilo kao u checkbox twig-u: sakrij N #}
-                                        {% if v['is_enable'] and (v['input_value'] is not defined or v['input_value'] != 'N') %}
+                                        {% set raw_value = (v['input_value'] is defined ? v['input_value'] : '')|trim %}
+                                        {% set is_visible = true %}
+
+                                        {# mora biti enable #}
+                                        {% if not v['is_enable'] %}
+                                            {% set is_visible = false %}
+                                        {% endif %}
+
+                                        {# prazno #}
+                                        {% if is_visible and raw_value == '' %}
+                                            {% set is_visible = false %}
+                                        {% endif %}
+
+                                        {# N i Ne #}
+                                        {% if is_visible and (raw_value == 'N' or raw_value == 'Ne') %}
+                                            {% set is_visible = false %}
+                                        {% endif %}
+
+                                        {# nule: 0 / 0,0 / 0,00 / 0.0 / 0.00 #}
+                                        {% set v_norm = raw_value|replace({',': '.'}) %}
+                                        {% if is_visible and (v_norm == '0' or v_norm == '0.0' or v_norm == '0.00' or v_norm == '0.000' or v_norm == '0.0000') %}
+                                            {% set is_visible = false %}
+                                        {% endif %}
+
+                                        {% if is_visible %}
                                             {% set visible_values = visible_values|merge([v]) %}
                                         {% endif %}
                                     {% endfor %}
                                 {% endif %}
+
 
                                 {# renderaj panel samo ako ima bar 1 vidljivu vrijednost #}
                                 {% if section['type'] and visible_values|length > 0 %}
@@ -155,6 +179,14 @@
                     </table>
                 </div>
                     <input type="hidden" name="def_primary" id="def_primary" value="{{ def_primary|default('') }}"/>
+
+                    {% if action_filter_enabled %}
+                        <input type="hidden" name="action_filter" value="1"/>
+                    {% endif %}
+
+                    {% if action_selected_category_id %}
+                        <input type="hidden" name="action_category_id" value="{{ action_selected_category_id }}"/>
+                    {% endif %}
 
                     <input type="hidden" name="ajax_digitalElephantFilter" value="1"/>
                 </div>

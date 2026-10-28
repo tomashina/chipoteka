@@ -1,0 +1,292 @@
+{{ header }}
+{% if faq_json_ld %}
+  <script type="application/ld+json">{{ faq_json_ld|raw }}</script>
+{% endif %}
+
+<main class="offcanvas-enabled">
+  <div class="page-title-overlap pt-4 pe-lg-3">
+    <div class="container-fluid py-2">
+      <div class="pe-lg-4 text-center text-lg-start">
+        <h1 class="category-page-title text-primary" id="page-title">{{ heading_title }}</h1>
+      </div>
+      <div class="mb-3 mb-lg-0">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb flex-lg-nowrap justify-content-center justify-content-lg-start">
+            {% for breadcrumb in breadcrumbs %}
+              <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+            {% endfor %}
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div id="information-faq" class="container-fluid pb-5 mb-2 mb-md-4">
+    {{ content_top }}
+
+    <div class="faq-intro mb-4">
+      <span class="faq-intro-icon" aria-hidden="true"><i class="fal fa-question-circle"></i></span>
+      <p>{{ text_intro }}</p>
+    </div>
+
+    {% if categories %}
+      <div class="row g-4 faq-layout">
+        <aside class="col-lg-3" aria-label="{{ text_categories }}">
+          <nav class="faq-category-navigation faq-card">
+            <h2>{{ text_categories }}</h2>
+            <div class="list-group">
+              {% for category in categories %}
+                <a class="list-group-item list-group-item-action{% if loop.first %} active{% endif %}" href="{{ faq_anchor_url }}#faq-category-{{ category.faq_category_id }}" data-faq-category-target="faq-category-{{ category.faq_category_id }}">
+                  {{ category.name|escape }}
+                </a>
+              {% endfor %}
+            </div>
+          </nav>
+        </aside>
+
+        <div class="col-lg-9">
+          <div class="faq-content faq-card">
+            {% for category in categories %}
+              <section id="faq-category-{{ category.faq_category_id }}" class="faq-category-section{% if not loop.first %} mt-5{% endif %}">
+                <h2>{{ category.name|escape }}</h2>
+                <div class="accordion" id="faq-accordion-{{ category.faq_category_id }}">
+                  {% for item in category.items %}
+                    <div class="accordion-item">
+                      <h3 class="accordion-header" id="faq-heading-{{ item.faq_item_id }}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq-answer-{{ item.faq_item_id }}" aria-expanded="false" aria-controls="faq-answer-{{ item.faq_item_id }}">
+                          {{ item.question|escape }}
+                        </button>
+                      </h3>
+                      <div id="faq-answer-{{ item.faq_item_id }}" class="accordion-collapse collapse" aria-labelledby="faq-heading-{{ item.faq_item_id }}" data-bs-parent="#faq-accordion-{{ category.faq_category_id }}">
+                        <div class="accordion-body faq-answer">{{ item.answer_html|raw }}</div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </section>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <div class="alert alert-secondary" role="alert">{{ text_empty }}</div>
+    {% endif %}
+
+    {{ content_bottom }}
+  </div>
+
+  <style>
+    #information-faq {
+      min-height: 52vh;
+    }
+    #information-faq .faq-intro {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      color: #4f4f4f;
+      background: linear-gradient(90deg, #fff5f5 0%, #ffffff 72%);
+      border: 1px solid #f0dddd;
+      border-left: 4px solid #e31318;
+      border-radius: 12px;
+    }
+    #information-faq .faq-intro p {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.5;
+    }
+    #information-faq .faq-intro-icon {
+      display: inline-flex;
+      flex: 0 0 38px;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      color: #e31318;
+      font-size: 21px;
+      background: #ffffff;
+      border: 1px solid #f1cece;
+      border-radius: 50%;
+    }
+    #information-faq .faq-layout {
+      align-items: flex-start;
+    }
+    #information-faq .faq-card {
+      background: #ffffff;
+      border: 1px solid #e6e6e6;
+      border-radius: 14px;
+      box-shadow: 0 7px 24px rgba(26, 26, 26, 0.06);
+    }
+    #information-faq .faq-category-navigation {
+      position: sticky;
+      top: 24px;
+      padding: 20px;
+    }
+    #information-faq .faq-category-navigation h2 {
+      margin: 0 0 14px;
+      color: #6a6a6a;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    #information-faq .faq-category-navigation .list-group {
+      gap: 8px;
+    }
+    #information-faq .faq-category-navigation .list-group-item {
+      padding: 13px 15px;
+      color: #494949;
+      font-weight: 600;
+      background: #f8f8f8;
+      border: 1px solid #ededed;
+      border-radius: 9px !important;
+    }
+    #information-faq .faq-category-navigation .list-group-item:hover {
+      color: #e31318;
+      background: #fff5f5;
+      border-color: #f1caca;
+    }
+    #information-faq .list-group-item.active {
+      color: #ffffff;
+      background-color: #e31318;
+      border-color: #e31318;
+      box-shadow: 0 7px 16px rgba(227, 19, 24, 0.18);
+    }
+    #information-faq .faq-content {
+      padding: 25px 28px 28px;
+    }
+    #information-faq .faq-category-section {
+      scroll-margin-top: 130px;
+    }
+    #information-faq .faq-category-section > h2 {
+      margin: 0 0 17px;
+      color: #e31318;
+      font-size: 21px;
+      font-weight: 500;
+      line-height: 1.25;
+    }
+    #information-faq .accordion-item {
+      margin-bottom: 11px;
+      overflow: hidden;
+      border: 1px solid #e2e2e2;
+      border-radius: 10px;
+      box-shadow: 0 2px 7px rgba(24, 24, 24, 0.035);
+    }
+    #information-faq .accordion-item:last-child {
+      margin-bottom: 0;
+    }
+    #information-faq .accordion-button {
+      width: 100%;
+      padding: 17px 19px;
+      color: #4a4a4a;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.45;
+      text-align: left;
+      background: #ffffff;
+      border: 0;
+      box-shadow: none;
+    }
+    #information-faq .accordion-button:not(.collapsed) {
+      color: #e31318;
+      background: #fff6f6;
+      box-shadow: inset 0 -1px 0 #f0dddd;
+    }
+    #information-faq .accordion-button:focus {
+      border-color: transparent;
+      box-shadow: 0 0 0 3px rgba(227, 19, 24, 0.1);
+    }
+    #information-faq .faq-answer {
+      padding: 19px;
+      color: #555555;
+      line-height: 1.7;
+    }
+    #information-faq .faq-answer > :first-child {
+      margin-top: 0;
+    }
+    #information-faq .faq-answer > :last-child {
+      margin-bottom: 0;
+    }
+    #information-faq .faq-answer a {
+      color: #d91217;
+      font-weight: 600;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    #information-faq .faq-answer ul,
+    #information-faq .faq-answer ol {
+      margin: 0 0 1rem;
+      padding-left: 1.4rem;
+    }
+    #information-faq .faq-answer blockquote {
+      margin: 1rem 0;
+      padding: .7rem 1rem;
+      background: #f8f8f8;
+      border-left: 3px solid #e31318;
+    }
+    @media (max-width: 991.98px) {
+      #information-faq .faq-category-navigation {
+        position: static;
+      }
+    }
+    @media (max-width: 575.98px) {
+      #information-faq .faq-intro {
+        align-items: flex-start;
+        padding: 14px 16px;
+      }
+      #information-faq .faq-intro p {
+        font-size: 15px;
+      }
+      #information-faq .faq-category-navigation,
+      #information-faq .faq-content {
+        padding: 18px;
+      }
+      #information-faq .faq-category-section > h2 {
+        font-size: 19px;
+      }
+      #information-faq .accordion-button {
+        padding: 15px 16px;
+        font-size: 15px;
+      }
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var links = document.querySelectorAll('#information-faq [data-faq-category-target]');
+
+      links.forEach(function(link) {
+        link.addEventListener('click', function(event) {
+          var target = document.getElementById(link.getAttribute('data-faq-category-target'));
+
+          if (!target) {
+            return;
+          }
+
+          event.preventDefault();
+          links.forEach(function(item) {
+            item.classList.remove('active');
+          });
+
+          link.classList.add('active');
+
+          var pageHeader = document.querySelector('.page-header');
+          var headerOffset = pageHeader ? pageHeader.getBoundingClientRect().height : 0;
+          var targetOffset = Math.max(24, headerOffset + 20);
+
+          if (window.jQuery) {
+            window.jQuery('html, body').stop().animate({
+              scrollTop: window.jQuery(target).offset().top - targetOffset
+            }, 450);
+          } else {
+            window.scrollTo({
+              top: target.getBoundingClientRect().top + window.pageYOffset - targetOffset,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+    });
+  </script>
+
+{{ footer }}

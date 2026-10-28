@@ -31,12 +31,13 @@ function DigitalElephantFilterController() {
     this.config             = DEFConfig;
 
     this.$_GET_string = function() {
-        if (this.url.isFilterParamsInUrl) {
-            var filterParams = this.url.removeEmptyParams(this.getFilterParams());
+        var filterParams = this.url.removeEmptyParams(this.getFilterParams());
+
+        if (filterParams) {
             return '&' + filterParams + this.url.getNativeParams();
-        } else {
-            return this.url.getNativeParams();
         }
+
+        return this.url.getNativeParams();
     };
 
     this.getFilterParams = function() {
@@ -47,7 +48,7 @@ function DigitalElephantFilterController() {
         var $_GET_string = this.$_GET_string();
         $_GET_string = this.url.cutGetParam($_GET_string, 'page');
 
-        this.containerProducts.ajaxGetProducts($_GET_string);
+        return this.containerProducts.ajaxGetProducts($_GET_string);
     };
 
     this.changeLimit = function (linkWithLimit) {
@@ -110,8 +111,10 @@ function DigitalElephantFilterController() {
     };
 
     this.reset = function () {
-        $(this.filterPanel.selectorForm + ' input').removeAttr('checked');
-        $(this.filterPanel.selectorForm + ' select option').removeAttr('selected');
+        $(this.filterPanel.selectorForm + ' input[type="checkbox"], ' + this.filterPanel.selectorForm + ' input[type="radio"]').prop('checked', false);
+        $(this.filterPanel.selectorForm + ' select').each(function () {
+            $(this).prop('selectedIndex', 0).val('');
+        });
 
         this.sliderPrice.setChangePriceMin(this.sliderPrice.getPeakPriceMin());
         this.sliderPrice.setChangePriceMax(this.sliderPrice.getPeakPriceMax());
@@ -122,7 +125,7 @@ function DigitalElephantFilterController() {
         var $_GET_string = this.$_GET_string();
         $_GET_string = this.url.cutGetParam($_GET_string, 'page');
 
-        this.containerProducts.ajaxGetProducts($_GET_string);
+        return this.containerProducts.ajaxGetProducts($_GET_string);
     };
 }
 //ajax get products END

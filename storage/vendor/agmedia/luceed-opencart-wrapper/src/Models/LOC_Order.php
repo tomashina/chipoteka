@@ -160,7 +160,7 @@ class LOC_Order
      *
      * @param array|null $order
      */
-    public function __construct(array $order = null)
+    public function __construct(?array $order = null)
     {
         $this->oc_order = $order;
         $this->service  = new Luceed();
@@ -665,7 +665,7 @@ class LOC_Order
             && $this->pickup !== '';
 
         if (
-            ($this->hasOIB() && $wants_eracun && in_array($this->oc_order['payment_code'], ['wspay', 'cod']))
+            ($this->hasOrderOIB() && $wants_eracun && in_array($this->oc_order['payment_code'], ['wspay', 'cod']))
             || $is_pickup_cash_eracun
         ) {
             $this->order['kupac_zeli_eracun'] = 'D';
@@ -1097,6 +1097,17 @@ class LOC_Order
 
 
     /**
+     * Checkbox "Želim eRačun" je vezan uz OIB, ne nužno uz B2B grupu kupca.
+     *
+     * @return bool
+     */
+    private function hasOrderOIB(): bool
+    {
+        return ! empty($this->oc_order['oib']);
+    }
+
+
+    /**
      * @return string
      */
     private function getStatus()
@@ -1310,8 +1321,14 @@ class LOC_Order
      */
     public function recordError()
     {
-        return Order::query()->where('order_id', $this->oc_order['order_id'])->update([
-            'luceed_uid' => $this->response->error
+        $error = 'LUCEED_SYNC_FAILED';
+
+        if (is_object($this->response) && isset($this->response->error) && $this->response->error) {
+            $error = (string) $this->response->error;
+        }
+
+        return Order::where('order_id', $this->oc_order['order_id'])->update([
+            'luceed_uid' => $error
         ]);
     }
 
@@ -1321,7 +1338,7 @@ class LOC_Order
      *
      * @return string
      */
-    public function collectStatuses(array $statuses = null): string
+    public function collectStatuses(?array $statuses = null): string
     {
         $string = '[';
 
@@ -1921,7 +1938,11 @@ class LOC_Order
      */
     private function checkAddress()
     {
-        if ($this->oc_order['payment_address_1'] == $this->oc_order['shipping_address_1']) {
+        if (
+            $this->oc_order['payment_address_1'] == $this->oc_order['shipping_address_1'] &&
+            $this->oc_order['payment_postcode'] == $this->oc_order['shipping_postcode'] &&
+            $this->oc_order['payment_city'] == $this->oc_order['shipping_city']
+        ) {
             return false;
         }
 
@@ -2006,7 +2027,7 @@ class LOC_Order
      * @param string|null $string
      * @param             $data
      */
-    private function log(string $string = null, $data = null): void
+    private function log(?string $string = null, $data = null): void
     {
         if ($string) {
             Log::store($string, 'proccess_order_' . $this->oc_order['order_id']);
@@ -2016,7 +2037,6 @@ class LOC_Order
             Log::store($data, 'proccess_order_' . $this->oc_order['order_id']);
         }
     }
-
 
     /**
      * @param $string

@@ -1,5 +1,7 @@
 <?php
 class ControllerAccountRegister extends Controller {
+	const GOOGLE_REGISTRATION_TTL = 1800;
+
 	private $error = array();
 
 	public function index() {
@@ -15,16 +17,45 @@ class ControllerAccountRegister extends Controller {
 		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/moment/moment-with-locales.min.js');
 		$this->document->addScript('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.js');
 		$this->document->addStyle('catalog/view/javascript/jquery/datetimepicker/bootstrap-datetimepicker.min.css');
+		$this->document->addStyle('catalog/view/theme/basel/stylesheet/account-login.css?v=2026082501');
+		$this->document->addStyle('catalog/view/theme/basel/stylesheet/account-register.css?v=2026082501');
 
 		$this->load->model('account/customer');
 
+		if (!empty($this->request->get['cancel_google'])) {
+			unset($this->session->data['google_registration']);
+			$this->response->redirect($this->url->link('account/register', '', true));
+		}
+
+		$google_registration = $this->getGoogleRegistration();
+		$is_google_registration = !empty($google_registration);
+
+		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $is_google_registration) {
+			$password = $this->createRandomPassword();
+			$this->request->post['email'] = $google_registration['email'];
+			$this->request->post['password'] = $password;
+			$this->request->post['confirm'] = $password;
+		}
+
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+			if (!isset($this->request->post['grupa_partnera'])) {
+				$this->request->post['grupa_partnera'] = '';
+			}
+
+			if (!isset($this->request->post['partner_uid'])) {
+				$this->request->post['partner_uid'] = '';
+			}
+
 			$customer_id = $this->model_account_customer->addCustomer($this->request->post);
 
 			// Clear any previous login attempts for unregistered accounts.
 			$this->model_account_customer->deleteLoginAttempts($this->request->post['email']);
 
-			$this->customer->login($this->request->post['email'], $this->request->post['password']);
+			$this->customer->login($this->request->post['email'], $this->request->post['password'], $is_google_registration);
+
+			if ($is_google_registration) {
+				unset($this->session->data['google_registration']);
+			}
 
 			unset($this->session->data['guest']);
 
@@ -49,7 +80,10 @@ class ControllerAccountRegister extends Controller {
 		);
 		$data['text_account_already'] = sprintf($this->language->get('text_account_already'), $this->url->link('account/login', '', true));
 
-		if (isset($this->error['warning'])) {
+		if (isset($this->session->data['error'])) {
+			$data['error_warning'] = $this->session->data['error'];
+			unset($this->session->data['error']);
+		} elseif (isset($this->error['warning'])) {
 			$data['error_warning'] = $this->error['warning'];
 		} else {
 			$data['error_warning'] = '';
@@ -98,6 +132,17 @@ class ControllerAccountRegister extends Controller {
 		}
 
 		$data['action'] = $this->url->link('account/register', '', true);
+		$data['google_registration_enabled'] = $this->isGoogleLoginEnabled();
+		$data['google_register'] = $this->url->link('extension/module/google_login', 'flow=register', true);
+		$data['google_registration'] = $is_google_registration;
+		$data['google_cancel'] = $this->url->link('account/register', 'cancel_google=1', true);
+
+		if (isset($this->session->data['success'])) {
+			$data['success'] = $this->session->data['success'];
+			unset($this->session->data['success']);
+		} else {
+			$data['success'] = '';
+		}
 
 		$data['customer_groups'] = array();
 
@@ -121,17 +166,23 @@ class ControllerAccountRegister extends Controller {
 
 		if (isset($this->request->post['firstname'])) {
 			$data['firstname'] = $this->request->post['firstname'];
+		} elseif ($is_google_registration) {
+			$data['firstname'] = $google_registration['firstname'];
 		} else {
 			$data['firstname'] = '';
 		}
 
 		if (isset($this->request->post['lastname'])) {
 			$data['lastname'] = $this->request->post['lastname'];
+		} elseif ($is_google_registration) {
+			$data['lastname'] = $google_registration['lastname'];
 		} else {
 			$data['lastname'] = '';
 		}
 
-		if (isset($this->request->post['email'])) {
+		if ($is_google_registration) {
+			$data['email'] = $google_registration['email'];
+		} elseif (isset($this->request->post['email'])) {
 			$data['email'] = $this->request->post['email'];
 		} else {
 			$data['email'] = '';
@@ -305,6 +356,41 @@ class ControllerAccountRegister extends Controller {
 		}
 		
 		return !$this->error;
+	}
+
+	private function isGoogleLoginEnabled() {
+		return $this->config->get('module_google_login_status')
+			&& trim((string)$this->config->get('module_google_login_client_id')) !== ''
+			&& trim((string)$this->config->get('module_google_login_client_secret')) !== '';
+	}
+
+	private function getGoogleRegistration() {
+		if (!$this->isGoogleLoginEnabled() || empty($this->session->data['google_registration']) || !is_array($this->session->data['google_registration'])) {
+			unset($this->session->data['google_registration']);
+			return array();
+		}
+
+		$registration = $this->session->data['google_registration'];
+
+		if (!isset($registration['email'], $registration['firstname'], $registration['lastname'], $registration['sub'], $registration['created_at'])
+			|| !is_string($registration['email'])
+			|| !filter_var($registration['email'], FILTER_VALIDATE_EMAIL)
+			|| !is_string($registration['firstname'])
+			|| !is_string($registration['lastname'])
+			|| !is_string($registration['sub'])
+			|| $registration['sub'] === ''
+			|| !is_numeric($registration['created_at'])
+			|| (int)$registration['created_at'] < (time() - self::GOOGLE_REGISTRATION_TTL)
+			|| (int)$registration['created_at'] > (time() + 60)) {
+			unset($this->session->data['google_registration']);
+			return array();
+		}
+
+		return $registration;
+	}
+
+	private function createRandomPassword() {
+		return rtrim(strtr(base64_encode(random_bytes(24)), '+/', '-_'), '=');
 	}
 
 	public function customfield() {

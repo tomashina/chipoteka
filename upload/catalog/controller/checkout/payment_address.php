@@ -9,14 +9,32 @@ class ControllerCheckoutPaymentAddress extends Controller {
            $data['address_id'] = $this->customer->getAddressId();
 		}
 
-        if ($this->customer->isLogged()) {
-            $data['groupId'] = $this->customer->getGroupId();
+		if ($this->customer->isLogged()) {
+			$data['groupId'] = $this->customer->getGroupId();
+		} else {
+			$data['groupId'] = '0';
+		}
 
-        } else {
-            $data['groupId'] ='0';
-        }
+		if (isset($this->session->data['payment_address']['firstname']) && trim((string)$this->session->data['payment_address']['firstname']) !== '') {
+			$data['firstname'] = $this->session->data['payment_address']['firstname'];
+		} elseif ($this->customer->isLogged()) {
+			$data['firstname'] = $this->customer->getFirstName();
+		} else {
+			$data['firstname'] = '';
+		}
 
-        $data['cart'] = $this->url->link('checkout/cart', '', true);
+		if (isset($this->session->data['payment_address']['lastname']) && trim((string)$this->session->data['payment_address']['lastname']) !== '') {
+			$data['lastname'] = $this->session->data['payment_address']['lastname'];
+		} elseif ($this->customer->isLogged()) {
+			$data['lastname'] = $this->customer->getLastName();
+		} else {
+			$data['lastname'] = '';
+		}
+
+		$data['email'] = $this->customer->isLogged() ? $this->customer->getEmail() : '';
+		$data['telephone'] = $this->customer->isLogged() ? $this->customer->getTelephone() : '';
+
+		$data['cart'] = $this->url->link('checkout/cart', '', true);
 
 		$this->load->model('account/address');
 

@@ -21,6 +21,10 @@ $_['entry_description']      = 'Description';
 $_['entry_meta_title']       = 'Meta Tag Title';
 $_['entry_meta_keyword']     = 'Meta Tag Keywords';
 $_['entry_meta_description'] = 'Meta Tag Description';
+$_['entry_information_faq']  = 'Information page FAQ';
+$_['entry_faq_question']     = 'Question';
+$_['entry_faq_answer']       = 'Answer';
+$_['entry_faq_sort_order']   = 'Sort Order';
 $_['entry_store']            = 'Stores';
 $_['entry_keyword']          = 'Keyword';
 $_['entry_bottom']           = 'Bottom';
@@ -30,6 +34,10 @@ $_['entry_layout']           = 'Layout Override';
 
 // Help
 $_['help_bottom']            = 'Display in the bottom footer.';
+$_['help_information_faq']   = 'FAQ is shown on the information page and used for FAQPage JSON-LD. If no FAQ rows exist, schema is not shown.';
+
+// Button
+$_['button_add_faq']         = 'Add FAQ';
 
 // Error
 $_['error_warning']          = 'Warning: Please check the form carefully for errors!';

@@ -1,4 +1,7 @@
 {{ header }}
+{% if policy_json_ld %}
+    <script type="application/ld+json">{{ policy_json_ld|raw }}</script>
+{% endif %}
 
 <main class="offcanvas-enabled">
   <!-- Custom page title-->
@@ -29,6 +32,19 @@
 
 
       {{ description }}
+
+      {% if policy_faq_items %}
+        <section class="mt-4">
+          <h2 class="h4 mb-3">{{ policy_faq_heading }}</h2>
+          <dl>
+            {% for item in policy_faq_items %}
+              <dt>{{ item.question }}</dt>
+              <dd>{{ item.answer }}</dd>
+            {% endfor %}
+          </dl>
+        </section>
+      {% endif %}
+
       {{ content_bottom }}
       </div>
 

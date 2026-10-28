@@ -56,6 +56,8 @@ class LOC_ProductSingle
      */
     private $products_for_revision = [];
 
+    private $status_manager;
+
 
     /**
      * LOC_ProductSingle constructor.
@@ -78,15 +80,30 @@ class LOC_ProductSingle
 
 
     /**
+     * @param string|null $uid
+     *
      * @return bool
      */
-    public function hasForUpdate(): bool
+    public function hasForUpdate($uid = null): bool
     {
-        $uid = LuceedProductForUpdate::all()->first();
+        if ( ! $uid) {
+            // An incomplete article remains pending, but has no trusted cache
+            // row until a later valid feed. Continue with other pending articles.
+            $pending = LuceedProductForUpdate::query()
+                ->join('product_luceed AS luceed_snapshot', 'product_luceed_for_update.uid', '=', 'luceed_snapshot.uid')
+                ->select('product_luceed_for_update.uid')
+                ->first();
+
+            if ( ! $pending) {
+                return false;
+            }
+
+            $uid = $pending->uid;
+        }
 
         if ($uid) {
-            $this->product_to_update = Product::where('luceed_uid', $uid->uid)->first();
-            $this->luceed_product = LuceedProduct::query()->where('uid', $uid->uid)->first();
+            $this->product_to_update = Product::where('luceed_uid', $uid)->first();
+            $this->luceed_product = LuceedProduct::query()->where('uid', $uid)->first();
 
             if ($this->product_to_update && $this->luceed_product) {
                 $this->product = $this->resolveLuceedProductData();
@@ -152,17 +169,8 @@ class LOC_ProductSingle
      */
     public function hasForDelete()
     {
-        $luceed = LuceedProduct::pluck('sifra');
-        $existing = Product::pluck('sku');
-
-        $diff = $existing->diff($luceed);
-
-        if ($diff->count()) {
-            $this->product_to_delete = Product::where('sku', $diff->first())->first();
-
-            return true;
-        }
-
+        // Absence from a response is not an ERP instruction to delete an article.
+        // Explicit enabled/webshop flags control visibility through status sync.
         return false;
     }
 
@@ -286,6 +294,19 @@ class LOC_ProductSingle
         $product['product_related']  = $old_product['product_related'];
         $product['product_reward']   = $old_product['product_reward'];
 
+        if (!$this->status_manager) {
+            $this->status_manager = new LOC_ProductStatus();
+        }
+
+        $product['status'] = $this->status_manager->resolveUpdateStatus(
+            (int) $this->product_to_update['product_id'],
+            (int) $this->product_to_update['status'],
+            (int) $product['status'],
+            (int) $this->product_to_update['quantity'],
+            ProductHelper::getActivationMinimum(collect($this->product)->toArray())
+        );
+        $product['_luceed_sync'] = true;
+
         return $product;
     }
 
@@ -315,7 +336,7 @@ class LOC_ProductSingle
         $manufacturer = ProductHelper::getManufacturer($this->product);
         $categories   = ProductHelper::getCategories($this->product);
         $stock_status = $this->product['stanje_kol'] ? agconf('import.default_stock_full') : agconf('import.default_stock_empty');
-        $status       = 1;
+        $status       = ProductHelper::isLuceedProductEligible(collect($this->product)->toArray()) ? 1 : 0;
 
         $description = ProductHelper::getDescription($this->product);
 
@@ -342,6 +363,14 @@ class LOC_ProductSingle
         $images = ProductHelper::getImages($this->product);
         $image_path = isset($images[0]['image']) ? $images[0]['image'] : 'image/placeholder.png';
         unset($images[0]);
+
+        if ($image_path === 'not_valid_image' || $image_path === 'image/placeholder.png') {
+            $status = 0;
+        }
+
+        if (!$this->product_to_update && (float) $this->product['stanje_kol'] < ProductHelper::getActivationMinimum(collect($this->product)->toArray())) {
+            $status = 0;
+        }
 
         $prod = [
             'model'               => $this->product['artikl'],

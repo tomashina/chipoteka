@@ -30,7 +30,7 @@ function DigitalElephantFilterContainerProducts() {
         var filterAction = $(this.filterPanel.selectorForm).attr('action');
 
         var $this = this;
-        $.ajax({
+        return $.ajax({
             url: filterAction + $_GET_string + '&path=' + this.config.categoryPath,
             dataType: 'HTML',
             success: function(html) {

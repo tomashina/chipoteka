@@ -99,7 +99,7 @@ class ModelExtensionFeedBoostSitemap extends Model {
 			$sql .= " LEFT JOIN " . DB_PREFIX . "product p ON (p2s.product_id = p.product_id)";
 		}
 		
-		$sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE p2s.store_id = '" . (int)$data['store_id'] . "' AND pd.language_id = '" . (int)$data['language_id'] . "' AND p.status = '1'";
+		$sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE p2s.store_id = '" . (int)$data['store_id'] . "' AND pd.language_id = '" . (int)$data['language_id'] . "' AND p.status = '1' AND p.date_available <= NOW()";
 		
 		if (!empty($data['filter_category_id'])) {
 			$sql .= " AND p2c.category_id = '" . (int)$data['filter_category_id'] . "'";
@@ -144,7 +144,7 @@ class ModelExtensionFeedBoostSitemap extends Model {
 			$sql .= " LEFT JOIN " . DB_PREFIX . "product p ON (p2s.product_id = p.product_id)";
 		}
 		
-		$sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE p2s.store_id = '" . (int)$data['store_id'] . "' AND pd.language_id = '" . (int)$data['language_id'] . "' AND p.status = '1'";
+		$sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) WHERE p2s.store_id = '" . (int)$data['store_id'] . "' AND pd.language_id = '" . (int)$data['language_id'] . "' AND p.status = '1' AND p.date_available <= NOW()";
 		
 		if (!empty($data['filter_category_id'])) {
 			$sql .= " AND p2c.category_id = '" . (int)$data['filter_category_id'] . "'";
@@ -483,6 +483,14 @@ class ModelExtensionFeedBoostSitemap extends Model {
 		}
 		
 		return $url . 'image/' . $image_new;
+	}
+
+	public function getSitemapImage($filename, $url) {
+		if (!$filename || !is_file(DIR_IMAGE . $filename) || substr(str_replace('\\', '/', realpath(DIR_IMAGE . $filename)), 0, strlen(DIR_IMAGE)) != str_replace('\\', '/', DIR_IMAGE)) {
+			return;
+		}
+
+		return rtrim($url, '/') . '/image/' . str_replace('%2F', '/', rawurlencode($filename));
 	}
 	
 	public function getBlogPosts($data = []) {

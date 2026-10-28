@@ -11,6 +11,8 @@ use Agmedia\Luceed\Connection\LuceedService;
 class Luceed
 {
 
+    private const PRODUCT_LIST_TIMEOUT_SECONDS = 240;
+
     /**
      * @var LuceedService
      */
@@ -158,7 +160,11 @@ class Luceed
      */
     public function getProductsList(array $query = null)
     {
-        return $this->service->get($this->end_points['product_list'] . ($query ?: ''));
+        return $this->service->get(
+            $this->end_points['product_list'] . ($query ?: ''),
+            '',
+            self::PRODUCT_LIST_TIMEOUT_SECONDS
+        );
     }
 
 
@@ -359,14 +365,16 @@ class Luceed
 
     /**
      * @param string $query
+     * @param bool   $b2b
+     * @param int    $timeoutSeconds
      *
      * @return false|mixed
      */
-    public function getOrders(string $query, bool $b2b = false)
+    public function getOrders(string $query, bool $b2b = false, int $timeoutSeconds = 0)
     {
         $this->checkOrderService($b2b);
 
-        return $this->service->get($this->end_points['orders_get'], $query);
+        return $this->service->get($this->end_points['orders_get'], $query, $timeoutSeconds);
     }
 
 

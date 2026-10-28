@@ -48,6 +48,7 @@ class ControllerAccountLogin extends Controller {
 		$this->load->language('account/login');
 
 		$this->document->setTitle($this->language->get('heading_title'));
+		$this->document->addStyle('catalog/view/theme/basel/stylesheet/account-login.css?v=2026082501');
 
 
 
@@ -132,6 +133,14 @@ class ControllerAccountLogin extends Controller {
 		} else {
 			$data['redirect'] = '';
 		}
+
+		$data['google_login_enabled'] = $this->config->get('module_google_login_status')
+			&& trim((string)$this->config->get('module_google_login_client_id')) !== ''
+			&& trim((string)$this->config->get('module_google_login_client_secret')) !== '';
+
+		$google_login_args = $data['redirect'] ? array('redirect' => html_entity_decode($data['redirect'], ENT_QUOTES, 'UTF-8')) : array();
+		$data['google_login'] = $this->url->link('extension/module/google_login', $google_login_args, true);
+		$data['google_register'] = $this->url->link('extension/module/google_login', 'flow=register', true);
 
 		if (isset($this->session->data['success'])) {
 			$data['success'] = $this->session->data['success'];

@@ -5,8 +5,695 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
 //    private $DEF_settings;
     private $storageSort = null;
     private $storageAttribute = null;
+    private $storageWarehouseAvailability = null;
+    private $storageWarehouseProductUids = array();
+    private $storageWarehouseProductIds = array();
+    private $storageWarehouseSnapshot = null;
+    private $storageWarehouseTableAvailable = null;
+    private $storageWarehouseTableAvailableBySelection = array();
 
-    public function getMinMaxPrice($category_id)
+    private function defGetSaleSortReferencePriceSql($price_field = 'p.price')
+    {
+        return "(CASE
+            WHEN p.price_last_30 > 0 AND p.price_2 > 0 AND p.price_last_30 < p.price_2 THEN p.price_last_30
+            WHEN p.price_2 > 0 THEN p.price_2
+            WHEN " . $price_field . " > 0 THEN " . $price_field . "
+            ELSE 0
+        END)";
+    }
+
+    private function defGetSaleSortPrioritySql($special_field = 'special', $price_field = 'p.price')
+    {
+        $reference_price_sql = $this->defGetSaleSortReferencePriceSql($price_field);
+
+        return "(CASE
+            WHEN " . $special_field . " IS NOT NULL
+                AND " . $special_field . " > 0
+                AND " . $reference_price_sql . " > 0
+                AND " . $special_field . " < " . $reference_price_sql . "
+            THEN 1
+            ELSE 0
+        END)";
+    }
+
+    private function defGetSaleSortPercentSql($special_field = 'special', $price_field = 'p.price')
+    {
+        $reference_price_sql = $this->defGetSaleSortReferencePriceSql($price_field);
+
+        return "(CASE
+            WHEN " . $special_field . " IS NOT NULL
+                AND " . $special_field . " > 0
+                AND " . $reference_price_sql . " > 0
+                AND " . $special_field . " < " . $reference_price_sql . "
+            THEN ((" . $reference_price_sql . " - " . $special_field . ") / " . $reference_price_sql . ") * 100
+            ELSE 0
+        END)";
+    }
+
+    private function defBooleanTrueValues()
+    {
+        return array('D', 'Da', 'T', 'True', 'Y', 'Yes', '1');
+    }
+
+    private function defBooleanFalseValues()
+    {
+        return array('N', 'Ne', 'F', 'False', 'No', '0');
+    }
+
+    private function defNormalizeBooleanToken($value)
+    {
+        $value = trim((string)$value);
+
+        if ($value === '') {
+            return '';
+        }
+
+        return strtoupper($value);
+    }
+
+    private function defLooksLikePlainNumber($value)
+    {
+        $candidate = trim((string)$value);
+
+        if ($candidate === '') {
+            return false;
+        }
+
+        $candidate = str_replace(',', '.', $candidate);
+
+        return (bool)preg_match('/^-?\d+(?:\.\d+)?$/', $candidate);
+    }
+
+    private function defNormalizePlainNumber($value)
+    {
+        $candidate = str_replace(',', '.', trim((string)$value));
+
+        if ($candidate === '') {
+            return '';
+        }
+
+        if (strpos($candidate, '.') !== false) {
+            $candidate = rtrim($candidate, '0');
+            $candidate = rtrim($candidate, '.');
+        }
+
+        return $candidate;
+    }
+
+    private function defExpandNumericFilterValues($value)
+    {
+        if ( ! $this->defLooksLikePlainNumber($value)) {
+            return array((string)$value);
+        }
+
+        $normalized = $this->defNormalizePlainNumber($value);
+        $variants = array(
+            (string)$value => (string)$value,
+            $normalized => $normalized,
+        );
+        $separators = array('.', ',');
+
+        if (strpos($normalized, '.') === false) {
+            foreach ($separators as $separator) {
+                for ($scale = 1; $scale <= 4; $scale++) {
+                    $variant = $normalized . $separator . str_repeat('0', $scale);
+                    $variants[$variant] = $variant;
+                }
+            }
+
+            return array_values($variants);
+        }
+
+        list($integer_part, $decimal_part) = explode('.', $normalized, 2);
+        $min_scale = strlen($decimal_part);
+        $max_scale = max($min_scale, 4);
+
+        foreach ($separators as $separator) {
+            for ($scale = $min_scale; $scale <= $max_scale; $scale++) {
+                $variant = $integer_part . $separator . str_pad($decimal_part, $scale, '0');
+                $variants[$variant] = $variant;
+            }
+        }
+
+        return array_values($variants);
+    }
+
+    private function defIsEnergyLabelAttribute($name)
+    {
+        $name = trim((string)$name);
+
+        if ($name === '') {
+            return false;
+        }
+
+        if (function_exists('mb_strtolower')) {
+            $name = mb_strtolower($name, 'UTF-8');
+        } else {
+            $name = strtolower($name);
+        }
+
+        return (strpos($name, 'energetska oznaka') === 0);
+    }
+
+    private function defGetBooleanAttributeMap(array $attribute_ids, array $product_ids)
+    {
+        $attribute_ids = array_values(array_unique(array_map('intval', $attribute_ids)));
+        $product_ids = array_values(array_unique(array_map('intval', $product_ids)));
+
+        if ( ! $attribute_ids || ! $product_ids) {
+            return array();
+        }
+
+        $sql = "SELECT pa.attribute_id, ad.name, TRIM(pa.text) AS text
+                FROM " . DB_PREFIX . "product_attribute pa
+                LEFT JOIN " . DB_PREFIX . "attribute_description ad
+                    ON (ad.attribute_id = pa.attribute_id AND ad.language_id = '" . (int)$this->config->get('config_language_id') . "')
+                WHERE pa.language_id = '" . (int)$this->config->get('config_language_id') . "'
+                    AND pa.attribute_id IN (" . implode(',', $attribute_ids) . ")
+                    AND pa.product_id IN (" . implode(',', $product_ids) . ")";
+
+        $query = $this->db->query($sql);
+        $allowed = array_flip(array_merge(
+            array_map(array($this, 'defNormalizeBooleanToken'), $this->defBooleanTrueValues()),
+            array_map(array($this, 'defNormalizeBooleanToken'), $this->defBooleanFalseValues())
+        ));
+        $map = array();
+
+        foreach ($query->rows as $row) {
+            $attribute_id = (int)$row['attribute_id'];
+
+            if ( ! isset($map[$attribute_id])) {
+                $map[$attribute_id] = array(
+                    'name' => $row['name'],
+                    'tokens' => array(),
+                );
+            }
+
+            foreach (explode(':', (string)$row['text']) as $part) {
+                $token = $this->defNormalizeBooleanToken($part);
+
+                if ($token === '') {
+                    continue;
+                }
+
+                $map[$attribute_id]['tokens'][$token] = true;
+            }
+        }
+
+        $boolean_attributes = array();
+
+        foreach ($map as $attribute_id => $attribute) {
+            if ($this->defIsEnergyLabelAttribute($attribute['name']) || empty($attribute['tokens'])) {
+                continue;
+            }
+
+            $is_boolean = true;
+
+            foreach (array_keys($attribute['tokens']) as $token) {
+                if ( ! isset($allowed[$token])) {
+                    $is_boolean = false;
+                    break;
+                }
+            }
+
+            if ($is_boolean) {
+                $boolean_attributes[$attribute_id] = true;
+            }
+        }
+
+        return $boolean_attributes;
+    }
+
+    private function defExpandAttributeFilterValues($attribute_id, array $attribute_values, array $boolean_attributes)
+    {
+        $values = array();
+        $is_boolean = !empty($boolean_attributes[(int)$attribute_id]);
+
+        foreach ($attribute_values as $attribute_value) {
+            $attribute_value = trim((string)$attribute_value);
+
+            if ($attribute_value === '') {
+                continue;
+            }
+
+            if ($is_boolean) {
+                $token = $this->defNormalizeBooleanToken($attribute_value);
+
+                if (in_array($token, array_map(array($this, 'defNormalizeBooleanToken'), $this->defBooleanTrueValues()), true)) {
+                    foreach ($this->defBooleanTrueValues() as $positive_value) {
+                        $values[$positive_value] = $positive_value;
+                    }
+
+                    continue;
+                }
+
+                if (in_array($token, array_map(array($this, 'defNormalizeBooleanToken'), $this->defBooleanFalseValues()), true)) {
+                    foreach ($this->defBooleanFalseValues() as $negative_value) {
+                        $values[$negative_value] = $negative_value;
+                    }
+
+                    continue;
+                }
+            }
+
+            if ($this->defLooksLikePlainNumber($attribute_value)) {
+                foreach ($this->defExpandNumericFilterValues($attribute_value) as $numeric_value) {
+                    $values[$numeric_value] = $numeric_value;
+                }
+
+                continue;
+            }
+
+            $values[$attribute_value] = $attribute_value;
+        }
+
+        return array_values($values);
+    }
+
+    private function defFlattenWarehouseCodes($selected_warehouses)
+    {
+        if ( ! is_array($selected_warehouses)) {
+            return array();
+        }
+
+        $warehouse_codes = array();
+
+        array_walk_recursive($selected_warehouses, function ($warehouse_code) use (&$warehouse_codes) {
+            $warehouse_code = trim((string)$warehouse_code);
+
+            if ($warehouse_code !== '') {
+                $warehouse_codes[$warehouse_code] = $warehouse_code;
+            }
+        });
+
+        return array_values($warehouse_codes);
+    }
+
+    private function defGetWarehouseCachePath(array $warehouse_codes)
+    {
+        sort($warehouse_codes);
+
+        $cache_dir = defined('DIR_CACHE') ? DIR_CACHE : (DIR_STORAGE . 'cache/');
+
+        return rtrim($cache_dir, '/\\') . '/def_warehouse_stock_' . md5(implode(',', $warehouse_codes)) . '.json';
+    }
+
+    private function defExtractWarehouseProductUidsFromPayload($payload)
+    {
+        $json = json_decode((string)$payload, true);
+
+        if (empty($json['result'][0]['stanje']) || !is_array($json['result'][0]['stanje'])) {
+            return array();
+        }
+
+        $product_uids = array();
+
+        foreach ($json['result'][0]['stanje'] as $item) {
+            if (empty($item['artikl_uid'])) {
+                continue;
+            }
+
+            if ((int)($item['raspolozivo_kol'] ?? 0) < 1) {
+                continue;
+            }
+
+            $product_uids[$item['artikl_uid']] = $item['artikl_uid'];
+        }
+
+        return array_values($product_uids);
+    }
+
+    private function defGetAvailabilityWarehouses()
+    {
+        if ($this->storageWarehouseAvailability === null) {
+            $warehouse_model = new \Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse();
+
+            $this->storageWarehouseAvailability = $warehouse_model->getAvailabilityViewWarehouses()
+                                                                  ->values()
+                                                                  ->all();
+        }
+
+        return $this->storageWarehouseAvailability;
+    }
+
+    public function getAvailabilityWarehouses()
+    {
+        return $this->defGetAvailabilityWarehouses();
+    }
+
+    private function defGetWarehouseUidsByCodes(array $warehouse_codes)
+    {
+        $warehouse_uids = array();
+
+        foreach ($this->defGetAvailabilityWarehouses() as $warehouse) {
+            $warehouse_code = trim((string)($warehouse['skladiste'] ?? ''));
+            $warehouse_uid = trim((string)($warehouse['skladiste_uid'] ?? ''));
+
+            if ($warehouse_code === '' || $warehouse_uid === '') {
+                continue;
+            }
+
+            if (in_array($warehouse_code, $warehouse_codes, true)) {
+                $warehouse_uids[$warehouse_uid] = $warehouse_uid;
+            }
+        }
+
+        return array_values($warehouse_uids);
+    }
+
+    private function defGetWarehouseTablePairSql(array $warehouse_codes)
+    {
+        $warehouse_uids_by_code = array();
+
+        foreach ($this->defGetAvailabilityWarehouses() as $warehouse) {
+            $warehouse_code = trim((string)($warehouse['skladiste'] ?? ''));
+            $warehouse_uid = trim((string)($warehouse['skladiste_uid'] ?? ''));
+
+            if ($warehouse_code === '' || $warehouse_uid === '') {
+                continue;
+            }
+
+            if (in_array($warehouse_code, $warehouse_codes, true)) {
+                $warehouse_uids_by_code[$warehouse_code] = $warehouse_uid;
+            }
+        }
+
+        if ( ! $warehouse_uids_by_code) {
+            return '';
+        }
+
+        $clauses = array();
+
+        foreach ($warehouse_uids_by_code as $warehouse_code => $warehouse_uid) {
+            $clauses[] = "(pws.warehouse_code = '" . $this->db->escape($warehouse_code) . "'
+                AND pws.warehouse_uid = '" . $this->db->escape($warehouse_uid) . "')";
+        }
+
+        return '(' . implode(' OR ', $clauses) . ')';
+    }
+
+    private function defCanUseWarehouseStockTable(array $warehouse_codes = array())
+    {
+        if ($this->storageWarehouseTableAvailable !== null) {
+            if ( ! $this->storageWarehouseTableAvailable) {
+                return false;
+            }
+        } else {
+            $table_name = DB_PREFIX . 'product_warehouse_stock';
+            $escaped_table_name = str_replace(
+                array('_', '%'),
+                array('\\_', '\\%'),
+                $this->db->escape($table_name)
+            );
+            $query = $this->db->query("SHOW TABLES LIKE '" . $escaped_table_name . "'");
+
+            if ( ! $query->num_rows) {
+                $this->storageWarehouseTableAvailable = false;
+
+                return false;
+            }
+
+            $sample_query = $this->db->query("SELECT 1 FROM `" . $table_name . "` LIMIT 1");
+            $this->storageWarehouseTableAvailable = (bool)$sample_query->num_rows;
+
+            if ( ! $this->storageWarehouseTableAvailable) {
+                return false;
+            }
+        }
+
+        $table_name = DB_PREFIX . 'product_warehouse_stock';
+
+        if ( ! $warehouse_codes) {
+            return true;
+        }
+
+        sort($warehouse_codes);
+
+        $storage_key = implode('|', $warehouse_codes);
+
+        if (isset($this->storageWarehouseTableAvailableBySelection[$storage_key])) {
+            return $this->storageWarehouseTableAvailableBySelection[$storage_key];
+        }
+
+        $pair_sql = $this->defGetWarehouseTablePairSql($warehouse_codes);
+
+        if ($pair_sql === '') {
+            $this->storageWarehouseTableAvailableBySelection[$storage_key] = false;
+
+            return false;
+        }
+
+        $selection_query = $this->db->query("SELECT 1
+            FROM `" . $table_name . "` pws
+            WHERE pws.quantity > 0
+                AND " . $pair_sql . "
+            LIMIT 1");
+
+        $this->storageWarehouseTableAvailableBySelection[$storage_key] = (bool)$selection_query->num_rows;
+
+        return $this->storageWarehouseTableAvailableBySelection[$storage_key];
+    }
+
+    private function defLoadWarehouseProductUidsFromCacheOrApi(array $warehouse_codes)
+    {
+        $cache_path = $this->defGetWarehouseCachePath($warehouse_codes);
+
+        if (is_file($cache_path) && (time() - (int)@filemtime($cache_path) < 300)) {
+            $cached_uids = json_decode((string)@file_get_contents($cache_path), true);
+
+            if (is_array($cached_uids)) {
+                return array_values(array_unique(array_map('strval', $cached_uids)));
+            }
+        }
+
+        try {
+            $payload = \Agmedia\Luceed\Facade\LuceedProduct::getWarehouseStock($warehouse_codes);
+            $product_uids = $this->defExtractWarehouseProductUidsFromPayload($payload);
+
+            if ($product_uids) {
+                @file_put_contents($cache_path, json_encode(array_values($product_uids)));
+            }
+
+            return $product_uids;
+        } catch (\Throwable $e) {
+            return array();
+        }
+    }
+
+    private function defLoadWarehouseProductUidsFromSnapshot(array $warehouse_codes)
+    {
+        $warehouse_uids = $this->defGetWarehouseUidsByCodes($warehouse_codes);
+
+        if ( ! $warehouse_uids) {
+            return array();
+        }
+
+        if ($this->storageWarehouseSnapshot === null) {
+            $snapshot_path = DIR_STORAGE . 'upload/luceed_json/stock_skladista.json';
+
+            if (is_file($snapshot_path)) {
+                $json = json_decode((string)@file_get_contents($snapshot_path), true);
+
+                if ( ! empty($json['result'][0]['stanje']) && is_array($json['result'][0]['stanje'])) {
+                    $this->storageWarehouseSnapshot = $json['result'][0]['stanje'];
+                } else {
+                    $this->storageWarehouseSnapshot = array();
+                }
+            } else {
+                $this->storageWarehouseSnapshot = array();
+            }
+        }
+
+        $product_uids = array();
+
+        foreach ($this->storageWarehouseSnapshot as $item) {
+            if (empty($item['artikl_uid']) || empty($item['skladiste_uid'])) {
+                continue;
+            }
+
+            if ( ! in_array($item['skladiste_uid'], $warehouse_uids, true)) {
+                continue;
+            }
+
+            if ((int)($item['raspolozivo_kol'] ?? 0) < 1) {
+                continue;
+            }
+
+            $product_uids[$item['artikl_uid']] = $item['artikl_uid'];
+        }
+
+        return array_values($product_uids);
+    }
+
+    private function defGetWarehouseProductUids(array $selected_warehouses)
+    {
+        $warehouse_codes = $this->defFlattenWarehouseCodes($selected_warehouses);
+
+        if ( ! $warehouse_codes) {
+            return array();
+        }
+
+        sort($warehouse_codes);
+
+        $storage_key = implode('|', $warehouse_codes);
+
+        if ( ! isset($this->storageWarehouseProductUids[$storage_key])) {
+            $product_uids = $this->defLoadWarehouseProductUidsFromCacheOrApi($warehouse_codes);
+
+            if ( ! $product_uids) {
+                $product_uids = $this->defLoadWarehouseProductUidsFromSnapshot($warehouse_codes);
+            }
+
+            $this->storageWarehouseProductUids[$storage_key] = array_values(array_unique($product_uids));
+        }
+
+        return $this->storageWarehouseProductUids[$storage_key];
+    }
+
+    private function defGetProductIdsByLuceedUids(array $product_uids)
+    {
+        $product_ids = array();
+
+        foreach (array_chunk(array_values(array_unique($product_uids)), 500) as $uid_chunk) {
+            $escaped_uids = array();
+
+            foreach ($uid_chunk as $product_uid) {
+                $product_uid = trim((string)$product_uid);
+
+                if ($product_uid !== '') {
+                    $escaped_uids[] = "'" . $this->db->escape($product_uid) . "'";
+                }
+            }
+
+            if ( ! $escaped_uids) {
+                continue;
+            }
+
+            $query = $this->db->query("SELECT product_id FROM `" . DB_PREFIX . "product` WHERE luceed_uid IN (" . implode(',', $escaped_uids) . ")");
+
+            foreach ($query->rows as $row) {
+                $product_id = (int)$row['product_id'];
+
+                if ($product_id > 0) {
+                    $product_ids[$product_id] = $product_id;
+                }
+            }
+        }
+
+        return array_values($product_ids);
+    }
+
+    private function defGetWarehouseProductIds(array $selected_warehouses)
+    {
+        $warehouse_codes = $this->defFlattenWarehouseCodes($selected_warehouses);
+
+        if ( ! $warehouse_codes) {
+            return array();
+        }
+
+        sort($warehouse_codes);
+
+        $storage_key = implode('|', $warehouse_codes);
+
+        if ( ! isset($this->storageWarehouseProductIds[$storage_key])) {
+            $product_uids = $this->defGetWarehouseProductUids($selected_warehouses);
+            $this->storageWarehouseProductIds[$storage_key] = $this->defGetProductIdsByLuceedUids($product_uids);
+        }
+
+        return $this->storageWarehouseProductIds[$storage_key];
+    }
+
+    private function defGetWarehouseFilterSql($field, array $selected_warehouses)
+    {
+        $warehouse_codes = $this->defFlattenWarehouseCodes($selected_warehouses);
+
+        if ( ! $warehouse_codes) {
+            return '';
+        }
+
+        if ($this->defCanUseWarehouseStockTable($warehouse_codes)) {
+            $pair_sql = $this->defGetWarehouseTablePairSql($warehouse_codes);
+
+            if ($pair_sql === '') {
+                return " AND 1 = 0";
+            }
+
+            return " AND " . $field . " IN (
+                SELECT pws.product_id
+                FROM `" . DB_PREFIX . "product_warehouse_stock` pws
+                WHERE pws.quantity > 0
+                  AND " . $pair_sql . "
+                GROUP BY pws.product_id
+            )";
+        }
+
+        $product_ids = $this->defGetWarehouseProductIds($selected_warehouses);
+
+        if ( ! $product_ids) {
+            return " AND 1 = 0";
+        }
+
+        $clauses = array();
+
+        foreach (array_chunk($product_ids, 500) as $product_id_chunk) {
+            $clauses[] = $field . " IN (" . implode(',', array_map('intval', $product_id_chunk)) . ")";
+        }
+
+        return " AND (" . implode(' OR ', $clauses) . ")";
+    }
+
+    private function defHasActionFilter(array $data)
+    {
+        return !empty($data['filter_action_only'])
+            || !empty($data['action_filter_only'])
+            || !empty($data['filter_action_category_id'])
+            || !empty($data['action_category_id']);
+    }
+
+    private function defGetActionPathId(array $data)
+    {
+        if (!empty($data['filter_action_category_id'])) {
+            return (int)$data['filter_action_category_id'];
+        }
+
+        if (!empty($data['action_category_id'])) {
+            return (int)$data['action_category_id'];
+        }
+
+        if (!empty($data['filter_action_parent_id'])) {
+            return (int)$data['filter_action_parent_id'];
+        }
+
+        if (!empty($data['action_parent_id'])) {
+            return (int)$data['action_parent_id'];
+        }
+
+        return 308;
+    }
+
+    private function defGetActionFilterSql($field, array $data)
+    {
+        if (!$this->defHasActionFilter($data)) {
+            return '';
+        }
+
+        $action_path_id = $this->defGetActionPathId($data);
+
+        if (!$action_path_id) {
+            return '';
+        }
+
+        return " AND EXISTS (
+            SELECT 1
+            FROM `" . DB_PREFIX . "category_path` acp
+            LEFT JOIN `" . DB_PREFIX . "product_to_category` ap2c
+                ON (ap2c.category_id = acp.category_id)
+            WHERE acp.path_id = '" . $action_path_id . "'
+                AND ap2c.product_id = " . $field . "
+        )";
+    }
+
+    public function getMinMaxPrice($category_id, $data = array())
     {
         $customer_group_id = $this->config->get('config_customer_group_id');
         $shipping_country_id = isset($this->session->data['shipping_country_id']) ? $this->session->data['shipping_country_id'] : (($this->config->get('config_tax_default') == 'shipping') ? $this->config->get('config_country_id') : null);
@@ -33,7 +720,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                 SELECT
                   p.product_id,
                   p.price,
-                  MIN(ps.price) AS discount,
+                  MIN(pd2.price) AS discount,
                   MIN(ps.price) AS special,
                   AVG(rating) AS total,
                   fixed_tax,
@@ -96,7 +783,13 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
             $sql .= ' AND ((' . implode(') OR (', $conditions) . '))';
         }
 
-        $sql .= ") AS t GROUP BY t.tax_class_id) AS tr2 ON (tr2.tax_class_id = p.tax_class_id) WHERE p2s.store_id = '" . $this->config->get('config_store_id') . "' AND p.status = '1' AND p.date_available <= NOW() GROUP BY p.product_id) as min_max";
+        $sql .= ") AS t GROUP BY t.tax_class_id) AS tr2 ON (tr2.tax_class_id = p.tax_class_id) WHERE p2s.store_id = '" . $this->config->get('config_store_id') . "' AND p.status = '1' AND p.date_available <= NOW()";
+
+        if ($this->defHasActionFilter($data)) {
+            $sql .= $this->defGetActionFilterSql('p.product_id', $data);
+        }
+
+        $sql .= " GROUP BY p.product_id) as min_max";
 
         $query = $this->db->query($sql);
 
@@ -134,6 +827,14 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
 
         if (isset($data['manufacturer_id']) && $data['manufacturer_id']) {
             $sql .= " AND p.manufacturer_id = '" . (int)$data['manufacturer_id'] . "'";
+        }
+
+        if (!empty($data['warehouses'])) {
+            $sql .= $this->defGetWarehouseFilterSql('p.product_id', $data['warehouses']);
+        }
+
+        if ($this->defHasActionFilter($data)) {
+            $sql .= $this->defGetActionFilterSql('p.product_id', $data);
         }
 
         $sql .= " AND pa.language_id = '" . (int)$this->config->get('config_language_id') . "'" .
@@ -213,6 +914,14 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                 " AND ((ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW( )) AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW( )))";
         }
 
+        if (!empty($data['warehouses'])) {
+            $sql .= $this->defGetWarehouseFilterSql('p.product_id', $data['warehouses']);
+        }
+
+        if ($this->defHasActionFilter($data)) {
+            $sql .= $this->defGetActionFilterSql('p.product_id', $data);
+        }
+
         $sql .= " ORDER BY ";
 
         switch ($DEF_settings['advance']['manufacturers']['sort']) {
@@ -242,6 +951,13 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
             " LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON(p.product_id=p2s.product_id) " .
             " WHERE c.status=1 AND c.parent_id = '" . (int)$category_id . "' AND cd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1' AND p.date_available <= NOW() AND p2s.store_id =" . (int)$this->config->get('config_store_id');
 
+        if (!empty($data['warehouses'])) {
+            $sql .= $this->defGetWarehouseFilterSql('p.product_id', $data['warehouses']);
+        }
+
+        if ($this->defHasActionFilter($data)) {
+            $sql .= $this->defGetActionFilterSql('p.product_id', $data);
+        }
 
         $sql .= " GROUP BY cd.category_id ORDER BY ";
 
@@ -291,6 +1007,15 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
         if (isset($data['manufacturer_id']) && $data['manufacturer_id']) {
             $sql .= " AND p.manufacturer_id = '" . (int)$data['manufacturer_id'] . "'";
         }
+
+        if (!empty($data['warehouses'])) {
+            $sql .= $this->defGetWarehouseFilterSql('p.product_id', $data['warehouses']);
+        }
+
+        if ($this->defHasActionFilter($data)) {
+            $sql .= $this->defGetActionFilterSql('p.product_id', $data);
+        }
+
         $sql .= " ORDER BY ";
 
         switch ($DEF_settings['advance']['options']['sort']) {
@@ -398,8 +1123,14 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
         if ($data['attributes']) {
 
             $without_attr_product_ids = [];
+            $product_ids = [];
             foreach ($query->rows as $row) {
-                $without_attr_product_ids[] = "'" . $row['product_id'] . "'";
+                $product_id = (int)$row['product_id'];
+
+                if ($product_id) {
+                    $without_attr_product_ids[] = "'" . $product_id . "'";
+                    $product_ids[] = $product_id;
+                }
             }
 
             if ($without_attr_product_ids) {
@@ -434,11 +1165,19 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                                    LIMIT 1) AS special
                         FROM " . DB_PREFIX . "product_attribute pa";
 
+                $boolean_attributes = $this->defGetBooleanAttributeMap(array_keys($data['attributes']), $product_ids);
                 $attribute_ids = array();
+
                 foreach ($data['attributes'] as $key => $attribute_values) {
-                    foreach ($attribute_values as $attribute_value) {
+                    $expanded_values = $this->defExpandAttributeFilterValues(
+                        $key,
+                        is_array($attribute_values) ? $attribute_values : array($attribute_values),
+                        $boolean_attributes
+                    );
+
+                    foreach ($expanded_values as $attribute_value) {
                         if ($attribute_value) {
-                            $attribute_ids[$key][] = "'" . $attribute_value . "'";
+                            $attribute_ids[$key][] = "'" . $this->db->escape($attribute_value) . "'";
                         }
                     }
 
@@ -454,7 +1193,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
 
                 $sql .= " LEFT JOIN (SELECT price, product_id FROM " . DB_PREFIX . "product_discount) AS pd2 ON (pd2.product_id = pa.product_id)
                     LEFT JOIN (SELECT price, product_id FROM " . DB_PREFIX . "product_special) AS ps ON (ps.product_id = pa.product_id)
-                    LEFT JOIN (SELECT price, sort_order, model, product_id FROM " . DB_PREFIX . "product) AS p ON (p.product_id = pa.product_id)
+                    LEFT JOIN (SELECT price, price_2, price_last_30, sort_order, model, product_id FROM " . DB_PREFIX . "product) AS p ON (p.product_id = pa.product_id)
                     LEFT JOIN (SELECT name, product_id FROM " . DB_PREFIX . "product_description) AS pd ON (pd.product_id = pa.product_id)";
 
                 $sql .= " WHERE pa.product_id IN (" . implode(',', $without_attr_product_ids) . ")";
@@ -550,7 +1289,24 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
 
             $sql .= ") AS t GROUP BY t.tax_class_id) AS tr2 ON (tr2.tax_class_id = p.tax_class_id)";
 
-            $sql .= "LEFT JOIN " . DB_PREFIX . "product_special AS ps ON (ps.product_id = p.product_id)";
+            $sql .= " LEFT JOIN (
+                SELECT pd2.product_id, MIN(pd2.price) AS price
+                FROM " . DB_PREFIX . "product_discount pd2
+                WHERE pd2.customer_group_id = '" . (int)$customer_group_id . "'
+                    AND pd2.quantity = '1'
+                    AND ((pd2.date_start = '0000-00-00' OR pd2.date_start < NOW())
+                        AND (pd2.date_end = '0000-00-00' OR pd2.date_end > NOW()))
+                GROUP BY pd2.product_id
+            ) AS pd2 ON (pd2.product_id = p.product_id)";
+
+            $sql .= " LEFT JOIN (
+                SELECT ps.product_id, MIN(ps.price) AS price
+                FROM " . DB_PREFIX . "product_special ps
+                WHERE ps.customer_group_id = '" . (int)$customer_group_id . "'
+                    AND ((ps.date_start = '0000-00-00 00:00:00' OR ps.date_start < NOW())
+                        AND (ps.date_end = '0000-00-00 00:00:00' OR ps.date_end > NOW()))
+                GROUP BY ps.product_id
+            ) AS ps ON (ps.product_id = p.product_id)";
         }
         //PRICE JOIN END
 
@@ -571,6 +1327,10 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
         }
 
         $sql .= " LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) WHERE pd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND p.status = '1'  AND p.price > '0' AND p.date_available <= NOW() AND p2s.store_id = '" . (int)$store_id . "'";
+
+        if (!empty($data['warehouses'])) {
+            $sql .= $this->defGetWarehouseFilterSql('p.product_id', $data['warehouses']);
+        }
 
         //OPTIONS WHERE BEGIN
         if ($data['options']) {
@@ -703,14 +1463,16 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
         }
         //MANUFACTURER WHERE BEGIN
 
+        $sql .= $this->defGetActionFilterSql('p.product_id', $data);
+
 
         //PRICE WHERE BEGIN
         if (!empty($data['price']['min']) && !empty($data['price']['max'])) {
             $price_min = $this->currency->convert($data['price']['min'], $this->session->data['currency'], $this->config->get('config_currency'));
             $price_max = $this->currency->convert($data['price']['max'], $this->session->data['currency'], $this->config->get('config_currency'));
 
-            $sql .= " AND (IF(ps.price IS NOT NULL, ps.price, IF(ps.price IS NOT NULL, p.price, p.price)) * (1 + IFNULL(percent_tax, 0)/100) + IFNULL(fixed_tax, 0)) >= '" . $this->db->escape($price_min) . "'";
-            $sql .= " AND (IF(ps.price IS NOT NULL, ps.price, IF(ps.price IS NOT NULL, p.price, p.price)) * (1 + IFNULL(percent_tax, 0)/100) + IFNULL(fixed_tax, 0)) <= '" . $this->db->escape($price_max) . "'";
+            $sql .= " AND (IF(ps.price IS NOT NULL, ps.price, IF(pd2.price IS NOT NULL, pd2.price, p.price)) * (1 + IFNULL(percent_tax, 0)/100) + IFNULL(fixed_tax, 0)) >= '" . $this->db->escape($price_min) . "'";
+            $sql .= " AND (IF(ps.price IS NOT NULL, ps.price, IF(pd2.price IS NOT NULL, pd2.price, p.price)) * (1 + IFNULL(percent_tax, 0)/100) + IFNULL(fixed_tax, 0)) <= '" . $this->db->escape($price_max) . "'";
         }
 
         //PRICE WHERE END
@@ -732,6 +1494,7 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                 'p.model',
                 'p.quantity',
                 'p.price',
+                'sale_percent',
                 'rating',
                 'p.sort_order',
                 'p.date_added'
@@ -742,6 +1505,8 @@ class ModelExtensionModuleDigitalElephantFilter extends Model
                     $sql .= " ORDER BY LCASE(" . $data['sort'] . ")";
                 } elseif ($data['sort'] == 'p.price') {
                     $sql .= " ORDER BY (CASE WHEN special IS NOT NULL THEN special ELSE p.price END)";
+                } elseif ($data['sort'] == 'sale_percent') {
+                    $sql .= " ORDER BY " . $this->defGetSaleSortPrioritySql('special') . " DESC, " . $this->defGetSaleSortPercentSql('special');
                 } else {
                     $sql .= " ORDER BY " . $data['sort'];
                 }

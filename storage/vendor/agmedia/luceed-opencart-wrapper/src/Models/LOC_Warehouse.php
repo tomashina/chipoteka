@@ -33,7 +33,7 @@ class LOC_Warehouse
      *
      * @var array
      */
-    private $strict_default_houses = ['101', '001'];
+    private $strict_default_houses = ['101'];
 
     /**
      * @var array
@@ -155,29 +155,35 @@ class LOC_Warehouse
         $units = $this->getUnitsQuery($houses);
         $houses_default = $this->getDefaultWarehouses();
         $units_default = $this->getUnitsQuery($houses_default);
-        $houses_stores = $this->getList()->whereIn(
-            'skladiste',
-            $this->getCodesByFlag('is_store', agconf('import.warehouse.stores'))
-        );
+        // Keep the CTA/status aligned with the branch list shown on the page.
+        // If a store is visible in the availability accordion and has stock, it
+        // should also influence the "Btn" status block.
+        $houses_stores = $houses;
         $units_stores = $this->getUnitsQuery($houses_stores);
 
-        $availables = collect($this->setAvailables(
-            LuceedProduct::stock($units, $product)
-        ));
+        $availables_response = LuceedProduct::stock($units, $product);
+        $defaults_response = LuceedProduct::stock($units_default, $product);
+        $supplier_response = LuceedProduct::getSuplierStock($product);
 
-        $defaults = collect($this->setAvailables(
-            LuceedProduct::stock($units_default, $product)
-        ));
+        if (
+            ! $this->hasValidAvailabilityPayload($availables_response)
+            && ! $this->hasValidAvailabilityPayload($defaults_response)
+            && ! $this->hasValidSupplierPayload($supplier_response)
+        ) {
+            throw new \RuntimeException('Luceed availability response is missing or invalid.');
+        }
 
-        $stores = collect($this->setAvailables(
-            LuceedProduct::stock($units_stores, $product)
-        ));
+        $availables = collect($this->setAvailables($availables_response));
 
-        $suplier = collect($this->setSuplierStock(
-            LuceedProduct::getSuplierStock($product)
-        ))->where('main', 'D')->first();
+        $defaults = collect($this->setAvailables($defaults_response));
 
-        $dobavljac_stanje = $suplier->dobavljac_stanje;
+        $suplier = collect($this->setSuplierStock($supplier_response))->where('main', 'D')->first();
+
+        $dobavljac_stanje = 0;
+
+        if (is_object($suplier) && isset($suplier->dobavljac_stanje)) {
+            $dobavljac_stanje = max((int) $suplier->dobavljac_stanje, 0);
+        }
 
         // AVAILABILITY VIEW
         foreach ($houses as $house) {
@@ -223,8 +229,10 @@ class LOC_Warehouse
 
         $qty_stores = 0;
         // STORES WAREHOUSE COUNT
+        // Use the same availability payload that renders the store list so the
+        // status banner stays consistent with the visible per-store quantities.
         foreach ($houses_stores as $house) {
-            $has = $stores->where('skladiste_uid', $house['skladiste_uid'])->first();
+            $has = $availables->where('skladiste_uid', $house['skladiste_uid'])->first();
 
             if ($has && $has->raspolozivo_kol >= 0) {
                 $qty_stores += $has->raspolozivo_kol;
@@ -265,7 +273,9 @@ class LOC_Warehouse
             $title = 'success';
             $date = Carbon::now()->addWeekdays(1);
             $btn = 'DOSTUPNO ODMAH';
-            $date = ($date->diff(Carbon::now())->days < 1) ? 'Šaljemo sutra' : 'Šaljemo do ' . $date->format('d.m.Y');;
+            //$date = ($date->diff(Carbon::now())->days < 1) ? 'Šaljemo sutra' : 'Šaljemo do ' . $date->format('d.m.Y');
+
+            $date = 'Rok isporuke 2-3 radna dana';
         }
 
         if ( ! $qty_default && ! $dobavljac_stanje && $qty_stores) {
@@ -279,7 +289,9 @@ class LOC_Warehouse
             $title = 'warning';
             $btn = 'DOSTUPNO NA IZDVOJENOM SKLADIŠTU';
             $button = 'Stavi u košaricu';
-            $date = 'Šaljemo do ' . Carbon::now()->addWeekdays(5)->format('d.m.Y');
+           // $date = 'Šaljemo do ' . Carbon::now()->addWeekdays(5)->format('d.m.Y');
+
+            $date = 'Rok isporuke 5-7 radnih dana ';
         }
 
         if ( ! $qty_default && ! $dobavljac_stanje && ! $qty_stores) {
@@ -319,10 +331,27 @@ class LOC_Warehouse
     }
 
 
+    public function getAvailabilityFallbackResponse(
+        string $title = 'Dostupnost po poslovnicama privremeno nije dostupna.',
+        string $subtitle = 'Pokusajte ponovno uskoro.'
+    ): Collection
+    {
+        return collect([
+            [
+                'title'   => 'Btn',
+                'btn'     => 'secondary',
+                'button'  => '',
+                'address' => $title,
+                'qty'     => $subtitle
+            ]
+        ]);
+    }
+
+
     /**
      * @return int
      */
-    public function import(Collection $list = null)
+    public function import(?Collection $list = null)
     {
         $imported = 0;
 
@@ -472,6 +501,14 @@ class LOC_Warehouse
     }
 
 
+    private function hasValidAvailabilityPayload($items): bool
+    {
+        $json = json_decode($items);
+
+        return isset($json->result[0]->stanje) && is_array($json->result[0]->stanje);
+    }
+
+
     /**
      * @param $stock
      *
@@ -487,4 +524,10 @@ class LOC_Warehouse
 
         return [];
     }
+    private function hasValidSupplierPayload($stock): bool
+    {
+        $json = json_decode($stock);
+
+        return isset($json->result[0]->artikli_dobavljaci) && is_array($json->result[0]->artikli_dobavljaci);
+}
 }

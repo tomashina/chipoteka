@@ -1,0 +1,118 @@
+CHIPOTEKA – VREMENSKI MAILOVI KUPCIMA
+
+Vrijeme se računa od zadnje promjene statusa narudžbe.
+Mail se šalje samo ako je narudžba na pragu slanja i dalje u navedenom statusu.
+Ako se status ranije promijeni, mail se ne šalje.
+Svaki mail za isti prag šalje se samo jednom.
+
+Oznaka %s u predmetu i tekstu automatski se zamjenjuje brojem narudžbe.
+
+
+1. PODSJETNIK ZA UPLATU NAKON 24 SATA
+
+Kome:
+Kupcima koji su odabrali plaćanje virmanom.
+
+Kada:
+Kada je narudžba 24 sata ostala u statusu „12 – Rezervacija” i uplata još nije evidentirana.
+
+Predmet:
+Chipoteka.hr - Podsjetnik za uplatu narudžbe broj %s
+
+Tekst:
+
+Poštovani/a,
+
+u ovom trenutku još nemamo evidentiranu uplatu za narudžbu broj %s.
+
+Ako ste uplatu već izvršili, molimo zanemarite ovu poruku jer evidentiranje uplate može potrajati. Ako uplatu još niste izvršili, podatke za plaćanje možete pronaći u ponudi koju smo Vam poslali.
+
+Hvala Vam.
+
+
+2. UPLATA NIJE EVIDENTIRANA NAKON 48 SATI
+
+Kome:
+Kupcima koji su odabrali plaćanje virmanom.
+
+Kada:
+Kada je narudžba 48 sati ostala u statusu „12 – Rezervacija” i uplata još nije evidentirana.
+
+Predmet:
+Chipoteka.hr - Uplata za narudžbu broj %s nije evidentirana
+
+Tekst:
+
+Poštovani/a,
+
+ni nakon 48 sati još nemamo evidentiranu uplatu za narudžbu broj %s.
+
+Ako ste uplatu već izvršili, molimo javite nam se na webnarudzba@chipoteka.hr kako bismo je provjerili. Ako uplatu još niste izvršili, a želite nastaviti s narudžbom, također nam se javite kako bismo prije uplate provjerili dostupnost proizvoda.
+
+Hvala Vam.
+
+
+3. OBRADA NARUDŽBE TRAJE DULJE OD 24 SATA
+
+Kome:
+Kupcima koji su odabrali pouzeće, virman ili WSPay.
+
+Kada:
+Kada je narudžba 24 sata ostala u statusu „02 – Odobren” ili „05 – Odobren – komisioniranje”.
+
+Predmet:
+Chipoteka.hr - Obrada narudžbe broj %s traje nešto dulje
+
+Tekst:
+
+Poštovani/a,
+
+Vaša narudžba broj %s još je u obradi. Ispričavamo se što obrada traje nešto dulje od očekivanog.
+
+Čim narudžba bude predana dostavnoj službi, poslat ćemo Vam obavijest e-mailom.
+
+Hvala Vam na strpljenju i razumijevanju.
+
+
+4. NARUDŽBA NIJE PREDANA DOSTAVNOJ SLUŽBI NAKON 72 SATA
+
+Kome:
+Kupcima koji su odabrali pouzeće, virman ili WSPay.
+
+Kada:
+Kada je narudžba 72 sata ostala u statusu „02 – Odobren” ili „05 – Odobren – komisioniranje”.
+
+Predmet:
+Chipoteka.hr - Obavijest o statusu narudžbe broj %s
+
+Tekst:
+
+Poštovani/a,
+
+Vaša narudžba broj %s još je u obradi i nije predana dostavnoj službi. Ispričavamo se zbog kašnjenja i radimo na tome da je pripremimo što prije.
+
+Ako trebate dodatne informacije, slobodno nam se javite na webnarudzba@chipoteka.hr.
+
+Hvala Vam na strpljenju i razumijevanju.
+
+
+5. PROVJERA ZADOVOLJSTVA NAKON ISPORUKE
+
+Kome:
+Kupcima koji su odabrali pouzeće, virman ili WSPay.
+
+Kada:
+Kada je od prelaska narudžbe u status „11 – Isporučeno” prošlo 168 sati, odnosno približno sedam dana.
+
+Predmet:
+Chipoteka.hr - Je li sve u redu s narudžbom broj %s?
+
+Tekst:
+
+Poštovani/a,
+
+prije otprilike sedam dana Vaša narudžba broj %s označena je kao isporučena. Nadamo se da je sve proteklo u redu i da ste zadovoljni kupnjom.
+
+Ako imate pitanje ili trebate pomoć, slobodno nam se javite na webnarudzba@chipoteka.hr.
+
+Hvala Vam na povjerenju.

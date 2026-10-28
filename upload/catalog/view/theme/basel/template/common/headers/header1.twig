@@ -195,6 +195,14 @@
                             {% endfor %}
                             <div class="accordion-item border-bottom">
                                 <h3 class="accordion-header">
+                                    <a class="accordion-button noneafter collapsed py-3" href="{{ faq }}">
+                                        {{ text_faq }}
+                                    </a>
+                                </h3>
+                                <style>.sidebar #menu .accordion-item .accordion-header .accordion-button.noneafter::after{content:unset}</style>
+                            </div>
+                            <div class="accordion-item border-bottom">
+                                <h3 class="accordion-header">
                                     <a class="accordion-button noneafter collapsed py-3" href="poslovnice">
                                         Poslovnice
                                                                             
@@ -233,4 +241,3 @@
             </div>
         </div>
     </aside>
-    

@@ -1,0 +1,94 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <a href="{{ sync_all }}" onclick="return confirm('{{ text_confirm_sync }}');" data-toggle="tooltip" title="{{ button_sync_all }}" class="btn btn-success"><i class="fa fa-refresh"></i></a>
+        <a href="{{ add }}" data-toggle="tooltip" title="{{ button_add }}" class="btn btn-primary"><i class="fa fa-plus"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>{% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {% if error_warning %}
+      <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}<button type="button" class="close" data-dismiss="alert">&times;</button></div>
+    {% endif %}
+    {% if success %}
+      <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}<button type="button" class="close" data-dismiss="alert">&times;</button></div>
+    {% endif %}
+    <div class="panel panel-default">
+      <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3></div>
+      <div class="panel-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <td>{{ column_name }}</td>
+                <td>{{ column_luceed_id }}</td>
+                <td>{{ column_customer_group }}</td>
+                <td class="text-right">{{ column_prices }}</td>
+                <td class="text-center">{{ column_sync }}</td>
+                <td>{{ column_feed }}</td>
+                <td>{{ column_last_sync }}</td>
+                <td class="text-right">{{ column_action }}</td>
+              </tr>
+            </thead>
+            <tbody>
+              {% if partner_feeds %}
+                {% for partner in partner_feeds %}
+                  <tr>
+                    <td><strong>{{ partner.name }}</strong><br><small>{{ partner.code }}</small></td>
+                    <td><code>{{ partner.luceed_partner_id }}</code></td>
+                    <td>{{ partner.customer_group }}</td>
+                    <td class="text-right">{{ partner.discount_count }}</td>
+                    <td class="text-center">
+                      {% if partner.status %}<span class="label label-success">{{ text_enabled }}</span>{% else %}<span class="label label-default">{{ text_disabled }}</span>{% endif %}
+                    </td>
+                    <td style="min-width:300px">
+                      {% if partner.feed_status and partner.feed_url %}
+                        <div class="input-group input-group-sm">
+                          <input type="text" class="form-control partner-feed-url" value="{{ partner.feed_url }}" readonly>
+                          <span class="input-group-btn"><button type="button" class="btn btn-default button-copy-url" data-toggle="tooltip" title="{{ text_copy }}"><i class="fa fa-copy"></i></button></span>
+                        </div>
+                      {% else %}
+                        <span class="label label-default">{{ text_disabled }}</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      {% if partner.last_sync_at %}{{ partner.last_sync_at }}{% else %}{{ text_never }}{% endif %}
+                      {% if partner.last_sync_status == 'success' %}<br><span class="label label-success">OK</span>{% elseif partner.last_sync_status == 'error' %}<br><span class="label label-danger" title="{{ partner.last_sync_message }}">Greška</span>{% endif %}
+                    </td>
+                    <td class="text-right" style="white-space:nowrap">
+                      {% if partner.status %}<a href="{{ partner.sync }}" onclick="return confirm('{{ text_confirm_sync }}');" data-toggle="tooltip" title="{{ button_sync }}" class="btn btn-success"><i class="fa fa-refresh"></i></a>{% endif %}
+                      {% if partner.feed_status %}<a href="{{ partner.regenerate }}" onclick="return confirm('{{ text_confirm_key }}');" data-toggle="tooltip" title="{{ button_regenerate }}" class="btn btn-warning"><i class="fa fa-key"></i></a>{% endif %}
+                      <a href="{{ partner.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                      <a href="{{ partner.delete }}" onclick="return confirm('{{ text_confirm_delete }}');" data-toggle="tooltip" title="{{ button_delete }}" class="btn btn-danger"><i class="fa fa-trash-o"></i></a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              {% else %}
+                <tr><td class="text-center" colspan="8">{{ text_no_results }}</td></tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$('.button-copy-url').on('click', function() {
+  var input = $(this).closest('.input-group').find('.partner-feed-url').get(0);
+  input.select();
+  input.setSelectionRange(0, input.value.length);
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(input.value);
+  } else {
+    document.execCommand('copy');
+  }
+});
+</script>
+{{ footer }}

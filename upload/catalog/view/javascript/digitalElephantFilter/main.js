@@ -32,25 +32,22 @@ $(function () {
 
         return baseUrl + '?' + qs;
     }
-    function getPanelQS() {
-        // trenutno stanje forme (checked + price inputi + def_primary + ajax_digitalElephantFilter)
-        var qs = $('#digitalElephantFilter_form').serialize();
+    function normalizeAppliedQS(qs, primaryOverride) {
+        qs = (qs || '').toString().replace(/^[?&]+/, '');
 
-        // osiguraj path jer ga forma često nema, a serveru treba za category_id
         if (DEFController.config.categoryPath) {
             qs = upsertQsParam(qs, 'path', DEFController.config.categoryPath);
         }
 
-        // osiguraj ajax flag
         qs = upsertQsParam(qs, 'ajax_digitalElephantFilter', '1');
-
-        // osiguraj def_primary (jer ga server koristi za “primarni kontekst”)
-        qs = upsertQsParam(qs, 'def_primary', ($('#def_primary').val() || ''));
-
-        // makni page da ne radi gluposti
+        qs = upsertQsParam(qs, 'def_primary', primaryOverride != null ? primaryOverride : ($('#def_primary').val() || ''));
         qs = qs.replace(/(^|&)page=\d+(&|$)/g, '$1').replace(/^&+|&+$/g, '');
 
-        return qs;
+        return DEFController.url.removeEmptyParams(qs);
+    }
+    function getPanelQS() {
+        // trenutno stanje forme (checked + price inputi + def_primary + ajax_digitalElephantFilter)
+        return normalizeAppliedQS($('#digitalElephantFilter_form').serialize());
     }
 
     // ✅ helper: upsert param u query string (dodaj ili zamijeni)
@@ -68,8 +65,187 @@ $(function () {
     // --- TOP "Očisti" + badge sync ---
     var defFiltersApplied = false;
 
+    function getComparableQueryEntries(qs) {
+        var normalizedQs = (qs || '').toString().replace(/^[?&]+/, '');
+        var entries = [];
+        var ignoreActionFilterInUrl = !!window.DEFIgnoreActionFilterInUrl;
+
+        if (!normalizedQs) {
+            return entries;
+        }
+
+        var searchParams = new URLSearchParams(normalizedQs);
+
+        searchParams.forEach(function (value, key) {
+            if (!key || value === '') {
+                return;
+            }
+
+            if (
+                key === 'route' ||
+                key === 'ajax_digitalElephantFilter' ||
+                key === 'def_primary' ||
+                key === 'path' ||
+                key === 'page' ||
+                key === 'sort' ||
+                key === 'order' ||
+                key === 'limit'
+            ) {
+                return;
+            }
+
+            if (ignoreActionFilterInUrl && (key === 'action_filter' || key === 'action_category_id')) {
+                return;
+            }
+
+            if (key === 'price[min]' && String(value) === String(DEFController.config.peakPrice.min)) {
+                return;
+            }
+
+            if (key === 'price[max]' && String(value) === String(DEFController.config.peakPrice.max)) {
+                return;
+            }
+
+            entries.push(key + '=' + value);
+        });
+
+        return entries.sort();
+    }
+
+    function normalizeComparableFilterParams(qs) {
+        return getComparableQueryEntries(qs).join('&');
+    }
+
+    function getCurrentFormFilterSignature() {
+        return normalizeComparableFilterParams($('#digitalElephantFilter_form').serialize());
+    }
+
+    function getUrlFilterParamsRaw() {
+        var filterParams = DEFController.url.getFilterParamsByLink();
+
+        if (filterParams) {
+            return filterParams;
+        }
+
+        return window.location.search || '';
+    }
+
+    function getUrlFilterSignature() {
+        return normalizeComparableFilterParams(getUrlFilterParamsRaw());
+    }
+
+    function hasAppliedFiltersInUrl() {
+        if (!!window.DEFResetInProgress) {
+            return false;
+        }
+
+        return getUrlFilterSignature() !== '';
+    }
+
+    function hasActionFilterInUrl() {
+        var searchParams = new URLSearchParams((getUrlFilterParamsRaw() || '').replace(/^[?&]+/, ''));
+
+        if (!!window.DEFResetInProgress || !!window.DEFIgnoreActionFilterInUrl) {
+            return false;
+        }
+
+        return searchParams.has('action_filter') || searchParams.has('action_category_id');
+    }
+
+    function hasActionFilterActive() {
+        var $actionToggle = $('#action-filter-toggle');
+        var $actionForm = $('#digitalElephantFilter_form');
+
+        if ($actionToggle.length && $actionToggle.is(':checked')) {
+            return true;
+        }
+
+        if ($actionForm.length && $actionForm.find('input[name="action_filter"]').length) {
+            return true;
+        }
+
+        return hasActionFilterInUrl();
+    }
+
+    function hasPendingFilterChanges() {
+        return getCurrentFormFilterSignature() !== getUrlFilterSignature();
+    }
+
+    function getWarehouseValuesFromUrl() {
+        var warehouseValues = [];
+        var searchParams = new URLSearchParams((getUrlFilterParamsRaw() || '').replace(/^[?&]+/, ''));
+
+        searchParams.forEach(function (value, key) {
+            if (key.indexOf('warehouse[') === 0) {
+                var normalizedValue = $.trim(String(value || ''));
+
+                if (normalizedValue !== '') {
+                    warehouseValues.push(normalizedValue);
+                }
+            }
+        });
+
+        return warehouseValues;
+    }
+
+    function syncWarehouseSelectionFromUrl() {
+        var warehouseValues = getWarehouseValuesFromUrl();
+        var $warehouseSelect = $('#digitalElephantFilter_form select[name^="warehouse["]');
+
+        if (!$warehouseSelect.length) {
+            return;
+        }
+
+        if (warehouseValues.length) {
+            $warehouseSelect.val(warehouseValues[0]);
+        }
+    }
+
+    function setTopButtonVisibility(selector, isVisible) {
+        $(selector).css('display', isVisible ? 'block' : 'none');
+    }
+
+    function beginResetFlow() {
+        window.DEFResetInProgress = true;
+        window.DEFIgnoreActionFilterInUrl = true;
+        setTopButtonVisibility('#filter-apply-top', false);
+        setTopButtonVisibility('#filter-clear-top', false);
+    }
+
+    function finishResetFlow() {
+        window.DEFResetInProgress = false;
+        window.DEFIgnoreActionFilterInUrl = false;
+        defFiltersApplied = hasAppliedFiltersInUrl();
+        toggleTopFilterButtons();
+        updateTotalFromDEF('');
+        setTimeout(function () {
+            updateTotalFromDEF('');
+        }, 250);
+    }
+
+    function runResetFlow() {
+        beginResetFlow();
+
+        if (typeof window.DEFClearActionFilterState === 'function') {
+            window.DEFClearActionFilterState();
+        }
+
+        var request = DEFController.reset();
+
+        if (request && typeof request.always === 'function') {
+            request.always(function () {
+                finishResetFlow();
+            });
+        } else {
+            finishResetFlow();
+        }
+    }
+
     function hasFilterSelectionOrChange() {
         var hasChecked = $('#digitalElephantFilter_form').find('input:checked').length > 0;
+        var hasSelectedOption = $('#digitalElephantFilter_form').find('select').filter(function () {
+            return ($(this).val() || '') !== '';
+        }).length > 0;
 
         var minNow = $('#digitalElephantFilter_changing_price_min').val();
         var maxNow = $('#digitalElephantFilter_changing_price_max').val();
@@ -84,7 +260,7 @@ $(function () {
 
         var hasPrice = String(minNow) !== String(minPeak) || String(maxNow) !== String(maxPeak);
 
-        return hasChecked || hasPrice;
+        return hasChecked || hasSelectedOption || hasPrice;
     }
 
     function getFacetKeyFromInput($el) {
@@ -102,6 +278,10 @@ $(function () {
 
         if (name.indexOf('manufacturers[') === 0) {
             return 'manufacturer';
+        }
+
+        if (name.indexOf('warehouse[') === 0) {
+            return 'warehouse';
         }
 
         if (name.indexOf('price[') === 0) {
@@ -140,18 +320,49 @@ $(function () {
         $('#def_primary').val('');
     }
 
-    function toggleTopFilterButtons() {
-        var hasSelection = hasFilterSelectionOrChange();
-        $('#filter-apply-top').toggle(hasSelection && !defFiltersApplied);
-        $('#filter-clear-top').toggle(defFiltersApplied);
+    function markFiltersDirty() {
+        defFiltersApplied = hasAppliedFiltersInUrl();
     }
 
-    function updateTotalFromDEF() {
-        // uzmi trenutno stanje forme (checked + price + def_primary + ajax flag + path)
-        var qs = getPanelQS();
+    function isWarehouseControl(el) {
+        var $el = $(el);
+        var name = $el.attr('name') || '';
 
-        // makni page da ne krivo računa
-        qs = DEFController.url.cutGetParam(qs, 'page');
+        return name.indexOf('warehouse[') === 0;
+    }
+
+    function toggleTopFilterButtons() {
+        var hasSelection = hasFilterSelectionOrChange();
+        var hasActionFilter = hasActionFilterActive();
+        var hasAppliedFilters = hasAppliedFiltersInUrl() || defFiltersApplied;
+        var hasPendingChanges = hasSelection && (!hasAppliedFilters || hasPendingFilterChanges());
+
+        if (window.DEFResetInProgress) {
+            setTopButtonVisibility('#filter-apply-top', false);
+            setTopButtonVisibility('#filter-clear-top', false);
+            return;
+        }
+
+        if (window.DEFActionAutoApplyInProgress) {
+            setTopButtonVisibility('#filter-apply-top', false);
+            setTopButtonVisibility('#filter-clear-top', hasActionFilter || hasAppliedFilters);
+            return;
+        }
+
+        if (hasActionFilter) {
+            setTopButtonVisibility('#filter-apply-top', false);
+            setTopButtonVisibility('#filter-clear-top', true);
+            return;
+        }
+
+        setTopButtonVisibility('#filter-apply-top', hasPendingChanges);
+        setTopButtonVisibility('#filter-clear-top', hasAppliedFilters);
+    }
+
+    function updateTotalFromDEF(qsOverride) {
+        var qs = (typeof qsOverride === 'string')
+            ? normalizeAppliedQS(qsOverride, '')
+            : getPanelQS();
 
         $.ajax({
             url: buildUrl(DEFController.config.action.ajaxRenderQuantityProducts, qs),
@@ -205,7 +416,9 @@ $(function () {
                         $('#def_primary').val(primary);
                     }
 
+                    syncWarehouseSelectionFromUrl();
                     initSliderPrice(DEFController);
+                    toggleTopFilterButtons();
                 }
             }
         });
@@ -245,6 +458,7 @@ $(function () {
                     }
                     $('#def_primary').val(primary);
 
+                    syncWarehouseSelectionFromUrl();
                     initSliderPrice(DEFController);
                     toggleTopFilterButtons();
                 }
@@ -252,42 +466,62 @@ $(function () {
         });
     }, 200);
 
+    var updateTotalPreview = debounce(function () {
+        updateTotalFromDEF();
+    }, 200);
+
 
     // wrapaj ajaxGetProducts da nakon svakog refresh-a updatea badge + applied state + panel
     var _ajaxGetProducts = DEFController.containerProducts.ajaxGetProducts.bind(DEFController.containerProducts);
+    var _renderFilterPanel = DEFController.filterPanel.render.bind(DEFController.filterPanel);
+
+    DEFController.filterPanel.render = function ($_GET_string) {
+        var ret = _renderFilterPanel($_GET_string);
+
+        if (ret && typeof ret.always === 'function') {
+            ret.always(function () {
+                syncWarehouseSelectionFromUrl();
+                toggleTopFilterButtons();
+            });
+        }
+
+        return ret;
+    };
 
     DEFController.containerProducts.ajaxGetProducts = function ($_GET_string, isShowMore) {
         var ret = _ajaxGetProducts($_GET_string, isShowMore);
 
         var afterApplied = function () {
-            defFiltersApplied = hasFilterSelectionOrChange();
+            defFiltersApplied = hasAppliedFiltersInUrl();
             toggleTopFilterButtons();
-            updateTotalFromDEF();
-            refreshFilterPanel();
+            updateTotalFromDEF($_GET_string);
         };
 
         if (ret && typeof ret.always === 'function') {
             ret.always(afterApplied);
-        } else {
-            setTimeout(afterApplied, 400);
         }
 
         return ret;
     };
 
     // inicijalno
-    updateTotalFromDEF();
     initSliderPrice(DEFController);
 
     defFiltersApplied = DEFController.url.isFilterParamsInUrl();
+
+    if (defFiltersApplied) {
+        updateTotalFromDEF();
+    }
+
+    window.DEFToggleTopFilterButtons = toggleTopFilterButtons;
     toggleTopFilterButtons();
 
     // TOP "Očisti"
     $(document).on('click', '#filter-clear-top', function () {
         resetPrimaryContext();
         defFiltersApplied = false;
-        toggleTopFilterButtons();
-        $('#digitalElephantFilter_button_clear').trigger('click');
+        runResetFlow();
+        return false;
     });
 
     // TOP "Filtriraj"
@@ -307,8 +541,11 @@ $(function () {
                     ensurePrimaryContext(el);
                 }
 
+                markFiltersDirty();
+
                 // 🔥 odmah sakrij sekundarne u panelu
                 refreshFilterPanelOnly();
+                updateTotalPreview();
 
                 toggleTopFilterButtons();
             }, 0);
@@ -321,7 +558,31 @@ $(function () {
         '#digitalElephantFilter_form select, #digitalElephantFilter_form input:not([type="checkbox"]):not([type="radio"])',
         function () {
             ensurePrimaryContext(this);
+            markFiltersDirty();
+
+            if (!isWarehouseControl(this)) {
+                refreshFilterPanelOnly();
+                updateTotalPreview();
+            }
+
             toggleTopFilterButtons();
+        }
+    );
+
+    // warehouse select zna u nekim browser/theme kombinacijama preskočiti očekivani flow,
+    // pa ga dodatno vežemo i na click s odgođenim očitanjem stvarne selected vrijednosti.
+    $(document).on(
+        'change click',
+        '#digitalElephantFilter_form select[name^="warehouse["]',
+        function () {
+            var el = this;
+
+            setTimeout(function () {
+                ensurePrimaryContext(el);
+                markFiltersDirty();
+                setTopButtonVisibility('#filter-apply-top', ($(el).val() || '') !== '');
+                toggleTopFilterButtons();
+            }, 0);
         }
     );
 
@@ -334,8 +595,7 @@ $(function () {
     $(document).on('click', '#digitalElephantFilter_button_clear', function () {
         resetPrimaryContext();
         defFiltersApplied = false;
-        toggleTopFilterButtons();
-        setTimeout(toggleTopFilterButtons, 50);
+        beginResetFlow();
     });
 
     // CONTAINER PRODUCT REQUIRE STYLE
@@ -370,7 +630,6 @@ $(function () {
     // page reload
     if (DEFController.url.isFilterParamsInUrl()) {
         DEFController.pageReloaded();
-        refreshFilterPanel();
     }
 
     // change limit
@@ -389,8 +648,8 @@ $(function () {
     $(document).on('click', DEFController.filterPanel.selectorButtonClear, function () {
         resetPrimaryContext();
         defFiltersApplied = false;
-        toggleTopFilterButtons();
-        DEFController.reset();
+        runResetFlow();
+        return false;
     });
 
     // show more

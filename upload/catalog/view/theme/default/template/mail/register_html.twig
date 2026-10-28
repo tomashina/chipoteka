@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="hr">
+  <body style="margin:0;padding:24px;background:#ffffff;color:#222222;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.55;">
+    <div style="max-width:680px;margin:0 auto;">
+      <p>{{ text_welcome }}</p>
+
+      {% if not approval %}
+        <p>{{ text_login }}</p>
+        <p>{{ text_service }}</p>
+        <p><a href="mailto:{{ contact_email }}" style="color:#e30613;text-decoration:underline;">{{ text_questions }}</a> {{ text_contact_help }}</p>
+      {% else %}
+        <p>{{ text_approval }}</p>
+        <p><a href="{{ login }}">{{ login }}</a></p>
+        <p>{{ text_thanks }}<br>{{ store }}</p>
+      {% endif %}
+    </div>
+  </body>
+</html>

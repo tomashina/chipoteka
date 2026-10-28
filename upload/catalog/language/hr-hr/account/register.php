@@ -12,6 +12,23 @@ $_['text_your_address']    = 'Vaša adresa';
 $_['text_newsletter']      = 'Newsletter';
 $_['text_your_password']   = 'Vaša lozinka';
 $_['text_agree']                     = '<span><span>Pročitao sam i slažem se s </span> <a href="%s" class="agree"><b>%s</b></a></span>';
+$_['text_register_card_title'] = 'Izradi račun';
+$_['text_register_intro'] = 'Unesi svoje podatke i kreiraj korisnički račun.';
+$_['text_account_type'] = 'Vrsta korisnika';
+$_['text_company_details'] = 'Podaci tvrtke';
+$_['text_contact_person'] = 'Kontakt osoba';
+$_['text_required_note'] = 'Polja označena zvjezdicom su obavezna.';
+$_['text_show_password'] = 'Prikaži lozinku';
+$_['text_hide_password'] = 'Sakrij lozinku';
+$_['text_home_label'] = 'Početna';
+$_['text_breadcrumb'] = 'Navigacija';
+$_['text_phone_placeholder'] = 'npr. 0912345678';
+$_['text_google_register'] = 'Registriraj se Google računom';
+$_['text_or'] = 'ili';
+$_['text_google_verified'] = 'Google račun je potvrđen';
+$_['text_google_password_help'] = 'Dovrši obavezne podatke. Lozinka nije potrebna za prijavu putem Googlea.';
+$_['text_google_email_verified'] = 'E-mail je verificirao Google';
+$_['text_use_email_registration'] = 'Registriraj se e-mailom';
 
 // Entry
 $_['entry_customer_group'] = 'Korisnička grupa';

@@ -1,0 +1,215 @@
+{{ header }}
+<main class="offcanvas-enabled">
+  <div class="page-title-overlap bg-dark pt-4 ps-lg-4 pe-lg-3">
+    <div class="container d-lg-flex justify-content-between py-2 py-lg-3">
+      <div class="order-lg-2 mb-3 mb-lg-0 pt-lg-2">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb breadcrumb-light flex-lg-nowrap justify-content-center justify-content-lg-start">
+            {% for breadcrumb in breadcrumbs %}
+              <li class="breadcrumb-item"><a class="text-nowrap" href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+            {% endfor %}
+          </ol>
+        </nav>
+      </div>
+      <div class="order-lg-1 pe-lg-4 text-center text-lg-start">
+        <h1 class="h2 text-light mb-0">{{ heading_title }}</h1>
+      </div>
+    </div>
+  </div>
+
+  <div id="content" class="container pb-5 mb-2 mb-md-4 ps-lg-4 pe-lg-3">
+    <div class="row">
+      {{ column_left }}
+      <section class="col-lg-8 pt-4">
+        <div class="d-none d-lg-flex justify-content-between align-items-center pt-lg-3 pb-4 pb-lg-5 mb-lg-3">
+          <h6 class="fs-base text-light mb-0">{{ heading_title }}</h6>
+        </div>
+
+        {{ content_top }}
+
+        {% if errors.warning %}
+          <div class="alert alert-danger">{{ errors.warning }}</div>
+        {% endif %}
+
+        {% if preview %}
+          <p class="text-muted">{{ text_preview_help }}</p>
+          <div class="table-responsive mb-4">
+            <table class="table table-bordered table-striped">
+              <tbody>
+                <tr>
+                  <td><b>{{ entry_order_id }}</b></td>
+                  <td>#{{ form.order_id }}</td>
+                </tr>
+                <tr>
+                  <td><b>{{ entry_firstname }} / {{ entry_lastname }}</b></td>
+                  <td>{{ form.firstname }} {{ form.lastname }}</td>
+                </tr>
+                <tr>
+                  <td><b>{{ entry_email }}</b></td>
+                  <td>{{ form.email }}</td>
+                </tr>
+                {% if form.refund_iban %}
+                  <tr>
+                    <td><b>{{ entry_refund_iban }}</b></td>
+                    <td>{{ form.refund_iban }}</td>
+                  </tr>
+                {% endif %}
+                <tr>
+                  <td><b>{{ entry_scope }}</b></td>
+                  <td>{% if form.withdrawal_scope == 'items' %}{{ text_selected_items }}{% else %}{{ text_full_order }}{% endif %}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2 class="h5 mb-3">{{ text_statement }}</h2>
+          <pre class="p-3 bg-light border rounded mb-4" style="white-space: pre-wrap;">{{ statement }}</pre>
+
+          <form action="{{ action }}" method="post">
+            <input type="hidden" name="order_id" value="{{ form.order_id }}" />
+            <input type="hidden" name="firstname" value="{{ form.firstname }}" />
+            <input type="hidden" name="lastname" value="{{ form.lastname }}" />
+            <input type="hidden" name="email" value="{{ form.email }}" />
+            <input type="hidden" name="telephone" value="{{ form.telephone }}" />
+            <input type="hidden" name="address" value="{{ form.address }}" />
+            <input type="hidden" name="refund_iban" value="{{ form.refund_iban }}" />
+            <input type="hidden" name="withdrawal_scope" value="{{ form.withdrawal_scope }}" />
+            <input type="hidden" name="comment" value="{{ form.comment }}" />
+            {% for order_product_id in form.order_products %}
+              <input type="hidden" name="order_products[]" value="{{ order_product_id }}" />
+            {% endfor %}
+            <div class="d-flex flex-wrap gap-2">
+              <button type="submit" name="confirm" value="1" class="btn btn-primary">{{ button_confirm }}</button>
+              <button type="button" onclick="window.history.back();" class="btn btn-outline-secondary">{{ button_edit }}</button>
+            </div>
+          </form>
+        {% else %}
+          <p class="text-muted">{{ text_intro }}</p>
+          <p class="fs-sm text-muted">{{ text_required_note }}</p>
+
+          <form action="{{ action }}" method="post" class="needs-validation">
+            <input type="text" name="website" value="" tabindex="-1" autocomplete="off" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;" />
+
+            <fieldset class="mb-4">
+              <legend class="h5 mb-3">{{ text_order }}</legend>
+              <div class="mb-3 required">
+                <label for="input-order-id" class="form-label">{{ entry_order_id }} *</label>
+                <input type="text" name="order_id" value="{{ form.order_id }}" id="input-order-id" class="form-control" />
+                {% if errors.order_id %}
+                  <div class="text-danger">{{ errors.order_id }}</div>
+                {% endif %}
+              </div>
+            </fieldset>
+
+            <fieldset class="mb-4">
+              <legend class="h5 mb-3">{{ text_customer }}</legend>
+              <div class="row">
+                <div class="col-md-6 mb-3 required">
+                  <label for="input-firstname" class="form-label">{{ entry_firstname }} *</label>
+                  <input type="text" name="firstname" value="{{ form.firstname }}" id="input-firstname" class="form-control" />
+                  {% if errors.firstname %}
+                    <div class="text-danger">{{ errors.firstname }}</div>
+                  {% endif %}
+                </div>
+                <div class="col-md-6 mb-3 required">
+                  <label for="input-lastname" class="form-label">{{ entry_lastname }} *</label>
+                  <input type="text" name="lastname" value="{{ form.lastname }}" id="input-lastname" class="form-control" />
+                  {% if errors.lastname %}
+                    <div class="text-danger">{{ errors.lastname }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3 required">
+                  <label for="input-email" class="form-label">{{ entry_email }} *</label>
+                  <input type="email" name="email" value="{{ form.email }}" id="input-email" class="form-control" />
+                  {% if errors.email %}
+                    <div class="text-danger">{{ errors.email }}</div>
+                  {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="input-telephone" class="form-label">{{ entry_telephone }}</label>
+                  <input type="text" name="telephone" value="{{ form.telephone }}" id="input-telephone" class="form-control" />
+                  {% if errors.telephone %}
+                    <div class="text-danger">{{ errors.telephone }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="input-address" class="form-label">{{ entry_address }}</label>
+                <textarea name="address" rows="3" id="input-address" class="form-control">{{ form.address }}</textarea>
+                {% if errors.address %}
+                  <div class="text-danger">{{ errors.address }}</div>
+                {% endif %}
+              </div>
+              <div class="mb-3">
+                <label for="input-refund-iban" class="form-label">{{ entry_refund_iban }}</label>
+                <input type="text" name="refund_iban" value="{{ form.refund_iban }}" id="input-refund-iban" class="form-control" />
+                {% if errors.refund_iban %}
+                  <div class="text-danger">{{ errors.refund_iban }}</div>
+                {% endif %}
+              </div>
+            </fieldset>
+
+            <fieldset class="mb-4">
+              <legend class="h5 mb-3">{{ text_products }}</legend>
+              <div class="mb-3">
+                <label class="form-label d-block">{{ entry_scope }}</label>
+                <div class="form-check mb-2">
+                  <input type="radio" name="withdrawal_scope" value="full" id="input-scope-full" class="form-check-input" {% if form.withdrawal_scope != 'items' %}checked{% endif %} />
+                  <label for="input-scope-full" class="form-check-label">{{ text_full_order }}</label>
+                </div>
+                <div class="form-check">
+                  <input type="radio" name="withdrawal_scope" value="items" id="input-scope-items" class="form-check-input" {% if form.withdrawal_scope == 'items' %}checked{% endif %} {% if not order_products %}disabled{% endif %} />
+                  <label for="input-scope-items" class="form-check-label">{{ text_selected_items }}</label>
+                </div>
+              </div>
+
+              {% if order_products %}
+                <div class="table-responsive mb-3">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th style="width: 40px;"></th>
+                        <th>{{ text_products }}</th>
+                        <th>Model</th>
+                        <th class="text-end">Kol.</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for product in order_products %}
+                        <tr>
+                          <td>
+                            <input type="checkbox" name="order_products[]" value="{{ product.order_product_id }}" {% if product.order_product_id in form.order_products %}checked{% endif %} />
+                          </td>
+                          <td>{{ product.name }}</td>
+                          <td>{{ product.model }}</td>
+                          <td class="text-end">{{ product.quantity }}</td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              {% else %}
+                <p class="text-muted">{{ text_no_products }}</p>
+              {% endif %}
+
+              {% if errors.scope %}
+                <div class="text-danger mb-3">{{ errors.scope }}</div>
+              {% endif %}
+
+              <div class="mb-3">
+                <label for="input-comment" class="form-label">{{ entry_comment }}</label>
+                <textarea name="comment" rows="5" id="input-comment" class="form-control">{{ form.comment }}</textarea>
+              </div>
+            </fieldset>
+
+            <button type="submit" class="btn btn-primary">{{ button_preview }}</button>
+          </form>
+        {% endif %}
+
+        {{ content_bottom }}
+      </section>
+    </div>
+  </div>
+{{ footer }}

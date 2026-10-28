@@ -21,24 +21,162 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
         $this->helperUrl  = $this->load->controller('extension/module/digital_elephant_filter/helper_url/prototype');
     }
 
+    /**
+     * Decimal display normalization:
+     * - trim trailing zeros
+     * - trim trailing decimal point
+     * Examples: "15.60" -> "15.6", "13.00" -> "13"
+     */
+    private function defNormalizeDecimal($value) {
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        $v = trim($value);
+        if ($v === '') return $v;
+
+        // if ever comes as "15,60"
+        $v = str_replace(',', '.', $v);
+
+        if (strpos($v, '.') !== false) {
+            $v = rtrim($v, '0');
+            $v = rtrim($v, '.');
+        }
+
+        return $v;
+    }
+
+    private function defLooksLikePlainNumber($value) {
+        if (!is_string($value)) {
+            return false;
+        }
+
+        $candidate = str_replace(',', '.', trim($value));
+
+        return (bool)preg_match('/^-?\d+(?:\.\d+)?$/', $candidate);
+    }
+
+    private function defBooleanTrueValues() {
+        return array('D', 'DA', 'T', 'TRUE', 'Y', 'YES');
+    }
+
+    private function defBooleanFalseValues() {
+        return array('N', 'NE', 'F', 'FALSE', 'NO', '0');
+    }
+
+    private function defNormalizeBooleanToken($value) {
+        $value = trim((string)$value);
+
+        if ($value === '') {
+            return '';
+        }
+
+        return strtoupper($value);
+    }
+
+    private function defIsEnergyLabelSection($name) {
+        $name = trim((string)$name);
+
+        if ($name === '') {
+            return false;
+        }
+
+        if (function_exists('mb_strtolower')) {
+            $name = mb_strtolower($name, 'UTF-8');
+        } else {
+            $name = strtolower($name);
+        }
+
+        return (strpos($name, 'energetska oznaka') === 0);
+    }
+
+    private function defIsBooleanAttributeSection($name, array $values) {
+        if ($this->defIsEnergyLabelSection($name)) {
+            return false;
+        }
+
+        $allowed = array_flip(array_merge(
+            $this->defBooleanTrueValues(),
+            $this->defBooleanFalseValues()
+        ));
+
+        $tokens = array();
+
+        foreach ($values as $value) {
+            foreach (explode(':', (string)$value) as $part) {
+                $token = $this->defNormalizeBooleanToken($part);
+
+                if ($token === '') {
+                    continue;
+                }
+
+                $tokens[$token] = true;
+            }
+        }
+
+        if ( ! $tokens) {
+            return false;
+        }
+
+        foreach (array_keys($tokens) as $token) {
+            if ( ! isset($allowed[$token])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function defNormalizeBooleanValue($value) {
+        $token = $this->defNormalizeBooleanToken($value);
+
+        if ($token === '') {
+            return null;
+        }
+
+        if (in_array($token, $this->defBooleanTrueValues(), true)) {
+            return 'D';
+        }
+
+        if (in_array($token, $this->defBooleanFalseValues(), true)) {
+            return null;
+        }
+
+        return trim((string)$value);
+    }
+
     public function getSectionGroups($setting, $category_id)
     {
         $category_id = (int)$category_id;
 
         $section_groups = $this->cache->get('DEF_panel_attr_' . $category_id);
+        $urlBase = $this->helperUrl->getUrlData();
+        $hasActionFilter = !empty($urlBase['action_filter']) || !empty($urlBase['action_category_id']);
 
-        if (($this->helperUrl->isAjaxRequest() || !$section_groups || !isset($setting['DEF_settings']['cache']['isset']))) {
-
+        if (($this->helperUrl->isAjaxRequest() || $hasActionFilter || !$section_groups || !isset($setting['DEF_settings']['cache']['isset']))) {
             $args = array(
                 'category_id' => $category_id,
                 'filter_sub_category' => true
             );
 
+            if (!empty($urlBase['warehouse'])) {
+                $args['warehouses'] = $urlBase['warehouse'];
+            }
+
+            if ($hasActionFilter) {
+                $args['action_filter_only'] = 1;
+                $args['action_category_id'] = !empty($urlBase['action_category_id']) ? (int)$urlBase['action_category_id'] : 0;
+                $args['action_parent_id'] = 308;
+            }
+
             $attributes_groups = $this->model_extension_module_digitalElephantFilter->getAttributes($setting['DEF_settings'], $args);
 
-            // ===================== URL STATE + PRIMARY CONTEXT =====================
-            $urlBase = $this->helperUrl->getUrlData();
+            $attributes_type_by_setting = '';
+            if (isset($setting['DEF_settings']['attributes'])) {
+                $attributes_type_by_setting = $setting['DEF_settings']['attributes'];
+            }
 
+            // ===================== URL STATE + PRIMARY CONTEXT =====================
             // SVI trenutno odabrani atributi (primarni + sekundarni)
             $activeAttributes = [];
             if (!empty($urlBase['attribute']) && is_array($urlBase['attribute'])) {
@@ -76,11 +214,6 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
             $showTotalsInLabel = false;
             // ======================================================================
 
-            $attributes_type_by_setting = '';
-            if (isset($setting['DEF_settings']['attributes'])) {
-                $attributes_type_by_setting = $setting['DEF_settings']['attributes'];
-            }
-
             $section_groups = [];
 
             foreach ($attributes_groups as $attribute_groups_id => $attribute_group) {
@@ -96,18 +229,43 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                     }
 
                     $values = [];
+                    $seenValues = [];
+                    $isBooleanAttr = $this->defIsBooleanAttributeSection(
+                        $attribute_value['name'],
+                        $attribute_value['values']
+                    );
 
                     foreach ($attribute_value['values'] as $value) {
 
-                        // normalizacija vrijednosti
-                        $value = is_string($value) ? trim($value) : $value;
+                        $rawValue = is_string($value) ? trim($value) : $value;
 
                         // ne prikazuj prazne (ali dozvoli '0')
-                        if ($value === '' || $value === null) {
+                        if ($rawValue === '' || $rawValue === null) {
                             continue;
                         }
 
-                        $input_label = $value;
+                        if ($isBooleanAttr) {
+                            $rawValue = $this->defNormalizeBooleanValue($rawValue);
+
+                            if ($rawValue === null) {
+                                continue;
+                            }
+                        }
+
+                        $displayValue = $rawValue;
+
+                        // Za prikaz makni suvišne završne nule samo na čistim brojčanim vrijednostima.
+                        if ($this->defLooksLikePlainNumber($rawValue)) {
+                            $displayValue = $this->defNormalizeDecimal($rawValue);
+                        }
+
+                        if (isset($seenValues[(string)$rawValue])) {
+                            continue;
+                        }
+
+                        $seenValues[(string)$rawValue] = true;
+
+                        $input_label = $displayValue;
                         $is_enable = true;
 
                         // računaj totals ako je:
@@ -160,8 +318,8 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                             }
 
                             // spriječi duplikate
-                            if (!in_array($value, $url['attribute'][$attribute_value_id], true)) {
-                                $url['attribute'][$attribute_value_id][] = $value;
+                            if (!in_array($rawValue, $url['attribute'][$attribute_value_id], true)) {
+                                $url['attribute'][$attribute_value_id][] = $rawValue;
                             }
 
                             $filter_data = $this->getProduct->getFilterDataByUrl($url);
@@ -171,9 +329,9 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
 
                             // Label: po želji pokaži (total)
                             if ($showTotalsInLabel || isset($setting['DEF_settings']['is_display_total'])) {
-                                $input_label = $value . ' <span>(' . (int)$totalProducts . ')</span>';
+                                $input_label = $displayValue . ' <span>(' . (int)$totalProducts . ')</span>';
                             } else {
-                                $input_label = $value;
+                                $input_label = $displayValue;
                             }
                         }
 
@@ -195,10 +353,11 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                         }
 
                         $values[] = array(
-                            'input_value' => $value,
+                            'input_value' => $rawValue,
+                            'display_value' => $displayValue,
                             'input_name'  => 'attribute',
                             'input_label' => $input_label,
-                            'value_id'    => $value,
+                            'value_id'    => $rawValue,
                             'image'       => '',
                             'is_enable'   => $is_enable
                         );
@@ -219,11 +378,12 @@ class ControllerExtensionModuleDigitalElephantFilterPanelAttribute extends Contr
                         }
 
                         $sections[] = array(
-                            'id'     => $attribute_value_id,
-                            'name'   => $attribute_value['name'],
-                            'values' => $values,
-                            'type'   => $type,
-                            'open'   => $opened,
+                            'id'         => $attribute_value_id,
+                            'name'       => $attribute_value['name'],
+                            'values'     => $values,
+                            'type'       => $type,
+                            'open'       => $opened,
+                            'is_boolean' => $isBooleanAttr,
                         );
                     }
                 }

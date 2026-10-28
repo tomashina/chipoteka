@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="706" height="220" viewBox="0 0 706 220" role="img" aria-label="Testni 2D barkod, ne plaćati">
+  <rect width="706" height="220" fill="#fff"/>
+  <g fill="#111">
+    <path d="M22 22h7v142h-7zm13 0h3v142h-3zm9 0h9v142h-9zm15 0h4v142h-4zm11 0h12v142H70zm19 0h5v142h-5zm12 0h8v142h-8zm14 0h3v142h-3zm10 0h11v142h-11zm18 0h5v142h-5zm12 0h14v142h-14zm21 0h3v142h-3zm10 0h8v142h-8zm15 0h5v142h-5zm12 0h12v142h-12zm19 0h4v142h-4zm11 0h9v142h-9zm15 0h3v142h-3zm10 0h14v142h-14zm21 0h5v142h-5zm12 0h8v142h-8zm14 0h4v142h-4zm11 0h13v142h-13zm20 0h5v142h-5zm12 0h10v142h-10zm17 0h3v142h-3zm10 0h12v142h-12zm19 0h4v142h-4zm11 0h8v142h-8zm15 0h5v142h-5zm12 0h14v142h-14zm21 0h3v142h-3zm10 0h9v142h-9zm16 0h5v142h-5zm12 0h12v142h-12zm19 0h4v142h-4zm11 0h8v142h-8zm15 0h3v142h-3zm10 0h14v142h-14zm21 0h5v142h-5zm12 0h9v142h-9zm16 0h4v142h-4zm11 0h12v142h-12zm19 0h3v142h-3zm10 0h10v142h-10zm17 0h5v142h-5zm12 0h13v142h-13zm20 0h4v142h-4zm11 0h9v142h-9zm16 0h3v142h-3zm10 0h12v142h-12z"/>
+    <path d="M22 42h662v4H22zm0 19h662v7H22zm0 27h662v3H22zm0 18h662v6H22zm0 25h662v4H22zm0 20h662v8H22z" fill="#fff"/>
+  </g>
+  <rect x="22" y="181" width="662" height="25" rx="3" fill="#f5f5f5"/>
+  <text x="353" y="199" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" fill="#E31318">TESTNI 2D BARKOD — NE PLAĆATI</text>
+</svg>
