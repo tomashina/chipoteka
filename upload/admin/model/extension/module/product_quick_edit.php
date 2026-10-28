@@ -898,12 +898,18 @@ class ModelExtensionModuleProductQuickEdit extends Model {
 				$this->log->write("PQE: cache miss p{$product_id}:{$column} [QE]");
 			}
 		} else if (in_array($column, array('quantity', 'sort_order', 'status', 'minimum', 'subtract', 'shipping', 'points', 'viewed'))) {
+			if ($column === 'status' && strpos(trim($value), '#') !== 0 && empty($data['_luceed_sync'])) {
+				(new \Agmedia\LuceedOpencartWrapper\Models\LOC_ProductStatus($this->db))->setManualStatus([(int)$product_id], (int)$value);
+			}
 			$matches = null;
 			if (strpos(trim($value), "#") === 0 && preg_match('/^#\s*(?P<operator>[+-\/\*])\s*(?P<operand>-?\d+\.?\d*)(?P<percent>%)?$/', trim($value), $matches) === 1) {
 				list($operator, $operand) = $this->parseExpression($matches);
 				$result = $this->db->query("UPDATE " . DB_PREFIX . "product SET $column = $column $operator '" . (float)$operand . "', date_modified = NOW() WHERE product_id = '" . (int)$product_id . "'");
 				$query = $this->db->query("SELECT $column FROM " . DB_PREFIX . "product WHERE product_id = '" . (int)$product_id . "'");
 				$value = $query->row[$column];
+				if ($column === 'status' && empty($data['_luceed_sync'])) {
+					(new \Agmedia\LuceedOpencartWrapper\Models\LOC_ProductStatus($this->db))->setManualStatus([(int)$product_id], (int)$value);
+				}
 			} else {
 				$result = $this->db->query("UPDATE " . DB_PREFIX . "product SET " . $column . " = '" . (int)$value . "', date_modified = NOW() WHERE product_id = '" . (int)$product_id . "'");
 			}

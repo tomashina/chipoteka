@@ -502,6 +502,7 @@ class ProductHelper
             'vpc' => $product->vpc,
             'mpc' => $product->mpc,
             'enabled' => $product->enabled,
+            'webshop' => $product->webshop ?? 'N',
             'specifikacija' => static::setDescription($product->specifikacija),
             'kataloski_broj' => $product->kataloski_broj,
             'stopa_pdv' => $product->stopa_pdv,
@@ -526,11 +527,77 @@ class ProductHelper
      */
     public static function hashLuceedData(array $product): string
     {
-        unset($product['stanje_kol']);
+        // These are reconciled on every successful feed, independently of the
+        // content queue. Adding webshop must not re-download every product image.
+        unset($product['stanje_kol'], $product['webshop']);
 
         return sha1(
             collect($product)->toJson()
         );
+    }
+
+
+    /**
+     * Publication requires an explicit ERP opt-in and usable product content.
+     * Stock is checked separately against Min_kol_web using the current stock feed.
+     */
+    public static function isLuceedProductEligible(array $product): bool
+    {
+        if (strtoupper(trim((string) ($product['enabled'] ?? ''))) !== 'D' ||
+            strtoupper(trim((string) ($product['webshop'] ?? ''))) !== 'D') {
+            return false;
+        }
+
+        $price = $product['mpc'] ?? null;
+        $description = html_entity_decode((string) ($product['opis'] ?? ''), ENT_QUOTES, 'UTF-8');
+        $description = trim(str_replace("\xC2\xA0", ' ', strip_tags($description)));
+
+        if (!is_numeric($price) || !is_finite((float) $price) || (float) $price <= 0 || $description === '') {
+            return false;
+        }
+
+        foreach (($product['dokumenti'] ?? []) as $document) {
+            $document = (array) $document;
+            $extension = strtolower(pathinfo((string) ($document['filename'] ?? ''), PATHINFO_EXTENSION));
+
+            if (!empty($document['file_uid']) && in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'], true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Min_kol_web controls visibility, independently of the minimum order quantity.
+     * An invalid configured threshold must stop the snapshot instead of publishing
+     * an article using a guessed lower threshold.
+     */
+    public static function getActivationMinimum(array $product): int
+    {
+        // Zero means no configured visibility threshold. Do not silently impose
+        // a new threshold on already active out-of-stock articles.
+        $minimum = 0;
+
+        foreach (($product['atributi'] ?? []) as $attribute) {
+            $attribute = (array) $attribute;
+            $name = strtolower(preg_replace('/[^a-z0-9]/i', '', (string) ($attribute['naziv'] ?? '')));
+
+            if ($name !== 'minkolweb' || strtoupper(trim((string) ($attribute['aktivan'] ?? 'D'))) === 'N') {
+                continue;
+            }
+
+            $value = str_replace(',', '.', trim((string) ($attribute['vrijednost'] ?? '')));
+
+            if (!preg_match('/^\d+(?:\.\d+)?$/', $value) || !is_finite((float) $value) || (float) $value > 2147483647) {
+                throw new \UnexpectedValueException('Invalid Min_kol_web for Luceed article ' . ($product['artikl'] ?? 'unknown'));
+            }
+
+            $minimum = max($minimum, (int) ceil((float) $value));
+        }
+
+        return $minimum;
     }
 
 

@@ -21,6 +21,7 @@ use Agmedia\LuceedOpencartWrapper\Models\LOC_Payment;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Price;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Product;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_ProductSingle;
+use Agmedia\LuceedOpencartWrapper\Models\LOC_ProductStatus;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Related;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Stock;
 use Agmedia\LuceedOpencartWrapper\Models\LOC_Warehouse;
@@ -347,6 +348,14 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function importProducts()
     {
+        return $this->runProductSync(function () {
+            return $this->importProductBatch();
+        });
+    }
+
+
+    private function importProductBatch()
+    {
         $_loc  = new LOC_Product(LuceedProduct::all());
         $count = 0;
 
@@ -404,7 +413,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
                         $product_for_update                    = $_loc_ps->makeForUpdate($product);
                         $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
                         $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
-                        $product_for_update['status']          = min((int)$product_for_update['status'], (int)$_loc_ps->product_to_update['status']);
 
                         $this->model_catalog_product->editProduct(
                             $_loc_ps->product_to_update['product_id'],
@@ -412,20 +420,20 @@ class ControllerExtensionModuleLuceedSync extends Controller
                         );
 
                         $_loc_ps->finishUpdate();
+                        LuceedProductForUpdate::where('uid', $item->uid)->delete();
 
                         $count++;
                     }
                 }
             }
 
-            LuceedProductForUpdate::truncate();
-
             //$this->updateQuantities();
             $this->finishUpdateProduct();
+            $this->reconcileProductStatuses();
 
             return $this->response($count, 'products');
         } catch (\Throwable $exception) {
-            Log::info($exception->getMessage(), 'luceed_product_sync_error');
+            Log::store($exception->getMessage(), 'luceed_product_sync_error');
             $this->response->addHeader('HTTP/1.1 503 Service Unavailable');
 
             return $this->output([
@@ -458,7 +466,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         try {
             return $this->output($this->refreshLuceedProductsCache());
         } catch (\Throwable $exception) {
-            Log::info($exception->getMessage(), 'luceed_product_sync_error');
+            Log::store($exception->getMessage(), 'luceed_product_sync_error');
             $this->response->addHeader('HTTP/1.1 503 Service Unavailable');
 
             return $this->output([
@@ -475,6 +483,25 @@ class ControllerExtensionModuleLuceedSync extends Controller
      * @return mixed
      */
     public function updateProduct()
+    {
+        return $this->runProductSync(function () {
+            // Interactive queue processing must follow the same snapshot
+            // freshness rules as the automatic stock and product jobs.
+            if (!isset($this->request->get['products'])) {
+                $this->refreshProductSnapshotForStock();
+                $readiness = $this->reconcileProductStatuses();
+
+                if (!empty($readiness['skipped'])) {
+                    $this->addServiceUnavailableHeader();
+                    return $this->output(['status' => 503, 'message' => 'Ažuriranje čeka svjež provjeren Luceed popis artikala.']);
+                }
+            }
+            return $this->updateProductBatch();
+        });
+    }
+
+
+    private function updateProductBatch()
     {
         $_loc_ps = new LOC_ProductSingle();
         $this->load->model('catalog/product');
@@ -496,7 +523,6 @@ class ControllerExtensionModuleLuceedSync extends Controller
                     $product_for_update                    = $_loc_ps->makeForUpdate($product);
                     $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
                     $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
-                    $product_for_update['status']          = min((int)$product_for_update['status'], (int)$_loc_ps->product_to_update['status']);
 
                     $this->model_catalog_product->editProduct(
                         $_loc_ps->product_to_update['product_id'],
@@ -529,16 +555,16 @@ class ControllerExtensionModuleLuceedSync extends Controller
             $product_for_update                    = $_loc_ps->makeForUpdate($product);
             $product_for_update['quantity']        = $_loc_ps->product_to_update['quantity'];
             $product_for_update['stock_status_id'] = $_loc_ps->product_to_update['stock_status_id'];
-            $product_for_update['status']          = min((int)$product_for_update['status'], (int)$_loc_ps->product_to_update['status']);
 
             $this->model_catalog_product->editProduct(
                 $_loc_ps->product_to_update['product_id'],
                 $product_for_update
             );
 
+            $result = $_loc_ps->finishUpdate();
             LuceedProductForUpdate::where('uid', $_loc_ps->product_to_update['luceed_uid'])->delete();
 
-            return $this->output($_loc_ps->finishUpdate());
+            return $this->output($result);
 
         } else {
             // Ako ima proizvoda za INSERT
@@ -855,23 +881,17 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function checkMinQty()
     {
-        $activated   = 0;
-        $deactivated = 0;
-        $products    = Product::all();
+        return $this->runProductSync(function () {
+            $this->refreshProductSnapshotForStock();
+            $result = $this->reconcileProductStatuses();
 
-        foreach ($products as $product) {
-            if ($product->quantity < $product->active_min && $product->status) {
-                $product->update(['status' => 0]);
-                $deactivated++;
+            if (!empty($result['skipped'])) {
+                $this->addServiceUnavailableHeader();
+                return $this->output(['status' => 503, 'message' => 'Nema svježeg Luceed popisa za provjeru aktivacije.', 'activation' => $result]);
             }
 
-            if ($product->quantity >= $product->active_min && ! $product->status) {
-                $product->update(['status' => 1]);
-                $activated++;
-            }
-        }
-
-        return $this->response([$activated, $deactivated], 'active');
+            return $this->response([$result['activated'], $result['deactivated']], 'active');
+        });
     }
 
 
@@ -1025,6 +1045,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateQuantities()
     {
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
         if ($response = $this->abortStockSyncWhenLuceedUnavailable('updateQuantities')) {
             return $this->output($response);
         }
@@ -1037,6 +1060,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         try {
+            $snapshot_warning = $this->refreshProductSnapshotForStock();
             $_loc = new LOC_Stock();
 
             $_loc->setSkladista(
@@ -1059,7 +1083,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
             $updated = $_loc->createQuery()->update();
 
-            return $this->response($updated, 'update_stock');
+            return $this->stockSyncResponse($updated, $snapshot_warning);
         } catch (\Throwable $e) {
             Log::store($e->getMessage(), 'luceed_stock_sync_error');
             Log::store($e->getTraceAsString(), 'luceed_stock_sync_error');
@@ -1081,6 +1105,9 @@ class ControllerExtensionModuleLuceedSync extends Controller
      */
     public function updateQuantitiesWithoutSupliers()
     {
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
         if ($response = $this->abortStockSyncWhenLuceedUnavailable('updateQuantitiesWithoutSupliers')) {
             return $this->output($response);
         }
@@ -1093,6 +1120,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
         }
 
         try {
+            $snapshot_warning = $this->refreshProductSnapshotForStock();
             $_loc = new LOC_Stock();
 
             $_loc->setSkladista(
@@ -1111,7 +1139,7 @@ class ControllerExtensionModuleLuceedSync extends Controller
 
             $updated = $_loc->createQuery()->updateWithoutSupliers();
 
-            return $this->response($updated, 'update_stock');
+            return $this->stockSyncResponse($updated, $snapshot_warning);
         } catch (\Throwable $e) {
             Log::store($e->getMessage(), 'luceed_stock_sync_error');
             Log::store($e->getTraceAsString(), 'luceed_stock_sync_error');
@@ -2719,11 +2747,99 @@ class ControllerExtensionModuleLuceedSync extends Controller
     /**
      * @return array
      */
-    private function refreshLuceedProductsCache(): array
+    private function refreshLuceedProductsCache(bool $reconcile = true): array
     {
         $_loc = new LOC_Product(LuceedProduct::all());
+        $result = $_loc->populateLuceedData();
+        if ($reconcile) {
+            $result['activation'] = $this->reconcileProductStatuses();
+        }
 
-        return $_loc->populateLuceedData();
+        return $result;
+    }
+
+
+    /**
+     * Refresh publication rules automatically after deployment and daily. A
+     * product-feed failure must not prevent an independent valid stock update.
+     */
+    private function refreshProductSnapshotForStock(): ?string
+    {
+        try {
+            if ((new LOC_ProductStatus())->needsSnapshotRefresh()) {
+                $this->refreshLuceedProductsCache(false);
+            }
+            return null;
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_product_sync_error');
+            return 'Luceed popis artikala nije obnovljen. Provjera aktivacije koristi samo prethodne podatke koji nisu stariji od 48 sati.';
+        }
+    }
+
+
+    private function reconcileProductStatuses(): array
+    {
+        $result = (new LOC_ProductStatus())->reconcile();
+        $this->cache->delete('product');
+        $this->cache->delete('pqe.products');
+
+        return $result;
+    }
+
+
+    private function stockSyncResponse(int $updated, ?string $snapshot_warning)
+    {
+        $this->cache->delete('product');
+        $this->cache->delete('pqe.products');
+
+        try {
+            $activation = $this->reconcileProductStatuses();
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_product_status_error');
+            $this->addServiceUnavailableHeader();
+            return $this->output([
+                'status' => 503,
+                'message' => 'Zalihe su ažurirane, ali provjera aktivacije nije uspjela. Provjera će se ponoviti sljedećim cronom.'
+            ]);
+        }
+
+        $this->load->language('extension/module/luceed_sync');
+        $failed = !$updated || $snapshot_warning !== null || !empty($activation['skipped']);
+
+        if ($failed) {
+            $this->addServiceUnavailableHeader();
+        }
+
+        return $this->output([
+            'status' => $failed ? 503 : 200,
+            'message' => ($updated ? $this->language->get('text_success_update_stock') : $this->language->get('text_warning_update_stock'))
+                . ' Aktivirano: ' . $activation['activated'] . ', deaktivirano: ' . $activation['deactivated'] . '.'
+                . ($snapshot_warning ? ' ' . $snapshot_warning : '')
+                . (!empty($activation['skipped']) ? ' Aktivacija je preskočena jer nema svježeg provjerenog popisa artikala.' : ''),
+            'activation' => $activation
+        ]);
+    }
+
+
+    private function runProductSync(callable $callback)
+    {
+        if (!$this->acquireLuceedProductSyncLock()) {
+            return $this->output(['status' => 409, 'message' => 'Sinkronizacija artikala ili zaliha je već u tijeku.']);
+        }
+
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
+
+        try {
+            return $callback();
+        } catch (\Throwable $e) {
+            Log::store($e->getMessage(), 'luceed_product_sync_error');
+            $this->addServiceUnavailableHeader();
+            return $this->output(['status' => 503, 'message' => 'Sinkronizacija artikala nije uspjela. Preostali artikli ostaju za sljedeći pokušaj.']);
+        } finally {
+            $this->releaseLuceedProductSyncLock();
+        }
     }
 
 
