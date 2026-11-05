@@ -21,6 +21,9 @@ Production redirects/PHP rules and generated warehouse JSON must not be merged
 into these two tracked files on this branch. `.gitignore` does not protect them
 because they are already tracked. Review future merges against this baseline.
 
+Generated `upload/image/cachewebp/` files must stay untracked. Adding them to
+this branch would collide with the test host's existing generated WebP cache.
+
 For each change, review and test locally, commit and push to the same branch,
 then use **Update from Remote** in the existing cPanel repository. Check the
 resulting HEAD and site response; confirm that settings and generated data stay
